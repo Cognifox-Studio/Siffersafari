@@ -1,5 +1,7 @@
 # Plan: Åk 1–9 (läroplan) → bättre frågegeneration
 
+Se även: `docs/KUNSKAPSNIVA_PER_AK.md` (detaljerad Åk 1–9-spec med `NU`/`SEN`-taggar och exakta app-regler).
+
 ## Syfte
 Använd årskurs-informationen (Åk 1–9) för att:
 - generera frågor med rätt **talområde**,

@@ -60,6 +60,7 @@ lib/
 Dokumentation (med Mermaid-diagram):
 - `docs/ARCHITECTURE.md`
 - `docs/MERMAID_GUIDE.md`
+- `docs/KUNSKAPSNIVA_PER_AK.md`
 
 ## Installation (Utveckling)
 
