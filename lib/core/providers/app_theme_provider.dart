@@ -7,7 +7,7 @@ import 'user_provider.dart';
 
 final appThemeProvider = Provider<AppTheme>((ref) {
   final user = ref.watch(userProvider).activeUser;
-  return user?.selectedTheme ?? AppTheme.space;
+  return user?.selectedTheme ?? AppTheme.jungle;
 });
 
 final appThemeConfigProvider = Provider<AppThemeConfig>((ref) {

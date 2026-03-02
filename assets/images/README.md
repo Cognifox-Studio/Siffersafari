@@ -15,7 +15,7 @@ images/
 │   │   └── decorations/
 │   └── jungle/         # Djungeltema-bilder
 │       ├── background.png
-│       ├── character.png
+│       ├── character_v2.png
 │       ├── icons/
 │       └── decorations/
 ├── icons/              # Gemensamma ikoner

@@ -3,15 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
 import '../../core/providers/app_theme_provider.dart';
+import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/quiz_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
 import '../../core/utils/page_transitions.dart';
-import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
@@ -34,8 +33,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _loadedAllowedOpsForUserId;
   String? _checkedOnboardingForUserId;
   bool _onboardingPushInFlight = false;
-
-  static String _onboardingDoneKey(String userId) => 'onboarding_done_$userId';
 
   OperationType _recommendedOperation({
     required Set<OperationType> allowedOps,
@@ -104,20 +101,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       defaultDifficulty: effectiveDifficulty,
     );
 
-    final repo = getIt<LocalStorageRepository>();
-    final rawWordProblemsEnabled = repo.getSetting(
-      wordProblemsEnabledKey(user.userId),
-      defaultValue: true,
+    final wordProblemsEnabled = ref.read(
+      wordProblemsEnabledProvider(user.userId),
     );
-    final wordProblemsEnabled =
-        rawWordProblemsEnabled is bool ? rawWordProblemsEnabled : true;
 
-    final rawMissingNumberEnabled = repo.getSetting(
-      missingNumberEnabledKey(user.userId),
-      defaultValue: true,
+    final missingNumberEnabled = ref.read(
+      missingNumberEnabledProvider(user.userId),
     );
-    final missingNumberEnabled =
-        rawMissingNumberEnabled is bool ? rawMissingNumberEnabled : true;
 
     ref.read(quizProvider.notifier).startSession(
           ageGroup: effectiveAgeGroup,
@@ -140,6 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final themeCfg = ref.watch(appThemeConfigProvider);
     final backgroundAsset = themeCfg.backgroundAsset;
     final questHeroAsset = themeCfg.questHeroAsset;
+    final characterAsset = themeCfg.characterAsset;
     final accentColor = themeCfg.accentColor;
 
     final scheme = Theme.of(context).colorScheme;
@@ -173,8 +164,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
         final navigator = Navigator.of(context);
 
-        final repo = getIt<LocalStorageRepository>();
-        final done = await repo.getSetting(_onboardingDoneKey(user.userId));
+        final repo = ref.read(localStorageRepositoryProvider);
+        final done = repo.isOnboardingDone(user.userId);
         if (!mounted) return;
 
         if (done != true) {
@@ -304,6 +295,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: subtleOnPrimary,
                     ),
+              ),
+              const SizedBox(height: AppConstants.defaultPadding),
+              SizedBox(
+                height: 120,
+                child: Image.asset(
+                  characterAsset,
+                  fit: BoxFit.contain,
+                  cacheHeight:
+                      (120 * MediaQuery.devicePixelRatioOf(context)).round(),
+                  excludeFromSemantics: true,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
             ],
 

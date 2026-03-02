@@ -60,7 +60,9 @@ void main(List<String> args) {
   for (final t in targets) {
     final targetFile = File('${dir.path}/${t.name}');
     if (targetFile.existsSync()) {
-      final backup = File('${dir.path}/${t.name}.backup_$stamp');
+      final backupsDir = Directory('${dir.path}/_backups');
+      backupsDir.createSync(recursive: true);
+      final backup = File('${backupsDir.path}/${t.name}.backup_$stamp');
       targetFile.copySync(backup.path);
       stdout.writeln('[SFX] Backup: ${backup.path}');
     }

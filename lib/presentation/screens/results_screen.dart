@@ -5,15 +5,13 @@ import 'package:lottie/lottie.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
 import '../../core/providers/app_theme_provider.dart';
+import '../../core/providers/audio_service_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/quiz_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
-import '../../core/services/audio_service.dart';
-import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/enums/operation_type.dart';
@@ -154,7 +152,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       final shouldCelebrate = session.successRate >= 0.8 ||
           (reward?.unlockedIds.isNotEmpty ?? false);
       if (shouldCelebrate) {
-        getIt<AudioService>().playCelebrationSound();
+        ref.read(audioServiceProvider).playCelebrationSound();
       }
       _applied = true;
     }
@@ -369,23 +367,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         defaultDifficulty: effectiveDifficulty,
                       );
 
-                      final repo = getIt<LocalStorageRepository>();
-                      final rawWordProblemsEnabled = repo.getSetting(
-                        wordProblemsEnabledKey(user.userId),
-                        defaultValue: true,
+                      final wordProblemsEnabled = ref.read(
+                        wordProblemsEnabledProvider(user.userId),
                       );
-                      final wordProblemsEnabled = rawWordProblemsEnabled is bool
-                          ? rawWordProblemsEnabled
-                          : true;
 
-                      final rawMissingNumberEnabled = repo.getSetting(
-                        missingNumberEnabledKey(user.userId),
-                        defaultValue: true,
+                      final missingNumberEnabled = ref.read(
+                        missingNumberEnabledProvider(user.userId),
                       );
-                      final missingNumberEnabled =
-                          rawMissingNumberEnabled is bool
-                              ? rawMissingNumberEnabled
-                              : true;
 
                       ref.read(quizProvider.notifier).startSession(
                             ageGroup: effectiveAgeGroup,
@@ -460,23 +448,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         defaultDifficulty: effectiveDifficulty,
                       );
 
-                      final repo = getIt<LocalStorageRepository>();
-                      final rawWordProblemsEnabled = repo.getSetting(
-                        wordProblemsEnabledKey(user.userId),
-                        defaultValue: true,
+                      final wordProblemsEnabled = ref.read(
+                        wordProblemsEnabledProvider(user.userId),
                       );
-                      final wordProblemsEnabled = rawWordProblemsEnabled is bool
-                          ? rawWordProblemsEnabled
-                          : true;
 
-                      final rawMissingNumberEnabled = repo.getSetting(
-                        missingNumberEnabledKey(user.userId),
-                        defaultValue: true,
+                      final missingNumberEnabled = ref.read(
+                        missingNumberEnabledProvider(user.userId),
                       );
-                      final missingNumberEnabled =
-                          rawMissingNumberEnabled is bool
-                              ? rawMissingNumberEnabled
-                              : true;
 
                       final count = DifficultyConfig.getQuestionsPerSession(
                         effectiveAgeGroup,

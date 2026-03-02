@@ -122,7 +122,7 @@ class MathGameApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final defaultTheme = AppThemeConfig.forTheme(AppTheme.space).themeData();
+    final defaultTheme = AppThemeConfig.forTheme(AppTheme.jungle).themeData();
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),

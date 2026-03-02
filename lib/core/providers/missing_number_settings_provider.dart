@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/local_storage_repository.dart';
 import '../config/app_features.dart';
-import '../di/injection.dart';
+import 'local_storage_repository_provider.dart';
 
 String missingNumberEnabledKey(String userId) =>
     'missing_number_enabled_$userId';
@@ -34,7 +34,7 @@ class MissingNumberEnabledNotifier extends StateNotifier<bool> {
 final missingNumberEnabledProvider =
     StateNotifierProvider.family<MissingNumberEnabledNotifier, bool, String>(
   (ref, userId) {
-    final repository = getIt<LocalStorageRepository>();
+    final repository = ref.watch(localStorageRepositoryProvider);
     return MissingNumberEnabledNotifier(repository, userId);
   },
 );

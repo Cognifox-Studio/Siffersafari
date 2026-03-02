@@ -1,6 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/settings_keys.dart';
 import '../../domain/entities/user_progress.dart';
 
 /// Repository for local storage operations using Hive
@@ -130,6 +131,69 @@ class LocalStorageRepository {
   /// Get a setting
   dynamic getSetting(String key, {dynamic defaultValue}) {
     return _settingsBox.get(key, defaultValue: defaultValue);
+  }
+
+  // --- Typed settings helpers (prefer these over raw getSetting/saveSetting) ---
+
+  String? getActiveUserId() {
+    final raw = getSetting(SettingsKeys.activeUserId);
+    return raw is String && raw.isNotEmpty ? raw : null;
+  }
+
+  Future<void> setActiveUserId(String userId) async {
+    await saveSetting(SettingsKeys.activeUserId, userId);
+  }
+
+  Future<void> clearActiveUserId() async {
+    await deleteSetting(SettingsKeys.activeUserId);
+  }
+
+  bool isOnboardingDone(String userId) {
+    final raw = getSetting(SettingsKeys.onboardingDone(userId));
+    return raw is bool ? raw : false;
+  }
+
+  Future<void> setOnboardingDone(String userId, bool done) async {
+    await saveSetting(SettingsKeys.onboardingDone(userId), done);
+  }
+
+  List<String> getAllowedOperationNames(String userId) {
+    final raw = getSetting(SettingsKeys.allowedOperations(userId));
+    if (raw is List) {
+      return raw.whereType<String>().toList(growable: false);
+    }
+    return const <String>[];
+  }
+
+  Future<void> setAllowedOperationNames(
+    String userId,
+    List<String> operationNames,
+  ) async {
+    await saveSetting(SettingsKeys.allowedOperations(userId), operationNames);
+  }
+
+  String? getCurrentQuestId(String userId) {
+    final raw = getSetting(SettingsKeys.questCurrent(userId));
+    return raw is String && raw.isNotEmpty ? raw : null;
+  }
+
+  Future<void> setCurrentQuestId(String userId, String questId) async {
+    await saveSetting(SettingsKeys.questCurrent(userId), questId);
+  }
+
+  Set<String> getCompletedQuestIds(String userId) {
+    final raw = getSetting(SettingsKeys.questCompleted(userId));
+    if (raw is List) {
+      return raw.map((e) => e.toString()).toSet();
+    }
+    return <String>{};
+  }
+
+  Future<void> setCompletedQuestIds(String userId, Set<String> questIds) async {
+    await saveSetting(
+      SettingsKeys.questCompleted(userId),
+      questIds.toList(growable: false),
+    );
   }
 
   /// Clear all data (for testing or reset)

@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:image/image.dart' as img;
 
@@ -13,6 +14,11 @@ void main(List<String> args) {
   final inputPath = parsed['in'] ?? parsed['input'];
   final outputPath = parsed['out'] ?? parsed['output'];
   final tolerance = int.tryParse(parsed['tolerance'] ?? '18') ?? 18;
+  final softSpan = int.tryParse(parsed['soft-span'] ?? '0') ?? 0;
+  final softMaxAlpha =
+      int.tryParse(parsed['soft-max-alpha'] ?? '64')?.clamp(0, 255) ?? 64;
+  final protectRadius =
+      int.tryParse(parsed['protect-radius'] ?? '2')?.clamp(0, 32) ?? 2;
   final minComponentRatio =
       double.tryParse(parsed['min-component-ratio'] ?? '0.01') ?? 0.01;
 
@@ -42,6 +48,9 @@ void main(List<String> args) {
     rgba,
     bgs,
     tolerance: tolerance,
+    softSpan: softSpan,
+    softMaxAlpha: softMaxAlpha,
+    protectRadius: protectRadius,
     minComponentRatio: minComponentRatio,
   );
 
@@ -56,6 +65,9 @@ void main(List<String> args) {
     stdout.writeln('  #${i + 1}: rgb(${c.r},${c.g},${c.b})');
   }
   stdout.writeln('Min component ratio: $minComponentRatio');
+  stdout.writeln('Soft span: $softSpan');
+  stdout.writeln('Soft max alpha: $softMaxAlpha');
+  stdout.writeln('Protect radius: $protectRadius');
   stdout.writeln('Made transparent pixels: $removed');
 }
 
@@ -88,6 +100,14 @@ Required:
 
 Optional:
   --tolerance <0-255> Color distance tolerance (default 18)
+  --soft-span <0-255> Soft transparency span beyond tolerance (default 0).
+                      If > 0, background pixels fade out gradually which helps
+                      with gradients/glow.
+  --soft-max-alpha <0-255> Max alpha used for soft-removed background pixels
+                           (default 64). Lower = more transparent background.
+  --protect-radius <px>    Dilate a conservative foreground mask by this many
+                           pixels to prevent background removal from leaking
+                           into the subject (default 2).
   --min-component-ratio <0..1> Also remove enclosed background components if they
                                are at least this fraction of the image (default 0.01)
 
@@ -134,28 +154,60 @@ int _removeBackground(
   img.Image image,
   List<({int r, int g, int b})> bgs, {
   required int tolerance,
+  required int softSpan,
+  required int softMaxAlpha,
+  required int protectRadius,
   required double minComponentRatio,
 }) {
   final w = image.width;
   final h = image.height;
+  int idx(int x, int y) => y * w + x;
 
-  bool matches(img.Pixel p) {
+  int distanceToBg(img.Pixel p) {
+    var best = 1 << 30;
     for (final bg in bgs) {
       final dr = (p.r.toInt() - bg.r).abs();
       final dg = (p.g.toInt() - bg.g).abs();
       final db = (p.b.toInt() - bg.b).abs();
-      // Manhattan distance is fine here.
-      if ((dr + dg + db) <= tolerance) return true;
+      final d = dr + dg + db;
+      if (d < best) best = d;
     }
-    return false;
+    return best;
+  }
+
+  final maxTol = (tolerance + max(0, softSpan)).clamp(0, 255 * 3);
+
+  // Build a conservative foreground-protection mask (strict threshold) and
+  // dilate it a little to block background flood-fill from leaking through
+  // tiny gaps in the outline.
+  final protectMask = List<bool>.filled(w * h, false);
+  if (protectRadius > 0) {
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        final p = image.getPixel(x, y);
+        // Strict: only pixels clearly different from background.
+        final isFg = distanceToBg(p) > tolerance;
+        if (!isFg) continue;
+
+        for (var dy = -protectRadius; dy <= protectRadius; dy++) {
+          final ny = y + dy;
+          if (ny < 0 || ny >= h) continue;
+          for (var dx = -protectRadius; dx <= protectRadius; dx++) {
+            final nx = x + dx;
+            if (nx < 0 || nx >= w) continue;
+            protectMask[idx(nx, ny)] = true;
+          }
+        }
+      }
+    }
   }
 
   final bgMask = List<bool>.filled(w * h, false);
-  int idx(int x, int y) => y * w + x;
   for (var y = 0; y < h; y++) {
     for (var x = 0; x < w; x++) {
       final p = image.getPixel(x, y);
-      bgMask[idx(x, y)] = matches(p);
+      final i = idx(x, y);
+      bgMask[i] = (distanceToBg(p) <= maxTol) && !protectMask[i];
     }
   }
 
@@ -225,7 +277,20 @@ int _removeBackground(
       if (!shouldRemove) continue;
 
       final p = image.getPixel(x, y);
-      image.setPixelRgba(x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), 0);
+      final d = distanceToBg(p);
+      int a;
+      if (softSpan <= 0) {
+        a = 0;
+      } else if (d <= tolerance) {
+        a = 0;
+      } else {
+        final t = ((d - tolerance) / softSpan).clamp(0.0, 1.0);
+        a = (t * softMaxAlpha).round().clamp(0, 255);
+      }
+
+      if (a != p.a.toInt()) {
+        image.setPixelRgba(x, y, p.r.toInt(), p.g.toInt(), p.b.toInt(), a);
+      }
       removed++;
     }
   }

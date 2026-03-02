@@ -3,12 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
+import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
-import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'parent_pin_screen.dart';
@@ -82,7 +81,7 @@ class _DashboardBody extends ConsumerWidget {
     final subtleOnPrimary =
         onPrimary.withValues(alpha: AppOpacities.subtleText);
     final user = ref.watch(userProvider).activeUser!;
-    final repo = getIt<LocalStorageRepository>();
+    final repo = ref.read(localStorageRepositoryProvider);
     final history = repo.getQuizHistory(userId, limit: 5);
     final recentHistory = repo.getQuizHistory(userId, limit: 50);
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);

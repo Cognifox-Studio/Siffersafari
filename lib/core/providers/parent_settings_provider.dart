@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/enums/operation_type.dart';
-import '../di/injection.dart';
+import 'local_storage_repository_provider.dart';
 
 const _baseOperations = <OperationType>[
   OperationType.addition,
@@ -17,8 +17,6 @@ class ParentSettingsNotifier
 
   final LocalStorageRepository _repository;
 
-  static String _allowedOpsKey(String userId) => 'allowed_ops_$userId';
-
   Set<OperationType> allowedOperationsFor(String userId) {
     return state[userId] ?? _baseOperations.toSet();
   }
@@ -28,23 +26,25 @@ class ParentSettingsNotifier
     loadAllowedOperations(userId);
   }
 
-  void loadAllowedOperations(String userId) {
-    final raw = _repository.getSetting(_allowedOpsKey(userId));
+  void loadAllowedOperations(
+    String userId, {
+    Set<OperationType>? defaultOperations,
+  }) {
+    final rawList = _repository.getAllowedOperationNames(userId);
 
     Set<OperationType> ops;
-    if (raw is List) {
-      ops = raw
-          .whereType<String>()
+    if (rawList.isNotEmpty) {
+      ops = rawList
           .map(_operationFromName)
           .whereType<OperationType>()
           .where((op) => _baseOperations.contains(op))
           .toSet();
     } else {
-      ops = _baseOperations.toSet();
+      ops = (defaultOperations ?? _baseOperations.toSet()).toSet();
     }
 
     if (ops.isEmpty) {
-      ops = _baseOperations.toSet();
+      ops = (defaultOperations ?? _baseOperations.toSet()).toSet();
     }
 
     state = {
@@ -87,9 +87,27 @@ class ParentSettingsNotifier
       userId: updated,
     };
 
-    await _repository.saveSetting(
-      _allowedOpsKey(userId),
-      updated.map((op) => op.name).toList(),
+    await _repository.setAllowedOperationNames(
+      userId,
+      updated.map((op) => op.name).toList(growable: false),
+    );
+  }
+
+  Future<void> setAllowedOperations(
+    String userId,
+    Set<OperationType> ops,
+  ) async {
+    final sanitized = ops.where(_baseOperations.contains).toSet();
+    if (sanitized.isEmpty) return;
+
+    state = {
+      ...state,
+      userId: sanitized,
+    };
+
+    await _repository.setAllowedOperationNames(
+      userId,
+      sanitized.map((op) => op.name).toList(growable: false),
     );
   }
 }
@@ -97,7 +115,7 @@ class ParentSettingsNotifier
 final parentSettingsProvider = StateNotifierProvider<ParentSettingsNotifier,
     Map<String, Set<OperationType>>>(
   (ref) {
-    final repository = getIt<LocalStorageRepository>();
+    final repository = ref.watch(localStorageRepositoryProvider);
     return ParentSettingsNotifier(repository);
   },
 );

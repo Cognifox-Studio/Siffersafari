@@ -60,7 +60,13 @@ flutter:
   uses-material-design: true
   
   assets:
-    - assets/sounds/
+    # Lista ljudfiler explicit så att backups (t.ex. *.wav.backup_*)
+    # inte råkar packas in i APK:n.
+    - assets/sounds/background_music.wav
+    - assets/sounds/celebration.wav
+    - assets/sounds/click.wav
+    - assets/sounds/correct.wav
+    - assets/sounds/wrong.wav
     - assets/animations/
     - assets/images/
     - assets/images/themes/space/

@@ -1,16 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/difficulty_config.dart';
-import '../../core/di/injection.dart';
-import '../../core/services/achievement_service.dart';
-import '../../core/services/audio_service.dart';
-import '../../core/services/quest_progression_service.dart';
+import '../../core/constants/settings_keys.dart';
 import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/entities/quest.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/age_group.dart';
 import '../../domain/enums/operation_type.dart';
+import '../services/achievement_service.dart';
+import '../services/audio_service.dart';
+import '../services/quest_progression_service.dart';
+import 'achievement_service_provider.dart';
+import 'audio_service_provider.dart';
+import 'local_storage_repository_provider.dart';
+import 'quest_progression_service_provider.dart';
 
 class UserState {
   const UserState({
@@ -63,12 +67,7 @@ class UserNotifier extends StateNotifier<UserState> {
     this._questProgressionService,
   ) : super(const UserState());
 
-  static const String _activeUserIdKey = 'active_user_id';
   static const String _legacyDemoUserName = 'Demo Användare';
-  static String _onboardingDoneKey(String userId) => 'onboarding_done_$userId';
-  static String _allowedOpsKey(String userId) => 'allowed_ops_$userId';
-  static String _questCurrentKey(String userId) => 'quest_current_$userId';
-  static String _questCompletedKey(String userId) => 'quest_completed_$userId';
 
   final LocalStorageRepository _repository;
   final AchievementService _achievementService;
@@ -83,10 +82,9 @@ class UserNotifier extends StateNotifier<UserState> {
   };
 
   Set<OperationType> _readParentAllowedOperations(String userId) {
-    final raw = _repository.getSetting(_allowedOpsKey(userId));
-    if (raw is List) {
-      final ops = raw
-          .whereType<String>()
+    final rawList = _repository.getAllowedOperationNames(userId);
+    if (rawList.isNotEmpty) {
+      final ops = rawList
           .map(_operationFromName)
           .whereType<OperationType>()
           .where(_baseOperations.contains)
@@ -114,17 +112,11 @@ class UserNotifier extends StateNotifier<UserState> {
   }
 
   Set<String> _readCompletedQuestIds(String userId) {
-    final raw = _repository.getSetting(_questCompletedKey(userId));
-    if (raw is List) {
-      return raw.map((e) => e.toString()).toSet();
-    }
-    return <String>{};
+    return _repository.getCompletedQuestIds(userId);
   }
 
   String? _readCurrentQuestId(String userId) {
-    final raw = _repository.getSetting(_questCurrentKey(userId));
-    if (raw is String && raw.isNotEmpty) return raw;
-    return null;
+    return _repository.getCurrentQuestId(userId);
   }
 
   Future<void> _ensureQuestInitialized(UserProgress user) async {
@@ -132,14 +124,14 @@ class UserNotifier extends StateNotifier<UserState> {
     if (current != null) return;
 
     final allowedOps = _effectiveAllowedOperationsFor(user);
-    await _repository.saveSetting(
-      _questCurrentKey(user.userId),
+    await _repository.setCurrentQuestId(
+      user.userId,
       _questProgressionService.firstQuestId(
         user,
         allowedOperations: allowedOps,
       ),
     );
-    await _repository.saveSetting(_questCompletedKey(user.userId), <String>[]);
+    await _repository.setCompletedQuestIds(user.userId, <String>{});
   }
 
   Future<void> _setQuestState({
@@ -147,11 +139,8 @@ class UserNotifier extends StateNotifier<UserState> {
     required String currentQuestId,
     required Set<String> completedQuestIds,
   }) async {
-    await _repository.saveSetting(_questCurrentKey(userId), currentQuestId);
-    await _repository.saveSetting(
-      _questCompletedKey(userId),
-      completedQuestIds.toList(growable: false),
-    );
+    await _repository.setCurrentQuestId(userId, currentQuestId);
+    await _repository.setCompletedQuestIds(userId, completedQuestIds);
   }
 
   /// Ensures the persisted quest pointer is valid for the user's current
@@ -171,10 +160,7 @@ class UserNotifier extends StateNotifier<UserState> {
     );
 
     if (current != status.quest.id) {
-      await _repository.saveSetting(
-        _questCurrentKey(user.userId),
-        status.quest.id,
-      );
+      await _repository.setCurrentQuestId(user.userId, status.quest.id);
       final label = user.gradeLevel != null
           ? 'Årskurs ${user.gradeLevel}'
           : user.ageGroup.displayName;
@@ -206,19 +192,21 @@ class UserNotifier extends StateNotifier<UserState> {
     final demoUsers = users.where(_isLegacyDemoUser).toList();
     if (demoUsers.isEmpty) return;
 
-    final storedActiveUserId = _repository.getSetting(_activeUserIdKey);
+    final storedActiveUserId =
+        _repository.getSetting(SettingsKeys.activeUserId);
     final demoUserIds = demoUsers.map((u) => u.userId).toSet();
 
     for (final demo in demoUsers) {
       await _repository.deleteQuizHistoryForUser(demo.userId);
-      await _repository.deleteSetting(_onboardingDoneKey(demo.userId));
-      await _repository.deleteSetting(_allowedOpsKey(demo.userId));
+      await _repository.deleteSetting(SettingsKeys.onboardingDone(demo.userId));
+      await _repository
+          .deleteSetting(SettingsKeys.allowedOperations(demo.userId));
       await _repository.deleteUserProgress(demo.userId);
     }
 
     if (storedActiveUserId is String &&
         demoUserIds.contains(storedActiveUserId)) {
-      await _repository.deleteSetting(_activeUserIdKey);
+      await _repository.deleteSetting(SettingsKeys.activeUserId);
     }
   }
 
@@ -233,7 +221,7 @@ class UserNotifier extends StateNotifier<UserState> {
           .where((u) => !_isLegacyDemoUser(u))
           .toList();
 
-      final storedActiveUserId = _repository.getSetting(_activeUserIdKey);
+      final storedActiveUserId = _repository.getActiveUserId();
       final storedActiveUser = storedActiveUserId is String
           ? users.cast<UserProgress?>().firstWhere(
                 (u) => u?.userId == storedActiveUserId,
@@ -294,7 +282,7 @@ class UserNotifier extends StateNotifier<UserState> {
       completedQuestIds: _readCompletedQuestIds(user.userId),
       allowedOperations: allowedOps,
     );
-    await _repository.saveSetting(_activeUserIdKey, userId);
+    await _repository.setActiveUserId(userId);
     state = state.copyWith(activeUser: user, questStatus: questStatus);
   }
 
@@ -314,7 +302,7 @@ class UserNotifier extends StateNotifier<UserState> {
     );
 
     await _repository.saveUserProgress(newUser);
-    await _repository.saveSetting(_activeUserIdKey, userId);
+    await _repository.setActiveUserId(userId);
     await _reconcileQuestPointer(newUser);
     await loadUsers();
     _syncAudioSettings(newUser);
@@ -323,7 +311,7 @@ class UserNotifier extends StateNotifier<UserState> {
 
   Future<void> saveUser(UserProgress user) async {
     await _repository.saveUserProgress(user);
-    await _repository.saveSetting(_activeUserIdKey, user.userId);
+    await _repository.saveSetting(SettingsKeys.activeUserId, user.userId);
     await _reconcileQuestPointer(user);
     await loadUsers();
     _syncAudioSettings(user);
@@ -497,10 +485,10 @@ class UserNotifier extends StateNotifier<UserState> {
 }
 
 final userProvider = StateNotifierProvider<UserNotifier, UserState>((ref) {
-  final repository = getIt<LocalStorageRepository>();
-  final achievementService = getIt<AchievementService>();
-  final audioService = getIt<AudioService>();
-  final questProgressionService = getIt<QuestProgressionService>();
+  final repository = ref.watch(localStorageRepositoryProvider);
+  final achievementService = ref.watch(achievementServiceProvider);
+  final audioService = ref.watch(audioServiceProvider);
+  final questProgressionService = ref.watch(questProgressionServiceProvider);
   return UserNotifier(
     repository,
     achievementService,

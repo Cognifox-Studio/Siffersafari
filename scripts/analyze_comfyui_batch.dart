@@ -9,11 +9,16 @@ void main(List<String> args) {
     );
     stdout
         .writeln('Prints one-line diagnostics per image (alpha, bbox, edge).');
+    stdout.writeln('Options:');
+    stdout.writeln('  --short   Print only file name (no long paths).');
     exit(0);
   }
 
+  final shortPaths = args.contains('--short');
+
   final files = <File>[];
   for (final a in args) {
+    if (a.startsWith('-')) continue;
     final entityType = FileSystemEntity.typeSync(a);
     if (entityType == FileSystemEntityType.notFound) {
       stderr.writeln('Not found: $a');
@@ -43,6 +48,9 @@ void main(List<String> args) {
 
   files.sort((a, b) => a.path.compareTo(b.path));
 
+  // Dart can print "Running build hooks..." without a newline before our output,
+  // causing the header to be glued to that text. Force a clean line.
+  stdout.writeln('');
   stdout.writeln('path\tsize\tch\ttrans%\tedgenon0\tbbox%\tflags\tcorners');
 
   for (final f in files) {
@@ -130,8 +138,10 @@ void main(List<String> args) {
 
     final corners = 'TL${c(tl)} TR${c(tr)} BL${c(bl)} BR${c(br)}';
 
+    final printedPath = shortPaths ? f.uri.pathSegments.last : f.path;
+
     stdout.writeln(
-      '${f.path}\t${w}x$h\t${decoded.numChannels}\t${pct(transparent)}\t$edgeNonTransparent\t${pct(bboxArea)}\t${flags.isEmpty ? '-' : flags.join(',')}\t$corners',
+      '$printedPath\t${w}x$h\t${decoded.numChannels}\t${pct(transparent)}\t$edgeNonTransparent\t${pct(bboxArea)}\t${flags.isEmpty ? '-' : flags.join(',')}\t$corners',
     );
   }
 }

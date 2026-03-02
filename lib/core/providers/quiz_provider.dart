@@ -3,9 +3,6 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
-import '../../core/services/audio_service.dart';
-import '../../core/services/question_generator_service.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/enums/age_group.dart';
@@ -13,6 +10,12 @@ import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
+import '../services/audio_service.dart';
+import '../services/question_generator_service.dart';
+import 'adaptive_difficulty_service_provider.dart';
+import 'audio_service_provider.dart';
+import 'feedback_service_provider.dart';
+import 'question_generator_service_provider.dart';
 
 class QuizState {
   const QuizState({
@@ -344,10 +347,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
 }
 
 final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
-  final generator = getIt<QuestionGeneratorService>();
-  final adaptive = getIt<AdaptiveDifficultyService>();
-  final feedback = getIt<FeedbackService>();
-  final audio = getIt<AudioService>();
+  final generator = ref.watch(questionGeneratorServiceProvider);
+  final adaptive = ref.watch(adaptiveDifficultyServiceProvider);
+  final feedback = ref.watch(feedbackServiceProvider);
+  final audio = ref.watch(audioServiceProvider);
 
   return QuizNotifier(generator, adaptive, feedback, audio);
 });

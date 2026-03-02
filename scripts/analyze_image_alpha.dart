@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:image/image.dart' as img;
 
@@ -99,6 +100,118 @@ void main(List<String> args) {
   stdout.writeln(
     'Non-transparent bbox: x=$minX..$maxX y=$minY..$maxY  (w=$bboxW h=$bboxH)',
   );
+
+  // Hole detection inside bbox (transparent pixels that are NOT connected to the
+  // bbox boundary). This catches cases where background removal accidentally
+  // cut holes into the character.
+  if (bboxW > 0 && bboxH > 0) {
+    final boxTotal = bboxW * bboxH;
+
+    int idx(int x, int y) => y * bboxW + x;
+
+    final isTransparent = Uint8List(boxTotal);
+    var transparentInBox = 0;
+    for (var y = 0; y < bboxH; y++) {
+      for (var x = 0; x < bboxW; x++) {
+        final a = px(minX + x, minY + y).a.toInt();
+        if (a == 0) {
+          isTransparent[idx(x, y)] = 1;
+          transparentInBox++;
+        }
+      }
+    }
+
+    final ext = Uint8List(boxTotal);
+    final queue = <int>[];
+    void tryEnqueueBg(int x, int y) {
+      final i = idx(x, y);
+      if (isTransparent[i] == 1 && ext[i] == 0) {
+        ext[i] = 1;
+        queue.add(i);
+      }
+    }
+
+    // Seed with transparent pixels on bbox boundary.
+    for (var x = 0; x < bboxW; x++) {
+      tryEnqueueBg(x, 0);
+      if (bboxH > 1) tryEnqueueBg(x, bboxH - 1);
+    }
+    for (var y = 1; y < bboxH - 1; y++) {
+      tryEnqueueBg(0, y);
+      if (bboxW > 1) tryEnqueueBg(bboxW - 1, y);
+    }
+
+    // Flood-fill external background within bbox.
+    while (queue.isNotEmpty) {
+      final i = queue.removeLast();
+      final x = i % bboxW;
+      final y = i ~/ bboxW;
+
+      if (x > 0) tryEnqueueBg(x - 1, y);
+      if (x + 1 < bboxW) tryEnqueueBg(x + 1, y);
+      if (y > 0) tryEnqueueBg(x, y - 1);
+      if (y + 1 < bboxH) tryEnqueueBg(x, y + 1);
+    }
+
+    var holePixels = 0;
+    for (var i = 0; i < boxTotal; i++) {
+      if (isTransparent[i] == 1 && ext[i] == 0) {
+        holePixels++;
+      }
+    }
+
+    var largestHole = 0;
+    if (holePixels > 0) {
+      final holeVisited = Uint8List(boxTotal);
+      final holeQueue = <int>[];
+      for (var i = 0; i < boxTotal; i++) {
+        if (isTransparent[i] != 1 || ext[i] != 0 || holeVisited[i] != 0) {
+          continue;
+        }
+
+        var size = 0;
+        holeVisited[i] = 1;
+        holeQueue.add(i);
+        while (holeQueue.isNotEmpty) {
+          final j = holeQueue.removeLast();
+          size++;
+          final x = j % bboxW;
+          final y = j ~/ bboxW;
+
+          void tryVisit(int nx, int ny) {
+            final k = idx(nx, ny);
+            if (isTransparent[k] == 1 && ext[k] == 0 && holeVisited[k] == 0) {
+              holeVisited[k] = 1;
+              holeQueue.add(k);
+            }
+          }
+
+          if (x > 0) tryVisit(x - 1, y);
+          if (x + 1 < bboxW) tryVisit(x + 1, y);
+          if (y > 0) tryVisit(x, y - 1);
+          if (y + 1 < bboxH) tryVisit(x, y + 1);
+        }
+        if (size > largestHole) largestHole = size;
+      }
+    }
+
+    String pctBox(int n) => ((n / boxTotal) * 100).toStringAsFixed(2);
+    stdout.writeln('BBox alpha breakdown:');
+    stdout.writeln(
+      '  transparent-in-bbox: $transparentInBox (${pctBox(transparentInBox)}%)',
+    );
+    stdout.writeln(
+      '  hole pixels:         $holePixels (${pctBox(holePixels)}%)  largestHole=$largestHole',
+    );
+
+    // Heuristics
+    final holePct = holePixels / boxTotal;
+    if (holePct > 0.005 || largestHole >= 64) {
+      stdout.writeln(
+        'WARNING: Detected potential transparency holes inside the character; check visually.',
+      );
+    }
+  }
 
   // Heuristics
   final transparentPct = transparent / total;

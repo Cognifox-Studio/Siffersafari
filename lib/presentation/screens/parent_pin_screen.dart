@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
+import '../../core/providers/parent_pin_service_provider.dart';
 import '../../domain/services/parent_pin_service.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'parent_dashboard_screen.dart';
@@ -33,7 +33,7 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
   void initState() {
     super.initState();
 
-    final pinService = getIt<ParentPinService>();
+    final pinService = ref.read(parentPinServiceProvider);
     _isSettingNewPin = widget.forceSetNewPin || !pinService.hasPinSet();
     _lockoutMinutes = pinService.getLockoutRemainingMinutes();
   }
@@ -51,7 +51,7 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
       _lockoutMinutes = null;
     });
 
-    final pinService = getIt<ParentPinService>();
+    final pinService = ref.read(parentPinServiceProvider);
     final pin = _pinController.text.trim();
 
     if (pin.length < 4) {

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/user_provider.dart';
+import '../../domain/enums/app_theme.dart';
 import '../dialogs/create_user_dialog.dart';
 import '../widgets/themed_background_scaffold.dart';
 
@@ -160,6 +161,45 @@ class SettingsScreen extends ConsumerWidget {
                           await ref
                               .read(userProvider.notifier)
                               .saveUser(user.copyWith(gradeLevel: value));
+                        },
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      title: Text(
+                        'Tema',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      subtitle: Text(
+                        'Byt bakgrund och stil.',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: subtleOnPrimary,
+                            ),
+                      ),
+                      trailing: DropdownButton<AppTheme>(
+                        value: user.selectedTheme,
+                        dropdownColor: themeCfg.baseBackgroundColor,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyMedium
+                            ?.copyWith(color: onPrimary),
+                        underline: const SizedBox.shrink(),
+                        items: [
+                          ...AppTheme.values.map(
+                            (t) => DropdownMenuItem<AppTheme>(
+                              value: t,
+                              child: Text('${t.emoji} ${t.displayName}'),
+                            ),
+                          ),
+                        ],
+                        onChanged: (value) async {
+                          if (value == null) return;
+                          await ref
+                              .read(userProvider.notifier)
+                              .saveUser(user.copyWith(selectedTheme: value));
                         },
                       ),
                     ),

@@ -8,6 +8,7 @@ class AppThemeConfig {
     required this.theme,
     required this.backgroundAsset,
     required this.questHeroAsset,
+    required this.characterAsset,
     required this.baseBackgroundColor,
     required this.primaryActionColor,
     required this.secondaryActionColor,
@@ -20,6 +21,7 @@ class AppThemeConfig {
 
   final String backgroundAsset;
   final String questHeroAsset;
+  final String characterAsset;
 
   final Color baseBackgroundColor;
   final Color primaryActionColor;
@@ -39,6 +41,7 @@ class AppThemeConfig {
           theme: AppTheme.jungle,
           backgroundAsset: 'assets/images/themes/jungle/background.png',
           questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
+          characterAsset: 'assets/images/themes/jungle/character_v2.png',
           baseBackgroundColor: AppColors.jungleBackground,
           primaryActionColor: AppColors.junglePrimary,
           secondaryActionColor: AppColors.jungleSecondary,
@@ -53,6 +56,7 @@ class AppThemeConfig {
           theme: AppTheme.space,
           backgroundAsset: 'assets/images/themes/space/background.png',
           questHeroAsset: 'assets/images/themes/space/quest_hero.png',
+          characterAsset: 'assets/images/themes/space/character.png',
           baseBackgroundColor: AppColors.spaceBackground,
           primaryActionColor: AppColors.spacePrimary,
           secondaryActionColor: AppColors.spaceSecondary,
@@ -153,12 +157,11 @@ class AppThemeConfig {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-          borderSide:
-              BorderSide(
-                color: scheme.onPrimary.withValues(
-                  alpha: AppOpacities.borderMedium,
-                ),
-              ),
+          borderSide: BorderSide(
+            color: scheme.onPrimary.withValues(
+              alpha: AppOpacities.borderMedium,
+            ),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius),

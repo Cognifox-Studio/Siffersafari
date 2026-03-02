@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
-import '../../core/di/injection.dart';
+import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/user_provider.dart';
-import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/themed_background_scaffold.dart';
 
@@ -31,16 +30,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int? _gradeLevel;
   Set<OperationType> _allowedOps = const {OperationType.multiplication};
 
-  static String _doneKey(String userId) => 'onboarding_done_$userId';
-  static String _allowedOpsKey(String userId) => 'allowed_ops_$userId';
-
-  OperationType? _operationFromName(String name) {
-    for (final op in OperationType.values) {
-      if (op.name == name) return op;
-    }
-    return null;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -49,27 +38,19 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     // Load persisted onboarding-related settings for this user.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final repo = getIt<LocalStorageRepository>();
+      final repo = ref.read(localStorageRepositoryProvider);
 
       final activeUser = ref.read(userProvider).activeUser;
       final user = activeUser?.userId == widget.userId
           ? activeUser
           : repo.getUserProgress(widget.userId);
 
-      final rawAllowed = repo.getSetting(_allowedOpsKey(widget.userId));
-      final ops = <OperationType>{};
-      if (rawAllowed is List) {
-        for (final item in rawAllowed.whereType<String>()) {
-          final op = _operationFromName(item);
-          if (op == null) continue;
-          if (op == OperationType.mixed) continue;
-          ops.add(op);
-        }
-      }
-
-      final allowedOps = ops.isNotEmpty
-          ? ops
-          : const <OperationType>{OperationType.multiplication};
+      ref.read(parentSettingsProvider.notifier).loadAllowedOperations(
+        widget.userId,
+        defaultOperations: const {OperationType.multiplication},
+      );
+      final allowedOps = ref.read(parentSettingsProvider)[widget.userId] ??
+          const <OperationType>{OperationType.multiplication};
 
       if (!mounted) return;
       setState(() {
@@ -101,15 +82,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   Future<void> _finish() async {
-    final repo = getIt<LocalStorageRepository>();
+    final repo = ref.read(localStorageRepositoryProvider);
 
-    // Persist settings chosen during onboarding.
-    await repo.saveSetting(
-      _allowedOpsKey(widget.userId),
-      _allowedOps.isNotEmpty
-          ? _allowedOps.map((op) => op.name).toList()
-          : [OperationType.multiplication.name],
-    );
+    await ref
+        .read(parentSettingsProvider.notifier)
+        .setAllowedOperations(widget.userId, _allowedOps);
 
     final activeUser = ref.read(userProvider).activeUser;
     if (activeUser != null && activeUser.userId == widget.userId) {
@@ -125,11 +102,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     }
 
     // Make sure parent settings cache reflects the saved operations.
-    ref.read(parentSettingsProvider.notifier).loadAllowedOperations(
-          widget.userId,
-        );
+    ref
+        .read(parentSettingsProvider.notifier)
+        .loadAllowedOperations(widget.userId);
 
-    await repo.saveSetting(_doneKey(widget.userId), true);
+    await repo.setOnboardingDone(widget.userId, true);
 
     if (!mounted) return;
     Navigator.of(context).pop();

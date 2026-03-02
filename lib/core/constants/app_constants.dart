@@ -52,7 +52,7 @@ class AppConstants {
   static const double largeIconSize = UiConstants.largeIconSize;
   static const double minTouchTargetSize = UiConstants.minTouchTargetSize;
 
-    static const double contentMaxWidth = UiConstants.contentMaxWidth;
+  static const double contentMaxWidth = UiConstants.contentMaxWidth;
 
   static const double microSpacing2 = UiConstants.microSpacing2;
   static const double microSpacing4 = UiConstants.microSpacing4;
@@ -64,8 +64,8 @@ class AppConstants {
   static const double progressBarHeightMedium =
       UiConstants.progressBarHeightMedium;
 
-    static const double backgroundOverlayOpacity =
-            UiConstants.backgroundOverlayOpacity;
+  static const double backgroundOverlayOpacity =
+      UiConstants.backgroundOverlayOpacity;
 
   // Animation Durations
   static const Duration microAnimationDuration =
@@ -79,8 +79,8 @@ class AppConstants {
 
   static const Duration pageTransitionSlow = UiConstants.pageTransitionSlow;
   static const Duration pageTransitionNormal = UiConstants.pageTransitionNormal;
-    static const Offset pageTransitionSlideBeginOffset =
-            UiConstants.pageTransitionSlideBeginOffset;
+  static const Offset pageTransitionSlideBeginOffset =
+      UiConstants.pageTransitionSlideBeginOffset;
 
   static const Duration momentDisplayDuration =
       UiConstants.momentDisplayDuration;
@@ -103,7 +103,8 @@ class AppConstants {
       UiConstants.answerButtonElevationSelected;
 
   // Shadows
-  static const double questionCardShadowBlur = UiConstants.questionCardShadowBlur;
+  static const double questionCardShadowBlur =
+      UiConstants.questionCardShadowBlur;
   static const double questionCardShadowOffsetY =
       UiConstants.questionCardShadowOffsetY;
 

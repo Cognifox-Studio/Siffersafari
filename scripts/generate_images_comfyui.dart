@@ -10,10 +10,14 @@ void main(List<String> args) async {
     exit(0);
   }
 
-  final server = Uri.parse(parsed['server'] ?? 'http://127.0.0.1:8188');
+  final defaultServer = Platform.environment['COMFYUI_SERVER'] ??
+      Platform.environment['COMFYUI_URL'] ??
+      'http://127.0.0.1:8000';
+  final server = Uri.parse(parsed['server'] ?? defaultServer);
   final workflowPath = parsed['workflow'];
   final promptText = parsed['prompt'];
   final negativePromptText = parsed['negative'] ?? parsed['neg'];
+  final initImagePath = parsed['init'] ?? parsed['initImage'];
   final outDir = parsed['out'] ?? 'assets/images/generated';
   final count = int.tryParse(parsed['count'] ?? parsed['n'] ?? '1') ?? 1;
 
@@ -43,6 +47,7 @@ void main(List<String> args) async {
   final widthArg = parsed['width'];
   final heightArg = parsed['height'];
   final batchArg = parsed['batch'];
+  final denoiseArg = parsed['denoise'];
 
   final seed = seedArg == null ? null : int.tryParse(seedArg);
   final steps = stepsArg == null ? null : int.tryParse(stepsArg);
@@ -50,11 +55,32 @@ void main(List<String> args) async {
   final height = heightArg == null ? null : int.tryParse(heightArg);
   final batch = batchArg == null ? null : int.tryParse(batchArg);
   final cfg = cfgArg == null ? null : double.tryParse(cfgArg);
+  final denoise = denoiseArg == null ? null : double.tryParse(denoiseArg);
+
+  String? initImageName;
+  if (initImagePath != null) {
+    final file = File(initImagePath);
+    if (!file.existsSync()) {
+      stderr.writeln('Init image not found: $initImagePath');
+      exit(2);
+    }
+    stdout.writeln('[ComfyUI] Uploading init image: $initImagePath');
+    initImageName = await _uploadImage(server, file);
+    stdout.writeln('[ComfyUI] Uploaded init image as: $initImageName');
+  }
+
+  if (_containsString(graph, '__INIT_IMAGE__') && initImageName == null) {
+    stderr.writeln(
+      'Workflow requires __INIT_IMAGE__ but no --init was provided.',
+    );
+    exit(2);
+  }
 
   _applyPromptPlaceholders(
     graph,
     promptText: promptText,
     negativePromptText: negativePromptText,
+    initImageName: initImageName,
   );
 
   _applyCommonNumericOverrides(
@@ -65,6 +91,7 @@ void main(List<String> args) async {
     width: width,
     height: height,
     batch: batch,
+    denoise: denoise,
   );
 
   Directory(outDir).createSync(recursive: true);
@@ -123,13 +150,15 @@ Required:
   --prompt  <text>    Positive prompt
 
 Optional:
-  --server <url>      Default: http://127.0.0.1:8188
+  --server <url>      Default: COMFYUI_SERVER/COMFYUI_URL or http://127.0.0.1:8000
   --negative <text>   Negative prompt (requires __NEGATIVE_PROMPT__ placeholder)
+  --init <path>        Init image (img2img). Requires __INIT_IMAGE__ placeholder
   --out <dir>         Default: assets/images/generated
   --count <n>         Number of generations (default 1)
   --seed <int>        If omitted, uses random seed per image
   --steps <int>       Overrides KSampler steps (if present)
   --cfg <double>      Overrides KSampler cfg (if present)
+  --denoise <double>   Overrides KSampler denoise (if present)
   --width <int>       Overrides EmptyLatentImage width (if present)
   --height <int>      Overrides EmptyLatentImage height (if present)
   --batch <int>       Overrides EmptyLatentImage batch_size (if present)
@@ -138,6 +167,7 @@ Workflow placeholders (recommended):
   Put these exact strings in your workflow text fields before exporting:
     __POSITIVE_PROMPT__
     __NEGATIVE_PROMPT__
+    __INIT_IMAGE__
 
 Example:
   dart run scripts/generate_images_comfyui.dart --workflow scripts/comfyui/workflows/txt2img_api.json --prompt "cute friendly space mascot, flat vector, kids app" --negative "scary, gore, realistic" --width 1024 --height 1024 --steps 25 --cfg 6.5 --count 4
@@ -186,6 +216,7 @@ void _applyPromptPlaceholders(
   Map<String, dynamic> graph, {
   required String promptText,
   String? negativePromptText,
+  String? initImageName,
 }) {
   dynamic replace(dynamic value) {
     if (value is Map) {
@@ -201,6 +232,7 @@ void _applyPromptPlaceholders(
     if (value is String) {
       if (value == '__POSITIVE_PROMPT__') return promptText;
       if (value == '__NEGATIVE_PROMPT__') return negativePromptText ?? '';
+      if (value == '__INIT_IMAGE__') return initImageName ?? '';
     }
     return value;
   }
@@ -251,6 +283,7 @@ void _applyCommonNumericOverrides(
   int? width,
   int? height,
   int? batch,
+  double? denoise,
 }) {
   for (final node in graph.values) {
     if (node is! Map) continue;
@@ -263,6 +296,7 @@ void _applyCommonNumericOverrides(
       if (seed != null) inputs['seed'] = seed;
       if (steps != null) inputs['steps'] = steps;
       if (cfg != null) inputs['cfg'] = cfg;
+      if (denoise != null) inputs['denoise'] = denoise;
     }
 
     if (classType == 'KSamplerAdvanced') {
@@ -276,6 +310,66 @@ void _applyCommonNumericOverrides(
       if (height != null) inputs['height'] = height;
       if (batch != null) inputs['batch_size'] = batch;
     }
+  }
+}
+
+Future<String> _uploadImage(Uri server, File file) async {
+  final uri = server.replace(path: '/upload/image');
+  final boundary = '----dartFormBoundary${_randomClientId()}';
+
+  final filename = file.uri.pathSegments.isNotEmpty
+      ? file.uri.pathSegments.last
+      : 'init.png';
+  final fileBytes = file.readAsBytesSync();
+  final contentType = filename.toLowerCase().endsWith('.jpg') ||
+          filename.toLowerCase().endsWith('.jpeg')
+      ? 'image/jpeg'
+      : 'image/png';
+
+  final bodyBytes = <int>[];
+  void writeString(String s) => bodyBytes.addAll(utf8.encode(s));
+
+  writeString('--$boundary\r\n');
+  writeString('Content-Disposition: form-data; name="overwrite"\r\n\r\n');
+  writeString('true\r\n');
+
+  writeString('--$boundary\r\n');
+  writeString(
+    'Content-Disposition: form-data; name="image"; filename="$filename"\r\n',
+  );
+  writeString('Content-Type: $contentType\r\n\r\n');
+  bodyBytes.addAll(fileBytes);
+  writeString('\r\n');
+  writeString('--$boundary--\r\n');
+
+  final client = HttpClient();
+  try {
+    final request = await client.postUrl(uri);
+    request.headers.set(
+      HttpHeaders.contentTypeHeader,
+      'multipart/form-data; boundary=$boundary',
+    );
+    request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+    request.add(bodyBytes);
+
+    final response = await request.close();
+    final text = await response.transform(utf8.decoder).join();
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('HTTP ${response.statusCode} calling $uri: $text');
+    }
+
+    final decoded = jsonDecode(text);
+    if (decoded is! Map) {
+      throw FormatException('Expected JSON object from $uri, got: $decoded');
+    }
+    final m = decoded.cast<String, dynamic>();
+    final name = m['name'] ?? m['filename'];
+    if (name is! String || name.isEmpty) {
+      throw StateError('Upload response missing image name: $m');
+    }
+    return name;
+  } finally {
+    client.close(force: true);
   }
 }
 

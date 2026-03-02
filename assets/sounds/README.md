@@ -26,6 +26,8 @@ Om du bara vill regenerera ett specifikt ljud (för att inte skriva över andra 
 
 Scriptet skapar alltid en timestampad backup av befintliga `.wav`-filer innan det skriver över.
 
+Backups sparas i `assets/sounds/_backups/` för att undvika att de blandas med appens riktiga ljudassets.
+
 ## Rekommendationer:
 
 - Format: MP3, WAV eller OGG

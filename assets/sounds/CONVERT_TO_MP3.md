@@ -9,6 +9,8 @@ Alla ljudfiler är för närvarande `.wav`-format, vilket resulterar i stor APK-
 ## Lösning
 Konvertera alla `.wav`-filer till `.mp3` med 128-192 kbps kvalitet för att minska storleken med ~90%.
 
+OBS: Projektet listar ljudassets explicit i `pubspec.yaml` för att undvika att `*.backup_*` råkar packas in i APK. Det betyder att du först ska lägga in MP3-filerna, och därefter uppdatera `pubspec.yaml` till att peka på MP3.
+
 ---
 
 ## Metod 1: Online Converter (Enklast, ingen installation)
@@ -22,6 +24,14 @@ Konvertera alla `.wav`-filer till `.mp3` med 128-192 kbps kvalitet för att mins
 4. Konvertera och ladda ner `.mp3`-filerna
 5. Placera dem i `assets/sounds/` (samma namn som .wav men .mp3 extension)
 6. Ta INTE bort .wav-filerna ännu (AudioService har fallback)
+7. När MP3-filerna ligger på plats: uppdatera `pubspec.yaml` så att endast MP3 packas in
+
+### Filnamn som appen förväntar sig
+- `background_music.mp3`
+- `celebration.mp3`
+- `click.mp3`
+- `correct.mp3`
+- `wrong.mp3`
 
 ---
 

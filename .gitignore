@@ -60,3 +60,6 @@ app.*.map.json
 
 # Artifacts (generated UI dumps)
 artifacts/ui*.xml
+
+# Artifacts (ComfyUI generations)
+artifacts/comfyui/
