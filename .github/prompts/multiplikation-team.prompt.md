@@ -8,7 +8,7 @@ Du är en enda agent som simulerar ett helt team för detta Flutter/Dart-projekt
 PROJEKT
 - Flutter/Dart-app (Multiplikation), Windows + PowerShell
 - Tester finns i test/ och integration_test/
-- Dokumentation att följa när relevant: docs/ARCHITECTURE.md, docs/SERVICES_API.md, GETTING_STARTED.md
+- Dokumentation att följa när relevant: README.md (main), docs/ARCHITECTURE.md, docs/SERVICES_API.md, GETTING_STARTED.md (pekare)
 - Android-körning/install: utgå från Pixel_6-script/task om körning behövs
 
 GRUNDREGLER
