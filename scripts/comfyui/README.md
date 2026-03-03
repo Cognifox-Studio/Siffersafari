@@ -55,6 +55,22 @@ If not, the placeholders for prompts still work.
 
 Note: `assets/images/generated/` is ignored by git in this repo. If you want to keep a generated image as an app asset, move/rename it into the proper theme folder under `assets/images/themes/`.
 
+## Pose-pack (character_v2)
+
+Generate a small set of character poses from the canonical jungle character reference.
+
+Recommended (also generates alpha variants):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_pose_pack.ps1 -AlphaAll
+```
+
+Override workflow explicitly:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_pose_pack.ps1 -Workflow scripts/comfyui/workflows/character_v2_pose_pack_api.json -AlphaAll
+```
+
 ## Benchmark (3 runs, median)
 
 To measure if speed flags improved performance, run 3 identical generations and take the median time:
@@ -78,3 +94,36 @@ If your ComfyUI runs on a different port, override it explicitly:
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/comfyui/bench_comfyui.ps1 -Server http://127.0.0.1:8001
 ```
+
+## Plugins (optional)
+
+These are only needed if you want higher consistency (IP-Adapter) or pose control (OpenPose).
+
+### ComfyUI-Manager
+
+From your ComfyUI folder:
+
+```powershell
+Set-Location "D:\Tools\Comfyui\resources\ComfyUI\custom_nodes"
+git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager
+```
+
+Restart ComfyUI afterwards.
+
+### IP-Adapter (stable character identity)
+
+```powershell
+Set-Location "D:\Tools\Comfyui\resources\ComfyUI\custom_nodes"
+git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus
+```
+
+Then download the required SDXL models into your ComfyUI model folders (see the IPAdapter repo for exact filenames).
+
+### OpenPose preprocessor (pose control)
+
+```powershell
+Set-Location "D:\Tools\Comfyui\resources\ComfyUI\custom_nodes"
+git clone https://github.com/Fannovel16/comfyui_controlnet_aux/
+```
+
+Then install Python dependencies as required by that repo (often includes `opencv-python`).

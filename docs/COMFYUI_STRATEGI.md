@@ -188,8 +188,8 @@ Mål: generera ett litet paket med poser (PNG) från en *master reference* (`cha
 
 Det här använder vår befintliga img2img-workflow och håller identiteten hyfsat bra via låg `denoise`.
 
-- Kör pose-pack scriptet:
-  - `powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_pose_pack.ps1 -AlphaAll`
+- Kör pose-pack via scriptet `scripts/generate_character_v2_pose_pack.ps1`.
+  - Exakta kommandon (inkl. flaggor) finns i `scripts/comfyui/README.md`.
 
 Output hamnar i `artifacts/comfyui/pose_pack_YYYYMMDD_HHMMSS/` med en mapp per pose.
 
@@ -208,7 +208,7 @@ Om du har byggt ett bättre workflow i ComfyUI (t.ex. med IP-Adapter + OpenPose)
 Pose-pack-scriptet väljer automatiskt den filen om den finns. Annars faller det tillbaka till `img2img_color_api.json`.
 
 Om du vill peka ut en annan fil explicit:
-- `powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_pose_pack.ps1 -Workflow <din_workflow.json> -AlphaAll`
+- Se `scripts/comfyui/README.md` (Pose-pack) för exempel på hur du pekar ut workflow explicit.
 
 ### Bästa sätt (rekommenderas): IP-Adapter + (ev) OpenPose
 
@@ -224,20 +224,13 @@ Det kräver att du installerar custom nodes + laddar ner modeller.
 
 ### 1) Installera ComfyUI-Manager (rekommenderas)
 
-I din ComfyUI-mapp:
-- Gå till `ComfyUI/custom_nodes/`
-- Kör:
-  - `git clone https://github.com/ltdrdata/ComfyUI-Manager comfyui-manager`
-- Starta om ComfyUI
+Se `scripts/comfyui/README.md` för exakta kommandon (custom_nodes + git clone) och felsökning.
 
 Om du saknar Git på Windows: installera Git (standardinstall) först.
 
 ### 2) IP-Adapter (för stabil identitet)
 
-Installera custom nodes:
-- `ComfyUI/custom_nodes/`:
-  - `git clone https://github.com/cubiq/ComfyUI_IPAdapter_plus`
-- Starta om ComfyUI
+Se `scripts/comfyui/README.md` för exakta kommandon (install av custom nodes) och vilka modellmappar som används.
 
 Ladda ner modeller (SDXL):
 - CLIP-Vision encoder till `ComfyUI/models/clip_vision/` (följ filnamn/krav i repo-readme för IPAdapter).
@@ -245,10 +238,7 @@ Ladda ner modeller (SDXL):
 
 ### 3) OpenPose-preprocessor + ControlNet OpenPose SDXL (för stabil pose)
 
-Installera preprocessors:
-- `ComfyUI/custom_nodes/`:
-  - `git clone https://github.com/Fannovel16/comfyui_controlnet_aux/`
-- Installera dependencies enligt deras README (pip/requirements) och starta om ComfyUI.
+Se `scripts/comfyui/README.md` för exakta kommandon (install av preprocessors) samt notiser kring dependencies.
 
 Ladda ner ControlNet OpenPose för SDXL (viktigt: SDXL-modell):
 - Exempel: `thibaud/controlnet-openpose-sdxl-1.0` eller `xinsir/controlnet-openpose-sdxl-1.0` (safetensors).
