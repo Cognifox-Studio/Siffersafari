@@ -1,9 +1,26 @@
 # Snabbstart Guide
 
+> Obs: Den här filen är en **kort pekare** för att undvika att duplicera innehåll från `README.md`.
+> För aktuell status, QA-rutin och rekommenderade kommandon: se `README.md`.
+
 ## Uppdatering
 
 - 2026-03-01: Aktuell implementationsstatus finns i `README.md` under sektionen **Status (2026-03-01)** och i `IMPLEMENTATION_STATUS.md`.
 - Rekommenderad QA-rutin (före commit/push) finns även sammanfattad i `CONTRIBUTING.md`.
+
+## TL;DR (minsta som krävs)
+
+```bash
+flutter pub get
+flutter analyze
+flutter test test/app_widget_flows_test.dart
+```
+
+För deterministisk körning på Pixel_6:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
+```
 
 ## Förutsättningar
 
@@ -235,11 +252,11 @@ flutter pub get
 
 2. **Läs dokumentationen:**
    - `docs/ARCHITECTURE.md` - Projektstruktur och design
-   - `TODO.md` - Vad som behöver göras härnäst
+   - `TODO_KVAR.md` - Vad som behöver göras härnäst
 
 3. **Börja implementera:**
-   - Välj en uppgift från `TODO.md`
-   - Skapa en ny branch: `git checkout -b feature/my-feature`
+   - Välj en uppgift från `TODO_KVAR.md`
+   - (Valfritt) Skapa en ny branch: `git checkout -b feature/my-feature`
    - Implementera och testa
    - Commit: `git commit -m "feat: add my feature"`
 
@@ -254,9 +271,9 @@ flutter pub get
 
 För frågor eller problem, se:
 - `docs/ARCHITECTURE.md` - Teknisk dokumentation
-- `TODO.md` - Kända issues och framtida features
-- `/memories/session/plan.md` - Fullständig projektplan
+- `TODO_KVAR.md` - Kända issues och framtida features
+- `docs/SESSION_BRIEF.md` - Kort status + nästa steg
 
 ---
 
-**Lycka till med utvecklingen! 🚀**
+**Lycka till med utvecklingen!**

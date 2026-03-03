@@ -2,7 +2,7 @@
 
 Genererad: 2026-02-27
 
-Denna fil samlar alla **oklara** checkboxar från TODO.md.
+Denna fil samlar alla **kvarstående** punkter (vår nuvarande “att göra”-lista).
 
 ---
 

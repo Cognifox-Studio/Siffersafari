@@ -2,11 +2,11 @@
 
 Genererad: 2026-02-27
 
-Denna fil samlar alla **klara** checkboxar från TODO.md och FÖRBÄTTRINGAR.md.
+Denna fil samlar alla **klara** punkter (historik/avprickat).
 
 ---
 
-## Från TODO.md
+## Klara (tidigare TODO-lista)
 
 ### Fas 1: Grundläggande Arkitektur
 - [x] Projektstruktur skapad (Clean Architecture)

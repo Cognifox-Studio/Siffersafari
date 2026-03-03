@@ -1,5 +1,7 @@
 # ComfyUI-strategi (Multiplikation)
 
+> För praktiska kommandon (starta ComfyUI, benchmark, hur man kör scripts/workflows): se `scripts/comfyui/README.md`.
+
 Mål: generera barnvänliga (6–12), tydliga och konsekventa assets till spelet, främst:
 - Tema-bakgrunder (Home/menyer)
 - Quest-hero (större figur/illustration)
