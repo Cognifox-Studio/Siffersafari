@@ -93,31 +93,13 @@ Det finns även VS Code tasks som använder samma flöde.
 
 ## Testning
 
-### Rekommenderad QA-rutin (före commit/push)
+Se `CONTRIBUTING.md` för rekommenderad QA-rutin och VS Code-tasks.
 
-Tips: samma QA-flöde finns som VS Code-tasks i `.vscode/tasks.json` (se även `CONTRIBUTING.md`).
-
-```bash
-# 1) Statisk analys
-flutter analyze
-
-# 2) Tester: kör minsta relevanta subset för ändringen
-# Exempel:
-flutter test test/question_generator_test.dart
-
-# 3) Vid "stora" commits/merges (många filer, refactor, bred påverkan):
-flutter test
-```
+Snabbkommandon:
 
 ```bash
-# Enhetstester
-flutter test
-
-# Enhetstester med coverage
-flutter test --coverage
-
-# Analysera kod
 flutter analyze
+flutter test
 ```
 
 ## Licens

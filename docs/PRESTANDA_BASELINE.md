@@ -1,5 +1,7 @@
 # Prestanda-baseline (Pixel_6, 2026-03-01)
 
+> OBS: Detta är en historisk snapshot (baseline + en uppföljningsmätning samma dag). För nuvarande prioriteringar/arbetslista, se `TODO_KVAR.md` under “Fas 7: Testing & Optimering”.
+
 ## Testkonfiguration
 - **Enhet**: Pixel_6 emulator (Android API 36, sdk_gphone64_x86_64)
 - **Build**: Debug APK (136 MB)
@@ -74,7 +76,7 @@
 
 ## Rekommenderade åtgärder (prioriterat)
 
-### Fas 1: Quick wins (✅ IMPLEMENTERAT 2026-03-01)
+### Fas 1: Quick wins (testat 2026-03-01, blandade resultat)
 
 1. **✅ Asynkron Hive-initialisering med loading screen**
    - Flyttade Hive box-öppning till asynkron Future med FutureBuilder
@@ -125,13 +127,10 @@
 
 ---
 
-## Nästa steg
+## Nästa steg (nuvarande)
 
-1. ✅ Baseline-mätning klar (detta dokument)
-2. ⏭️ **Implementera Fas 1 quick wins** (fokus: frame skipping + startup tid)
-3. ⏭️ Mät igen och verifiera förbättring
-4. ⏭️ Skapa äldre emulator (API 24/25) och testa där
-5. ⏭️ Release build-test för Play Store
+- Se `TODO_KVAR.md` → “Prestanda-optimering (fortsättning)” för aktuella åtgärder.
+- Kör om mätning på Pixel_6 efter nästa större prestandaändring för en ren före/efter-jämförelse.
 
 ---
 
