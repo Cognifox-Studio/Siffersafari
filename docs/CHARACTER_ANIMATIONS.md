@@ -44,19 +44,30 @@ Konvention:
 - Använd scripts för att generera pose-pack i `artifacts/comfyui/...`.
 - Välj ut och ev. frilägg de frames du vill använda, och flytta dem sedan manuellt till `assets/images/characters/...` enligt strukturen ovan.
 
-## Snabbstart: "dance" (utan ComfyUI)
+## Frame-sekvenser (rekommenderat)
 
-Det finns ett litet script som kan skapa en enkel dans-loop genom att göra små förflyttningar/skalningar av en befintlig PNG:
+För riktiga animationer (arm/ben/ansikte) behöver varje frame vara en egen genererad bild.
 
-```bash
-dart run scripts/generate_mascot_dance_frames.dart \
-  --in assets/images/themes/jungle/character_v2.png \
-  --out artifacts/mascot_frames/character_v2_dance \
-  --count 16 --size 256
-```
+Startset vi bygger först:
+- `idle/`
+- `jump/`
+- `run/`
+- `wave/`
 
-Kopiera sedan frames till assets:
+Rekommenderat flöde:
+- Generera frames till `artifacts/comfyui/...` (iteration).
+- När en loop känns bra: kopiera/byt namn till `assets/images/characters/character_v2/<anim>/` enligt konventionen ovan.
+
+### Script: generera frames via ComfyUI
+
+Det finns ett helper-script som genererar en frame i taget (en ComfyUI-körning per frame) och sparar dem med rätt filnamn:
 
 ```powershell
-Copy-Item "artifacts/mascot_frames/character_v2_dance\dance_*.png" "assets/images/characters/character_v2/dance/" -Force
+powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_animation_frames.ps1 -Anim idle -Frames 8 -AlphaAll
+```
+
+Exempel för wave:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_animation_frames.ps1 -Anim wave -Frames 8 -AlphaAll
 ```

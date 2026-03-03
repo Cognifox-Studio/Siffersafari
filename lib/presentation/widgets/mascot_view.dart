@@ -96,7 +96,7 @@ class _MascotViewState extends State<MascotView>
             ? null
             : (widget.height! * MediaQuery.devicePixelRatioOf(context)).round());
 
-    Widget buildImage(String assetPath) {
+    Widget buildImage(String assetPath, {required bool isFrame}) {
       return Image.asset(
         assetPath,
         fit: widget.fit,
@@ -104,7 +104,8 @@ class _MascotViewState extends State<MascotView>
         excludeFromSemantics: widget.excludeFromSemantics,
         gaplessPlayback: true,
         errorBuilder: (context, error, stackTrace) {
-          return const SizedBox.shrink();
+          if (!isFrame) return const SizedBox.shrink();
+          return buildImage(widget.asset, isFrame: false);
         },
       );
     }
@@ -113,7 +114,7 @@ class _MascotViewState extends State<MascotView>
     final controller = _controller;
 
     if (frames.length < 2 || controller == null) {
-      return buildImage(widget.asset);
+      return buildImage(widget.asset, isFrame: false);
     }
 
     return AnimatedBuilder(
@@ -121,7 +122,7 @@ class _MascotViewState extends State<MascotView>
       builder: (context, child) {
         final frameIndex = (controller.value * frames.length).floor();
         final safeIndex = frameIndex.clamp(0, frames.length - 1);
-        return buildImage(frames[safeIndex]);
+        return buildImage(frames[safeIndex], isFrame: true);
       },
     );
   }

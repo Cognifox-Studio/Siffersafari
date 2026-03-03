@@ -35,16 +35,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _checkedOnboardingForUserId;
   bool _onboardingPushInFlight = false;
 
-  static const int _danceFrameCount = 16;
+  static const int _idleFrameCount = 8;
 
-  List<String>? _mascotDanceFramesFor(String characterAsset) {
+  static final List<String> _characterV2IdleFrames = List<String>.generate(
+    _idleFrameCount,
+    (i) =>
+        'assets/images/characters/character_v2/idle/idle_${i.toString().padLeft(3, '0')}.png',
+    growable: false,
+  );
+
+  List<String>? _mascotIdleFramesFor(String characterAsset) {
     if (!characterAsset.endsWith('/character_v2.png')) return null;
-    return List<String>.generate(
-      _danceFrameCount,
-      (i) =>
-          'assets/images/characters/character_v2/dance/dance_${i.toString().padLeft(3, '0')}.png',
-      growable: false,
-    );
+    return _characterV2IdleFrames;
   }
 
   OperationType _recommendedOperation({
@@ -312,12 +314,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: AppConstants.defaultPadding),
               SizedBox(
                 height: 120,
-                  child: MascotView(
-                    asset: characterAsset,
-                  frames: _mascotDanceFramesFor(characterAsset),
-                  fps: 10,
-                    height: 120,
-                    fit: BoxFit.contain,
+                child: MascotView(
+                  asset: characterAsset,
+                  frames: _mascotIdleFramesFor(characterAsset),
+                  height: 120,
+                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: AppConstants.smallPadding),

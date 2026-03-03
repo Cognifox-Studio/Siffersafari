@@ -5,7 +5,7 @@
 
 ## Mål just nu
 - Stabilisera arbetsflöde när chat-kontext blir lång (extern kontext + repo-sök).
-- (Aktuellt spår) Få ComfyUI batch-generering (`--count >1`) att fungera stabilt.
+- (Aktuellt spår) Bygga riktiga karaktärsanimationer (idle/jump/run/wave) genom att generera en ComfyUI-bild per frame och kuratera in i `assets/`.
 
 ## Status nu
 - App: **Siffersafari** (mattespel 6–12), Android-only, offline-first, flera profiler.
@@ -13,11 +13,12 @@
 - QA-rutin: `flutter analyze` → minsta relevanta `flutter test`-subset (full suite vid stora ändringar).
 - Pixel_6: deterministiska flöden via `scripts/flutter_pixel6.ps1` (sync/install/run).
 - ComfyUI: servern svarar på `http://127.0.0.1:8000/system_stats`.
-- ComfyUI: enstaka generering (`--count 1`) lyckas; batch (`--count 12`) gav exit code 1 (fånga logg nästa gång).
+- ComfyUI: servern svarar och våra scripts pekar på `http://127.0.0.1:8000`.
+- Animation: placeholder-"dance" sanerad; nytt script finns för frame-för-frame generation via ComfyUI.
 
 ## Nästa steg (konkret)
-- Vid nästa ComfyUI-batch-fel: fånga stderr/stdout och spara rålogg under `artifacts/comfyui/` och sammanfatta felet här.
-- Om felet är intermittent: testa `--count 2` för att snäva in.
+- Generera första riktiga `idle`-loop (t.ex. 8 frames) till `artifacts/comfyui/...` och välj en stabil sekvens.
+- Kopiera valda frames till `assets/images/characters/character_v2/idle/` och koppla in i UI via `MascotView(frames: ...)`.
 
 ## Nyckeldocs (när vi tappar tråden)
 - `README.md` (status + QA)

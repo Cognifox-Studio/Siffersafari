@@ -71,6 +71,21 @@ Override workflow explicitly:
 powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_pose_pack.ps1 -Workflow scripts/comfyui/workflows/character_v2_pose_pack_api.json -AlphaAll
 ```
 
+## Animation frames (idle/jump/run/wave)
+
+To build real UI animations, generate each frame via ComfyUI and curate the results.
+
+Example (idle, 8 frames):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_animation_frames.ps1 -Anim idle -Frames 8 -AlphaAll
+```
+
+This outputs to `artifacts/comfyui/anim_<anim>_<timestamp>/`.
+When you're happy with the loop, copy the chosen frames into:
+
+`assets/images/characters/character_v2/<anim>/`.
+
 ## Benchmark (3 runs, median)
 
 To measure if speed flags improved performance, run 3 identical generations and take the median time:

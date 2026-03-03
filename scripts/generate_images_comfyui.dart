@@ -20,6 +20,12 @@ void main(List<String> args) async {
   final initImagePath = parsed['init'] ?? parsed['initImage'];
   final outDir = parsed['out'] ?? 'artifacts/comfyui/out';
   final count = int.tryParse(parsed['count'] ?? parsed['n'] ?? '1') ?? 1;
+  final fixedName = parsed['fixedName'] ?? parsed['fixed-name'];
+
+  if (fixedName != null && count != 1) {
+    stderr.writeln('When using --fixedName, --count must be 1.');
+    exit(2);
+  }
 
   if (workflowPath == null || promptText == null) {
     stderr.writeln('Missing required args: --workflow and --prompt');
@@ -120,12 +126,21 @@ void main(List<String> args) async {
 
     for (final img in downloaded) {
       final ext = img.extension;
-      final fileName = _buildOutputName(
-        promptText: promptText,
-        seed: runSeed,
-        index: imagesSaved.length + 1,
-        extension: ext,
-      );
+
+      if (fixedName != null && downloaded.length != 1) {
+        stderr.writeln(
+          'Workflow returned ${downloaded.length} images, but --fixedName expects exactly 1.',
+        );
+        exit(2);
+      }
+
+      final fileName = fixedName ??
+          _buildOutputName(
+            promptText: promptText,
+            seed: runSeed,
+            index: imagesSaved.length + 1,
+            extension: ext,
+          );
       final filePath = '$outDir/$fileName';
       File(filePath).writeAsBytesSync(img.bytes);
       imagesSaved.add(filePath);
@@ -157,6 +172,7 @@ Optional:
   --init <path>        Init image (img2img). Requires __INIT_IMAGE__ placeholder
   --out <dir>         Default: artifacts/comfyui/out
   --count <n>         Number of generations (default 1)
+  --fixedName <name>  Save exactly one generated image as this filename (requires --count 1)
   --seed <int>        If omitted, uses random seed per image
   --steps <int>       Overrides KSampler steps (if present)
   --cfg <double>      Overrides KSampler cfg (if present)
