@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bcrypt/bcrypt.dart';
 
 import '../../data/repositories/local_storage_repository.dart';
@@ -17,6 +19,8 @@ class ParentPinService {
   static const int _maxFailedAttempts = 5;
   static const Duration _lockoutDuration = Duration(minutes: 5);
   static const int _backupCodesPerConfig = 6;
+
+  static final Random _secureRandom = Random.secure();
 
   /// Hash a PIN using BCrypt (adaptive hashing with built-in salt).
   String _hashPin(String pin) {
@@ -150,14 +154,19 @@ class ParentPinService {
   /// Generate a random backup code (8 alphanumeric characters)
   static String _generateBackupCode() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    final random = DateTime.now().microsecond;
     final buffer = StringBuffer();
-    var seed = random;
     for (var i = 0; i < 8; i++) {
-      seed = (seed * 1103515245 + 12345) & 0x7fffffff; // LCG algorithm
-      buffer.write(chars[seed % chars.length]);
+      buffer.write(chars[_secureRandom.nextInt(chars.length)]);
     }
     return buffer.toString();
+  }
+
+  static List<String> _generateUniqueBackupCodes(int count) {
+    final set = <String>{};
+    while (set.length < count) {
+      set.add(_generateBackupCode());
+    }
+    return set.toList(growable: false);
   }
 
   /// Setup PIN recovery on first PIN creation
@@ -170,10 +179,7 @@ class ParentPinService {
     final answerHash = _hashPin(securityAnswer.trim().toLowerCase());
 
     // Generate backup codes
-    final plainCodes = List<String>.generate(
-      _backupCodesPerConfig,
-      (_) => _generateBackupCode(),
-    );
+    final plainCodes = _generateUniqueBackupCodes(_backupCodesPerConfig);
 
     // Hash the backup codes for storage
     final hashedCodes = plainCodes.map((code) => _hashPin(code)).toList();
@@ -244,10 +250,7 @@ class ParentPinService {
     final config = _getRecoveryConfig();
     if (config == null) return [];
 
-    final plainCodes = List<String>.generate(
-      _backupCodesPerConfig,
-      (_) => _generateBackupCode(),
-    );
+    final plainCodes = _generateUniqueBackupCodes(_backupCodesPerConfig);
     final hashedCodes = plainCodes.map((code) => _hashPin(code)).toList();
 
     final updatedConfig = config.copyWith(
