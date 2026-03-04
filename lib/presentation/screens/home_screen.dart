@@ -114,6 +114,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final steps = DifficultyConfig.buildDifficultySteps(
       storedSteps: user.operationDifficultySteps,
       defaultDifficulty: effectiveDifficulty,
+      gradeLevel: user.gradeLevel,
     );
 
     final wordProblemsEnabled = ref.read(
@@ -124,7 +125,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       missingNumberEnabledProvider(user.userId),
     );
 
-    ref.read(quizProvider.notifier).startSession(
+        ref.read(quizProvider.notifier).startSession(
+          userId: user.userId,
           ageGroup: effectiveAgeGroup,
           gradeLevel: user.gradeLevel,
           operationType: operationType,

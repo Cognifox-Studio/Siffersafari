@@ -1,24 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
+import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/enums/age_group.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
-import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
 import '../services/audio_service.dart';
 import '../services/question_generator_service.dart';
-import 'adaptive_difficulty_service_provider.dart';
 import 'audio_service_provider.dart';
 import 'feedback_service_provider.dart';
+import 'local_storage_repository_provider.dart';
 import 'question_generator_service_provider.dart';
 
 class QuizState {
   const QuizState({
+    this.userId,
     this.session,
     this.isLoading = false,
     this.errorMessage,
@@ -30,6 +33,7 @@ class QuizState {
     this.speedBonusCount = 0,
   });
 
+  final String? userId;
   final QuizSession? session;
   final bool isLoading;
   final String? errorMessage;
@@ -41,6 +45,7 @@ class QuizState {
   final int speedBonusCount;
 
   QuizState copyWith({
+    String? userId,
     QuizSession? session,
     bool? isLoading,
     String? errorMessage,
@@ -52,6 +57,7 @@ class QuizState {
     int? speedBonusCount,
   }) {
     return QuizState(
+      userId: userId ?? this.userId,
       session: session ?? this.session,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
@@ -70,18 +76,68 @@ class QuizState {
 class QuizNotifier extends StateNotifier<QuizState> {
   QuizNotifier(
     this._questionGenerator,
-    this._adaptiveDifficultyService,
     this._feedbackService,
     this._audioService,
+    this._repository,
   ) : super(const QuizState());
 
   final QuestionGeneratorService _questionGenerator;
-  final AdaptiveDifficultyService _adaptiveDifficultyService;
   final FeedbackService _feedbackService;
   final AudioService _audioService;
+  final LocalStorageRepository _repository;
   final _uuid = const Uuid();
 
+  void _persistInProgressSession({
+    required String userId,
+    required QuizSession session,
+  }) {
+    final answered = session.correctAnswers + session.wrongAnswers;
+    if (answered <= 0) return;
+
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: session.operationType.name,
+    );
+
+    // Clean up any legacy in-progress entries so benchmark underlag doesn't
+    // overcount abandoned sessions.
+    unawaited(
+      _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: session.operationType.name,
+        exceptSessionId: inProgressId,
+      ),
+    );
+
+    final now = DateTime.now();
+    final start = session.startTime ?? now;
+    final end = session.endTime ?? now;
+
+    final rate = answered == 0 ? 0.0 : (session.correctAnswers / answered);
+
+    // Fire-and-forget so answering stays snappy.
+    unawaited(
+      _repository.saveQuizSession({
+        'sessionId': inProgressId,
+        'userId': userId,
+        'operationType': session.operationType.name,
+        'difficulty': session.difficulty.name,
+        'correctAnswers': session.correctAnswers,
+        // For in-progress sessions, totalQuestions means answered so far.
+        'totalQuestions': answered,
+        'successRate': rate,
+        'points': session.totalPoints,
+        'bonusPoints': 0,
+        'pointsWithBonus': session.totalPoints,
+        'startTime': start.toIso8601String(),
+        'endTime': end.toIso8601String(),
+        'isComplete': false,
+      }),
+    );
+  }
+
   void startSession({
+    required String userId,
     required AgeGroup ageGroup,
     int? gradeLevel,
     required OperationType operationType,
@@ -90,6 +146,40 @@ class QuizNotifier extends StateNotifier<QuizState> {
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
   }) {
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: operationType.name,
+    );
+
+    // Reset in-progress underlag immediately when the child starts playing the
+    // same operation again (even before the first answer).
+    unawaited(
+      _repository.saveQuizSession({
+        'sessionId': inProgressId,
+        'userId': userId,
+        'operationType': operationType.name,
+        'difficulty': difficulty.name,
+        'correctAnswers': 0,
+        'totalQuestions': 0,
+        'successRate': 0.0,
+        'points': 0,
+        'bonusPoints': 0,
+        'pointsWithBonus': 0,
+        'startTime': DateTime.now().toIso8601String(),
+        'endTime': DateTime.now().toIso8601String(),
+        'isComplete': false,
+      }),
+    );
+
+    // Also purge any legacy in-progress entries for the same operation.
+    unawaited(
+      _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: operationType.name,
+        exceptSessionId: inProgressId,
+      ),
+    );
+
     final count = DifficultyConfig.getQuestionsPerSession(ageGroup);
 
     final steps = Map<OperationType, int>.unmodifiable(
@@ -97,6 +187,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
           DifficultyConfig.buildDifficultySteps(
             storedSteps: const {},
             defaultDifficulty: difficulty,
+            gradeLevel: gradeLevel,
           ),
     );
 
@@ -128,6 +219,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
 
     state = state.copyWith(
+      userId: userId,
       session: session,
       feedback: null,
       difficultyStepsByOperation: steps,
@@ -139,6 +231,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
   }
 
   void startCustomSession({
+    required String userId,
     required OperationType operationType,
     required DifficultyLevel difficulty,
     required List<Question> questions,
@@ -150,6 +243,37 @@ class QuizNotifier extends StateNotifier<QuizState> {
   }) {
     if (questions.isEmpty) return;
 
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: operationType.name,
+    );
+
+    unawaited(
+      _repository.saveQuizSession({
+        'sessionId': inProgressId,
+        'userId': userId,
+        'operationType': operationType.name,
+        'difficulty': difficulty.name,
+        'correctAnswers': 0,
+        'totalQuestions': 0,
+        'successRate': 0.0,
+        'points': 0,
+        'bonusPoints': 0,
+        'pointsWithBonus': 0,
+        'startTime': DateTime.now().toIso8601String(),
+        'endTime': DateTime.now().toIso8601String(),
+        'isComplete': false,
+      }),
+    );
+
+    unawaited(
+      _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: operationType.name,
+        exceptSessionId: inProgressId,
+      ),
+    );
+
     final effectiveWordProblemsEnabled = wordProblemsEnabled ?? true;
     final effectiveMissingNumberEnabled = missingNumberEnabled ?? true;
 
@@ -158,6 +282,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
           DifficultyConfig.buildDifficultySteps(
             storedSteps: const {},
             defaultDifficulty: difficulty,
+            gradeLevel: gradeLevel,
           ),
     );
 
@@ -176,6 +301,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
 
     state = state.copyWith(
+      userId: userId,
       session: session,
       feedback: null,
       difficultyStepsByOperation: steps,
@@ -248,18 +374,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
     }
     updatedResultsByOperation[op] = updatedOpResults;
 
-    final updatedSteps =
-        Map<OperationType, int>.from(state.difficultyStepsByOperation);
-    final currentStep = updatedSteps[op] ??
-        DifficultyConfig.initialStepForDifficulty(session.difficulty);
-    final suggestedStep = _adaptiveDifficultyService.suggestDifficultyStep(
-      currentStep: currentStep,
-      recentResults: updatedOpResults,
-      minStep: DifficultyConfig.minDifficultyStep,
-      maxStep: DifficultyConfig.maxDifficultyStep,
-    );
-    updatedSteps[op] = suggestedStep;
-
     final feedback = _feedbackService.buildFeedback(
       question: question,
       userAnswer: answer,
@@ -269,16 +383,9 @@ class QuizNotifier extends StateNotifier<QuizState> {
       correctStreak: isCorrect ? newStreak : previousStreak,
     );
 
-    final updatedSessionWithSteps = updatedSession.copyWith(
-      difficultyStepsByOperation:
-          Map<OperationType, int>.unmodifiable(updatedSteps),
-    );
-
     state = state.copyWith(
-      session: updatedSessionWithSteps,
+      session: updatedSession,
       feedback: feedback,
-      difficultyStepsByOperation:
-          Map<OperationType, int>.unmodifiable(updatedSteps),
       recentResultsByOperation: Map<OperationType, List<bool>>.unmodifiable(
         updatedResultsByOperation.map(
           (k, v) => MapEntry(k, List<bool>.unmodifiable(v)),
@@ -288,6 +395,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
       bestCorrectStreak: newBestStreak,
       speedBonusCount: newSpeedBonusCount,
     );
+
+    final userId = state.userId;
+    if (userId != null && userId.isNotEmpty) {
+      _persistInProgressSession(userId: userId, session: updatedSession);
+    }
   }
 
   void goToNextQuestion() {
@@ -348,9 +460,9 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
 final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
   final generator = ref.watch(questionGeneratorServiceProvider);
-  final adaptive = ref.watch(adaptiveDifficultyServiceProvider);
   final feedback = ref.watch(feedbackServiceProvider);
   final audio = ref.watch(audioServiceProvider);
+  final repo = ref.watch(localStorageRepositoryProvider);
 
-  return QuizNotifier(generator, adaptive, feedback, audio);
+  return QuizNotifier(generator, feedback, audio, repo);
 });

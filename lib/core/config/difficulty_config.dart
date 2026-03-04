@@ -14,6 +14,12 @@ class DifficultyConfig {
   /// Window size for the parent dashboard recommendation.
   static const int trainingRecommendationWindow = 3;
 
+  /// Minimum number of answered questions before we show a step recommendation
+  /// in Parent mode.
+  ///
+  /// This keeps the recommendation stable and avoids overreacting.
+  static const int trainingRecommendationMinQuestions = 20;
+
   /// Simple benchmark result used for parent feedback.
   ///
   /// This is a lightweight, app-internal indicator (not a formal assessment).
@@ -353,25 +359,23 @@ class DifficultyConfig {
     final step = clampDifficultyStep(currentStep);
     final rate = avg.clamp(0.0, 1.0);
 
-    // Tuned around the 85% target:
-    // - If clearly above target -> suggest harder.
-    // - If clearly below target -> suggest easier.
-    // - Otherwise -> keep.
+    // Tuned around the 85% target.
+    // IMPORTANT: This is a recommendation only (parent applies changes).
+    // Keep it cautious: never recommend more than +/-1 step at a time.
+    //
+    // Parent preference (stable + simple):
+    // - Recommend harder when success rate is clearly above target (>85%).
+    // - Recommend easier when success rate is clearly low (<75%).
+    // - Otherwise: no change.
     const eps = 1e-9;
-    final harder2 = targetSuccessRate + 0.10;
-    final harder1 = targetSuccessRate + 0.05;
-    final easier2 = targetSuccessRate - 0.15;
-    final easier1 = targetSuccessRate - 0.05;
+    final harder = targetSuccessRate;
+    const easier = 0.75;
 
-    final delta = rate >= harder2 - eps
-        ? 2
-        : rate >= harder1 - eps
-            ? 1
-            : rate <= easier2 + eps
-                ? -2
-                : rate <= easier1 + eps
-                    ? -1
-                    : 0;
+    final delta = rate > harder + eps
+        ? 1
+        : rate < easier - eps
+            ? -1
+            : 0;
 
     return clampDifficultyStep(step + delta);
   }
@@ -394,13 +398,18 @@ class DifficultyConfig {
   static Map<OperationType, int> buildDifficultySteps({
     required Map<String, int> storedSteps,
     required DifficultyLevel defaultDifficulty,
+    int? gradeLevel,
     bool preferEasyStart = true,
   }) {
-    // Default: start conservatively (too easy > too hard). If we have stored
-    // history, that always wins.
-    final fallback = preferEasyStart
-        ? clampDifficultyStep(2)
-        : initialStepForDifficulty(defaultDifficulty);
+    // Default: start conservatively (too easy > too hard).
+    // If we have stored history, that always wins.
+    // For grade-based profiles: when starting a new grade (no stored steps),
+    // always start at step 1.
+    final fallback = storedSteps.isEmpty && gradeLevel != null
+        ? clampDifficultyStep(1)
+        : preferEasyStart
+            ? clampDifficultyStep(2)
+            : initialStepForDifficulty(defaultDifficulty);
     return {
       OperationType.addition: clampDifficultyStep(
         storedSteps[OperationType.addition.name] ?? fallback,

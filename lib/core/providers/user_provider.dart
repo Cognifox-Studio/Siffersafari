@@ -354,13 +354,6 @@ class UserNotifier extends StateNotifier<UserState> {
       ...reward.unlockedIds.where((id) => !user.achievements.contains(id)),
     ];
 
-    final updatedSteps = {
-      ...user.operationDifficultySteps,
-      ...session.difficultyStepsByOperation.map(
-        (k, v) => MapEntry(k.name, v),
-      ),
-    };
-
     final updatedUser = user.copyWith(
       totalQuizzesTaken: user.totalQuizzesTaken + 1,
       totalQuestionsAnswered:
@@ -372,7 +365,6 @@ class UserNotifier extends StateNotifier<UserState> {
       lastSessionDate: now,
       masteryLevels: updatedMastery,
       achievements: updatedAchievements,
-      operationDifficultySteps: updatedSteps,
     );
 
     await _reconcileQuestPointer(user);
@@ -436,7 +428,17 @@ class UserNotifier extends StateNotifier<UserState> {
       'pointsWithBonus': session.totalPoints + reward.bonusPoints,
       'startTime': (session.startTime ?? now).toIso8601String(),
       'endTime': (session.endTime ?? now).toIso8601String(),
+      'isComplete': true,
     });
+
+    // Remove any leftover in-progress record so benchmark underlag doesn't
+    // double-count the finished session.
+    await _repository.deleteQuizSession(
+      _repository.inProgressQuizSessionId(
+        userId: user.userId,
+        operationTypeName: session.operationType.name,
+      ),
+    );
 
     await _repository.saveUserProgress(updatedUser);
     await loadUsers();

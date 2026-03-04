@@ -82,8 +82,11 @@ class _DashboardBody extends ConsumerWidget {
         onPrimary.withValues(alpha: AppOpacities.subtleText);
     final user = ref.watch(userProvider).activeUser!;
     final repo = ref.read(localStorageRepositoryProvider);
-    final history = repo.getQuizHistory(userId, limit: 5);
     final recentHistory = repo.getQuizHistory(userId, limit: 50);
+    final history = recentHistory
+      .where((s) => s['isComplete'] != false)
+      .take(5)
+      .toList(growable: false);
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);
 
     final settingsNotifier = ref.read(parentSettingsProvider.notifier);
@@ -123,7 +126,7 @@ class _DashboardBody extends ConsumerWidget {
                 value: '${user.level} (${user.levelTitle})',
               ),
               _StatRow(
-                label: 'Korrekt % (totalt)',
+                label: 'Korrekt % (alla frågor)',
                 value: '${(user.successRate * 100).toStringAsFixed(0)}%',
               ),
               _StatRow(
@@ -282,6 +285,17 @@ class _DashboardBody extends ConsumerWidget {
                     ),
               ),
               const SizedBox(height: AppConstants.smallPadding),
+              Text(
+                'Förklaring av % i föräldraläget:\n'
+                '• Korrekt % (alla frågor): alla svar sedan start.\n'
+                '• Förslag (steg): räknas per räknesätt på senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågor (höj vid >85%, sänk vid <75%).\n'
+                '• Rekommenderad övning (t.ex. Plus • Lätt 89%): snitt per kategori (räknesätt + Lätt/Medel/Svår) från quiz-resultat — påverkar inte steg.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: subtleOnPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: AppConstants.defaultPadding),
               if (user.gradeLevel == null)
                 Padding(
                   padding: const EdgeInsets.only(
@@ -608,37 +622,37 @@ class _BenchmarkSection extends ConsumerWidget {
   final Map<String, int> storedSteps;
   final List<Map<String, dynamic>> quizHistory;
 
-  List<Map<String, dynamic>> _latestSessionsFor(OperationType op) {
-    final sessions = <Map<String, dynamic>>[];
+  ({double? rate, int answered}) _successRateFromLatestQuestions(
+    OperationType op,
+  ) {
+    var correct = 0;
+    var total = 0;
+
     for (final s in quizHistory) {
       if (s['operationType'] != op.name) continue;
-      sessions.add(s);
-      if (sessions.length >= DifficultyConfig.trainingRecommendationWindow) {
+
+      final cRaw = s['correctAnswers'];
+      final tRaw = s['totalQuestions'];
+      final c = cRaw is num ? cRaw.toInt() : int.tryParse('$cRaw');
+      final t = tRaw is num ? tRaw.toInt() : int.tryParse('$tRaw');
+      if (c == null || t == null || t <= 0) continue;
+
+      correct += c;
+      total += t;
+
+      if (total >= DifficultyConfig.trainingRecommendationMinQuestions) {
         break;
       }
     }
-    return sessions;
+
+    if (total <= 0) {
+      return (rate: null, answered: 0);
+    }
+    return (rate: correct / total, answered: total);
   }
 
-  double? _averageSuccessRate(List<Map<String, dynamic>> sessions) {
-    if (sessions.isEmpty) return null;
-
-    var sum = 0.0;
-    var count = 0;
-    for (final s in sessions) {
-      final v = s['successRate'];
-      final rate = switch (v) {
-        num n => n.toDouble(),
-        String str => double.tryParse(str),
-        _ => null,
-      };
-      if (rate == null) continue;
-      sum += rate;
-      count++;
-    }
-
-    if (count == 0) return null;
-    return sum / count;
+  String _percentLabel(double rate) {
+    return '${(rate * 100).toStringAsFixed(0)}%';
   }
 
   @override
@@ -662,7 +676,7 @@ class _BenchmarkSection extends ConsumerWidget {
 
       final currentStoredSteps = currentUser.operationDifficultySteps;
       final currentStep = DifficultyConfig.clampDifficultyStep(
-        currentStoredSteps[op.name] ?? 2,
+        currentStoredSteps[op.name] ?? DifficultyConfig.minDifficultyStep,
       );
       final nextStep =
           DifficultyConfig.clampDifficultyStep(currentStep + delta);
@@ -698,7 +712,15 @@ class _BenchmarkSection extends ConsumerWidget {
         ),
         const SizedBox(height: AppConstants.microSpacing2),
         Text(
-          'Rekommenderat steg bygger på snitt av senaste 3 quiz (mål: 85% rätt).',
+          'Förslag kommer efter minst ${DifficultyConfig.trainingRecommendationMinQuestions} frågor (mål: 85% rätt).',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: subtleOnPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+        ),
+        const SizedBox(height: AppConstants.microSpacing2),
+        Text(
+          'Obs: Steg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: subtleOnPrimary,
                 fontWeight: FontWeight.w600,
@@ -706,34 +728,36 @@ class _BenchmarkSection extends ConsumerWidget {
         ),
         const SizedBox(height: AppConstants.smallPadding),
         ...ops.map((op) {
-          final latest = _latestSessionsFor(op);
-          final hasData = latest.isNotEmpty;
-          final step = hasData ? storedSteps[op.name] : null;
-          final benchmark = step == null
-              ? null
-              : DifficultyConfig.compareDifficultyStepToGrade(
-                  gradeLevel: gradeLevel,
-                  operation: op,
-                  difficultyStep: step,
-                );
-          final currentStep =
-              step == null ? null : DifficultyConfig.clampDifficultyStep(step);
-          final avg = _averageSuccessRate(latest);
-          final recommendedStep = currentStep == null
+          final stored = storedSteps[op.name];
+          final currentStep = DifficultyConfig.clampDifficultyStep(
+            stored ?? DifficultyConfig.minDifficultyStep,
+          );
+          final stats = _successRateFromLatestQuestions(op);
+          final hasEnough =
+              stats.answered >= DifficultyConfig.trainingRecommendationMinQuestions;
+
+          final recommendedStep = !hasEnough
               ? null
               : DifficultyConfig.recommendedDifficultyStepForTraining(
                   currentStep: currentStep,
-                  averageSuccessRate: avg,
+                  averageSuccessRate: stats.rate,
                 );
-          final valueText = benchmark == null
-              ? 'Ingen data än'
-              : DifficultyConfig.benchmarkLevelLabel(benchmark.level);
-          final recommendationText = benchmark == null
-              ? ''
-              : DifficultyConfig.benchmarkRecommendationText(
-                  level: benchmark.level,
-                  operation: op,
-                );
+
+          // Make the Under/I linje/Över indicator reflect the child's answers
+          // when we have enough underlag, without auto-changing the stored step.
+          final indicatorStep = recommendedStep ?? currentStep;
+
+          final benchmark = DifficultyConfig.compareDifficultyStepToGrade(
+            gradeLevel: gradeLevel,
+            operation: op,
+            difficultyStep: indicatorStep,
+          );
+
+          final valueText = DifficultyConfig.benchmarkLevelLabel(benchmark.level);
+          final recommendationText = DifficultyConfig.benchmarkRecommendationText(
+            level: benchmark.level,
+            operation: op,
+          );
 
           return Padding(
             padding: const EdgeInsets.symmetric(
@@ -763,57 +787,84 @@ class _BenchmarkSection extends ConsumerWidget {
                     ),
                   ],
                 ),
-                if (benchmark != null)
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: AppConstants.microSpacing4),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        if (currentStep != null && recommendedStep != null)
-                          Text(
-                            'Nu: Steg $currentStep • Rekommenderat (85%): Steg $recommendedStep',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: subtleOnPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                          ),
-                        const SizedBox(height: AppConstants.microSpacing6),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: (currentStep == null ||
-                                        currentStep <=
-                                            DifficultyConfig.minDifficultyStep)
-                                    ? null
-                                    : () => updateStep(op, -1),
-                                child: const Text('Lättare'),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppConstants.microSpacing4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      if (stats.rate != null)
+                        Text(
+                          hasEnough
+                              ? 'Underlag (senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågor): ${_percentLabel(stats.rate!)} rätt.'
+                              : 'Underlag: ${stats.answered}/${DifficultyConfig.trainingRecommendationMinQuestions} frågor (just nu: ${_percentLabel(stats.rate!)} rätt).',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: subtleOnPrimary,
+                                fontWeight: FontWeight.w600,
                               ),
-                            ),
-                            const SizedBox(width: AppConstants.smallPadding),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: (currentStep == null ||
-                                        currentStep >=
-                                            DifficultyConfig.maxDifficultyStep)
-                                    ? null
-                                    : () => updateStep(op, 1),
-                                child: const Text('Svårare'),
-                              ),
-                            ),
-                          ],
                         ),
-                      ],
-                    ),
+                      if (stats.rate != null)
+                        const SizedBox(height: AppConstants.microSpacing2),
+                      if (recommendedStep != null)
+                        Text(
+                          '${op.displayName}: Steg $currentStep • Förslag (utifrån barnets svar): Steg $recommendedStep',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: subtleOnPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        )
+                      else
+                        Text(
+                          '${op.displayName}: Steg $currentStep • Spela minst ${DifficultyConfig.trainingRecommendationMinQuestions} frågor för ett förslag.',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: subtleOnPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                          if (recommendedStep != null)
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppConstants.microSpacing2,
+                              ),
+                              child: Text(
+                                'Indikatorn (Under/I linje/Över) bygger nu på förslaget (Steg $recommendedStep).',
+                                style:
+                                    Theme.of(context).textTheme.bodySmall?.copyWith(
+                                          color: subtleOnPrimary,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                              ),
+                            ),
+                      const SizedBox(height: AppConstants.microSpacing6),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed:
+                                  (currentStep <= DifficultyConfig.minDifficultyStep)
+                                      ? null
+                                      : () => updateStep(op, -1),
+                              child: const Text('Lättare'),
+                            ),
+                          ),
+                          const SizedBox(width: AppConstants.smallPadding),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed:
+                                  (currentStep >= DifficultyConfig.maxDifficultyStep)
+                                      ? null
+                                      : () => updateStep(op, 1),
+                              child: const Text('Svårare'),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                if (benchmark != null &&
-                    benchmark.level != GradeBenchmarkLevel.inline &&
+                ),
+                if (benchmark.level != GradeBenchmarkLevel.inline &&
                     recommendationText.isNotEmpty)
                   Padding(
-                    padding:
-                        const EdgeInsets.only(top: AppConstants.microSpacing2),
+                    padding: const EdgeInsets.only(top: AppConstants.microSpacing2),
                     child: Text(
                       recommendationText,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

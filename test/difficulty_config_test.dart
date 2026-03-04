@@ -165,6 +165,13 @@ void main() {
       expect(
         DifficultyConfig.recommendedDifficultyStepForTraining(
           currentStep: 5,
+          averageSuccessRate: 0.86,
+        ),
+        6,
+      );
+      expect(
+        DifficultyConfig.recommendedDifficultyStepForTraining(
+          currentStep: 5,
           averageSuccessRate: 0.90,
         ),
         6,
@@ -174,21 +181,21 @@ void main() {
           currentStep: 5,
           averageSuccessRate: 0.96,
         ),
-        7,
+        6,
       );
       expect(
         DifficultyConfig.recommendedDifficultyStepForTraining(
           currentStep: 5,
           averageSuccessRate: 0.80,
         ),
-        4,
+        5,
       );
       expect(
         DifficultyConfig.recommendedDifficultyStepForTraining(
           currentStep: 5,
           averageSuccessRate: 0.60,
         ),
-        3,
+        4,
       );
     });
 

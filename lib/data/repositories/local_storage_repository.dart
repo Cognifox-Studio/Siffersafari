@@ -10,6 +10,15 @@ class LocalStorageRepository {
   Box<dynamic> get _quizHistoryBox => Hive.box(AppConstants.quizHistoryBox);
   Box<dynamic> get _settingsBox => Hive.box(AppConstants.settingsBox);
 
+  String inProgressQuizSessionId({
+    required String userId,
+    required String operationTypeName,
+  }) {
+    // Deterministic key so “in progress” is overwritten when the child starts
+    // the same operation again.
+    return 'inprogress_${userId}_$operationTypeName';
+  }
+
   Map<String, dynamic>? _tryAsStringKeyedMap(dynamic value) {
     if (value is! Map) return null;
     try {
@@ -48,6 +57,32 @@ class LocalStorageRepository {
   Future<void> saveQuizSession(Map<String, dynamic> session) async {
     final sessionId = session['sessionId'] as String;
     await _quizHistoryBox.put(sessionId, session);
+  }
+
+  Future<void> deleteQuizSession(String sessionId) async {
+    await _quizHistoryBox.delete(sessionId);
+  }
+
+  Future<void> purgeInProgressQuizSessions({
+    required String userId,
+    required String operationTypeName,
+    String? exceptSessionId,
+  }) async {
+    final keys = _quizHistoryBox.keys.toList(growable: false);
+    for (final key in keys) {
+      final value = _quizHistoryBox.get(key);
+      if (value is! Map) continue;
+
+      if (value['userId'] != userId) continue;
+      if (value['operationType'] != operationTypeName) continue;
+      if (value['isComplete'] != false) continue;
+
+      if (exceptSessionId != null && value['sessionId'] == exceptSessionId) {
+        continue;
+      }
+
+      await _quizHistoryBox.delete(key);
+    }
   }
 
   /// Get quiz history for a user

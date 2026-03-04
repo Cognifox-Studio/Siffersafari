@@ -365,6 +365,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       final steps = DifficultyConfig.buildDifficultySteps(
                         storedSteps: user.operationDifficultySteps,
                         defaultDifficulty: effectiveDifficulty,
+                        gradeLevel: user.gradeLevel,
                       );
 
                       final wordProblemsEnabled = ref.read(
@@ -375,7 +376,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         missingNumberEnabledProvider(user.userId),
                       );
 
-                      ref.read(quizProvider.notifier).startSession(
+                          ref.read(quizProvider.notifier).startSession(
+                            userId: user.userId,
                             ageGroup: effectiveAgeGroup,
                             gradeLevel: user.gradeLevel,
                             operationType: session.operationType,
@@ -446,6 +448,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       final steps = DifficultyConfig.buildDifficultySteps(
                         storedSteps: user.operationDifficultySteps,
                         defaultDifficulty: effectiveDifficulty,
+                        gradeLevel: user.gradeLevel,
                       );
 
                       final wordProblemsEnabled = ref.read(
@@ -468,6 +471,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
 
                       if (miniQuestions.isEmpty) {
                         ref.read(quizProvider.notifier).startSession(
+                          userId: user.userId,
                               ageGroup: effectiveAgeGroup,
                               gradeLevel: user.gradeLevel,
                               operationType: session.operationType,
@@ -478,6 +482,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                             );
                       } else {
                         ref.read(quizProvider.notifier).startCustomSession(
+                          userId: user.userId,
                               operationType: session.operationType,
                               difficulty: effectiveDifficulty,
                               questions: miniQuestions,
