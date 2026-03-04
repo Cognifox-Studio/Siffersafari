@@ -90,10 +90,10 @@
   - [x] Definiera scope och kriterier → Snabba verifieringar av app-start, settings navigation, achievements, profile switcher
   - [x] Genomför ändringen → Utökad `integration_test/app_smoke_test.dart` med 4 nya test cases (totalt 5 tests)
   - [x] Verifiera och markera klar → Kompilera OK med `flutter analyze`, CI-ready smoke tests
-- [ ] Validera att adaptiv svårighetsgrad fungerar korrekt för alla årskurser
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [ ] Validera rekommendationssystemet (Under/I linje/Över) för alla årskurser
+  - [ ] Definiera scope och kriterier → Verifiera att benchmark-indikatorn (Under/I linje/Över) beräknas korrekt för Åk 1-9 och alla räknesätt
+  - [ ] Genomför ändringen → Skapa valideringstester för `DifficultyConfig.compareDifficultyStepToGrade()` och `recommendedDifficultyStepForTraining()`
+  - [ ] Verifiera och markera klar → Kontrollera att rekommendationer baseras på rätt data (senaste 20+ frågor, 85% target)
 - [ ] Validera att spaced repetition-algoritmen fungerar korrekt
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
