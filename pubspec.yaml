@@ -23,6 +23,9 @@ dependencies:
   # Animations & Graphics
   lottie: ^2.7.0
   
+  # Audio
+  audioplayers: ^5.0.0
+  
   # UI & Design
   google_fonts: ^6.1.0
   flutter_screenutil: ^5.9.0
