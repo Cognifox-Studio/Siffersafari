@@ -41,7 +41,7 @@
 
 ## Senast verifierat
 - `flutter analyze`: OK (2026-03-04, exit 0)
-- Tester: subset kört och grönt i detta spår (2026-03-04)
+- Tester: full suite (`flutter test`) kört och grönt (2026-03-04)
 - Enhet/emulator: Pixel_6 (script-baserat flöde), samt emulator-5554 har använts tidigare
 
 ## Snabb felsöknings-snapshot (bara om relevant)
