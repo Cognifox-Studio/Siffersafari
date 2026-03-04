@@ -1,23 +1,40 @@
 # BEFORE RELEASE
 
-- [ ] Kör fullständig regressionstestning på alla enheter
-- [ ] Säkerställ att all dokumentation är uppdaterad
+## Legal & Compliance (gör ABSOLUT FÖRST)
 - [ ] Verifiera att alla lagkrav (GDPR, etc) är uppfyllda
-- [ ] Testa appen på lågpresterande enheter
-- [ ] Säkerställ att backup och återställning fungerar
-- [ ] Kör prestandatest och åtgärda eventuella flaskhalsar
-- [ ] Kontrollera att alla länkar och externa resurser fungerar
-- [ ] Säkerställ att onboarding fungerar utan internet
-- [ ] Verifiera att alla texter är korrekt översatta
-- [ ] Gör en sista UI/UX-genomgång och fixa smådetaljer
 - [ ] Verifiera att privacy policy och terms of service är uppdaterade
 - [ ] Kontrollera att alla assets har korrekt copyright/licens
+- [ ] Verifiera att permissions är minimala och väldokumenterade
+
+## Security Audit
+- [ ] Gör final security audit
+
+## Documentation
+- [ ] Säkerställ att all dokumentation är uppdaterad
+
+## Testing & Quality Assurance
+- [ ] Kör fullständig regressionstestning på alla enheter
+- [ ] Testa appen på lågpresterande enheter
+- [ ] Testa med olika språkinställningar
 - [ ] Testa installation och avinstallation på flera enheter
-- [ ] Verifiera att alla APK-signaturer fungerar korrekt
-- [ ] Kontrollera att app-storlek är acceptabel
 - [ ] Testa uppgradering från tidigare version (om relevant)
+
+## Performance & Compatibility
+- [ ] Kör prestandatest och åtgärda eventuella flaskhalsar
+- [ ] Kontrollera att app-storlek är acceptabel
+
+## Functionality Verification
+- [ ] Säkerställ att backup och återställning fungerar
+- [ ] Kontrollera att alla länkar och externa resurser fungerar
+- [ ] Säkerställ att onboarding fungerar utan internet
+
+## Monitoring & Analytics
 - [ ] Verifiera att crash reporting fungerar
 - [ ] Kontrollera att alla analytics events loggas korrekt
-- [ ] Testa med olika språkinställningar
-- [ ] Verifiera att permissions är minimala och väldokumenterade
-- [ ] Gör final security audit
+
+## Build & Signing
+- [ ] Verifiera att alla APK-signaturer fungerar korrekt
+
+## Final Polish
+- [ ] Gör en sista UI/UX-genomgång och fixa smådetaljer
+- [ ] Verifiera att alla texter är korrekt översatta
