@@ -19,7 +19,7 @@
   - [ ] Verifiera och markera klar
 
 ## Security Audit
-- [ ] Gör final security audit
+- [ ] [RESEARCH] Gör final security audit (OWASP top 10 för mobila appar)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

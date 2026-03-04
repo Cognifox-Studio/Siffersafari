@@ -101,7 +101,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till monitoring för kritiska fel i produktion
+- [ ] [RESEARCH] Lägg till monitoring för kritiska fel i produktion (offline-compatible monitoring)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -149,7 +149,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Utvärdera och förbättra batteriförbrukning
+- [ ] [RESEARCH] Utvärdera och förbättra batteriförbrukning (Flutter performance audit)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -179,7 +179,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa testplan för olika skärmstorlekar och upplösningar
+- [ ] [RESEARCH] Skapa testplan för olika skärmstorlekar och upplösningar
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

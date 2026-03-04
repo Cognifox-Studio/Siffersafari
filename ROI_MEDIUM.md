@@ -7,15 +7,15 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Förbättra testautomatisering för integrationstester
+- [ ] [RESEARCH] Förbättra testautomatisering för integrationstester
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa automated UI testing suite
+- [ ] [RESEARCH] Skapa automated UI testing suite (Flutter driver/integration tests)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera feature toggles för gradvis utrullning
+- [ ] [RESEARCH] Implementera feature toggles för gradvis utrullning
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -57,7 +57,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera adaptive UI baserat på enhetsprestanda
+- [ ] [RESEARCH] Implementera adaptive UI baserat på enhetsprestanda
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -75,7 +75,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera versioning av användardata
+- [ ] [RESEARCH] Implementera versioning av användardata
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -109,6 +109,9 @@
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
 - [ ] Implementera auto-save för ofullständiga quiz
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -238,13 +241,13 @@
   - [ ] Verifiera och markera klar
 
 ## Multi-language & Localization
-- [ ] Lägg till stöd för flera språk (minst engelska)
+- [ ] [RESEARCH] Lägg till stöd för flera språk (minst engelska)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
 
 ## Notifications & Feedback
-- [ ] Lägg till stöd för push-notiser (lokalt)
+- [ ] [RESEARCH] Lägg till stöd för push-notiser (lokalt)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -288,11 +291,11 @@
   - [ ] Verifiera och markera klar
 
 ## Advanced Features
-- [ ] Lägg till stöd för biometrisk inloggning (om relevant)
+- [ ] [RESEARCH] Lägg till stöd för biometrisk inloggning (om relevant)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till A/B testing-ramverk för nya features
+- [ ] [RESEARCH] Lägg till A/B testing-ramverk för nya features
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
