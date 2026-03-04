@@ -2,25 +2,49 @@
 
 ## Foundation & Security (gör först)
 - [ ] Implementera säker storage av föräldra-PIN (hash + salt)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 	- [ ] Välj hashstrategi (Argon2id eller bcrypt) och dokumentera valet
 	- [ ] Lägg till salt + verifieringsfunktion i auth-flödet
 	- [ ] Migrera ev. befintlig PIN-lagring utan dataförlust
 	- [ ] Lägg till tester: korrekt PIN, fel PIN, edge cases
 - [ ] Utvärdera och förbättra datasäkerhet (t.ex. kryptering av känslig info)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera datavalidering vid Hive-läsning/skrivning
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 	- [ ] Definiera schema/regler per Hive-box (obligatoriska fält, typer)
 	- [ ] Lägg till guard/validator före write och efter read
 	- [ ] Hantera ogiltig data med fallback + loggning
 	- [ ] Lägg till enhetstester för korrupt/inkompatibel data
 - [ ] Validera all användarinput för att förhindra data corruption
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera säker hantering av känslig användardata
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Säkerställ COPPA-compliance för barn under 13 år
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera dataexport för GDPR-compliance
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 	- [ ] Definiera exakt vilka datafält som ingår i export
 	- [ ] Implementera export till läsbart offline-format (t.ex. JSON)
 	- [ ] Lägg till anonymisering/minimering där det behövs
 	- [ ] Verifiera export med testdata för flera profiler
 - [ ] Implementera rate limiting för föräldra-PIN-försök
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 	- [ ] Definiera regler (antal försök, spärrtid, återställning)
 	- [ ] Implementera lokal spärrlogik per profil/enhet
 	- [ ] Visa tydligt felmeddelande och nedräkning vid spärr
@@ -28,51 +52,162 @@
 
 ## Testing & Quality (gör tidigt)
 - [ ] Förbättra testtäckningen: Lägg till fler enhets- och widgettester för edge cases och regression.
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till regressionstester för kritiska buggar
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till testfall för edge cases i quiz och progression
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till integration tests för alla kritiska användarflöden
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa automatiserad smoke test-suite
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Validera att adaptiv svårighetsgrad fungerar korrekt för alla årskurser
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Validera att spaced repetition-algoritmen fungerar korrekt
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Validera att alla achievements och progression triggers fungerar
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Error Handling & Monitoring
 - [ ] Implementera robust felhantering och användarvänliga felmeddelanden
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till error tracking och crash reporting
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till monitoring för kritiska fel i produktion
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera automatisk återställning efter app-krasch
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera automatisk loggrotation för att undvika diskfullhet
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera graceful degradation vid minnesslut
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Documentation (parallellt med utveckling)
 - [ ] Utöka dokumentationen: Gör en tydligare utvecklarguide och uppdatera API-beskrivningar.
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Dokumentera alla API-endpoints och servicegränssnitt
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa kodexempel för vanliga integrationer
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa detaljerad felsökningsguide för vanliga problem
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Dokumentera alla externa dependencies och licenser
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa användarguide för föräldrar och lärare
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Performance & Optimization
 - [ ] Optimera quizlogik för snabbare respons
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Utvärdera och förbättra batteriförbrukning
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Säkerställ att alla assets är optimerade för storlek och laddningstid
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Validera att alla ljud-/animationsfiler fungerar korrekt
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa performance benchmarks för alla kritiska operationer
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Stability & Compatibility
 - [ ] Säkerställ offline-funktionalitet för alla kärnflöden
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Säkerställ att appen fungerar på alla stödda Android-versioner
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Lägg till enhetskompatibilitetschecklista och testning
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa testplan för olika skärmstorlekar och upplösningar
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Implementera automatisk datamigration mellan versioner
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## User Experience
 - [ ] Förbättra onboarding-flödet för nya användare
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Förbättra hantering av användarprofiler (skapa, byta, ta bort)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Planning & Operations
 - [ ] Skapa en tydlig utvecklingsplan för kommande versioner
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Automatisera backup av användardata (lokalt/offline)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa hotfix-rutin för kritiska buggar i produktion
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa rollback-plan för misslyckade uppdateringar
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 - [ ] Skapa disaster recovery-plan
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
