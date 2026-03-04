@@ -69,11 +69,11 @@
 	- [x] Lägg till recovery-metoder i ParentPinService: setupPinRecovery(), verifySecurityAnswer(), verifyAndUseBackupCode()
 
 ## Testing & Quality (gör tidigt)
-- [ ] Förbättra testtäckningen: Lägg till fler enhets- och widgettester för edge cases och regression.
+- [x] Förbättra testtäckningen: Lägg till fler enhets- och widgettester för edge cases och regression — **KLAR: PIN/Recovery täckt med enhetstester**
   - [x] Fixa testinfrastruktur: `app_widget_flows_test` ska inte falla tillbaka till Hive när `initializeHive: false`
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+  - [x] Definiera scope och kriterier → Säkerhetskritisk logik: PIN-verifiering, lockout, recovery
+  - [x] Genomför ändringen → Ny testfil: `test/parent_pin_service_test.dart`
+  - [x] Verifiera och markera klar → `flutter test test/parent_pin_service_test.dart`
 - [ ] Lägg till regressionstester för kritiska buggar
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen

@@ -12,6 +12,7 @@
 - Svårighetsförslag (steg): **pågående quiz-svar räknas direkt** (sparas som “incomplete” historik) så underlaget uppdateras även om barnet avbryter. Nollställs automatiskt när barnet startar samma räknesätt igen.
 - Under/I linje/Över-indikatorn i Föräldraläge bygger (när det finns underlag) på **förslaget (steg)** utifrån barnets svar, inte bara på inställt steg.
 - QA-rutin: `flutter analyze` → minsta relevanta `flutter test`-subset (full suite vid stora ändringar).
+- Säkerhet/tests: enhetstester för PIN/lockout/recovery i `test/parent_pin_service_test.dart`; backup-koder genereras med `Random.secure()` och är unika per batch.
 - Pixel_6: deterministiska flöden via `scripts/flutter_pixel6.ps1` (sync/install/run).
 - ComfyUI: servern svarar på `http://127.0.0.1:8000/system_stats`.
 - Animation: pipeline finns för frame-för-frame PNG → GIF/strip/audit (utan emulator).
