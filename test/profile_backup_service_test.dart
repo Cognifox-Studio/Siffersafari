@@ -54,5 +54,31 @@ void main() {
         throwsA(isA<FormatException>()),
       );
     });
+
+    test('decode failar om userData.name saknas eller ar tom', () {
+      const payloadMissingName =
+          '{"schemaVersion":1,"userId":"u1","userData":{},"quizHistory":[]}';
+      const payloadEmptyName =
+          '{"schemaVersion":1,"userId":"u1","userData":{"name":""},"quizHistory":[]}';
+
+      expect(
+        () => service.decode(payloadMissingName),
+        throwsA(isA<FormatException>()),
+      );
+      expect(
+        () => service.decode(payloadEmptyName),
+        throwsA(isA<FormatException>()),
+      );
+    });
+
+    test('decode failar om quizHistory-entry saknar giltigt sessionId', () {
+      const payload =
+          '{"schemaVersion":1,"userId":"u1","userData":{"name":"Test"},"quizHistory":[{"score":7}]}';
+
+      expect(
+        () => service.decode(payload),
+        throwsA(isA<FormatException>()),
+      );
+    });
   });
 }

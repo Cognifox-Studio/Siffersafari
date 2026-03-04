@@ -36,7 +36,7 @@ class ProfileBackupService {
     {
     int minSupportedVersion = 1,
     int maxSupportedVersion = currentSchemaVersion,
-  }
+    }
   ) {
     final dynamic parsed;
     try {
@@ -69,6 +69,10 @@ class ProfileBackupService {
       throw const FormatException('Missing or invalid userData');
     }
     final userData = Map<String, dynamic>.from(userDataRaw);
+    final userName = userData['name'];
+    if (userName is! String || userName.trim().isEmpty) {
+      throw const FormatException('Missing or invalid userData.name');
+    }
 
     final quizHistoryRaw = map['quizHistory'];
     if (quizHistoryRaw is! List) {
@@ -80,7 +84,12 @@ class ProfileBackupService {
       if (item is! Map) {
         throw const FormatException('quizHistory contains invalid entries');
       }
-      quizHistory.add(Map<String, dynamic>.from(item));
+      final session = Map<String, dynamic>.from(item);
+      final sessionId = session['sessionId'];
+      if (sessionId is! String || sessionId.trim().isEmpty) {
+        throw const FormatException('quizHistory entry missing valid sessionId');
+      }
+      quizHistory.add(session);
     }
 
     return ProfileBackup(

@@ -9,12 +9,16 @@ void main() {
       expect(libDir.existsSync(), isTrue);
 
       final forbiddenPatterns = <RegExp>[
+        RegExp(r'package:http/'),
         RegExp(r'package:http/http\.dart'),
         RegExp(r'\bdio\b'),
+        RegExp(r'\bClient\s*\('),
         RegExp(r'\bHttpClient\s*\('),
         RegExp(r'\bWebSocket\s*\('),
         RegExp(r'\bSocket\s*\('),
         RegExp(r'\bInternetAddress\b'),
+        RegExp(r'\bSocketException\b'),
+        RegExp(r'\bRawDatagramSocket\b'),
         RegExp(r'https?://'),
       ];
 

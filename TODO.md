@@ -6,11 +6,13 @@
   - Scope: GitHub Actions som kor `flutter analyze` + relevanta tester pa pull requests.
   - ROI: Stoppar regressions tidigt och sparar mycket manuell QA-tid.
   - Status: Klar (MVP) via `.github/workflows/flutter.yml` med `flutter analyze lib test integration_test` + `flutter test test`.
+  - V2: Concurrency + path-filter + strikt analyze (`--fatal-infos`) i CI.
 
 - [x] 2. Offline-only verifikation (kod + end-to-end)
   - Scope: Audit av kodbasen for natverksanrop + smoke test i flygplanslage.
   - ROI: Skyddar en av appens viktigaste produktfordelar (offline-first).
   - Status: Kod-audit klar via `test/offline_only_audit_test.dart` (forbjudna natverksmönster i `lib/`).
+  - V2: Utokad detektion (http-clientmönster, sockets och fler natverksidentifierare).
 
 - [x] 3. Testmatris for rekommendationssystemet (Under/I linje/Over)
   - Scope: Enhetstester for `DifficultyConfig.compareDifficultyStepToGrade()` over Ak 1-9 och alla raknesatt.
@@ -41,6 +43,7 @@
   - Scope: Integrations- och feltests for export/import, korrupt fil och versionskompatibilitet.
   - ROI: Skyddar anvandardata och minskar support-risk.
   - Status: Ny `lib/domain/services/profile_backup_service.dart` + tester for korrupt JSON och schema-version.
+  - V2: Strikt payload-validering for `userData.name` och `quizHistory[].sessionId` + nya regressionstester.
 
 - [x] 9. Tillganglighet quick wins (screen reader + touch targets + kontrast)
   - Scope: A11y-pass av kritiska skarmar: Home, Quiz, Resultat, Foraldralage.
