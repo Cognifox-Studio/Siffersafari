@@ -11,7 +11,9 @@
 - [ ] Lägg till custom medal designs
 
 ## Audio Customization
-- [ ] Lägg till fler ljud- och musikval
+- [ ] Definiera 5 olika ljudvarianter per händelsetyp (utom klickljud)
+- [ ] Implementera stöd för att slumpa/rotera mellan 5 ljudvarianter per händelsetyp
+- [ ] Hitta och välj passande bakgrundsmusik för appen (barnvänlig, lugn, loopbar)
 - [ ] Lägg till stöd för custom bakgrundsljud per profil
 - [ ] Skapa custom notification sounds
 - [ ] Skapa olika quiz-bakgrundsmusik per tema
@@ -60,6 +62,7 @@
 
 ## User Profiles & Customization
 - [ ] Lägg till stöd för anpassade quizinställningar
+- [ ] Lägg till ljudinställningar: musik av/på, musikvolym, effektvolym och val av ljudpaket
 - [ ] Lägg till stöd för profilbilder från kamera
 - [ ] Skapa custom quiz layouts
 - [ ] Skapa custom fonts för olika åldersgrupper
