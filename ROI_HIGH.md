@@ -75,9 +75,10 @@
   - [x] Genomför ändringen → Ny testfil: `test/parent_pin_service_test.dart`
   - [x] Verifiera och markera klar → `flutter test test/parent_pin_service_test.dart`
 - [ ] Lägg till regressionstester för kritiska buggar
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [x] Lägg till regressionstester för kritiska buggar — **KLAR: backup-koder (unikhet + case-insensitiv inmatning) testat**
+  - [x] Definiera scope och kriterier → Förhindra historisk bugg: duplicerade backup-koder som kunde ge “återanvändning”
+  - [x] Genomför ändringen → Regression assertions i `test/parent_pin_service_test.dart`
+  - [x] Verifiera och markera klar → `flutter test test/parent_pin_service_test.dart`
 - [ ] Lägg till testfall för edge cases i quiz och progression
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen

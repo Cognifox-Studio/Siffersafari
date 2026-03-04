@@ -9,10 +9,11 @@
 
 ## Status nu
 - App: **Siffersafari** (mattespel 6–12), Android-only, offline-first, flera profiler.
+- ROI_MEDIUM (DX): opt-in exempelprofiler via `SEED_EXAMPLE_PROFILES` + Settings “Radera all data” wipe.
 - Svårighetsförslag (steg): **pågående quiz-svar räknas direkt** (sparas som “incomplete” historik) så underlaget uppdateras även om barnet avbryter. Nollställs automatiskt när barnet startar samma räknesätt igen.
 - Under/I linje/Över-indikatorn i Föräldraläge bygger (när det finns underlag) på **förslaget (steg)** utifrån barnets svar, inte bara på inställt steg.
 - QA-rutin: `flutter analyze` → minsta relevanta `flutter test`-subset (full suite vid stora ändringar).
-- Säkerhet/tests: enhetstester för PIN/lockout/recovery i `test/parent_pin_service_test.dart`; backup-koder genereras med `Random.secure()` och är unika per batch.
+- Säkerhet/tests: enhetstester för PIN/lockout/recovery i `test/parent_pin_service_test.dart`; regression täcker backup-kod-unikhet + case-insensitiv inmatning.
 - Pixel_6: deterministiska flöden via `scripts/flutter_pixel6.ps1` (sync/install/run).
 - ComfyUI: servern svarar på `http://127.0.0.1:8000/system_stats`.
 - Animation: pipeline finns för frame-för-frame PNG → GIF/strip/audit (utan emulator).
@@ -43,6 +44,7 @@
 ## Senast verifierat
 - `flutter analyze`: OK (2026-03-04, exit 0)
 - Tester: full suite (`flutter test`) kört och grönt (2026-03-04)
+- Tester (subset): `flutter test test/app_widget_flows_test.dart` kört och grönt (2026-03-04)
 - Enhet/emulator: Pixel_6 (script-baserat flöde), samt emulator-5554 har använts tidigare
 
 ## Snabb felsöknings-snapshot (bara om relevant)

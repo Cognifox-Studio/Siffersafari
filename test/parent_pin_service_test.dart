@@ -115,6 +115,8 @@ void main() {
       );
 
       expect(codes, hasLength(6));
+      // Regression: backup codes must be unique within a batch.
+      expect(codes.toSet(), hasLength(6));
       final codeFormat = RegExp(r'^[A-Z0-9]{8}$');
       for (final code in codes) {
         expect(code, matches(codeFormat));
@@ -149,7 +151,8 @@ void main() {
         (code) => storedHashes.any((hash) => BCrypt.checkpw(code, hash)),
       );
 
-      final used = await service.verifyAndUseBackupCode(matchingCode);
+      // Regression: backup code redemption is case-insensitive.
+      final used = await service.verifyAndUseBackupCode(matchingCode.toLowerCase());
       expect(used, isTrue);
 
       final correct2 = await service.verifySecurityAnswer('MY ANSWER');
