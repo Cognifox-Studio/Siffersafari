@@ -12,10 +12,50 @@ void main() {
   testWidgets(
     'Integration (screenshots): ta skärmdumpar av alla huvudvyer',
     (tester) async {
+      Future<void> waitFor(
+        String label,
+        bool Function() condition, {
+        Duration timeout = const Duration(seconds: 20),
+        Duration step = const Duration(milliseconds: 600),
+      }) async {
+        final sw = Stopwatch()..start();
+        while (sw.elapsed < timeout) {
+          if (condition()) return;
+          await it.settle(tester, step);
+        }
+
+        fail(
+          'Timed out waiting for: $label. Visible texts: ${it.visibleTexts(tester).take(80).toList()}',
+        );
+      }
+
       Future<void> settle([
         Duration duration = const Duration(milliseconds: 800),
       ]) async {
         await it.settle(tester, duration);
+      }
+
+      bool isHomeLike() {
+        // Home has a version footer like "Version 1.0.0".
+        if (find.textContaining('Version ').evaluate().isNotEmpty) return true;
+
+        // Landing / first-run screens.
+        if (find.textContaining('Välkommen').evaluate().isNotEmpty) return true;
+        if (find.text('Siffersafari').evaluate().isNotEmpty) return true;
+        if (find.text('Skapa profil').evaluate().isNotEmpty) return true;
+        if (find.text('Skapa användare').evaluate().isNotEmpty) return true;
+
+        // Logged-in Home with operation cards.
+        for (final label in const [
+          'Addition',
+          'Subtraktion',
+          'Multiplikation',
+          'Division',
+        ]) {
+          if (find.text(label).evaluate().isNotEmpty) return true;
+        }
+
+        return false;
       }
 
       String safeName(String raw) {
@@ -39,18 +79,25 @@ void main() {
       }
 
       Future<void> ensureHomeVisible() async {
-        for (var attempt = 0; attempt < 40; attempt++) {
-          // Home has a version footer like "Version 1.0.0".
-          if (find.textContaining('Version ').evaluate().isNotEmpty) return;
+        await waitFor(
+          'Home / start screen / onboarding gate',
+          () {
+            if (isHomeLike()) return true;
 
-          // If onboarding blocks, wait.
-          if (find.text('Kom igång').evaluate().isNotEmpty) return;
+            // If onboarding blocks, that's acceptable as "home is visible enough".
+            if (find.text('Kom igång').evaluate().isNotEmpty) return true;
+            if (find.text('Hoppa över').evaluate().isNotEmpty) return true;
+            if (find.textContaining('Vilken årskurs').evaluate().isNotEmpty) {
+              return true;
+            }
+            if (find.text('Årskurs').evaluate().isNotEmpty) return true;
+            if (find.text('Välj årskurs').evaluate().isNotEmpty) return true;
+            if (find.text('Välj räknesätt').evaluate().isNotEmpty) return true;
 
-          await settle(const Duration(milliseconds: 600));
-        }
-
-        fail(
-          'Could not reach Home or Onboarding. Visible texts: ${it.visibleTexts(tester).take(80).toList()}',
+            return false;
+          },
+          timeout: const Duration(seconds: 20),
+          step: const Duration(milliseconds: 600),
         );
       }
 
@@ -60,28 +107,43 @@ void main() {
 
       Future<void> backUntilHome({int maxBacks = 8}) async {
         for (var i = 0; i < maxBacks; i++) {
-          if (find.textContaining('Version ').evaluate().isNotEmpty) return;
+          if (isHomeLike()) return;
           await backOnce();
         }
       }
 
       Future<void> ensureOnboardingVisible() async {
-        for (var attempt = 0; attempt < 40; attempt++) {
-          if (find.text('Kom igång').evaluate().isNotEmpty) return;
-          await settle(const Duration(milliseconds: 600));
-        }
-        fail(
-          'Onboarding did not appear. Visible texts: ${it.visibleTexts(tester).take(80).toList()}',
+        await waitFor(
+          'Onboarding',
+          () {
+            if (find.text('Kom igång').evaluate().isNotEmpty) return true;
+            if (find.text('Hoppa över').evaluate().isNotEmpty) return true;
+            if (find.textContaining('Vilken årskurs').evaluate().isNotEmpty) {
+              return true;
+            }
+            if (find.text('Årskurs').evaluate().isNotEmpty) return true;
+            if (find.text('Välj årskurs').evaluate().isNotEmpty) return true;
+            if (find.text('Välj räknesätt').evaluate().isNotEmpty) return true;
+
+            // Step indicator like "1/2" or "1/3".
+            final stepIndicators = ['1/2', '1/3', '2/3'];
+            for (final s in stepIndicators) {
+              if (find.text(s).evaluate().isNotEmpty) return true;
+            }
+
+            return false;
+          },
+          timeout: const Duration(seconds: 15),
+          step: const Duration(milliseconds: 600),
         );
       }
 
       Future<void> ensureResultsVisible() async {
-        for (var attempt = 0; attempt < 80; attempt++) {
-          if (find.text('Tillbaka till Start').evaluate().isNotEmpty) return;
-          await settle(const Duration(milliseconds: 500));
-        }
-        fail(
-          'Results did not appear. Visible texts: ${it.visibleTexts(tester).take(80).toList()}',
+        await waitFor(
+          'Results (Tillbaka till Start)',
+          () => find.text('Tillbaka till Start').evaluate().isNotEmpty,
+          timeout: const Duration(seconds: 25),
+          step: const Duration(milliseconds: 500),
         );
       }
 
@@ -89,7 +151,7 @@ void main() {
       await app.main();
 
       // App startup does async init (Hive + DI).
-      await tester.pumpAndSettle(const Duration(seconds: 3));
+      await it.settle(tester, const Duration(seconds: 3));
 
       // Required for Android screenshots.
       await binding.convertFlutterSurfaceToImage();
@@ -101,8 +163,13 @@ void main() {
       await shot('home_initial');
 
       final createUserButton =
+          find.widgetWithText(ElevatedButton, 'Skapa profil');
+      final createUserButtonFallback =
           find.widgetWithText(ElevatedButton, 'Skapa användare');
-      if (createUserButton.evaluate().isNotEmpty) {
+      final createProfileButton = createUserButton.evaluate().isNotEmpty
+          ? createUserButton
+          : createUserButtonFallback;
+      if (createProfileButton.evaluate().isNotEmpty) {
         // Open Settings via the "no user" path (start quiz -> redirected).
         Finder? opOnHome;
         for (final label in const [
@@ -129,8 +196,13 @@ void main() {
         await shot('home_no_user');
 
         // Create user dialog.
-        await it.tap(tester, createUserButton);
-        expect(find.text('Skapa användare'), findsWidgets);
+        await it.tap(tester, createProfileButton);
+        expect(
+          find.byType(TextField).evaluate().isNotEmpty,
+          isTrue,
+          reason:
+              'Expected a create profile dialog. Visible texts: ${it.visibleTexts(tester).take(80).toList()}',
+        );
         await shot('create_user_dialog');
 
         await tester.enterText(find.byType(TextField).first, 'UI TEST 1');
@@ -149,7 +221,12 @@ void main() {
         // ---- Onboarding step 1: grade ----
         await shot('onboarding_grade');
 
-        final isGradePage = find.text('1/2').evaluate().isNotEmpty;
+        final isGradePage =
+            find.textContaining('årskurs').evaluate().isNotEmpty ||
+                find.text('Årskurs').evaluate().isNotEmpty ||
+                find.text('Välj årskurs').evaluate().isNotEmpty ||
+                find.text('1/2').evaluate().isNotEmpty ||
+                find.text('1/3').evaluate().isNotEmpty;
         if (isGradePage) {
           final gradeDropdown = find.byType(DropdownButton<int?>);
           if (gradeDropdown.evaluate().isNotEmpty) {
@@ -331,13 +408,17 @@ void main() {
               await shot('settings_after_toggles');
 
               // Open create user dialog from Settings.
-              if (find.text('Skapa användare').evaluate().isNotEmpty) {
+              final createFromSettings =
+                  find.text('Skapa användare').evaluate().isNotEmpty
+                      ? find.text('Skapa användare')
+                      : find.text('Skapa profil');
+              if (createFromSettings.evaluate().isNotEmpty) {
                 await it.tap(
                   tester,
-                  find.text('Skapa användare'),
+                  createFromSettings,
                   after: const Duration(milliseconds: 600),
                 );
-                if (find.text('Skapa användare').evaluate().length >= 2) {
+                if (find.byType(TextField).evaluate().isNotEmpty) {
                   await shot('settings_create_user_dialog');
 
                   if (find.text('Avbryt').evaluate().isNotEmpty) {
@@ -482,5 +563,6 @@ void main() {
         }
       }
     },
+    timeout: const Timeout(Duration(minutes: 3)),
   );
 }

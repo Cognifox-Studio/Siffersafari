@@ -43,10 +43,9 @@ void main(List<String> args) {
       .whereType<File>()
       .where((f) => f.path.toLowerCase().endsWith('.png'))
       .where((f) {
-        if (prefix == null || prefix.trim().isEmpty) return true;
-        return f.uri.pathSegments.last.startsWith(prefix);
-      })
-      .toList()
+    if (prefix == null || prefix.trim().isEmpty) return true;
+    return f.uri.pathSegments.last.startsWith(prefix);
+  }).toList()
     ..sort((a, b) => a.path.compareTo(b.path));
 
   if (files.isEmpty) {
@@ -62,7 +61,8 @@ void main(List<String> args) {
       stderr.writeln('Failed to decode: ${f.path}');
       continue;
     }
-    decoded.add(_NamedImage(name: f.uri.pathSegments.last, image: _ensureRgba(image)));
+    decoded.add(
+        _NamedImage(name: f.uri.pathSegments.last, image: _ensureRgba(image)));
   }
 
   if (decoded.isEmpty) {
@@ -80,9 +80,12 @@ void main(List<String> args) {
   final outDir = Directory(outDirPath)..createSync(recursive: true);
 
   stdout.writeln('---');
-  stdout.writeln('In:  $inDirPath  frames=${decoded.length}  prefix=${prefix ?? '(none)'}');
-  stdout.writeln('Out: $outDirPath  size=${size}x$size  margin=$margin  padSquare=$padToSquare  overwrite=$overwrite');
-  stdout.writeln('Union bbox: x=${union.x}..${union.x + union.w - 1}  y=${union.y}..${union.y + union.h - 1}  (w=${union.w} h=${union.h})');
+  stdout.writeln(
+      'In:  $inDirPath  frames=${decoded.length}  prefix=${prefix ?? '(none)'}');
+  stdout.writeln(
+      'Out: $outDirPath  size=${size}x$size  margin=$margin  padSquare=$padToSquare  overwrite=$overwrite');
+  stdout.writeln(
+      'Union bbox: x=${union.x}..${union.x + union.w - 1}  y=${union.y}..${union.y + union.h - 1}  (w=${union.w} h=${union.h})');
 
   for (final fr in decoded) {
     final outPath = '${outDir.path}${Platform.pathSeparator}${fr.name}';
@@ -122,7 +125,8 @@ img.Image _ensureRgba(img.Image image) {
   // For safety, bake orientation (no-op for PNG) and ensure 4 channels.
   final baked = img.bakeOrientation(image);
   if (baked.numChannels == 4) return baked;
-  final out = img.Image(width: baked.width, height: baked.height, numChannels: 4);
+  final out =
+      img.Image(width: baked.width, height: baked.height, numChannels: 4);
   img.compositeImage(out, baked);
   return out;
 }

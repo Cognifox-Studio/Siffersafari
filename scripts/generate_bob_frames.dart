@@ -71,7 +71,8 @@ void main(List<String> args) {
       exit(2);
     }
 
-    final frame = img.Image(width: source.width, height: source.height, numChannels: 4);
+    final frame =
+        img.Image(width: source.width, height: source.height, numChannels: 4);
     // Transparent by default.
     img.compositeImage(frame, source, dstX: dx[i], dstY: dy[i]);
     outFile.writeAsBytesSync(img.encodePng(frame));
@@ -83,7 +84,8 @@ void main(List<String> args) {
 img.Image _ensureRgba(img.Image image) {
   final baked = img.bakeOrientation(image);
   if (baked.numChannels == 4) return baked;
-  final out = img.Image(width: baked.width, height: baked.height, numChannels: 4);
+  final out =
+      img.Image(width: baked.width, height: baked.height, numChannels: 4);
   img.compositeImage(out, baked);
   return out;
 }

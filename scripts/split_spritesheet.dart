@@ -68,13 +68,15 @@ void main(List<String> args) {
 
   final expectedRows = ((count + columns - 1) / columns).floor();
   final sheetNeededW = padLeft + (columns * frameW) + ((columns - 1) * gapX);
-  final sheetNeededH = padTop + (expectedRows * frameH) + ((expectedRows - 1) * gapY);
+  final sheetNeededH =
+      padTop + (expectedRows * frameH) + ((expectedRows - 1) * gapY);
 
   if (image.width < sheetNeededW || image.height < sheetNeededH) {
     stderr.writeln('Spritesheet too small for the given params.');
     stderr.writeln('Sheet: ${image.width}x${image.height}');
     stderr.writeln('Needed: ${sheetNeededW}x${sheetNeededH}');
-    stderr.writeln('Tip: check --columns/--count/--frame-w/--frame-h and padding/gaps.');
+    stderr.writeln(
+        'Tip: check --columns/--count/--frame-w/--frame-h and padding/gaps.');
     exit(2);
   }
 
@@ -102,7 +104,8 @@ void main(List<String> args) {
       exit(2);
     }
 
-    final frame = img.copyCrop(image, x: x, y: y, width: frameW, height: frameH);
+    final frame =
+        img.copyCrop(image, x: x, y: y, width: frameW, height: frameH);
     outFile.writeAsBytesSync(img.encodePng(frame));
   }
 

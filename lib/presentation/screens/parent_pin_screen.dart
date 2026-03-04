@@ -148,6 +148,7 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                 DropdownButtonFormField<String>(
                   key: ValueKey(selectedQuestion),
                   initialValue: selectedQuestion,
+                  isExpanded: true,
                   items: defaultSecurityQuestions
                       .map(
                         (q) => DropdownMenuItem<String>(
