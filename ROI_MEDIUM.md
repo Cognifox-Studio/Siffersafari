@@ -47,6 +47,7 @@
 - [ ] Implementera smart förslag för nästa övning
 
 ## Accessibility & Usability
+- [ ] Granska och förenkla alla textfrågor för Åk 1-3 (enkel, kort svenska anpassad för yngre barn)
 - [ ] Implementera stöd för större textstorlekar (accessibility)
 - [ ] Lägg till tooltips och hjälptexter där det behövs
 - [ ] Skapa context-sensitive help
