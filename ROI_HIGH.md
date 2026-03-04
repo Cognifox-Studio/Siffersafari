@@ -49,6 +49,14 @@
 	- [ ] Implementera lokal spärrlogik per profil/enhet
 	- [ ] Visa tydligt felmeddelande och nedräkning vid spärr
 	- [ ] Lägg till tester för brute-force-liknande försök
+- [ ] Implementera PIN-återställ med sekretskapsfrågor och backup-koder
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Skapa bibliotek med sekretskapsfrågor (3+ per profil) anpassade för föräldrar
+	- [ ] Implementera backup-kod-generering (3-4 koder per setup, sparas lokalt)
+	- [ ] Bygga PIN-återställ-flöde: säkerhetsfrågor → verifiering → ny PIN-setup
+	- [ ] Lägg till tester: korrekt svar, fel svar, backup-kod-validering
 
 ## Testing & Quality (gör tidigt)
 - [ ] Förbättra testtäckningen: Lägg till fler enhets- och widgettester för edge cases och regression.
