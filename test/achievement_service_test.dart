@@ -61,8 +61,10 @@ void main() {
       );
 
       final reward = service.evaluate(user: user, session: session);
-      expect(reward.unlockedIds,
-          isNot(contains(AppConstants.firstQuizAchievement)),);
+      expect(
+        reward.unlockedIds,
+        isNot(contains(AppConstants.firstQuizAchievement)),
+      );
     });
 
     test('Unit (AchievementService): streak-7 triggar men inte streak-30 vid 7',
@@ -88,8 +90,10 @@ void main() {
 
       final reward = service.evaluate(user: user, session: session);
       expect(reward.unlockedIds, contains(AppConstants.streak7Achievement));
-      expect(reward.unlockedIds,
-          isNot(contains(AppConstants.streak30Achievement)),);
+      expect(
+        reward.unlockedIds,
+        isNot(contains(AppConstants.streak30Achievement)),
+      );
     });
   });
 }

@@ -86,7 +86,8 @@ class ProfileBackupService {
       final sessionId = session['sessionId'];
       if (sessionId is! String || sessionId.trim().isEmpty) {
         throw const FormatException(
-            'quizHistory entry missing valid sessionId',);
+          'quizHistory entry missing valid sessionId',
+        );
       }
       quizHistory.add(session);
     }
