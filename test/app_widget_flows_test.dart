@@ -665,7 +665,8 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       expect(onboardingTitle, findsOneWidget);
-      expect(find.text('1/2'), findsOneWidget);
+      final hasReadingStep = find.text('1/3').evaluate().isNotEmpty;
+      expect(find.text(hasReadingStep ? '1/3' : '1/2'), findsOneWidget);
       expect(find.text('Vilken årskurs kör du?'), findsOneWidget);
 
       // Choose a grade (e.g. Åk 3) to better match real user flow.
@@ -686,7 +687,23 @@ void main() {
             const Duration(milliseconds: 200),
       );
 
-      expect(find.text('2/2'), findsOneWidget);
+      if (hasReadingStep) {
+        expect(find.text('2/3'), findsOneWidget);
+        expect(find.text('Kan barnet läsa?'), findsOneWidget);
+
+        // Choose 'Nej' to keep reading load low by default.
+        await tester.tap(find.text('Nej'));
+        await pumpFor(
+          tester,
+          AppConstants.mediumAnimationDuration +
+              const Duration(milliseconds: 200),
+        );
+
+        expect(find.text('3/3'), findsOneWidget);
+      } else {
+        expect(find.text('2/2'), findsOneWidget);
+      }
+
       expect(find.text('Vad vill du räkna?'), findsOneWidget);
 
       // Finish onboarding.
@@ -694,7 +711,8 @@ void main() {
 
       // Wait for pop back to Home without using pumpUntilFound (no auto-skip).
       final homeTitle = find.text(AppConstants.appName);
-      final finishSteps = (const Duration(seconds: 4).inMilliseconds / 50).ceil();
+      final finishSteps =
+          (const Duration(seconds: 4).inMilliseconds / 50).ceil();
       for (var i = 0; i < finishSteps; i++) {
         if (homeTitle.evaluate().isNotEmpty) break;
         await tester.pump(const Duration(milliseconds: 50));

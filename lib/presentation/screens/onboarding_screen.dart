@@ -5,6 +5,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/user_provider.dart';
+import '../../core/providers/word_problems_settings_provider.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/themed_background_scaffold.dart';
 
@@ -30,6 +31,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   int? _gradeLevel;
   Set<OperationType> _allowedOps = const {OperationType.multiplication};
 
+  bool _needsReadingSetup = false;
+
   @override
   void initState() {
     super.initState();
@@ -39,6 +42,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     // Load persisted onboarding-related settings for this user.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final repo = ref.read(localStorageRepositoryProvider);
+
+      final existingReadingSetting =
+          repo.getSetting(wordProblemsEnabledKey(widget.userId));
 
       final activeUser = ref.read(userProvider).activeUser;
       final user = activeUser?.userId == widget.userId
@@ -56,6 +62,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       setState(() {
         _gradeLevel = user?.gradeLevel;
         _allowedOps = allowedOps;
+        _needsReadingSetup = existingReadingSetting is! bool;
       });
 
       // If grade is already set (often chosen during user creation), start on
@@ -113,7 +120,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   }
 
   void _next() {
-    if (_pageIndex >= 1) {
+    if (_pageIndex >= (_pages.length - 1)) {
       _finish();
       return;
     }
@@ -126,7 +133,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (_pageIndex + 1) / 2;
+    final progress = (_pageIndex + 1) / _pages.length;
     final accentColor = Theme.of(context).colorScheme.secondary;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
@@ -147,13 +154,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     children: [
                       Text(
                         'Nu kör vi!',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineSmall
-                            ?.copyWith(
-                              color: onPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  color: onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -167,7 +172,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   ),
                 ),
                 Text(
-                  '${_pageIndex + 1}/2',
+                  '${_pageIndex + 1}/${_pages.length}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w600,
@@ -192,27 +197,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: PageView(
                 controller: _controller,
                 onPageChanged: (index) => setState(() => _pageIndex = index),
-                children: [
-                  _OnboardingGradePage(
-                    gradeLevel: _gradeLevel,
-                    onChanged: (value) => setState(() {
-                      _gradeLevel = value;
-                    }),
-                  ),
-                  _OnboardingOpsPage(
-                    allowedOps: _allowedOps,
-                    onChanged: (updated) => setState(() {
-                      _allowedOps = updated;
-                    }),
-                  ),
-                ],
+                children: _pages,
               ),
             ),
             const SizedBox(height: AppConstants.defaultPadding),
             ElevatedButton(
               onPressed: _next,
               child: Text(
-                _pageIndex >= 1 ? 'Klar' : 'Nästa',
+                _pageIndex >= (_pages.length - 1) ? 'Klar' : 'Nästa',
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: onPrimary,
                       fontWeight: FontWeight.bold,
@@ -234,6 +226,42 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
     );
+  }
+
+  List<Widget> get _pages {
+    final pages = <Widget>[
+      _OnboardingGradePage(
+        gradeLevel: _gradeLevel,
+        onChanged: (value) => setState(() {
+          _gradeLevel = value;
+        }),
+      ),
+    ];
+
+    if (_needsReadingSetup) {
+      pages.add(
+        _OnboardingReadingPage(
+          onAnswer: (canRead) async {
+            await ref
+                .read(wordProblemsEnabledProvider(widget.userId).notifier)
+                .setEnabled(canRead);
+            if (!mounted) return;
+            _next();
+          },
+        ),
+      );
+    }
+
+    pages.add(
+      _OnboardingOpsPage(
+        allowedOps: _allowedOps,
+        onChanged: (updated) => setState(() {
+          _allowedOps = updated;
+        }),
+      ),
+    );
+
+    return pages;
   }
 }
 
@@ -433,6 +461,67 @@ class _OnboardingOpsPage extends StatelessWidget {
               ),
             );
           }),
+        ],
+      ),
+    );
+  }
+}
+
+class _OnboardingReadingPage extends StatelessWidget {
+  const _OnboardingReadingPage({
+    required this.onAnswer,
+  });
+
+  final ValueChanged<bool> onAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
+    final subtleOnPrimary =
+        onPrimary.withValues(alpha: AppOpacities.subtleText);
+
+    return _OnboardingCard(
+      icon: Icons.menu_book,
+      title: 'Kan barnet läsa?',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Om ja kan spelet ibland visa korta textuppgifter istället för bara tal.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => onAnswer(true),
+                  child: const Text('Ja'),
+                ),
+              ),
+              const SizedBox(width: AppConstants.smallPadding),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () => onAnswer(false),
+                  child: const Text('Nej'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Text(
+            'Du kan ändra detta senare i Föräldraläge.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: subtleOnPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );

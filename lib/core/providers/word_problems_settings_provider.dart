@@ -13,15 +13,25 @@ class WordProblemsEnabledNotifier extends StateNotifier<bool> {
   final LocalStorageRepository _repository;
   final String _userId;
 
+  static bool _defaultValue({
+    required LocalStorageRepository repository,
+    required String userId,
+  }) {
+    final user = repository.getUserProgress(userId);
+    if (user?.gradeLevel == 1) return false;
+    return AppFeatures.wordProblemsEnabled;
+  }
+
   static bool _readInitialValue({
     required LocalStorageRepository repository,
     required String userId,
   }) {
+    final fallback = _defaultValue(repository: repository, userId: userId);
     final raw = repository.getSetting(
       wordProblemsEnabledKey(userId),
-      defaultValue: AppFeatures.wordProblemsEnabled,
+      defaultValue: fallback,
     );
-    return raw is bool ? raw : AppFeatures.wordProblemsEnabled;
+    return raw is bool ? raw : fallback;
   }
 
   Future<void> setEnabled(bool enabled) async {
