@@ -21,7 +21,7 @@
 	- [ ] Lägg till guard/validator före write och efter read
 	- [ ] Hantera ogiltig data med fallback + loggning
 	- [ ] Lägg till enhetstester för korrupt/inkompatibel data
-- [ ] Validera all användarinput för att förhindra data corruption
+- [ ] [RESEARCH] Validera all användarinput för att förhindra data corruption (input validation library/framework)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -93,7 +93,7 @@
   - [ ] Verifiera och markera klar
 
 ## Error Handling & Monitoring
-- [ ] Implementera robust felhantering och användarvänliga felmeddelanden
+- [ ] [RESEARCH] Implementera robust felhantering och användarvänliga felmeddelanden
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -183,7 +183,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera automatisk datamigration mellan versioner
+- [ ] [RESEARCH] Implementera automatisk datamigration mellan versioner (strategy för schema-upgrades)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

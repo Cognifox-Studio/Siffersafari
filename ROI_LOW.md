@@ -5,7 +5,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa en "credits"-sida
+- [ ] [RESEARCH] Skapa en "credits"-sida (assets/contributors inventory)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

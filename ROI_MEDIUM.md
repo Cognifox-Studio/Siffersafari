@@ -23,6 +23,9 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
 
 ## Performance & Technical Foundation
 - [ ] Optimera prestanda: Mät och förbättra laddningstider, minnesanvändning och animationer.
@@ -123,11 +126,11 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Förbättra hantering av stora datamängder (många quiz/sessioner)
+- [ ] [RESEARCH] Förbättra hantering av stora datamängder (många quiz/sessioner) - database performance/pagination
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till stöd för flera användarprofiler på samma enhet
+- [ ] [RESEARCH] Lägg till stöd för flera användarprofiler på samma enhet (verifiera om redan implementerat)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -137,7 +140,7 @@
   - [ ] Verifiera och markera klar
 
 ## Analytics & Insights
-- [ ] Implementera offline analytics (lokal statistik)
+- [ ] [RESEARCH] Implementera offline analytics (lokal statistik) - data collection strategy
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -149,7 +152,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera smart förslag för nästa övning
+- [ ] [RESEARCH] Implementera smart förslag för nästa övning (algoritm/heuristics)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -171,7 +174,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till stöd för färgblinda (accessibility)
+- [ ] [RESEARCH] Lägg till stöd för färgblinda (accessibility - WCAG guidelines)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -197,7 +200,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa designsystem med färger, typografi, spacing
+- [ ] [RESEARCH] Skapa designsystem med färger, typografi, spacing (design tokens)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -209,7 +212,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera stöd för tablet-layout
+- [ ] [RESEARCH] Implementera stöd för tablet-layout (responsive design breakpoints)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -227,7 +230,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till stöd för användargenererat innehåll (custom quiz)
+- [ ] [RESEARCH] Lägg till stöd för användargenererat inhåll (custom quiz) - validation & storage strategy
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -299,13 +302,13 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa admin-panel för content management
+- [ ] [RESEARCH] Skapa admin-panel för content management (offline admin interface design)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
 
 ## Updates & Maintenance
-- [ ] Lägg till stöd för offline-uppdateringar
+- [ ] [RESEARCH] Lägg till stöd för offline-uppdateringar (update mechanism för offline app)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
