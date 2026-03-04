@@ -1,7 +1,7 @@
 # ROI HIGH
 
 ## Foundation & Security (gör först)
-- [ ] Implementera säker storage av föräldra-PIN (hash + salt)
+- [ ] [RESEARCH] Implementera säker storage av föräldra-PIN (hash + salt)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -9,11 +9,11 @@
 	- [ ] Lägg till salt + verifieringsfunktion i auth-flödet
 	- [ ] Migrera ev. befintlig PIN-lagring utan dataförlust
 	- [ ] Lägg till tester: korrekt PIN, fel PIN, edge cases
-- [ ] Utvärdera och förbättra datasäkerhet (t.ex. kryptering av känslig info)
+- [ ] [RESEARCH] Utvärdera och förbättra datasäkerhet (t.ex. kryptering av känslig info)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera datavalidering vid Hive-läsning/skrivning
+- [ ] [RESEARCH] Implementera datavalidering vid Hive-läsning/skrivning
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -25,15 +25,15 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera säker hantering av känslig användardata
+- [ ] [RESEARCH] Implementera säker hantering av känslig användardata
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Säkerställ COPPA-compliance för barn under 13 år
+- [ ] [RESEARCH] Säkerställ COPPA-compliance för barn under 13 år
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Implementera dataexport för GDPR-compliance
+- [ ] [RESEARCH] Implementera dataexport för GDPR-compliance
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -49,7 +49,7 @@
 	- [ ] Implementera lokal spärrlogik per profil/enhet
 	- [ ] Visa tydligt felmeddelande och nedräkning vid spärr
 	- [ ] Lägg till tester för brute-force-liknande försök
-- [ ] Implementera PIN-återställ med sekretskapsfrågor och backup-koder
+- [ ] [RESEARCH] Implementera PIN-återställ med sekretskapsfrågor och backup-koder
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -97,7 +97,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till error tracking och crash reporting
+- [ ] [RESEARCH] Lägg till error tracking och crash reporting (privacy-friendly approach för offline)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

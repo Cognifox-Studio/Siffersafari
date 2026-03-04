@@ -3,7 +3,7 @@
 > Standard framåt: nya prioriterade todos ska få en mini-checklista direkt vid skapande.
 
 ## CI/CD & Automation (force multipliers - gör först)
-- [ ] Automatisera QA: Sätt upp CI/CD-flöde med automatiska tester och kodanalys vid varje commit.
+- [ ] [RESEARCH] Automatisera QA: Sätt upp CI/CD-flöde med automatiska tester och kodanalys vid varje commit.
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -29,7 +29,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Lägg till profiling tools för prestandamätning
+- [ ] [RESEARCH] Lägg till profiling tools för prestandamätning
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

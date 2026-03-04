@@ -1,7 +1,7 @@
 # ROI LOW
 
 ## Basic Accessibility & Polish (gör först inom LOW)
-- [ ] Förbättra tillgängligheten: Testa med skärmläsare och justera UI för bättre accessibility.
+- [ ] [RESEARCH] Förbättra tillgängligheten: Testa med skärmläsare och justera UI för bättre accessibility.
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -29,7 +29,7 @@
   - [ ] Verifiera och markera klar
 
 ## Audio Customization
-- [ ] Definiera 5 olika ljudvarianter per händelsetyp (utom klickljud)
+- [ ] [RESEARCH] Definiera 5 olika ljudvarianter per händelsetyp (utom klickljud)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -37,7 +37,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Hitta och välj passande bakgrundsmusik för appen (barnvänlig, lugn, loopbar)
+- [ ] [RESEARCH] Hitta och välj passande bakgrundsmusik för appen (barnvänlig, lugn, loopbar)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -45,7 +45,7 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Skapa custom notification sounds
+- [ ] [RESEARCH] Skapa custom notification sounds
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar

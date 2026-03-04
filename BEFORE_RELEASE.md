@@ -1,11 +1,11 @@
 # BEFORE RELEASE
 
 ## Legal & Compliance (gör ABSOLUT FÖRST)
-- [ ] Verifiera att alla lagkrav (GDPR, etc) är uppfyllda
+- [ ] [RESEARCH] Verifiera att alla lagkrav (GDPR, COPPA, etc) är uppfyllda (juridisk checklista)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] Verifiera att privacy policy och terms of service är uppdaterade
+- [ ] [RESEARCH] Verifiera att privacy policy och terms of service är uppdaterade (juridisk granskning)
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
