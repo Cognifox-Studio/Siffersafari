@@ -1,21 +1,19 @@
 # Karaktärsanimationer (Ville / character_v2)
 
-Mål: kunna använda maskoten (t.ex. `character_v2`) som **animerad** figur i UI utan att introducera ny UI/nya flöden.
+Mål: använda maskoten (t.ex. `character_v2`) som **animerad** figur i UI utan att introducera nya flöden.
 
-## Rekommenderad approach (MVP)
+## Nuläge (2026-03-05)
 
-- Använd **frame-sekvenser** (PNG/WebP med transparens) och spela upp dem som en enkel loop.
-- I appen används widgeten `MascotView` som stödjer både:
-  - statisk bild (idag), och
-  - frame-sekvens (senare) utan att ändra resten av UI.
+- ✅ **Idle-animation** används i appen (`assets/images/characters/character_v2/idle/`)
+- ✅ Widgeten `MascotView` stödjer frame-sekvenser (loop)
+- ❌ Jump/Run/Wave är inte implementerade (assets borttagna)
 
-## Asset-struktur (för framtida frames)
+## Asset-struktur
 
 Lägg bara in **kuraterade** frames i `assets/`.
 Allt som genereras under iteration ska ligga i `artifacts/` tills det är godkänt.
 
-Förslag:
-
+Struktur:
 ```
 assets/images/characters/
   character_v2/
@@ -23,51 +21,26 @@ assets/images/characters/
       idle_000.png
       idle_001.png
       ...
-    wave/
-      wave_000.png
-      wave_001.png
-      ...
 ```
 
 Konvention:
-- Filnamn: `<anim>_<index med 3 siffror>.png`
-- Samma dimensioner för alla frames i en animation.
-- Helst transparent bakgrund.
-
-## Koppla in i UI
-
-- Idag används `AppThemeConfig.characterAsset` (en statisk PNG).
-- När frames finns kan vi (nästa steg) låta `AppThemeConfig` även ange en frame-sekvens för t.ex. "idle" och använda den i `MascotView(frames: [...])`.
+- Filnamn: `<anim>_<frameno start 000>.png`
+- Samma dimensioner för alla frames i en animation
+- Transparent bakgrund
 
 ## Generering (ComfyUI)
 
-- Använd scripts för att generera pose-pack i `artifacts/comfyui/...`.
-- Välj ut och ev. frilägg de frames du vill använda, och flytta dem sedan manuellt till `assets/images/characters/...` enligt strukturen ovan.
-
-## Frame-sekvenser (rekommenderat)
-
-För riktiga animationer (arm/ben/ansikte) behöver varje frame vara en egen genererad bild.
-
-Startset vi bygger först:
-- `idle/`
-- `jump/`
-- `run/`
-- `wave/`
-
-Rekommenderat flöde:
-- Generera frames till `artifacts/comfyui/...` (iteration).
-- När en loop känns bra: kopiera/byt namn till `assets/images/characters/character_v2/<anim>/` enligt konventionen ovan.
-
-### Script: generera frames via ComfyUI
-
-Det finns ett helper-script som genererar en frame i taget (en ComfyUI-körning per frame) och sparar dem med rätt filnamn:
+Använd `scripts/generate_character_v2_animation_frames.ps1` för att generera frame-sekvenser:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_animation_frames.ps1 -Anim idle -Frames 8 -AlphaAll
+powershell -ExecutionPolicy Bypass `
+  -File scripts/generate_character_v2_animation_frames.ps1 `
+  -Anim idle -Frames 8 -AlphaAll
 ```
 
-Exempel för wave:
+Frames genereras till `artifacts/comfyui/...`. Välj ut bästa och flytta manuellt till `assets/`.
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts/generate_character_v2_animation_frames.ps1 -Anim wave -Frames 8 -AlphaAll
-```
+Tips:
+- Använd `-StableSeed` för konsekvent karaktär över frames
+- Håll `-Denoise` låg (0.25–0.45) för att undvika drift
+- Preview med GIF: `dart run scripts/preview_animation_gif.dart`

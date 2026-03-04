@@ -1,6 +1,25 @@
 # Kunskapsnivå per årskurs (Åk 1–9)
 
-Syfte: En intern **spec** för vilken kunskapsnivå som är rimlig per årskurs och hur den mappas till appens nuvarande logik (talområden, räknesätt och feature-gates). Målet är att förbättra frågegenerationen utan att vi behöver “gissa” vad appen faktiskt gör.
+En intern **spec** och **implementationsplan** för vilken kunskapsnivå som är rimlig per årskurs och hur den mappas till appens logik (talområden, räknesätt, feature-gates och frågegeneration).
+
+## Syfte & Målbild
+
+Använd årskurs-informationen (Åk 1–9) för att:
+- Generera frågor med rätt **talområde**
+- Gradvis introducera rätt **strategier** (t.ex. tiokompisar, tiotalsövergång)
+- Senare kunna lägga till nya **frågetyper** (textuppgifter, pengar, tid, geometri) utan att bygga om appen i ett steg
+
+**Målbild:**
+- När en förälder sätter barnets Åk ska quizet automatiskt välja rimliga tal och "typiska" strategier för den Åk
+- Föräldern kan alltid överstyra räknesätt och svårighet; Åk är en **guide**, inte ett tak
+- Målet är "rimliga" frågor som tränar rätt strategi, inte en exakt läroplanssimulation
+
+## Grundprinciper
+
+- **Förståelse före hastighet** (särskilt Åk 1–2)
+- **Stabil progression**: små steg, tydliga nivåer
+- **Föräldern har sista ordet**: förälderns val av räknesätt begränsar alltid
+- **Fallback**: om Åk saknas eller data saknas → använd nuvarande logik
 
 ## Taggar
 - `NU (stöds i appen)`: kan uttryckas i nuvarande quiz-format (text + heltalssvar och/eller befintliga Mix-typer).
@@ -201,3 +220,49 @@ Pedagogiska “progressionssignaler” (kompletterande, ej maskin-exakt):
 Exakta app-regler i repo (detta dokument speglar dessa):
 - Talspann + benchmark + synliga räknesätt: `lib/core/config/difficulty_config.dart`
 - Feature-gates + Mix-fördelning: `lib/core/services/question_generator_service.dart`
+
+Skolverkets kursplan för matematik (Lgr22):
+- https://www.skolverket.se/undervisning/grundskolan/laroplan-lgr22-for-grundskolan-samt-for-forskoleklassen-och-fritidshemmet
+- Kursplan i matematik: https://www.skolverket.se/undervisning/grundskolan/laroplan-lgr22-for-grundskolan-samt-for-forskoleklassen-och-fritidshemmet#/curriculums/LGR22/GRGRMAT01
+
+---
+
+## Implementationsstatus (2026-03-05)
+
+- ✅ UI-svårighet: 3 nivåer (lätt/medel/svår)
+- ✅ Intern svårighet: step 1–10 per räknesätt (adaptiv), sparas per barnprofil
+- ✅ Åk-styrning: används som talområde + constraints, med fallback om data saknas
+- ✅ Textuppgifter v1: finns och är per barn (på/av)
+- ✅ "Saknat tal" (t.ex. `? + 3 = 7`): finns och är per barn (på/av)
+- ✅ M3 (Åk 4–6): +/− har jämnare talområde per step + gradvis växling; ×/÷ har "tabeller först"-formning
+- ✅ M4 (påbörjad): enkla statistik- och sannolikhetsfrågor + enkel kombinatorik kan dyka upp i Mix för Åk 4–6
+- ⚠️ Division med rest: **avstängt** i nuvarande quiz-format (heltal utan rest)
+
+## Milstolpar (framtida utveckling)
+
+### M2 — Textuppgifter v2 (Åk 1–3, utökade mallar)
+- Utöka textuppgifts-generator med fler mallar
+- 1–2 steg, kort text, låg kognitiv last
+- Acceptance: Textuppgifter fungerar i quizflödet utan ny skärm
+
+### M3 — Åk 4–6: fler strategier och större tal
+- Utöka talområde + constraints (mer växling, division med rest som option)
+- Acceptance: Talområde skalar upp utan stora "hopp", step 1–10 känns jämn
+
+### M4 — Geometri/Mätning/Diagram (separata moduler)
+- Implementera en modul i taget med visuell representation
+- Varje modul behöver: datamodell, generator, rendering, test
+- Acceptance: Varje modul kan slås av/på och har fallback
+
+### M5a — Åk 7–9: utan ny UI
+- Negativa tal: +/−/×/÷ med heltal
+- Prioriteringsregler: enkla uttryck med parenteser
+- Procent: "x % av y", procentuell förändring
+- Potenser: kvadrattal/kubiktal
+- Acceptance: Kan köras i quizflödet utan ny skärm
+
+### M5b — Åk 7–9: kräver ny UI/representation
+- Funktioner & grafer (koordinatsystem, lutning)
+- Geometri med figur (Pythagoras, cirkel-omkrets/area)
+- Statistik/sannolikhet med diagram
+- Acceptance: Varje modul har egen minimal rendering + enhetstester

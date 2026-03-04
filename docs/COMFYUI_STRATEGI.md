@@ -25,14 +25,8 @@ Vi vill optimera för:
   - `__INIT_IMAGE__` (img2img)
 
 ### Workflows
-- `scripts/comfyui/workflows/txt2img_api.json`: SDXL base + refiner (två pass).
-- `scripts/comfyui/workflows/img2img_color_api.json`: SDXL img2img (initbild + denoise).
-
-### Postprocess/QA
-- `scripts/make_background_transparent.dart`: hörn-baserad bakgrundsborttagning (fungerar bäst om bakgrunden är relativt platt/solid).
-- `scripts/analyze_image_alpha.dart`: objektiv alpha-check (transparent/semi/opaque, edge non-transparent, bbox + hole detection).
-- `scripts/analyze_comfyui_batch.dart`: batchdiagnostik för en hel mapp.
-- `scripts/crop_character_sheet.dart`: beskär vänster/höger-panel när ComfyUI råkar generera två karaktärer i en bild.
+- `scripts/comfyui/workflows/txt2img_api.json`: SDXL base + refiner (två pass)
+- `scripts/comfyui/workflows/img2img_color_api.json`: SDXL img2img (initbild + denoise)
 
 ---
 
@@ -63,24 +57,21 @@ Vi vill optimera för:
 
 ## Rekommenderad pipeline (3 nivåer)
 
-### Nivå A — Stabil baseline (ingen ny ComfyUI-install)
-Syfte: snabbt få fram användbara assets med det vi redan har.
+### Nivå A — Stabil baseline
+
+Syfte: snabbt få fram användbara assets med befintlig setup.
 
 1. **Generera** (txt2img eller img2img)
-   - Bakgrund: txt2img funkar bra.
-   - Karaktär: börja med img2img från en “kanon-bild” (en enda master-karaktär) och håll `denoise` låg (t.ex. 0.25–0.45).
+   - Bakgrund: txt2img funkar bra
+   - Karaktär: börja med img2img från en "kanon-bild" och håll `denoise` låg (0.25–0.45)
 
-2. **Gör transparens**
-   - Kör `scripts/make_background_transparent.dart`.
-   - Viktigt: se till att ComfyUI-bilden har en bakgrund som är *så platt som möjligt*.
+2. **Transparens**
+   - Bygg in mask i ComfyUI-workflow (semantic segmentation eller SAM) för ren alpha
+   - Alternativt: använd chroma-key med solid bakgrund
 
 3. **QA**
-   - Kör `scripts/analyze_image_alpha.dart` på slut-PNG.
-   - Röd flagg:
-     - väldigt låg transparensandel (bakgrund kvar)
-     - många edge-nontransparent pixlar (motiv ”läcker” ut till kanten)
-     - hole detection varnar (genomskinliga hål inne i motivet)
-
+   - Manuell granskning + preview i appen
+   - Verifiera att alpha ser bra ut (inga hål, inga kvarvarande bakgrundsrester)
 
 ### Nivå B — Konsekvent karaktär (rekommenderas)
 Syfte: göra “samma person” i många variationer/teman.
@@ -110,9 +101,9 @@ Mål: få **tydlig rörelse** utan att karaktären byter outfit/hatttyp mellan f
   - ev. `-ChainInit` om du behöver mer sammanhängande loop (men håll koll på artefakt-ackumulering)
   - håll `-Denoise` låg/medel (t.ex. 0.25–0.45) om identiteten driftar
 
-2) Preview (GIF) + snabb inspektion
-- GIF: `dart run scripts/preview_animation_gif.dart --dir <frames-dir> --prefix run_ --fps 10`
-- Inspektera timing/strip: `dart run scripts/inspect_animation_gif.dart --gif <path.gif> --outStrip <path.png>`
+2) Preview + inspektion
+   - Preview GIF: se `scripts/comfyui/README.md` för workflow-info
+   - Inspektera timing och slingning visuellt
 
 3) När prompt inte räcker
 - Om benen/armarna inte “läser” som spring: lägg till pose-signal (OpenPose/ControlNet) i workflow istället för att bara höja `denoise`.
@@ -186,18 +177,20 @@ Det betyder att vi nästan alltid slipper skriva `--server ...`.
 
 ### 2) Batcha “samma karaktär” via img2img (låg denoise)
 
-Det här ger bäst payoff per minut utan att installera nya custom nodes.
+Det här ger bäst payoff per minut.
 
-Exempel (12 variationer från en kanonbild):
+Exempel-recept (12 variationer från en kanonbild):
 
-1. Välj en kanonbild (init):
-  - t.ex. `assets/images/themes/jungle/character_v2.png` (eller en råbild utan alpha om du har en bättre).
+1. Välj en kanonbild (init): `assets/images/themes/jungle/character_v2.png`
 
-2. Generera batch:
-  - `dart run scripts/generate_images_comfyui.dart --workflow scripts/comfyui/workflows/img2img_color_api.json --init assets/images/themes/jungle/character_v2.png --prompt "cute friendly jungle explorer kid, full body, centered, bold outline, simple shapes, clean silhouette, cartoon, solid background" --negative "scary, creepy, gore, realistic, text, watermark, logo, multiple characters, character sheet" --denoise 0.35 --cfg 6.5 --steps 28 --count 12 --out build/tmp/char_batch`
+2. Generera batch via `scripts/generate_images_comfyui.dart`:
+   - workflow: `img2img_color_api.json`
+   - init: kanonbild
+   - prompt: "cute friendly jungle explorer kid, full body, centered, bold outline"
+   - negative: "scary, gore, text, multiple characters"
+   - denoise: 0.35, cfg: 6.5, steps: 28, count: 12
 
-3. Kör QA snabbt:
-  - `dart run scripts/analyze_comfyui_batch.dart build/tmp/char_batch`
+3. Granska visuellt och välj bästa
   - plocka 3 toppkandidater och kör `dart run scripts/analyze_image_alpha.dart <fil.png>` för djupcheck.
 
 ### 3) När vi gör många assets: investera i IP-Adapter
