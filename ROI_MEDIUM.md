@@ -89,14 +89,12 @@
 - [ ] Skapa en "tips & tricks"-sektion i appen
 
 ## Social & Sharing
-- [ ] Lägg till stöd för delning av resultat
-- [ ] Lägg till stöd för collaborative features (delad statistik)
+- [ ] Lägg till stöd för delning av resultat (via export/lokala medel)
 
 ## Advanced Features
 - [ ] Lägg till stöd för biometrisk inloggning (om relevant)
 - [ ] Lägg till A/B testing-ramverk för nya features
 - [ ] Skapa admin-panel för content management
-- [ ] Implementera webhook support för externa integrationer
 
 ## Updates & Maintenance
 - [ ] Lägg till stöd för offline-uppdateringar

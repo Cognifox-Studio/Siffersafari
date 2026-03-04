@@ -49,7 +49,6 @@
 - [ ] Lägg till enhetskompatibilitetschecklista och testning
 - [ ] Skapa testplan för olika skärmstorlekar och upplösningar
 - [ ] Implementera automatisk datamigration mellan versioner
-- [ ] Implementera robust nätverkshantering (om framtida server-integration)
 
 ## User Experience
 - [ ] Förbättra onboarding-flödet för nya användare
