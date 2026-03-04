@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/parent_pin_service_provider.dart';
 import '../../core/utils/input_validators.dart';
+import '../../domain/entities/pin_recovery_config.dart';
 import '../../domain/services/parent_pin_service.dart';
 import '../widgets/themed_background_scaffold.dart';
-import '../../domain/entities/pin_recovery_config.dart';
 import 'parent_dashboard_screen.dart';
 import 'pin_recovery_screen.dart';
 
@@ -55,14 +55,14 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
     });
 
     final pinService = ref.read(parentPinServiceProvider);
-    
+
     // Validate and sanitize PIN
     final pinError = InputValidators.validatePin(_pinController.text);
     if (pinError != null) {
       setState(() => _error = pinError);
       return;
     }
-    
+
     final pin = InputValidators.sanitizePin(_pinController.text.trim());
 
     if (_isSettingNewPin) {
@@ -71,8 +71,9 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
         setState(() => _error = confirmError);
         return;
       }
-      
-      final confirm = InputValidators.sanitizePin(_confirmController.text.trim());
+
+      final confirm =
+          InputValidators.sanitizePin(_confirmController.text.trim());
       if (confirm != pin) {
         setState(() => _error = 'PIN-koderna matchar inte');
         return;
@@ -141,16 +142,18 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
               ElevatedButton(
                 onPressed: () async {
                   final messenger = ScaffoldMessenger.of(context);
+
                   try {
                     final defaultQuestion = defaultSecurityQuestions.first;
                     final codes = await pinService.setupPinRecovery(
                       securityQuestion: defaultQuestion,
                       securityAnswer: 'standard', // Default answer for demo
                     );
+
                     if (!ctx.mounted) return;
                     _showCodesForCopying(ctx, codes, pinService);
                   } catch (e) {
-                    if (!ctx.mounted) return;
+                    if (!mounted) return;
                     messenger.showSnackBar(
                       SnackBar(content: Text('Fel: $e')),
                     );
@@ -167,12 +170,12 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                     MaterialPageRoute(
                       builder: (_) => const ParentDashboardScreen(),
                     ),
-                    if (!context.mounted) return;
-                    if (!ctx.mounted) return;
-                    _showCodesForCopying(ctx, codes, pinService);
+                  );
+                },
                 child: const Text('Hoppa över'),
-                    if (!context.mounted) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -347,7 +350,10 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                         ),
                   ),
                 ),
-                if (!_isSettingNewPin && ref.read(parentPinServiceProvider).hasRecoveryConfigured()) ...[
+                if (!_isSettingNewPin &&
+                    ref
+                        .read(parentPinServiceProvider)
+                        .hasRecoveryConfigured()) ...[
                   const SizedBox(height: AppConstants.smallPadding),
                   TextButton(
                     onPressed: () {

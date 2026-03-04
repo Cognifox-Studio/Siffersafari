@@ -17,7 +17,6 @@ import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 import '../dialogs/create_user_dialog.dart';
 import '../widgets/interactive_mascot.dart';
-import '../widgets/mascot_view.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'onboarding_screen.dart';
 import 'parent_pin_screen.dart';
