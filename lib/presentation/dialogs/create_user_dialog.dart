@@ -33,6 +33,7 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
   String _selectedAvatar = _avatars.first;
 
   static const List<String> _avatars = [
+    // Ursprungliga
     '🦊',
     '🐯',
     '🐼',
@@ -41,6 +42,17 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
     '🦁',
     '🐨',
     '🐰',
+    // Nya djur
+    '🦏',
+    '🐘',
+    '🐺',
+    '🦝',
+    '🦉',
+    '🦜',
+    '🦎',
+    '🦞',
+    '🦋',
+    '🐢',
   ];
 
   @override

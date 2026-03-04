@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
@@ -33,6 +34,26 @@ class LocalStorageRepository {
         DateTime.fromMillisecondsSinceEpoch(0);
   }
 
+  /// Validate critical quiz session fields and skip if invalid
+  /// Returns null if data is corrupted/invalid, otherwise the validated session
+  Map<String, dynamic>? _validateQuizSession(dynamic value) {
+    final session = _tryAsStringKeyedMap(value);
+    if (session == null) return null;
+
+    // Validate critical fields
+    final sessionId = session['sessionId'];
+    final userId = session['userId'];
+    final isComplete = session['isComplete'];
+    final operationType = session['operationType'];
+
+    if (sessionId is! String || sessionId.isEmpty) return null;
+    if (userId is! String || userId.isEmpty) return null;
+    if (isComplete is! bool) return null;
+    if (operationType is! String || operationType.isEmpty) return null;
+
+    return session;
+  }
+
   /// Save user progress
   Future<void> saveUserProgress(UserProgress progress) async {
     await _userProgressBox.put(progress.userId, progress);
@@ -56,11 +77,27 @@ class LocalStorageRepository {
   /// Save a quiz session to history
   Future<void> saveQuizSession(Map<String, dynamic> session) async {
     final sessionId = session['sessionId'] as String;
-    await _quizHistoryBox.put(sessionId, session);
+    debugPrint('[LocalStorage] saveQuizSession: sessionId=$sessionId');
+    try {
+      await _quizHistoryBox.put(sessionId, session);
+      debugPrint('[LocalStorage] saveQuizSession: success for $sessionId');
+    } catch (e, st) {
+      debugPrint('[LocalStorage] saveQuizSession failed: $e');
+      debugPrintStack(stackTrace: st);
+      rethrow;
+    }
   }
 
   Future<void> deleteQuizSession(String sessionId) async {
-    await _quizHistoryBox.delete(sessionId);
+    debugPrint('[LocalStorage] deleteQuizSession: sessionId=$sessionId');
+    try {
+      await _quizHistoryBox.delete(sessionId);
+      debugPrint('[LocalStorage] deleteQuizSession: success for $sessionId');
+    } catch (e, st) {
+      debugPrint('[LocalStorage] deleteQuizSession failed: $e');
+      debugPrintStack(stackTrace: st);
+      rethrow;
+    }
   }
 
   Future<void> purgeInProgressQuizSessions({
@@ -68,20 +105,39 @@ class LocalStorageRepository {
     required String operationTypeName,
     String? exceptSessionId,
   }) async {
-    final keys = _quizHistoryBox.keys.toList(growable: false);
-    for (final key in keys) {
+    debugPrint(
+      '[LocalStorage] purgeInProgressQuizSessions: userId=$userId, '
+      'operationTypeName=$operationTypeName, exceptSessionId=$exceptSessionId',
+    );
+    try {
+      final keys = _quizHistoryBox.keys.toList(growable: false);
+      debugPrint('[LocalStorage] Quiz history has ${keys.length} sessions');
+      for (final key in keys) {
       final value = _quizHistoryBox.get(key);
-      if (value is! Map) continue;
+      
+      // Validate before accessing fields
+      final session = _validateQuizSession(value);
+      if (session == null) {
+        // Silently skip/delete corrupted entries
+        await _quizHistoryBox.delete(key);
+        continue;
+      }
 
-      if (value['userId'] != userId) continue;
-      if (value['operationType'] != operationTypeName) continue;
-      if (value['isComplete'] != false) continue;
+      if (session['userId'] != userId) continue;
+      if (session['operationType'] != operationTypeName) continue;
+      if (session['isComplete'] != false) continue;
 
-      if (exceptSessionId != null && value['sessionId'] == exceptSessionId) {
+      if (exceptSessionId != null && session['sessionId'] == exceptSessionId) {
         continue;
       }
 
       await _quizHistoryBox.delete(key);
+      }
+    debugPrint('[LocalStorage] purgeInProgressQuizSessions completed');
+    } catch (e, st) {
+      debugPrint('[LocalStorage] purgeInProgressQuizSessions failed: $e');
+      debugPrintStack(stackTrace: st);
+      rethrow;
     }
   }
 
@@ -95,7 +151,8 @@ class LocalStorageRepository {
       final top = <Map<String, dynamic>>[]; // newest -> oldest
 
       for (final value in _quizHistoryBox.values) {
-        final session = _tryAsStringKeyedMap(value);
+        // Validate before accessing
+        final session = _validateQuizSession(value);
         if (session == null) continue;
         if (session['userId'] != userId) continue;
 
@@ -128,7 +185,8 @@ class LocalStorageRepository {
     // Full list requested.
     final allSessions = <Map<String, dynamic>>[];
     for (final value in _quizHistoryBox.values) {
-      final session = _tryAsStringKeyedMap(value);
+      // Validate before accessing
+      final session = _validateQuizSession(value);
       if (session == null) continue;
       if (session['userId'] != userId) continue;
       allSessions.add(session);
@@ -147,7 +205,9 @@ class LocalStorageRepository {
     final keys = _quizHistoryBox.keys.toList(growable: false);
     for (final key in keys) {
       final value = _quizHistoryBox.get(key);
-      if (value is Map && value['userId'] == userId) {
+      // Validate before accessing
+      final session = _validateQuizSession(value);
+      if (session != null && session['userId'] == userId) {
         await _quizHistoryBox.delete(key);
       }
     }

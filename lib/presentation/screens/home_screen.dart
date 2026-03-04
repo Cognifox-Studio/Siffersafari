@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/app_theme_provider.dart';
+import '../../core/providers/audio_service_provider.dart';
 import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
@@ -15,6 +16,7 @@ import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 import '../dialogs/create_user_dialog.dart';
+import '../widgets/interactive_mascot.dart';
 import '../widgets/mascot_view.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'onboarding_screen.dart';
@@ -79,10 +81,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load existing users
+    // Load existing users and start background music
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final notifier = ref.read(userProvider.notifier);
       await notifier.loadUsers();
+
+      // Start background music when home screen loads
+      ref.read(audioServiceProvider).playMusic();
     });
   }
 
@@ -125,7 +130,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       missingNumberEnabledProvider(user.userId),
     );
 
-        ref.read(quizProvider.notifier).startSession(
+    ref.read(quizProvider.notifier).startSession(
           userId: user.userId,
           ageGroup: effectiveAgeGroup,
           gradeLevel: user.gradeLevel,
@@ -316,11 +321,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               const SizedBox(height: AppConstants.defaultPadding),
               SizedBox(
                 height: 120,
-                child: MascotView(
+                child: InteractiveMascot(
                   asset: characterAsset,
-                  frames: _mascotIdleFramesFor(characterAsset),
+                  idleFrames: _mascotIdleFramesFor(characterAsset),
                   height: 120,
-                  fit: BoxFit.contain,
                 ),
               ),
               const SizedBox(height: AppConstants.smallPadding),

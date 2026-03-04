@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/providers/data_export_service_provider.dart';
 import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
@@ -38,6 +39,11 @@ class ParentDashboardScreen extends ConsumerWidget {
             icon: const Icon(Icons.settings),
           ),
           IconButton(
+            tooltip: 'Exportera data (GDPR)',
+            onPressed: () => _showExportDialog(context, ref, user?.userId),
+            icon: const Icon(Icons.download),
+          ),
+          IconButton(
             tooltip: 'Byt PIN',
             onPressed: () {
               Navigator.of(context).push(
@@ -64,6 +70,108 @@ class ParentDashboardScreen extends ConsumerWidget {
           : _DashboardBody(userId: user.userId),
     );
   }
+
+  static void _showExportDialog(
+    BuildContext context,
+    WidgetRef ref,
+    String? userId,
+  ) {
+    if (userId == null) return;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Exportera data'),
+        content: const Text(
+          'Ladda ned dina data i JSON-format. '
+          'Alla dina svar och profiluppgifter (men inte lösenord) kommer att sparas.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Avbryt'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _performExport(context, ref, userId, fullData: false);
+            },
+            child: const Text('Metadata'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              _performExport(context, ref, userId, fullData: true);
+            },
+            child: const Text('Allt'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  static Future<void> _performExport(
+    BuildContext context,
+    WidgetRef ref,
+    String userId, {
+    required bool fullData,
+  }) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => const AlertDialog(
+        title: Text('Exporterar...'),
+        content: SizedBox(
+          height: 50,
+          child: Center(child: CircularProgressIndicator()),
+        ),
+      ),
+    );
+
+    try {
+      final exportService = ref.read(dataExportServiceProvider);
+      final filePath = fullData
+          ? await exportService.exportUserDataAsJson(userId)
+          : await exportService.exportUserMetadataAsJson(userId);
+
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // Close progress dialog
+
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Export slutfört'),
+          content: Text(
+            'Din data har sparats till:\n\n$filePath\n\n'
+            'Filen är en JSON-fil som kan öppnas i valfri textredigerare.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      Navigator.of(context).pop(); // Close progress dialog
+
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Exportfel'),
+          content: Text('Kunde inte exportera data: $e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
 }
 
 class _DashboardBody extends ConsumerWidget {
@@ -84,9 +192,9 @@ class _DashboardBody extends ConsumerWidget {
     final repo = ref.read(localStorageRepositoryProvider);
     final recentHistory = repo.getQuizHistory(userId, limit: 50);
     final history = recentHistory
-      .where((s) => s['isComplete'] != false)
-      .take(5)
-      .toList(growable: false);
+        .where((s) => s['isComplete'] != false)
+        .take(5)
+        .toList(growable: false);
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);
 
     final settingsNotifier = ref.read(parentSettingsProvider.notifier);
@@ -733,8 +841,8 @@ class _BenchmarkSection extends ConsumerWidget {
             stored ?? DifficultyConfig.minDifficultyStep,
           );
           final stats = _successRateFromLatestQuestions(op);
-          final hasEnough =
-              stats.answered >= DifficultyConfig.trainingRecommendationMinQuestions;
+          final hasEnough = stats.answered >=
+              DifficultyConfig.trainingRecommendationMinQuestions;
 
           final recommendedStep = !hasEnough
               ? null
@@ -753,8 +861,10 @@ class _BenchmarkSection extends ConsumerWidget {
             difficultyStep: indicatorStep,
           );
 
-          final valueText = DifficultyConfig.benchmarkLevelLabel(benchmark.level);
-          final recommendationText = DifficultyConfig.benchmarkRecommendationText(
+          final valueText =
+              DifficultyConfig.benchmarkLevelLabel(benchmark.level);
+          final recommendationText =
+              DifficultyConfig.benchmarkRecommendationText(
             level: benchmark.level,
             operation: op,
           );
@@ -788,7 +898,8 @@ class _BenchmarkSection extends ConsumerWidget {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: AppConstants.microSpacing4),
+                  padding:
+                      const EdgeInsets.only(top: AppConstants.microSpacing4),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
@@ -797,62 +908,65 @@ class _BenchmarkSection extends ConsumerWidget {
                           hasEnough
                               ? 'Underlag (senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågor): ${_percentLabel(stats.rate!)} rätt.'
                               : 'Underlag: ${stats.answered}/${DifficultyConfig.trainingRecommendationMinQuestions} frågor (just nu: ${_percentLabel(stats.rate!)} rätt).',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: subtleOnPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: subtleOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
                       if (stats.rate != null)
                         const SizedBox(height: AppConstants.microSpacing2),
                       if (recommendedStep != null)
                         Text(
                           '${op.displayName}: Steg $currentStep • Förslag (utifrån barnets svar): Steg $recommendedStep',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: subtleOnPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: subtleOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         )
                       else
                         Text(
                           '${op.displayName}: Steg $currentStep • Spela minst ${DifficultyConfig.trainingRecommendationMinQuestions} frågor för ett förslag.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: subtleOnPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: subtleOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                         ),
-                          if (recommendedStep != null)
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppConstants.microSpacing2,
-                              ),
-                              child: Text(
-                                'Indikatorn (Under/I linje/Över) bygger nu på förslaget (Steg $recommendedStep).',
-                                style:
-                                    Theme.of(context).textTheme.bodySmall?.copyWith(
-                                          color: subtleOnPrimary,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                              ),
-                            ),
+                      if (recommendedStep != null)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: AppConstants.microSpacing2,
+                          ),
+                          child: Text(
+                            'Indikatorn (Under/I linje/Över) bygger nu på förslaget (Steg $recommendedStep).',
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: subtleOnPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                          ),
+                        ),
                       const SizedBox(height: AppConstants.microSpacing6),
                       Row(
                         children: [
                           Expanded(
                             child: OutlinedButton(
-                              onPressed:
-                                  (currentStep <= DifficultyConfig.minDifficultyStep)
-                                      ? null
-                                      : () => updateStep(op, -1),
+                              onPressed: (currentStep <=
+                                      DifficultyConfig.minDifficultyStep)
+                                  ? null
+                                  : () => updateStep(op, -1),
                               child: const Text('Lättare'),
                             ),
                           ),
                           const SizedBox(width: AppConstants.smallPadding),
                           Expanded(
                             child: OutlinedButton(
-                              onPressed:
-                                  (currentStep >= DifficultyConfig.maxDifficultyStep)
-                                      ? null
-                                      : () => updateStep(op, 1),
+                              onPressed: (currentStep >=
+                                      DifficultyConfig.maxDifficultyStep)
+                                  ? null
+                                  : () => updateStep(op, 1),
                               child: const Text('Svårare'),
                             ),
                           ),
@@ -864,7 +978,8 @@ class _BenchmarkSection extends ConsumerWidget {
                 if (benchmark.level != GradeBenchmarkLevel.inline &&
                     recommendationText.isNotEmpty)
                   Padding(
-                    padding: const EdgeInsets.only(top: AppConstants.microSpacing2),
+                    padding:
+                        const EdgeInsets.only(top: AppConstants.microSpacing2),
                     child: Text(
                       recommendationText,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(

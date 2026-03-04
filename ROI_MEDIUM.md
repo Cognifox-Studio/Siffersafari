@@ -88,10 +88,13 @@
   - [ ] Verifiera och markera klar
 
 ## Developer Experience
-- [ ] Förbättra loggning för felsökning
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [x] Förbättra loggning för felsökning — **KLAR: Strukturerad [LogPrefix] loggning i LocalStorageRepository, QuizNotifier, UserNotifier**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+  - [x] Lägg till loggning i LocalStorageRepository (saveQuizSession, deleteQuizSession, purgeInProgressQuizSessions)
+  - [x] Lägg till loggning i QuizNotifier (_persistInProgressSession, startSession, startCustomSession, submitAnswer)
+  - [x] Lägg till loggning i UserNotifier (applyQuizResult, deleteQuizSession, saveQuizSession)
 - [ ] Skapa fler exempelprofiler för testning
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen

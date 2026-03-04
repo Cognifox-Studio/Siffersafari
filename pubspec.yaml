@@ -39,6 +39,7 @@ dependencies:
   get_it: ^7.6.4
   uuid: ^4.2.1
   crypto: ^3.0.3
+  bcrypt: ^1.2.0
 
 dev_dependencies:
   flutter_test:

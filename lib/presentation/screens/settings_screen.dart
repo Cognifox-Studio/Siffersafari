@@ -258,6 +258,119 @@ class SettingsScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+            const SizedBox(height: AppConstants.defaultPadding),
+            if (user != null)
+              Container(
+                decoration: BoxDecoration(
+                  color: onPrimary.withValues(alpha: AppOpacities.panelFill),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.borderRadius),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ListTile(
+                      title: Text(
+                        'Om appen',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      title: Text(
+                        'Sekretesspolicy',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: onPrimary,
+                            ),
+                      ),
+                      subtitle: Text(
+                        'Läs om hur vi hanterar data',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: subtleOnPrimary,
+                            ),
+                      ),
+                      leading: Icon(
+                        Icons.privacy_tip_outlined,
+                        color: mutedOnPrimary,
+                      ),
+                      trailing: Icon(Icons.open_in_new, color: mutedOnPrimary),
+                      onTap: () async {
+                        // In future: open Privacy Policy link or web view
+                        // For now, show a dialog with basic info
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text(
+                                'Sekretesspolicy: Vi sparar all data lokalt på din enhet. Ingen data skickas till servern.',
+                              ),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const Divider(height: 1),
+                    ListTile(
+                      title: Text(
+                        'Radera all data',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Colors.red.shade400,
+                            ),
+                      ),
+                      subtitle: Text(
+                        'Radera alla profiler och data permanent',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: subtleOnPrimary,
+                            ),
+                      ),
+                      leading:
+                          Icon(Icons.delete_outline, color: Colors.red.shade400),
+                      onTap: () {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Radera all data?'),
+                            content: const Text(
+                              'Detta tar bort alla profiler, quiz-resultat och inställningar. '
+                              'Denna åtgärd kan inte ångras.',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Avbryt'),
+                              ),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.of(context).pop();
+                                  // TODO: Implement clearAllData when needed
+                                  // await ref
+                                  //     .read(userProvider.notifier)
+                                  //     .clearAllData();
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('Funktion inte implementerad än.'),
+                                      ),
+                                    );
+                                  }
+                                },
+                                child: Text(
+                                  'Radera',
+                                  style: TextStyle(color: Colors.red.shade400),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),

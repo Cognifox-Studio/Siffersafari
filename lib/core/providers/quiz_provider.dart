@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -91,8 +92,15 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required String userId,
     required QuizSession session,
   }) {
+    debugPrint(
+      '[QuizNotifier] _persistInProgressSession: '
+      'userId=$userId, operationType=${session.operationType.name}',
+    );
     final answered = session.correctAnswers + session.wrongAnswers;
-    if (answered <= 0) return;
+    if (answered <= 0) {
+      debugPrint('[QuizNotifier] _persistInProgressSession: no answers yet, skipping');
+      return;
+    }
 
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
@@ -146,6 +154,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
   }) {
+    debugPrint(
+      '[QuizNotifier] startSession: userId=$userId, '
+      'operation=${operationType.name}, difficulty=${difficulty.name}',
+    );
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
       operationTypeName: operationType.name,
@@ -241,7 +253,14 @@ class QuizNotifier extends StateNotifier<QuizState> {
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
   }) {
-    if (questions.isEmpty) return;
+    debugPrint(
+      '[QuizNotifier] startCustomSession: userId=$userId, '
+      'operation=${operationType.name}, questions=${questions.length}',
+    );
+    if (questions.isEmpty) {
+      debugPrint('[QuizNotifier] startCustomSession: empty questions list, skipping');
+      return;
+    }
 
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
@@ -318,10 +337,17 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required AgeGroup ageGroup,
   }) {
     final session = state.session;
-    if (session == null || session.currentQuestion == null) return;
+    if (session == null || session.currentQuestion == null) {
+      debugPrint('[QuizNotifier] submitAnswer: no active session');
+      return;
+    }
 
     final question = session.currentQuestion!;
     final isCorrect = question.isCorrect(answer);
+    debugPrint(
+      '[QuizNotifier] submitAnswer: question=${question.id}, '
+      'answer=$answer, correct=$isCorrect, time=${responseTime.inSeconds}s',
+    );
 
     if (isCorrect) {
       _audioService.playCorrectSound();
@@ -398,6 +424,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     final userId = state.userId;
     if (userId != null && userId.isNotEmpty) {
+      debugPrint('[QuizNotifier] submitAnswer: persisting session for userId=$userId');
       _persistInProgressSession(userId: userId, session: updatedSession);
     }
   }

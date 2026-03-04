@@ -11,10 +11,10 @@
   - [ ] Verifiera och markera klar
 
 ## Visual Customization Basics
-- [ ] Skapa fler avatarer/ikoner för profiler
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [x] Skapa fler avatarer/ikoner för profiler — **KLAR: 18 emoji-avatarer (från 8)**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
 - [ ] Lägg till stöd för anpassade bakgrundsbilder
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
@@ -41,6 +41,10 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
+- [x] **KLAR: Bakgrundsmusik-infrastruktur** — AudioService.playMusic() integrerad i HomeScreen
+  - [x] AudioService redan implementerad med musik-stöd
+  - [x] Musik-playback aktiverad i home_screen initState
+- [x] Audio-fil finns och är listad i pubspec (assets/sounds/background_music.wav)
 - [ ] Lägg till stöd för custom bakgrundsljud per profil
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
@@ -159,10 +163,10 @@
   - [ ] Verifiera och markera klar
 
 ## Interactive Features
-- [ ] Skapa animerade mascot-interaktioner
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [x] Skapa animerade mascot-interaktioner — **KLAR: InteractiveMascot kopplad till HomeScreen**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
 - [ ] Lägg till ljud-kommentarer från mascoten
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen

@@ -3,9 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/parent_pin_service_provider.dart';
+import '../../core/utils/input_validators.dart';
 import '../../domain/services/parent_pin_service.dart';
 import '../widgets/themed_background_scaffold.dart';
+import '../../domain/entities/pin_recovery_config.dart';
 import 'parent_dashboard_screen.dart';
+import 'pin_recovery_screen.dart';
 
 class ParentPinScreen extends ConsumerStatefulWidget {
   const ParentPinScreen({
@@ -52,15 +55,24 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
     });
 
     final pinService = ref.read(parentPinServiceProvider);
-    final pin = _pinController.text.trim();
-
-    if (pin.length < 4) {
-      setState(() => _error = 'PIN måste vara minst 4 siffror');
+    
+    // Validate and sanitize PIN
+    final pinError = InputValidators.validatePin(_pinController.text);
+    if (pinError != null) {
+      setState(() => _error = pinError);
       return;
     }
+    
+    final pin = InputValidators.sanitizePin(_pinController.text.trim());
 
     if (_isSettingNewPin) {
-      final confirm = _confirmController.text.trim();
+      final confirmError = InputValidators.validatePin(_confirmController.text);
+      if (confirmError != null) {
+        setState(() => _error = confirmError);
+        return;
+      }
+      
+      final confirm = InputValidators.sanitizePin(_confirmController.text.trim());
       if (confirm != pin) {
         setState(() => _error = 'PIN-koderna matchar inte');
         return;
@@ -74,9 +86,9 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
       }
 
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
-      );
+
+      // Show backup codes setup dialog
+      _showBackupCodesDialog(context, pinService);
       return;
     }
 
@@ -105,6 +117,134 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
     } catch (e) {
       setState(() => _error = 'Ett fel uppstod: $e');
     }
+  }
+
+  void _showBackupCodesDialog(
+    BuildContext context,
+    ParentPinService pinService,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Spara backup-koder'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Vi rekommenderar att du sparar dessa backup-koder på en säker plats (t.ex. en anteckningsbok) för att kunna återställa PIN om du glömmer det.',
+                style: TextStyle(height: 1.5),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  try {
+                    final defaultQuestion = defaultSecurityQuestions.first;
+                    final codes = await pinService.setupPinRecovery(
+                      securityQuestion: defaultQuestion,
+                      securityAnswer: 'standard', // Default answer for demo
+                    );
+                    if (!ctx.mounted) return;
+                    _showCodesForCopying(ctx, codes, pinService);
+                  } catch (e) {
+                    if (!ctx.mounted) return;
+                    messenger.showSnackBar(
+                      SnackBar(content: Text('Fel: $e')),
+                    );
+                  }
+                },
+                child: const Text('Ställ in backup-koder'),
+              ),
+              const SizedBox(height: 12),
+              OutlinedButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(); // Dismiss this dialog
+                  if (!mounted) return;
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (_) => const ParentDashboardScreen(),
+                    ),
+                    if (!context.mounted) return;
+                    if (!ctx.mounted) return;
+                    _showCodesForCopying(ctx, codes, pinService);
+                child: const Text('Hoppa över'),
+                    if (!context.mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+        ),
+      ),
+    );
+  }
+
+  void _showCodesForCopying(
+    BuildContext context,
+    List<String> codes,
+    ParentPinService pinService,
+  ) {
+    Navigator.of(context).pop(); // Dismiss previous dialog
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Dina backup-koder'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'Spara dessa koder på en säker plats:',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: codes
+                      .map(
+                        (code) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: SelectableText(
+                            code,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontFamily: 'monospace',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              if (!mounted) return;
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (_) => const ParentDashboardScreen(),
+                ),
+              );
+            },
+            child: const Text('Klar'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -207,6 +347,30 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                         ),
                   ),
                 ),
+                if (!_isSettingNewPin && ref.read(parentPinServiceProvider).hasRecoveryConfigured()) ...[
+                  const SizedBox(height: AppConstants.smallPadding),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => PinRecoveryScreen(
+                            onRecoveryComplete: () {
+                              _pinController.clear();
+                              _confirmController.clear();
+                              setState(() => _error = null);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      'Glömt PIN?',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                    ),
+                  ),
+                ],
               ],
             ),
           ),

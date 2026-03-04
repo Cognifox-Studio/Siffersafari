@@ -49,6 +49,34 @@ class _InMemoryLocalStorageRepository extends LocalStorageRepository {
   }
 
   @override
+  Future<void> deleteQuizSession(String sessionId) async {
+    _quizHistory.remove(sessionId);
+  }
+
+  @override
+  Future<void> purgeInProgressQuizSessions({
+    required String userId,
+    required String operationTypeName,
+    String? exceptSessionId,
+  }) async {
+    final keys = _quizHistory.keys.toList(growable: false);
+    for (final key in keys) {
+      final session = _quizHistory[key];
+      if (session == null) continue;
+
+      if (exceptSessionId != null && session['sessionId'] == exceptSessionId) {
+        continue;
+      }
+
+      if (session['userId'] != userId) continue;
+      if (session['operationType'] != operationTypeName) continue;
+      if (session['isComplete'] != false) continue;
+
+      _quizHistory.remove(key);
+    }
+  }
+
+  @override
   List<Map<String, dynamic>> getQuizHistory(String userId, {int? limit}) {
     final allSessions = _quizHistory.values
         .where((session) => session['userId'] == userId)

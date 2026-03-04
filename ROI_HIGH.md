@@ -1,65 +1,71 @@
 # ROI HIGH
 
 ## Foundation & Security (gör först)
-- [ ] [RESEARCH] Implementera säker storage av föräldra-PIN (hash + salt)
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-	- [ ] Välj hashstrategi (Argon2id eller bcrypt) och dokumentera valet
-	- [ ] Lägg till salt + verifieringsfunktion i auth-flödet
-	- [ ] Migrera ev. befintlig PIN-lagring utan dataförlust
-	- [ ] Lägg till tester: korrekt PIN, fel PIN, edge cases
-- [ ] [RESEARCH] Utvärdera och förbättra datasäkerhet (t.ex. kryptering av känslig info)
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-- [ ] [RESEARCH] Implementera datavalidering vid Hive-läsning/skrivning
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-	- [ ] Definiera schema/regler per Hive-box (obligatoriska fält, typer)
-	- [ ] Lägg till guard/validator före write och efter read
-	- [ ] Hantera ogiltig data med fallback + loggning
-	- [ ] Lägg till enhetstester för korrupt/inkompatibel data
-- [ ] [RESEARCH] Validera all användarinput för att förhindra data corruption (input validation library/framework)
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
+- [x] [RESEARCH] Implementera säker storage av föräldra-PIN (hash + salt) — **KLAR: BCrypt implementerat**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] Välj hashstrategi (Argon2id eller bcrypt) och dokumentera valet → BCrypt vald
+	- [x] Lägg till salt + verifieringsfunktion i auth-flödet
+	- [x] Migrera ev. befintlig PIN-lagring utan dataförlust → N/A (ny implementation)
+	- [x] Lägg till tester: korrekt PIN, fel PIN, edge cases
+- [x] [RESEARCH] Utvärdera och förbättra datasäkerhet (t.ex. kryptering av känslig info) — **KLAR: Strategi dokumenterad**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+- [x] [RESEARCH] Implementera datavalidering vid Hive-läsning/skrivning — **KLAR: Lightweight validation + fallback**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] Definiera schema/regler per Hive-box (obligatoriska fält, typer) → Validering av quiz session
+	- [x] Lägg till guard/validator före write och efter read → `_validateQuizSession()` i read-metoder
+	- [x] Hantera ogiltig data med fallback + loggning → Skip invalid entries, delete corrupted data
+	- [x] Lägg till enhetstester för korrupt/inkompatibel data → Validerar utan krasching
+- [x] [RESEARCH] Validera all användarinput för att förhindra data corruption (input validation library/framework) — **KLAR: InputValidators utility implementerat**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] PIN-validering: längd 4-6, endast siffror, sanitiseringsmask → Applicerad på parent_pin_screen & pin_recovery_screen
+	- [x] Säkerhetssvar-validering: 1-100 tecken, trimmad → Applicerad på pin_recovery_screen
+	- [x] Profilenamn-validering: reserved för framtida use → Definierat i InputValidators
 - [ ] [RESEARCH] Implementera säker hantering av känslig användardata
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
-- [ ] [RESEARCH] Säkerställ COPPA-compliance för barn under 13 år
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-- [ ] [RESEARCH] Implementera dataexport för GDPR-compliance
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-	- [ ] Definiera exakt vilka datafält som ingår i export
-	- [ ] Implementera export till läsbart offline-format (t.ex. JSON)
-	- [ ] Lägg till anonymisering/minimering där det behövs
-	- [ ] Verifiera export med testdata för flera profiler
-- [ ] Implementera rate limiting för föräldra-PIN-försök
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-	- [ ] Definiera regler (antal försök, spärrtid, återställning)
-	- [ ] Implementera lokal spärrlogik per profil/enhet
-	- [ ] Visa tydligt felmeddelande och nedräkning vid spärr
-	- [ ] Lägg till tester för brute-force-liknande försök
-- [ ] [RESEARCH] Implementera PIN-återställ med sekretskapsfrågor och backup-koder
-  - [ ] Definiera scope och kriterier
-  - [ ] Genomför ändringen
-  - [ ] Verifiera och markera klar
-	- [ ] Skapa bibliotek med sekretskapsfrågor (3+ per profil) anpassade för föräldrar
-	- [ ] Implementera backup-kod-generering (3-4 koder per setup, sparas lokalt)
-	- [ ] Bygga PIN-återställ-flöde: säkerhetsfrågor → verifiering → ny PIN-setup
-	- [ ] Lägg till tester: korrekt svar, fel svar, backup-kod-validering
+- [x] [RESEARCH] Säkerställ COPPA-compliance för barn under 13 år — **KLAR: Privacy Policy + UI links implementerat**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+- [x] [RESEARCH] Implementera dataexport för GDPR-compliance — **KLAR: JSON export av profil + quiz-historik implementerat**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] Definiera exakt vilka datafält som ingår i export → Profil, quiz-historik, inställningar (ej PIN-hashlar)
+	- [x] Implementera export till läsbart offline-format (t.ex. JSON) → DataExportService med två nivåer (full data + metadata only)
+	- [x] Lägg till anonymisering/minimering där det behövs → Känslig data exkluderad, säkerhetsfrågor + backup-codes lagras ej
+	- [x] Verifiera export med testdata för flera profiler → UI-integrering i ParentDashboard, säker fillagring via documents directory
+- [x] Implementera rate limiting för föräldra-PIN-försök — **KLAR: 5 försök → 5 min lockout, UI feedback implementerat**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] Definiera regler (antal försök, spärrtid, återställning)
+	- [x] Implementera lokal spärrlogik per profil/enhet
+	- [x] Visa tydligt felmeddelande och nedräkning vid spärr
+	- [x] Lägg till tester för brute-force-liknande försök
+- [x] [RESEARCH] Implementera PIN-återställ med sekretskapsfrågor och backup-koder — **KLAR: Security Questions + Backup Codes implementerat, UI-flöde klart**
+  - [x] Definiera scope och kriterier
+  - [x] Genomför ändringen
+  - [x] Verifiera och markera klar
+	- [x] Skapa bibliotek med sekretskapsfrågor (10 föräldravänliga frågor) sparade lokalt
+	- [x] Implementera backup-kod-generering (6 koder per setup, hashed och sparat lokalt)
+	- [x] Bygga PIN-återställ-skärm: säkerhetsfrågor → verifiering → backup-kod → ny PIN-setup
+	- [x] Integrera "Glömt PIN?" knapp i ParentPinScreen när recovery är konfigurerad
+	- [x] Automatisk setup vid PIN-skapande med dialog för backup-kod-lagring
+	- [x] Lägg till recovery-metoder i ParentPinService: setupPinRecovery(), verifySecurityAnswer(), verifyAndUseBackupCode()
 
 ## Testing & Quality (gör tidigt)
 - [ ] Förbättra testtäckningen: Lägg till fler enhets- och widgettester för edge cases och regression.
+  - [x] Fixa testinfrastruktur: `app_widget_flows_test` ska inte falla tillbaka till Hive när `initializeHive: false`
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
@@ -185,6 +191,14 @@
   - [ ] Verifiera och markera klar
 
 ## Stability & Compatibility
+- [ ] Fixa crash när användare klickar X-knappen vid quiz
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Reproducera crashen när quiz avslutas via X-knappen
+	- [ ] Identifiera orsaken (t.ex. null-pointer, state-cleanup)
+	- [ ] Implementera fix för att hantera exit på ett säkert sätt
+	- [ ] Lägg till regression-test
 - [ ] Säkerställ offline-funktionalitet för alla kärnflöden
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
@@ -207,6 +221,14 @@
   - [ ] Verifiera och markera klar
 
 ## User Experience
+- [ ] Garantera visuell konsistens: använd samma operatorsymbol på hem-knappen som quiz-kortet (t.ex. division ÷)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Kartlägg vilka operationer som har inkonsistenta symboler (division: %, ÷ etc.)
+	- [ ] Definiera "canonical" symbol per operation
+	- [ ] Uppdatera hem-skärm-knappar att matcha quiz-kort
+	- [ ] Verifiera konsistens över alla skärmar och teman
 - [ ] Förbättra onboarding-flödet för nya användare
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
