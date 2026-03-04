@@ -30,6 +30,7 @@
 - [ ] Skapa fler exempelprofiler för testning
 - [ ] Skapa en "reset app"-funktion för test/demo
 - [ ] Implementera smart retry-logik för misslyckade operationer
+- [ ] Bryt ner prioriterade todos i mini-checklistor (tydlig definition av klar per punkt)
 
 ## Core Features & UX Improvements
 - [ ] Lägg till stöd för export/import av användardata
