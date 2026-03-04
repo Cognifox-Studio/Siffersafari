@@ -80,6 +80,32 @@
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
 
+## Progression System Polish
+- [ ] Säkerställ tema-konsistens mellan nivåer (rymd) och uppdrag (djungel)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Bestäm huvudtema: helt rymd ELLER helt djungel
+	- [ ] Uppdatera alla quest-titlar till valt tema
+	- [ ] Uppdatera alla nivå-titlar till valt tema
+	- [ ] Verifiera tema-konsistens i hela appen (UI, ikoner, ljud)
+- [ ] Förbättra uppdragstitlar för mer engagerande språk
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Granska alla 8+ befintliga quest-titlar
+	- [ ] Skriv om titlar för att vara mer spännande och barnvänliga
+	- [ ] Testa nya titlar med målgrupp (eller pedagogisk granskning)
+	- [ ] Uppdatera QuestDefinition med nya titlar och beskrivningar
+- [ ] Lägg till alternativa nivåtitel-teman (personalisering)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Skapa 2-3 alternativa tema-set (t.ex. djungel, hav, fantasy)
+	- [ ] Lägg till tema-väljare i profilinställningar
+	- [ ] Implementera dynamiskt byte av levelTitles baserat på valt tema
+	- [ ] Testa att tema-byte fungerar och sparas korrekt
+
 ## Animation & Visual Effects
 - [ ] Skapa fler belöningsanimationer
   - [ ] Definiera scope och kriterier

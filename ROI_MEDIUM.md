@@ -148,6 +148,56 @@
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
+
+## Progression System Improvements
+- [ ] Utöka nivåsystemet med fler nivåer (15-20 för långsiktig motivation)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Utforma nya nivåtitlar (nivå 11-20) med rymdtema
+	- [ ] Uppdatera levelTitles-listan i UserProgress
+	- [ ] Verifiera att progressberäkning fungerar för fler nivåer
+	- [ ] Testa med höga poängsummor för att säkerställa inga index-fel
+- [ ] Implementera nivå-upp belöningar och celebrationer (ljud, animation, feedback)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Skapa nivå-upp celebration-dialog med animation
+	- [ ] Lägg till nivå-upp ljud och visuella effekter
+	- [ ] Implementera belöningar vid nivå-upp (unlocks, bonus-poäng)
+	- [ ] Visa "Du har uppnått [ny titel]!" med tydlig feedback
+- [ ] Utöka uppdragssystemet med hard-quests för Åk 5+
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Skapa hard-quests för alla 4 operationer (8 nya quests totalt)
+	- [ ] Definiera engagerande titlar för hard-quests (rymd/djungeltema)
+	- [ ] Uppdatera questsForUser() för att inkludera hard-quests för Åk 5+
+	- [ ] Testa att hard-quests bara visas för rätt årskurser
+- [ ] Lägg till Mix-quests som kräver flera operationer samtidigt
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Skapa QuestDefinition för Mix-quests (easy+medium+hard)
+	- [ ] Definiera requiredMastery för att låsa upp Mix-quests
+	- [ ] Implementera logik för att spåra mix-prestanda
+	- [ ] Testa att Mix-quests fungerar korrekt med flera operationstyper
+- [ ] Balansera poäng per nivå baserat på faktisk speldata
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Samla in data: genomsnittlig tid till nivå-upp för testanvändare
+	- [ ] Analysera om 200 poäng/nivå känns lagom eller för långsamt/snabbt
+	- [ ] Justera pointsPerLevel-konstanten baserat på analys
+	- [ ] Verifiera att progression känns belönande men inte för lätt
+- [ ] Förbättra visualisering av uppdragsprogress (tydligare feedback)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Lägg till detaljerad progress-indicator (X% till målet)
+	- [ ] Visa hur många fler rätt svar som behövs för quest completion
+	- [ ] Implementera milestone-feedback (25%, 50%, 75%, 100%)
+	- [ ] Testa att feedback uppdateras korrekt efter varje quiz
 - [ ] Skapa visuella progress bars för användarmål
   - [ ] Definiera scope och kriterier
   - [ ] Genomför ändringen

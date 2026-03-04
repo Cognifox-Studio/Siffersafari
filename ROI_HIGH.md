@@ -92,6 +92,24 @@
   - [ ] Genomför ändringen
   - [ ] Verifiera och markera klar
 
+## Progression & Motivation (kritiskt för engagement)
+- [ ] Definiera och implementera belöningar för quest-klarande (vad händer när uppdrag slutförs?)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Bestäm belöningstyper: poäng, achievements, theme unlocks, ljudeffekter
+	- [ ] Implementera quest completion-logik med belöningsutdelning
+	- [ ] Skapa celebration-UI (animation, ljud, visuell feedback)
+	- [ ] Testa att belöningar tilldelas korrekt och sparas i Hive
+- [ ] Validera att quest-progression är pedagogiskt meningsfull för alla årskurser (Åk 1-9)
+  - [ ] Definiera scope och kriterier
+  - [ ] Genomför ändringen
+  - [ ] Verifiera och markera klar
+	- [ ] Granska quest-ordning per årskurs (Åk 1-2: easy, Åk 3-4: easy+medium, etc.)
+	- [ ] Verifiera att svårighetsgrad ökar gradvis och logiskt
+	- [ ] Testa quest-progression med testprofiler för varje Åk-nivå
+	- [ ] Justera quest-krav (requiredMastery) om något är för lätt/svårt
+
 ## Error Handling & Monitoring
 - [ ] [RESEARCH] Implementera robust felhantering och användarvänliga felmeddelanden
   - [ ] Definiera scope och kriterier
