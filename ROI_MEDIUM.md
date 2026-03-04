@@ -2,3 +2,23 @@
 
 - [ ] Automatisera QA: Sätt upp CI/CD-flöde med automatiska tester och kodanalys vid varje commit.
 - [ ] Optimera prestanda: Mät och förbättra laddningstider, minnesanvändning och animationer.
+- [ ] Lägg till dark mode-stöd
+- [ ] Implementera stöd för större textstorlekar (accessibility)
+- [ ] Lägg till fler quiztyper (t.ex. mixade räknesätt)
+- [ ] Förbättra statistikvyn för användare och föräldrar
+- [ ] Lägg till stöd för export/import av användardata
+- [ ] Skapa fler exempelprofiler för testning
+- [ ] Lägg till stöd för push-notiser (lokalt)
+- [ ] Förbättra animationer och övergångar
+- [ ] Lägg till stöd för flera språk (minst engelska)
+- [ ] Skapa en "reset app"-funktion för test/demo
+- [ ] Lägg till möjlighet att rapportera buggar direkt i appen
+- [ ] Förbättra loggning för felsökning
+- [ ] Lägg till stöd för externa tangentbord
+- [ ] Skapa en "tips & tricks"-sektion i appen
+- [ ] Lägg till stöd för delning av resultat
+- [ ] Förbättra hantering av stora datamängder (många quiz/sessioner)
+- [ ] Lägg till stöd för olika färgteman
+- [ ] Skapa en "senaste ändringar"-vy för användare
+- [ ] Lägg till stöd för biometrisk inloggning (om relevant)
+- [ ] Förbättra testautomatisering för integrationstester
