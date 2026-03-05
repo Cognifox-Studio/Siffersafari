@@ -308,8 +308,7 @@ class SettingsScreen extends ConsumerWidget {
                     ),
                     const Divider(height: 1),
                     ListTile(
-                      title: Text(
-                        'Radera all data',
+                      title: Text(                        'Radera all data',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                               color: Colors.red.shade400,
                             ),
