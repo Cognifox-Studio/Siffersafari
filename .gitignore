@@ -77,3 +77,7 @@ assets/images/generated/
 
 # Local preview images (keep out of git)
 assets/images/themes/**/**/*_preview*.png
+
+# Signing keys (SECRET - never commit)
+android/upload-keystore.jks
+android/key.properties

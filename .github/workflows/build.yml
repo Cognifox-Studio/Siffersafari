@@ -1,0 +1,82 @@
+name: Build and Release APK
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
+      
+      - name: Get dependencies
+        run: flutter pub get
+      
+      - name: Analyze
+        run: flutter analyze
+      
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/upload-keystore.jks
+      
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=upload-key
+          storeFile=upload-keystore.jks
+          EOF
+      
+      - name: Build APK
+        run: flutter build apk --release
+      
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(grep "version:" pubspec.yaml | head -1 | sed 's/version: //g')
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          echo "VERSION=${VERSION}"
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          tag_name: v${{ steps.version.outputs.VERSION }}
+          name: Siffersafari ${{ steps.version.outputs.VERSION }}
+          body: |
+            ## Alpha Release
+            
+            **Version:** ${{ steps.version.outputs.VERSION }}
+            
+            ### How to install:
+            1. Download `app-release.apk` below
+            2. Transfer to your Android tablet
+            3. Open file manager, find the APK, and tap to install
+            4. If prompted about unknown sources, allow installation
+            
+            ### What's new:
+            - See commit history for details
+            
+            ### Feedback:
+            Test the app and report any issues!
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
