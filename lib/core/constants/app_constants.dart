@@ -46,7 +46,7 @@ class AppConstants {
   static const double difficultyDecreaseThreshold =
       LearningConstants.difficultyDecreaseThreshold;
 
-  // UI Constants
+  // UI Constants (delegated to UiConstants for convenience — single import point)
   static const double defaultPadding = UiConstants.defaultPadding;
   static const double smallPadding = UiConstants.smallPadding;
   static const double largePadding = UiConstants.largePadding;

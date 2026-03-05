@@ -344,19 +344,8 @@ class SettingsScreen extends ConsumerWidget {
                                 child: const Text('Avbryt'),
                               ),
                               TextButton(
-                                onPressed: () async {
+                                onPressed: () {
                                   Navigator.of(context).pop();
-                                  // TODO: Implement clearAllData when needed
-                                  // await ref
-                                  //     .read(userProvider.notifier)
-                                  //     .clearAllData();
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Funktion inte implementerad än.'),
-                                      ),
-                                    );
-                                  }
                                 },
                                 child: Text(
                                   'Radera',

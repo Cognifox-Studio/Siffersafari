@@ -252,10 +252,10 @@ flutter pub get
 
 2. **Läs dokumentationen:**
    - `docs/ARCHITECTURE.md` - Projektstruktur och design
-   - `TODO_KVAR.md` - Vad som behöver göras härnäst
+   - `docs/SESSION_BRIEF.md` - Status och nästa steg
 
 3. **Börja implementera:**
-   - Välj en uppgift från `TODO_KVAR.md`
+   - Välj en uppgift från roadmapen i `TODO.md`
    - (Valfritt) Skapa en ny branch: `git checkout -b feature/my-feature`
    - Implementera och testa
    - Commit: `git commit -m "feat: add my feature"`
@@ -271,7 +271,7 @@ flutter pub get
 
 För frågor eller problem, se:
 - `docs/ARCHITECTURE.md` - Teknisk dokumentation
-- `TODO_KVAR.md` - Kända issues och framtida features
+- `TODO.md` - Roadmap och framtida features
 - `docs/SESSION_BRIEF.md` - Kort status + nästa steg
 
 ---
