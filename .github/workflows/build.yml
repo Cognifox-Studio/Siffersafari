@@ -12,6 +12,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +36,14 @@ jobs:
         run: dart run build_runner build --delete-conflicting-outputs
       
       - name: Analyze
-        run: flutter analyze
+        run: flutter analyze --fatal-infos lib test integration_test
+
+      - name: Validate signing secrets
+        run: |
+          if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ] || [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then
+            echo "Missing KEYSTORE_BASE64 or KEYSTORE_PASSWORD secret"
+            exit 1
+          fi
       
       - name: Decode keystore
         run: |
