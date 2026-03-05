@@ -214,31 +214,105 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          // Progress bar
-          Padding(
-            padding: EdgeInsets.all(AppConstants.defaultPadding.w),
-            child: ProgressIndicatorBar(
-              progress: progress,
-              valueColor: accentColor,
-              backgroundColor:
-                  onPrimary.withValues(alpha: AppOpacities.progressTrack),
-            ),
-          ),
-
-          Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: AppConstants.defaultPadding.w,
-            ),
-            child: _buildPlayHud(
+      body: OrientationBuilder(
+        builder: (context, orientation) {
+          if (orientation == Orientation.portrait) {
+            return _buildPortraitLayout(
               context,
               question: question,
-              correctStreak: quizState.correctStreak,
-              speedBonusCount: quizState.speedBonusCount,
+              progress: progress,
+              quizState: quizState,
+              primaryActionColor: primaryActionColor,
+              accentColor: accentColor,
+              cardColor: cardColor,
+              cardBorderColor: cardBorderColor,
+              lightTextColor: lightTextColor,
+              mutedTextColor: mutedTextColor,
+              onPrimary: onPrimary,
+              scheme: scheme,
+            );
+          } else {
+            return _buildLandscapeLayout(
+              context,
+              question: question,
+              progress: progress,
+              quizState: quizState,
+              primaryActionColor: primaryActionColor,
+              accentColor: accentColor,
+              cardColor: cardColor,
+              cardBorderColor: cardBorderColor,
+              lightTextColor: lightTextColor,
+              mutedTextColor: mutedTextColor,
+              onPrimary: onPrimary,
+              scheme: scheme,
+            );
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildPortraitLayout(
+    BuildContext context, {
+    required Question question,
+    required double progress,
+    required QuizState quizState,
+    required Color primaryActionColor,
+    required Color accentColor,
+    required Color cardColor,
+    required Color cardBorderColor,
+    required Color lightTextColor,
+    required Color mutedTextColor,
+    required Color onPrimary,
+    required ColorScheme scheme,
+  }) {
+    return Column(
+      children: [
+        // Progress bar
+        Padding(
+          padding: EdgeInsets.all(AppConstants.defaultPadding.w),
+          child: ProgressIndicatorBar(
+            progress: progress,
+            valueColor: accentColor,
+            backgroundColor:
+                onPrimary.withValues(alpha: AppOpacities.progressTrack),
+          ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.defaultPadding.w,
+          ),
+          child: _buildPlayHud(
+            context,
+            question: question,
+            correctStreak: quizState.correctStreak,
+            speedBonusCount: quizState.speedBonusCount,
+          ),
+        ),
+
+        Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: AppConstants.defaultPadding.w,
+          ),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              _buildMissionText(
+                correctStreak: quizState.correctStreak,
+                speedBonusCount: quizState.speedBonusCount,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: scheme.secondary,
+                    fontWeight: FontWeight.w800,
+                  ),
             ),
           ),
+        ),
 
+        if (_momentText != null)
           Padding(
             padding: EdgeInsets.symmetric(
               horizontal: AppConstants.defaultPadding.w,
@@ -246,62 +320,171 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                _buildMissionText(
-                  correctStreak: quizState.correctStreak,
-                  speedBonusCount: quizState.speedBonusCount,
-                ),
+                _momentText!,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: scheme.secondary,
-                      fontWeight: FontWeight.w800,
+                      color: onPrimary,
+                      fontWeight: FontWeight.w900,
                     ),
               ),
             ),
           ),
 
-          if (_momentText != null)
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: AppConstants.defaultPadding.w,
-              ),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  _momentText!,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
+        SizedBox(height: AppConstants.smallPadding.h),
+
+        // Question card
+        Expanded(
+          child: QuestionCard(
+            question: question,
+            cardColor: cardColor,
+            shadowColor: primaryActionColor,
+            questionTextColor: lightTextColor,
+            subtitleTextColor: mutedTextColor,
+            borderColor: cardBorderColor,
+          ),
+        ),
+
+        // Answer buttons
+        Padding(
+          padding: EdgeInsets.all(AppConstants.defaultPadding.w),
+          child: _buildAnswerButtons(context, question),
+        ),
+
+        SizedBox(height: AppConstants.defaultPadding.h),
+      ],
+    );
+  }
+
+  Widget _buildLandscapeLayout(
+    BuildContext context, {
+    required Question question,
+    required double progress,
+    required QuizState quizState,
+    required Color primaryActionColor,
+    required Color accentColor,
+    required Color cardColor,
+    required Color cardBorderColor,
+    required Color lightTextColor,
+    required Color mutedTextColor,
+    required Color onPrimary,
+    required ColorScheme scheme,
+  }) {
+    return Column(
+      children: [
+        // Progress bar at top
+        Padding(
+          padding: EdgeInsets.all(AppConstants.defaultPadding.w),
+          child: ProgressIndicatorBar(
+            progress: progress,
+            valueColor: accentColor,
+            backgroundColor:
+                onPrimary.withValues(alpha: AppOpacities.progressTrack),
+          ),
+        ),
+
+        // Main content: question on left, answers on right
+        Expanded(
+          child: Row(
+            children: [
+              // Left: Question card (60% width)
+              Expanded(
+                flex: 60,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: AppConstants.defaultPadding.w,
+                    right: AppConstants.smallPadding.w,
+                    bottom: AppConstants.defaultPadding.h,
+                  ),
+                  child: QuestionCard(
+                    question: question,
+                    cardColor: cardColor,
+                    shadowColor: primaryActionColor,
+                    questionTextColor: lightTextColor,
+                    subtitleTextColor: mutedTextColor,
+                    borderColor: cardBorderColor,
+                  ),
                 ),
               ),
-            ),
 
-          SizedBox(height: AppConstants.smallPadding.h),
+              // Right: Answer buttons + HUD (40% width)
+              Expanded(
+                flex: 40,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: AppConstants.smallPadding.w,
+                    right: AppConstants.defaultPadding.w,
+                    bottom: AppConstants.defaultPadding.h,
+                  ),
+                  child: Column(
+                    children: [
+                      // PlayHud and mission text
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: AppConstants.smallPadding.h,
+                        ),
+                        child: _buildPlayHud(
+                          context,
+                          question: question,
+                          correctStreak: quizState.correctStreak,
+                          speedBonusCount: quizState.speedBonusCount,
+                        ),
+                      ),
 
-          // Question card
-          Expanded(
-            child: QuestionCard(
-              question: question,
-              cardColor: cardColor,
-              shadowColor: primaryActionColor,
-              questionTextColor: lightTextColor,
-              subtitleTextColor: mutedTextColor,
-              borderColor: cardBorderColor,
-            ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: AppConstants.smallPadding.h,
+                        ),
+                        child: Text(
+                          _buildMissionText(
+                            correctStreak: quizState.correctStreak,
+                            speedBonusCount: quizState.speedBonusCount,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodySmall
+                              ?.copyWith(
+                                color: scheme.secondary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                      ),
+
+                      if (_momentText != null)
+                        Padding(
+                          padding: EdgeInsets.only(
+                            bottom: AppConstants.smallPadding.h,
+                          ),
+                          child: Text(
+                            _momentText!,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
+                                  color: onPrimary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
+                        ),
+
+                      // Answer buttons (scrollable if needed)
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: _buildAnswerButtons(context, question),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
-
-          // Answer buttons
-          Padding(
-            padding: EdgeInsets.all(AppConstants.defaultPadding.w),
-            child: _buildAnswerButtons(context, question),
-          ),
-
-          SizedBox(height: AppConstants.defaultPadding.h),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
