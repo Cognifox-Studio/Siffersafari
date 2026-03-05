@@ -4,7 +4,6 @@ import 'dart:isolate';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -49,27 +48,14 @@ Future<void> main() async {
     () => initializeDependencies(initializeHive: false),
   );
 
-  final initCompleter = Completer<String?>();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    // Important: run heavy init *after* the first frame has fully rasterized.
-    // A post-frame callback still runs on the UI thread; by scheduling another
-    // task we avoid blocking first-frame rasterization.
-    Future<void>(() async {
-      try {
-        initCompleter.complete(await _initializeAsync());
-      } catch (e, st) {
-        debugPrint('Deferred initialization failed: $e');
-        debugPrintStack(stackTrace: st);
-        initCompleter.complete(e.toString());
-      }
-    });
-  });
+  // Run heavy init before first Flutter frame so we avoid jank/skipped frames.
+  // Android's launch screen will remain visible until the first frame renders.
+  final initError = await _initializeAsync();
 
-  // Show app immediately with loading indicator while Hive boxes open in background
   runApp(
     ProviderScope(
       child: MathGameApp(
-        initFuture: initCompleter.future,
+        initFuture: Future.value(initError),
       ),
     ),
   );
