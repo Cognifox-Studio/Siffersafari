@@ -9,6 +9,8 @@ import '../../core/providers/word_problems_settings_provider.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/themed_background_scaffold.dart';
 
+// region OnboardingScreen Widget
+
 class OnboardingScreen extends ConsumerStatefulWidget {
   const OnboardingScreen({
     required this.userId,
@@ -23,6 +25,10 @@ class OnboardingScreen extends ConsumerStatefulWidget {
   @override
   ConsumerState<OnboardingScreen> createState() => _OnboardingScreenState();
 }
+
+// endregion
+
+// region _OnboardingScreenState Main Widget
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final _controller = PageController();
@@ -388,7 +394,9 @@ class _OnboardingGradePage extends StatelessWidget {
     );
   }
 }
+// endregion
 
+// region Page Builder Widgets
 class _OnboardingOpsPage extends StatelessWidget {
   const _OnboardingOpsPage({
     required this.allowedOps,

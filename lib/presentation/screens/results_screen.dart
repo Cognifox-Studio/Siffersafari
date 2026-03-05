@@ -20,12 +20,18 @@ import '../widgets/themed_background_scaffold.dart';
 import 'home_screen.dart';
 import 'quiz_screen.dart';
 
+// region ResultsScreen Widget
+
 class ResultsScreen extends ConsumerStatefulWidget {
   const ResultsScreen({super.key});
 
   @override
   ConsumerState<ResultsScreen> createState() => _ResultsScreenState();
 }
+
+// endregion
+
+// region _ResultsScreenState Main Widget
 
 class _ResultsScreenState extends ConsumerState<ResultsScreen> {
   bool _applied = false;
@@ -534,6 +540,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     );
   }
 
+  // endregion
+
+  // region Helper Methods
+
   Widget _buildStatRow(BuildContext context, String label, String value) {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
@@ -767,7 +777,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     }
     return hash;
   }
+
+  // endregion
 }
+
+// region Helper Classes
 
 class _BadgeTeaser {
   const _BadgeTeaser({
@@ -796,3 +810,5 @@ class _HardestQuestion {
   final bool wasCorrect;
   final Duration? time;
 }
+
+// endregion

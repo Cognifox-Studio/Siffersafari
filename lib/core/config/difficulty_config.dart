@@ -2,6 +2,8 @@ import '../../domain/enums/age_group.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 
+// region DifficultyConfig Class
+
 /// Configuration for difficulty levels based on age groups
 class DifficultyConfig {
   DifficultyConfig._();
@@ -19,6 +21,10 @@ class DifficultyConfig {
   ///
   /// This keeps the recommendation stable and avoids overreacting.
   static const int trainingRecommendationMinQuestions = 20;
+
+  // endregion
+
+  // region Grade Benchmarking Methods
 
   /// Simple benchmark result used for parent feedback.
   ///
@@ -151,6 +157,10 @@ class DifficultyConfig {
     return 1;
   }
 
+  // endregion
+
+  // region Operation Visibility & Filtering
+
   /// A minimal, child-facing mapping for which operations to show by grade (Åk).
   ///
   /// Parent settings are still the hard limit; this mapping only further
@@ -201,6 +211,10 @@ class DifficultyConfig {
     final intersection = parentAllowedOperations.intersection(byGrade);
     return intersection.isEmpty ? parentAllowedOperations : intersection;
   }
+
+  // endregion
+
+  // region Difficulty Step Management
 
   /// Internal difficulty steps used for smoother progression.
   ///
@@ -379,6 +393,10 @@ class DifficultyConfig {
 
     return clampDifficultyStep(step + delta);
   }
+
+  // endregion
+
+  // region Number Range Calculation
 
   /// Default starting step if no stored history exists.
   static int initialStepForDifficulty(DifficultyLevel difficulty) {
@@ -697,6 +715,10 @@ class DifficultyConfig {
     return (baseTime * multiplier).round();
   }
 
+  // endregion
+
+  // region Helper Methods & Classes
+
   /// Get number of questions per session
   static int getQuestionsPerSession(AgeGroup ageGroup) {
     switch (ageGroup) {
@@ -739,3 +761,5 @@ class NumberRange {
 
   bool contains(int value) => value >= min && value <= max;
 }
+
+// endregion

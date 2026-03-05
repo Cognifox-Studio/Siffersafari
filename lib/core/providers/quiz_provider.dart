@@ -20,6 +20,8 @@ import 'feedback_service_provider.dart';
 import 'local_storage_repository_provider.dart';
 import 'question_generator_service_provider.dart';
 
+// region QuizState Class
+
 class QuizState {
   const QuizState({
     this.userId,
@@ -109,7 +111,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final answered = session.correctAnswers + session.wrongAnswers;
     if (answered <= 0) {
       debugPrint(
-          '[QuizNotifier] _persistInProgressSession: no answers yet, skipping',);
+        '[QuizNotifier] _persistInProgressSession: no answers yet, skipping',
+      );
       return;
     }
 
@@ -270,7 +273,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
     if (questions.isEmpty) {
       debugPrint(
-          '[QuizNotifier] startCustomSession: empty questions list, skipping',);
+        '[QuizNotifier] startCustomSession: empty questions list, skipping',
+      );
       return;
     }
 
@@ -437,7 +441,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final userId = state.userId;
     if (userId != null && userId.isNotEmpty) {
       debugPrint(
-          '[QuizNotifier] submitAnswer: persisting session for userId=$userId',);
+        '[QuizNotifier] submitAnswer: persisting session for userId=$userId',
+      );
       _persistInProgressSession(userId: userId, session: updatedSession);
     }
   }
@@ -498,6 +503,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
   }
 }
 
+// endregion
+
+// region Provider Definition
+
 final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
   final generator = ref.watch(questionGeneratorServiceProvider);
   final feedback = ref.watch(feedbackServiceProvider);
@@ -506,3 +515,5 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
 
   return QuizNotifier(generator, feedback, audio, repo);
 });
+
+// endregion

@@ -17,6 +17,8 @@ import 'audio_service_provider.dart';
 import 'local_storage_repository_provider.dart';
 import 'quest_progression_service_provider.dart';
 
+// region UserState Class
+
 class UserState {
   const UserState({
     this.activeUser,
@@ -498,6 +500,10 @@ class UserNotifier extends StateNotifier<UserState> {
   }
 }
 
+// endregion
+
+// region Provider Definition
+
 final userProvider = StateNotifierProvider<UserNotifier, UserState>((ref) {
   final repository = ref.watch(localStorageRepositoryProvider);
   final achievementService = ref.watch(achievementServiceProvider);
@@ -510,3 +516,5 @@ final userProvider = StateNotifierProvider<UserNotifier, UserState>((ref) {
     questProgressionService,
   );
 });
+
+// endregion
