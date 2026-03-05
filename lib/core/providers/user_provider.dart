@@ -62,6 +62,10 @@ class UserState {
   }
 }
 
+// endregion
+
+// region UserNotifier Class
+
 /// Manages user profile state: active user, user list, quest progress, and achievements.
 ///
 /// Key responsibilities:

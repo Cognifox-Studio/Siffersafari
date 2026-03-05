@@ -76,6 +76,10 @@ class QuizState {
   }
 }
 
+// endregion
+
+// region QuizNotifier Class
+
 /// Manages quiz session state: questions, answers, feedback, and streaks.
 ///
 /// Key responsibilities:
