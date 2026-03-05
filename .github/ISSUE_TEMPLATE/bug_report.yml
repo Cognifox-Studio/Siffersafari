@@ -1,0 +1,59 @@
+name: Bug report
+description: Rapportera ett fel i appen
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tack for att du rapporterar! Fyll i sa mycket som mojligt.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Kort sammanfattning
+      placeholder: Vad ar felet?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steg for att reproducera
+      placeholder: |
+        1. Ga till ...
+        2. Klicka pa ...
+        3. Se fel ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Forvantat beteende
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Faktiskt beteende
+    validations:
+      required: true
+
+  - type: input
+    id: app_version
+    attributes:
+      label: App-version
+      placeholder: t.ex. v0.1.0
+
+  - type: input
+    id: device
+    attributes:
+      label: Enhet
+      placeholder: t.ex. Pixel 6 / Samsung Tab A8
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Loggar/skarmbilder (valfritt)
+      render: shell

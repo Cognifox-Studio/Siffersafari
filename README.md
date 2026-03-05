@@ -4,6 +4,32 @@ Ett pedagogiskt mattespel för barn (6–12 år) som lär grundläggande matemat
 
 Fokus: **Android-only**, **offline-first**, flera barnprofiler.
 
+[![Flutter CI](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml/badge.svg)](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml)
+[![Build and Release APK](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml/badge.svg)](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml)
+[![Release](https://img.shields.io/github/v/release/Cognifox-Studio/Siffersafari?display_name=tag)](https://github.com/Cognifox-Studio/Siffersafari/releases)
+
+## Installera APK (Android)
+
+1. Gå till [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases)
+2. Ladda ner `app-release.apk` (senaste version)
+3. Öppna filen på Android och installera
+4. Tillåt "Installera okända appar" för webbläsare/filhanterare vid behov
+
+Direktlänk till senaste APK (när release finns):
+[https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk](https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk)
+
+## Snabblänkar
+
+- [📚 Dokumentation](#-dokumentation)
+- [Status](#status-2026-03-05)
+- [Funktioner](#funktioner)
+- [Teknisk Stack](#teknisk-stack)
+- [Arkitektur](#arkitektur)
+- [Installation (Utveckling)](#installation-utveckling)
+- [Testning](#testning)
+- [Säkerhet](SECURITY.md)
+- [Contributing](docs/CONTRIBUTING.md)
+
 ---
 
 ## 📚 Dokumentation
@@ -88,7 +114,7 @@ Kort version:
 flutter pub get
 
 # Generera kod (Hive adapters, Riverpod)
-flutter pub run build_runner build --delete-conflicting-outputs
+dart run build_runner build --delete-conflicting-outputs
 
 # Kör appen
 flutter run

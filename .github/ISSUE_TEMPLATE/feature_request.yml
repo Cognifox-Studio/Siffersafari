@@ -1,0 +1,33 @@
+name: Feature request
+description: Foresla en ny funktion eller forbattrad upplevelse
+labels: [enhancement]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Kort sammanfattning
+      placeholder: Vad vill du lagga till?
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem/Behover
+      description: Vilket problem loses?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Losningsforslag
+      description: Hur skulle funktionen kunna fungera?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativ
+      description: Finns det andra satt att losa samma behov?
