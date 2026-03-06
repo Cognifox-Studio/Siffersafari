@@ -22,21 +22,87 @@ class QuestionCard extends StatelessWidget {
   final Color? subtitleTextColor;
   final Color? borderColor;
 
+  double _resolveEquationFontSize(
+    BuildContext context, {
+    required TextStyle? baseStyle,
+    required String text,
+    required double maxWidth,
+    required bool compact,
+  }) {
+    final candidates = compact
+        ? <double>[44, 40, 36, 32, 28]
+        : <double>[64, 58, 52, 46, 40, 34];
+    final textScaler = MediaQuery.textScalerOf(context);
+
+    for (final fontSize in candidates) {
+      final painter = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: baseStyle?.copyWith(fontSize: fontSize),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: Directionality.of(context),
+        textScaler: textScaler,
+        maxLines: 1,
+      )..layout(maxWidth: maxWidth);
+
+      if (!painter.didExceedMaxLines && painter.width <= maxWidth) {
+        return fontSize;
+      }
+    }
+
+    return candidates.last;
+  }
+
+  double _resolveWordProblemFontSize(
+    BuildContext context, {
+    required TextStyle? baseStyle,
+    required String text,
+    required double maxWidth,
+    required int maxLines,
+    required bool compact,
+  }) {
+    final candidates = compact
+        ? <double>[26, 24, 22, 20, 18]
+        : <double>[34, 32, 30, 28, 26, 24, 22];
+    final textScaler = MediaQuery.textScalerOf(context);
+
+    for (final fontSize in candidates) {
+      final painter = TextPainter(
+        text: TextSpan(
+          text: text,
+          style: baseStyle?.copyWith(fontSize: fontSize),
+        ),
+        textAlign: TextAlign.center,
+        textDirection: Directionality.of(context),
+        textScaler: textScaler,
+        maxLines: maxLines,
+        ellipsis: '...',
+      )..layout(maxWidth: maxWidth);
+
+      if (!painter.didExceedMaxLines) {
+        return fontSize;
+      }
+    }
+
+    return candidates.last;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final resolvedCardColor = (cardColor ?? scheme.surface).withValues(
       alpha: 1.0,
     );
-    final resolvedBorderColor =
-        borderColor ?? scheme.onPrimary.withValues(alpha: AppOpacities.cardBorder);
+    final resolvedBorderColor = borderColor ??
+        scheme.onPrimary.withValues(alpha: AppOpacities.cardBorder);
     final resolvedAccentColor = shadowColor ?? scheme.secondary;
 
-    final isWordProblem = question.promptText != null;
     final isEquationPrompt = question.promptText?.contains('=') ?? false;
+    final isWordProblem = question.promptText != null && !isEquationPrompt;
 
     return Semantics(
-      label: 'Fråga: ${question.questionText}. Vad blir resultatet?',
+      label: 'Fråga: ${question.displayQuestionText}. Vad blir resultatet?',
       child: ExcludeSemantics(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -52,30 +118,42 @@ class QuestionCard extends StatelessWidget {
                     ? AppConstants.smallPadding.w
                     : AppConstants.defaultPadding.w)
                 : AppConstants.largePadding.w;
-
-            final symbolStyle = compact
-                ? textTheme.headlineMedium
-                : (isWordProblem
-                    ? textTheme.displayMedium
-                    : textTheme.displayLarge);
+            final maxQuestionWidth = constraints.maxWidth < 520.w
+              ? constraints.maxWidth
+              : 520.w;
 
             final questionStyle = isWordProblem
-              ? (compact ? textTheme.titleMedium : textTheme.headlineSmall)
-              : (compact ? textTheme.headlineLarge : textTheme.displayLarge);
-
-            final symbolGap = compact
-                ? (AppConstants.smallPadding.h * 0.25)
-                : AppConstants.defaultPadding.h;
-
-            final subtitleGap = compact
-              ? AppConstants.microSpacing6.h
-              : AppConstants.smallPadding.h;
-
+                ? (compact ? textTheme.titleMedium : textTheme.headlineSmall)
+                : (compact ? textTheme.headlineLarge : textTheme.displayLarge);
             final wordProblemMaxLines = veryCompact ? 3 : 5;
             final questionMaxLines = isWordProblem ? wordProblemMaxLines : 2;
-            final helperText = isWordProblem
-              ? 'Läs lugnt och välj rätt svar.'
-              : 'Välj rätt svar.';
+            final wordProblemFontSize = !isWordProblem
+                ? null
+                : _resolveWordProblemFontSize(
+                    context,
+                    baseStyle: questionStyle?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: questionTextColor ?? scheme.onSurface,
+                      height: 1.2,
+                    ),
+                    text: question.displayQuestionText,
+                    maxWidth: maxQuestionWidth,
+                    maxLines: questionMaxLines,
+                    compact: compact,
+                  );
+            final equationFontSize = isWordProblem
+                ? null
+                : _resolveEquationFontSize(
+                    context,
+                    baseStyle: questionStyle?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: questionTextColor ?? scheme.onSurface,
+                      height: 1.0,
+                    ),
+                    text: question.displayQuestionText,
+                    maxWidth: maxQuestionWidth,
+                    compact: compact,
+                  );
 
             return Container(
               margin: EdgeInsets.symmetric(
@@ -91,8 +169,9 @@ class QuestionCard extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: resolvedAccentColor
-                        .withValues(alpha: AppOpacities.cardShadow),
+                    color: resolvedAccentColor.withValues(
+                      alpha: AppOpacities.cardShadow,
+                    ),
                     blurRadius: AppConstants.questionCardShadowBlur,
                     offset:
                         const Offset(0, AppConstants.questionCardShadowOffsetY),
@@ -101,131 +180,52 @@ class QuestionCard extends StatelessWidget {
               ),
               child: ultraCompact
                   ? Center(
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          question.questionText,
-                          style: textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            color: questionTextColor ?? scheme.onSurface,
-                          ),
-                          textAlign: TextAlign.center,
+                      child: Text(
+                        question.displayQuestionText,
+                        style: textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          color: questionTextColor ?? scheme.onSurface,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
                       ),
                     )
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          spacing: AppConstants.smallPadding.w,
-                          runSpacing: AppConstants.microSpacing6.h,
-                          children: [
-                            _QuestionMetaChip(
-                              text:
-                                  '${question.operationType.emoji} ${question.operationType.displayName}',
-                              textColor: questionTextColor ?? scheme.onSurface,
-                              backgroundColor: resolvedAccentColor.withValues(
-                                alpha: AppOpacities.accentFillSubtle,
-                              ),
-                              borderColor: resolvedAccentColor.withValues(
-                                alpha: AppOpacities.highlightStrong,
-                              ),
-                            ),
-                            _QuestionMetaChip(
-                              text: isWordProblem
-                                  ? 'Textuppgift'
-                                  : question.difficulty.displayName,
-                              textColor: subtitleTextColor ??
-                                  scheme.onSurface.withValues(
-                                    alpha: AppOpacities.mutedText,
-                                  ),
-                              backgroundColor: scheme.onSurface.withValues(
-                                alpha: AppOpacities.subtleFill,
-                              ),
-                              borderColor: scheme.onSurface.withValues(
-                                alpha: AppOpacities.cardBorder,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(
-                          height: compact
-                              ? AppConstants.smallPadding.h
-                              : AppConstants.defaultPadding.h,
-                        ),
                         Expanded(
                           child: Center(
                             child: ConstrainedBox(
-                              constraints: BoxConstraints(maxWidth: 520.w),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    if (!isEquationPrompt) ...[
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: compact
-                                              ? AppConstants.smallPadding.w
-                                              : AppConstants.defaultPadding.w,
-                                          vertical: compact
-                                              ? AppConstants.microSpacing6.h
-                                              : AppConstants.smallPadding.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: resolvedAccentColor.withValues(
-                                            alpha:
-                                                AppOpacities.accentFillSubtle,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            AppConstants.borderRadius * 1.5,
-                                          ),
-                                          border: Border.all(
-                                            color:
-                                                resolvedAccentColor.withValues(
-                                              alpha:
-                                                  AppOpacities.highlightStrong,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          question.operationType.symbol,
-                                          style: symbolStyle?.copyWith(
-                                            fontWeight: FontWeight.w900,
-                                            color: questionTextColor ??
-                                                scheme.onSurface,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: symbolGap),
-                                    ],
-                                    Text(
-                                      question.questionText,
+                              constraints: BoxConstraints(maxWidth: maxQuestionWidth),
+                              child: isWordProblem
+                                  ? Text(
+                                      question.displayQuestionText,
                                       style: questionStyle?.copyWith(
+                                        fontSize: wordProblemFontSize,
                                         fontWeight: FontWeight.bold,
                                         color: questionTextColor ??
                                             scheme.onSurface,
-                                        height: isWordProblem ? 1.2 : 1.0,
+                                        height: 1.2,
                                       ),
                                       textAlign: TextAlign.center,
                                       maxLines: questionMaxLines,
                                       overflow: TextOverflow.ellipsis,
-                                    ),
-                                    SizedBox(height: subtitleGap),
-                                    Text(
-                                      helperText,
-                                      style: textTheme.titleMedium?.copyWith(
-                                        color: subtitleTextColor ??
-                                            scheme.onSurface.withValues(
-                                              alpha: AppOpacities.mutedText,
-                                            ),
-                                        fontWeight: FontWeight.w600,
+                                    )
+                                  : Text(
+                                      question.displayQuestionText,
+                                      style: questionStyle?.copyWith(
+                                        fontSize: equationFontSize,
+                                        fontWeight: FontWeight.bold,
+                                        color: questionTextColor ??
+                                            scheme.onSurface,
+                                        height: 1.0,
                                       ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.clip,
+                                      softWrap: false,
                                       textAlign: TextAlign.center,
                                     ),
-                                  ],
-                                ),
-                              ),
                             ),
                           ),
                         ),
@@ -234,42 +234,6 @@ class QuestionCard extends StatelessWidget {
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-class _QuestionMetaChip extends StatelessWidget {
-  const _QuestionMetaChip({
-    required this.text,
-    required this.textColor,
-    required this.backgroundColor,
-    required this.borderColor,
-  });
-
-  final String text;
-  final Color textColor;
-  final Color backgroundColor;
-  final Color borderColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: AppConstants.smallPadding.w,
-        vertical: AppConstants.microSpacing6.h,
-      ),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.25),
-        border: Border.all(color: borderColor),
-      ),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: textColor,
-              fontWeight: FontWeight.w700,
-            ),
       ),
     );
   }

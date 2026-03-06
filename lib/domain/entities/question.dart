@@ -27,9 +27,17 @@ class Question extends Equatable {
   final List<int> wrongAnswers;
   final String? explanation;
 
-  /// Format the question as a string (e.g., "5 + 3")
+  /// Format the base question as a string (e.g., "5 + 3")
   String get questionText {
     return promptText ?? '$operand1 ${operationType.symbol} $operand2';
+  }
+
+  /// Format the question for quiz display (e.g., "5 + 3 = ?").
+  ///
+  /// Existing prompt-based questions keep their original prompt so special
+  /// formats like missing-number equations continue to render unchanged.
+  String get displayQuestionText {
+    return promptText ?? '$operand1 ${operationType.symbol} $operand2 = ?';
   }
 
   /// Get all answer options (correct + wrong answers)
