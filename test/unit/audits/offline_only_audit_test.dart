@@ -43,8 +43,8 @@ void main() {
         for (final pattern in forbiddenPatterns) {
           if (pattern.hasMatch(content)) {
             final allowedForFile = allowedViolations[path];
-            final isAllowedForFile =
-                allowedForFile != null && allowedForFile.contains(pattern.pattern);
+            final isAllowedForFile = allowedForFile != null &&
+                allowedForFile.contains(pattern.pattern);
             if (!isAllowedForFile) {
               violations.add('$path -> ${pattern.pattern}');
             }

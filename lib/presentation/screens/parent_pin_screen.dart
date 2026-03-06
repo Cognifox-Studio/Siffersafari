@@ -335,125 +335,157 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
       appBar: AppBar(
         title: Text(_isSettingNewPin ? 'Skapa PIN' : 'Ange PIN'),
       ),
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            decoration: BoxDecoration(
-              color: onPrimary.withValues(alpha: AppOpacities.panelFill),
-              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final viewInsets = MediaQuery.of(context).viewInsets;
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.fromLTRB(
+              AppConstants.defaultPadding,
+              AppConstants.defaultPadding,
+              AppConstants.defaultPadding,
+              AppConstants.defaultPadding + viewInsets.bottom,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  _isSettingNewPin
-                      ? 'Välj en PIN-kod för föräldraläge'
-                      : isLockedOut
-                          ? 'För många felaktiga försök. Vänta $_lockoutMinutes minut${_lockoutMinutes! != 1 ? 'er' : ''}.'
-                          : 'Skriv PIN-koden för att öppna föräldraläge',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isLockedOut ? errorColor : mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.defaultPadding),
-                TextField(
-                  controller: _pinController,
-                  keyboardType: TextInputType.number,
-                  obscureText: true,
-                  enabled: !isLockedOut,
-                  style: TextStyle(color: onPrimary),
-                  decoration: InputDecoration(
-                    labelText: 'PIN',
-                    labelStyle: TextStyle(color: mutedOnPrimary),
-                    filled: true,
-                    fillColor: onPrimary.withValues(
-                      alpha: AppOpacities.subtleFill,
-                    ),
-                    border: OutlineInputBorder(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 560),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    decoration: BoxDecoration(
+                      color:
+                          onPrimary.withValues(alpha: AppOpacities.panelFill),
                       borderRadius:
                           BorderRadius.circular(AppConstants.borderRadius),
-                      borderSide: BorderSide.none,
                     ),
-                  ),
-                ),
-                if (_isSettingNewPin) ...[
-                  const SizedBox(height: AppConstants.defaultPadding),
-                  TextField(
-                    controller: _confirmController,
-                    keyboardType: TextInputType.number,
-                    obscureText: true,
-                    style: TextStyle(color: onPrimary),
-                    decoration: InputDecoration(
-                      labelText: 'Bekräfta PIN',
-                      labelStyle: TextStyle(color: mutedOnPrimary),
-                      filled: true,
-                      fillColor: onPrimary.withValues(
-                        alpha: AppOpacities.subtleFill,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.borderRadius),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ],
-                if (_error != null) ...[
-                  const SizedBox(height: AppConstants.smallPadding),
-                  Text(
-                    _error!,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: errorColor,
-                          fontWeight: FontWeight.w600,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Text(
+                          _isSettingNewPin
+                              ? 'Välj en PIN-kod för föräldraläge'
+                              : isLockedOut
+                                  ? 'För många felaktiga försök. Vänta $_lockoutMinutes minut${_lockoutMinutes! != 1 ? 'er' : ''}.'
+                                  : 'Skriv PIN-koden för att öppna föräldraläge',
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(
+                                color:
+                                    isLockedOut ? errorColor : mutedOnPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
-                  ),
-                ],
-                const SizedBox(height: AppConstants.defaultPadding),
-                ElevatedButton(
-                  onPressed: isLockedOut ? null : _submit,
-                  child: Text(
-                    _isSettingNewPin ? 'Spara PIN' : 'Öppna',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: onPrimary,
-                          fontWeight: FontWeight.bold,
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        TextField(
+                          controller: _pinController,
+                          keyboardType: TextInputType.number,
+                          obscureText: true,
+                          enabled: !isLockedOut,
+                          style: TextStyle(color: onPrimary),
+                          decoration: InputDecoration(
+                            labelText: 'PIN',
+                            labelStyle: TextStyle(color: mutedOnPrimary),
+                            filled: true,
+                            fillColor: onPrimary.withValues(
+                              alpha: AppOpacities.subtleFill,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                AppConstants.borderRadius,
+                              ),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
                         ),
-                  ),
-                ),
-                if (!_isSettingNewPin &&
-                    ref
-                        .read(parentPinServiceProvider)
-                        .hasRecoveryConfigured()) ...[
-                  const SizedBox(height: AppConstants.smallPadding),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => PinRecoveryScreen(
-                            onRecoveryComplete: () {
-                              _pinController.clear();
-                              _confirmController.clear();
-                              setState(() => _error = null);
+                        if (_isSettingNewPin) ...[
+                          const SizedBox(height: AppConstants.defaultPadding),
+                          TextField(
+                            controller: _confirmController,
+                            keyboardType: TextInputType.number,
+                            obscureText: true,
+                            style: TextStyle(color: onPrimary),
+                            decoration: InputDecoration(
+                              labelText: 'Bekräfta PIN',
+                              labelStyle: TextStyle(color: mutedOnPrimary),
+                              filled: true,
+                              fillColor: onPrimary.withValues(
+                                alpha: AppOpacities.subtleFill,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AppConstants.borderRadius,
+                                ),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (_error != null) ...[
+                          const SizedBox(height: AppConstants.smallPadding),
+                          Text(
+                            _error!,
+                            style:
+                                Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: errorColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                          ),
+                        ],
+                        const SizedBox(height: AppConstants.defaultPadding),
+                        ElevatedButton(
+                          onPressed: isLockedOut ? null : _submit,
+                          child: Text(
+                            _isSettingNewPin ? 'Spara PIN' : 'Öppna',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ),
+                        if (!_isSettingNewPin &&
+                            ref
+                                .read(parentPinServiceProvider)
+                                .hasRecoveryConfigured()) ...[
+                          const SizedBox(height: AppConstants.smallPadding),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => PinRecoveryScreen(
+                                    onRecoveryComplete: () {
+                                      _pinController.clear();
+                                      _confirmController.clear();
+                                      setState(() => _error = null);
+                                    },
+                                  ),
+                                ),
+                              );
                             },
+                            child: Text(
+                              'Glömt PIN?',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                  ),
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    child: Text(
-                      'Glömt PIN?',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.primary,
-                          ),
+                        ],
+                      ],
                     ),
                   ),
-                ],
-              ],
+                ),
+              ),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

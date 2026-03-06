@@ -64,17 +64,30 @@ class ParentDashboardScreen extends ConsumerWidget {
         ],
       ),
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      body: user == null
-          ? Center(
-              child: Text(
-                'Ingen aktiv användare',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: mutedOnPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            )
-          : _DashboardBody(userId: user.userId),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final maxContentWidth =
+              constraints.maxWidth >= 900 ? 820.0 : double.infinity;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxContentWidth),
+              child: user == null
+                  ? Center(
+                      child: Text(
+                        'Ingen aktiv användare',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: mutedOnPrimary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                      ),
+                    )
+                  : _DashboardBody(userId: user.userId),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -198,6 +211,33 @@ class _DashboardBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    const sectionSpacing = SizedBox(height: AppConstants.defaultPadding);
+
+    void showInfoDialog({required String title, required String message}) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Widget infoButton({required String title, required String message}) {
+      return IconButton(
+        tooltip: 'Förklaring',
+        visualDensity: VisualDensity.compact,
+        onPressed: () => showInfoDialog(title: title, message: message),
+        icon: const Icon(Icons.help_outline),
+      );
+    }
+
     final accentColor = Theme.of(context).colorScheme.secondary;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
@@ -232,12 +272,18 @@ class _DashboardBody extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Översikt',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Översikt',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                ],
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               _StatRow(
@@ -263,19 +309,30 @@ class _DashboardBody extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: AppConstants.defaultPadding),
+        sectionSpacing,
         const _UpdateSectionCard(),
-        const SizedBox(height: AppConstants.defaultPadding),
+        sectionSpacing,
         _Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Anpassningar',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Anpassningar',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  infoButton(
+                    title: 'Anpassningar',
+                    message:
+                        'Här kan du styra vad som kan dyka upp i quiz och vilken nivå som är lagom.\n\nTips: Om du är osäker, börja med att sätta Årskurs och låt resten vara på standard.',
+                  ),
+                ],
               ),
               const SizedBox(height: AppConstants.smallPadding),
               ListTile(
@@ -287,53 +344,62 @@ class _DashboardBody extends ConsumerWidget {
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                subtitle: Text(
-                  'Styr svårighetsnivå (Åk 1–9).',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: subtleOnPrimary,
-                      ),
-                ),
-                trailing: DropdownButton<int?>(
-                  value: user.gradeLevel,
-                  dropdownColor: Theme.of(context).scaffoldBackgroundColor,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: onPrimary),
-                  underline: const SizedBox.shrink(),
-                  items: [
-                    const DropdownMenuItem<int?>(
-                      value: null,
-                      child: Text('Ingen'),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    infoButton(
+                      title: 'Årskurs',
+                      message:
+                          'Årskurs används för att välja en lagom nivå och för att kunna visa en enkel Under/I linje/Över-indikator i analysen.\n\nDu kan alltid lämna den tom om du vill.',
                     ),
-                    ..._gradeItems.map(
-                      (g) => DropdownMenuItem<int?>(
-                        value: g,
-                        child: Text('Åk $g'),
-                      ),
+                    DropdownButton<int?>(
+                      value: user.gradeLevel,
+                      dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: onPrimary),
+                      underline: const SizedBox.shrink(),
+                      items: [
+                        const DropdownMenuItem<int?>(
+                          value: null,
+                          child: Text('Ingen'),
+                        ),
+                        ..._gradeItems.map(
+                          (g) => DropdownMenuItem<int?>(
+                            value: g,
+                            child: Text('Åk $g'),
+                          ),
+                        ),
+                      ],
+                      onChanged: (value) async {
+                        await ref
+                            .read(userProvider.notifier)
+                            .saveUser(user.copyWith(gradeLevel: value));
+                      },
                     ),
                   ],
-                  onChanged: (value) async {
-                    await ref
-                        .read(userProvider.notifier)
-                        .saveUser(user.copyWith(gradeLevel: value));
-                  },
                 ),
               ),
               const Divider(height: 1),
               SwitchListTile(
-                title: Text(
-                  'Textuppgifter',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Textuppgifter',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
-                ),
-                subtitle: Text(
-                  'Ibland visas en kort text istället för bara tal (Åk 1–3, +/−).',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: subtleOnPrimary,
-                      ),
+                    ),
+                    infoButton(
+                      title: 'Textuppgifter',
+                      message:
+                          'När detta är på kan vissa frågor visas som en kort text (inte bara siffror).\n\nDet används främst för Åk 1–3 och för Plus/Minus.',
+                    ),
+                  ],
                 ),
                 value: wordProblemsEnabled,
                 activeThumbColor: accentColor,
@@ -345,18 +411,23 @@ class _DashboardBody extends ConsumerWidget {
               ),
               const Divider(height: 1),
               SwitchListTile(
-                title: Text(
-                  'Saknat tal',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Saknat tal',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
-                ),
-                subtitle: Text(
-                  'Ibland visas en ekvation med ? (Åk 2–3, +/−).',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: subtleOnPrimary,
-                      ),
+                    ),
+                    infoButton(
+                      title: 'Saknat tal',
+                      message:
+                          'När detta är på kan vissa frågor vara av typen: 7 + ? = 10.\n\nDet används främst för Åk 2–3 och för Plus/Minus.',
+                    ),
+                  ],
                 ),
                 value: missingNumberEnabled,
                 activeThumbColor: accentColor,
@@ -367,6 +438,27 @@ class _DashboardBody extends ConsumerWidget {
                 },
               ),
               const Divider(height: 1),
+              Padding(
+                padding: const EdgeInsets.only(top: AppConstants.smallPadding),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Räknesätt',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                    infoButton(
+                      title: 'Räknesätt',
+                      message:
+                          'Välj vilka räknesätt som får användas i quiz.\n\nMinst ett räknesätt måste vara på.',
+                    ),
+                  ],
+                ),
+              ),
               ..._baseOps().map((op) {
                 final isOn = allowedOps.contains(op);
                 final canTurnOff = allowedOps.length > 1;
@@ -397,24 +489,32 @@ class _DashboardBody extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: AppConstants.defaultPadding),
+        sectionSpacing,
         _Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'Analys',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Analys',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
                     ),
+                  ),
+                  infoButton(
+                    title: 'Hur räknas statistiken?',
+                    message:
+                        'Korrekt % (alla frågor) = alla svar sedan start.\n\nFörslag (steg) räknas per räknesätt på de senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågorna (mål: 85% rätt).\n\nRekommenderad övning visar snitt per kategori (t.ex. Plus • Lätt) från quiz-resultat. Det ändrar inte steg automatiskt.',
+                  ),
+                ],
               ),
               const SizedBox(height: AppConstants.smallPadding),
               Text(
-                'Förklaring av % i föräldraläget:\n'
-                '• Korrekt % (alla frågor): alla svar sedan start.\n'
-                '• Förslag (steg): räknas per räknesätt på senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågor (höj vid >85%, sänk vid <75%).\n'
-                '• Rekommenderad övning (t.ex. Plus • Lätt 89%): snitt per kategori (räknesätt + Lätt/Medel/Svår) från quiz-resultat — påverkar inte steg.',
+                'Tryck på ? för förklaringar.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: subtleOnPrimary,
                       fontWeight: FontWeight.w600,
@@ -427,7 +527,7 @@ class _DashboardBody extends ConsumerWidget {
                     bottom: AppConstants.defaultPadding,
                   ),
                   child: Text(
-                    'Sätt Årskurs (Åk) för att få en enkel Under/I linje/Över-indikator.',
+                    'Sätt Årskurs (Åk) för att få Under/I linje/Över-indikator.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: mutedOnPrimary,
                           fontWeight: FontWeight.w600,
@@ -456,12 +556,23 @@ class _DashboardBody extends ConsumerWidget {
                       ),
                 )
               else ...[
-                Text(
-                  'Rekommenderad övning:',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Rekommenderad övning',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: mutedOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
+                    ),
+                    infoButton(
+                      title: 'Rekommenderad övning',
+                      message:
+                          'Här visas de 3 områden där barnet just nu har lägst träffsäkerhet (t.ex. Plus • Lätt).\n\nDet är en enkel “börja här”-lista: spela gärna några quiz i de områdena och se om procenten förbättras över tid.',
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppConstants.smallPadding),
                 ...weakestAreas.map(
@@ -499,7 +610,7 @@ class _DashboardBody extends ConsumerWidget {
             ],
           ),
         ),
-        const SizedBox(height: AppConstants.defaultPadding),
+        sectionSpacing,
         _Card(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1083,6 +1194,22 @@ class _BenchmarkSection extends ConsumerWidget {
         onPrimary.withValues(alpha: AppOpacities.subtleText);
     final user = ref.watch(userProvider).activeUser;
 
+    void showInfoDialog({required String title, required String message}) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    }
+
     final ops = <OperationType>[
       OperationType.addition,
       OperationType.subtraction,
@@ -1115,32 +1242,32 @@ class _BenchmarkSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          'Skolverket-indikator (Åk $gradeLevel)',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: mutedOnPrimary,
-                fontWeight: FontWeight.w700,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'Skolverket-indikator (Åk $gradeLevel)',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: mutedOnPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
               ),
+            ),
+            IconButton(
+              tooltip: 'Förklaring',
+              visualDensity: VisualDensity.compact,
+              onPressed: () => showInfoDialog(
+                title: 'Skolverket-indikator',
+                message:
+                    'Detta är en enkel “Under / I linje / Över”-indikator baserad på appens nivå (steg 1–10) per räknesätt.\n\nFörslag bygger på de senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågorna (mål: 85% rätt).\n\nSteg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
+              ),
+              icon: const Icon(Icons.help_outline),
+            ),
+          ],
         ),
         const SizedBox(height: AppConstants.smallPadding),
         Text(
-          'Baserat på appens interna nivå (steg 1–10) per räknesätt.',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: subtleOnPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: AppConstants.microSpacing2),
-        Text(
-          'Förslag kommer efter minst ${DifficultyConfig.trainingRecommendationMinQuestions} frågor (mål: 85% rätt).',
-          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: subtleOnPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-        ),
-        const SizedBox(height: AppConstants.microSpacing2),
-        Text(
-          'Obs: Steg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
+          'Kort sagt: indikatorn speglar barnets senaste svar.',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: subtleOnPrimary,
                 fontWeight: FontWeight.w600,
@@ -1181,6 +1308,31 @@ class _BenchmarkSection extends ConsumerWidget {
             operation: op,
           );
 
+          final underlagText = stats.rate == null
+              ? 'Underlag: 0/${DifficultyConfig.trainingRecommendationMinQuestions} frågor'
+              : hasEnough
+                  ? 'Senaste ${DifficultyConfig.trainingRecommendationMinQuestions}: ${_percentLabel(stats.rate!)} rätt'
+                  : 'Underlag: ${stats.answered}/${DifficultyConfig.trainingRecommendationMinQuestions} (just nu: ${_percentLabel(stats.rate!)} rätt)';
+
+          final stepText = recommendedStep == null
+              ? 'Steg $currentStep'
+              : 'Steg $currentStep → Förslag $recommendedStep';
+
+          final detailsMessage = StringBuffer()
+            ..writeln('Indikator: $valueText')
+            ..writeln(underlagText)
+            ..writeln(stepText)
+            ..writeln()
+            ..writeln(
+              'Obs: Steg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
+            );
+
+          if (recommendationText.isNotEmpty) {
+            detailsMessage
+              ..writeln()
+              ..writeln(recommendationText);
+          }
+
           return Padding(
             padding: const EdgeInsets.symmetric(
               vertical: AppConstants.microSpacing6,
@@ -1207,6 +1359,15 @@ class _BenchmarkSection extends ConsumerWidget {
                             fontWeight: FontWeight.bold,
                           ),
                     ),
+                    IconButton(
+                      tooltip: 'Förklaring',
+                      visualDensity: VisualDensity.compact,
+                      onPressed: () => showInfoDialog(
+                        title: '${op.displayName} – detaljer',
+                        message: detailsMessage.toString().trim(),
+                      ),
+                      icon: const Icon(Icons.help_outline),
+                    ),
                   ],
                 ),
                 Padding(
@@ -1215,51 +1376,21 @@ class _BenchmarkSection extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      if (stats.rate != null)
-                        Text(
-                          hasEnough
-                              ? 'Underlag (senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågor): ${_percentLabel(stats.rate!)} rätt.'
-                              : 'Underlag: ${stats.answered}/${DifficultyConfig.trainingRecommendationMinQuestions} frågor (just nu: ${_percentLabel(stats.rate!)} rätt).',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: subtleOnPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      if (stats.rate != null)
-                        const SizedBox(height: AppConstants.microSpacing2),
-                      if (recommendedStep != null)
-                        Text(
-                          '${op.displayName}: Steg $currentStep • Förslag (utifrån barnets svar): Steg $recommendedStep',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: subtleOnPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        )
-                      else
-                        Text(
-                          '${op.displayName}: Steg $currentStep • Spela minst ${DifficultyConfig.trainingRecommendationMinQuestions} frågor för ett förslag.',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: subtleOnPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      if (recommendedStep != null)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: AppConstants.microSpacing2,
-                          ),
-                          child: Text(
-                            'Indikatorn (Under/I linje/Över) bygger nu på förslaget (Steg $recommendedStep).',
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: subtleOnPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                          ),
-                        ),
+                      Text(
+                        underlagText,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: subtleOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                      const SizedBox(height: AppConstants.microSpacing2),
+                      Text(
+                        stepText,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: subtleOnPrimary,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
                       const SizedBox(height: AppConstants.microSpacing6),
                       Row(
                         children: [
@@ -1287,19 +1418,6 @@ class _BenchmarkSection extends ConsumerWidget {
                     ],
                   ),
                 ),
-                if (benchmark.level != GradeBenchmarkLevel.inline &&
-                    recommendationText.isNotEmpty)
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: AppConstants.microSpacing2),
-                    child: Text(
-                      recommendationText,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: subtleOnPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
               ],
             ),
           );

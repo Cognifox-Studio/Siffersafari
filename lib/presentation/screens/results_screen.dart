@@ -212,16 +212,18 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     return ThemedBackgroundScaffold(
       body: LayoutBuilder(
         builder: (context, constraints) {
+          final maxContentWidth =
+              constraints.maxWidth >= 900 ? 820.0 : double.infinity;
           final isWideScreen = constraints.maxWidth > 600;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(AppConstants.largePadding.w),
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
             child: ConstrainedBox(
               constraints: BoxConstraints(minHeight: constraints.maxHeight),
               child: Center(
                 child: ConstrainedBox(
                   constraints: isWideScreen
-                      ? const BoxConstraints(maxWidth: 640)
+                      ? BoxConstraints(maxWidth: maxContentWidth)
                       : const BoxConstraints(),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -237,7 +239,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         textAlign: TextAlign.center,
                       ),
 
-                      SizedBox(height: AppConstants.largePadding.h),
+                      const SizedBox(height: AppConstants.largePadding),
 
                       if (shouldCelebrate) ...[
                         TweenAnimationBuilder<double>(
@@ -267,11 +269,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                       // Star rating
                       StarRating(stars: stars),
 
-                      SizedBox(height: AppConstants.largePadding.h),
+                      const SizedBox(height: AppConstants.largePadding),
 
                       // Stats card
                       Container(
-                        padding: EdgeInsets.all(AppConstants.largePadding.w),
+                        padding:
+                            const EdgeInsets.all(AppConstants.defaultPadding),
                         decoration: BoxDecoration(
                           color: panelColor,
                           borderRadius:
@@ -321,7 +324,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         ),
                       ),
 
-                      SizedBox(height: AppConstants.largePadding.h),
+                      const SizedBox(height: AppConstants.largePadding),
 
                       _buildBadgePanel(
                         context,
@@ -331,7 +334,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                         badgeTeaser: badgeTeaser,
                       ),
 
-                      SizedBox(height: AppConstants.largePadding.h),
+                      const SizedBox(height: AppConstants.largePadding),
 
                       // Buttons
                       ElevatedButton(

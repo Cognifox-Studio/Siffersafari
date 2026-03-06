@@ -148,87 +148,113 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       canPop: false,
       child: ThemedBackgroundScaffold(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        'Nu kör vi!',
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final compactLayout = constraints.maxHeight < 620;
+            final maxContentWidth =
+                constraints.maxWidth >= 900 ? 860.0 : double.infinity;
+
+            return Center(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxWidth: maxContentWidth),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                'Nu kör vi!',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(
+                                      color: onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                'Jag heter ${AppConstants.mascotName}.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.copyWith(
+                                      color: mutedOnPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Text(
+                          '${_pageIndex + 1}/${_pages.length}',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppConstants.smallPadding),
+                    ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(AppConstants.borderRadius),
+                      child: LinearProgressIndicator(
+                        value: progress.clamp(0.0, 1.0),
+                        minHeight: AppConstants.progressBarHeightSmall,
+                        backgroundColor: onPrimary.withValues(
+                          alpha: AppOpacities.progressTrackLight,
+                        ),
+                        valueColor: AlwaysStoppedAnimation<Color>(accentColor),
+                      ),
+                    ),
+                    SizedBox(
+                      height: compactLayout
+                          ? AppConstants.defaultPadding
+                          : AppConstants.largePadding,
+                    ),
+                    Expanded(
+                      child: PageView(
+                        controller: _controller,
+                        onPageChanged: (index) =>
+                            setState(() => _pageIndex = index),
+                        children: _pages,
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.defaultPadding),
+                    ElevatedButton(
+                      onPressed: _next,
+                      child: Text(
+                        _pageIndex >= (_pages.length - 1) ? 'Klar' : 'Nästa',
                         style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: onPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Jag heter ${AppConstants.mascotName}.',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    ),
+                    const SizedBox(height: AppConstants.smallPadding),
+                    TextButton(
+                      onPressed: _finish,
+                      child: Text(
+                        'Hoppa över',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
                               color: mutedOnPrimary,
                               fontWeight: FontWeight.w600,
                             ),
                       ),
-                    ],
-                  ),
-                ),
-                Text(
-                  '${_pageIndex + 1}/${_pages.length}',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppConstants.smallPadding),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-              child: LinearProgressIndicator(
-                value: progress.clamp(0.0, 1.0),
-                minHeight: AppConstants.progressBarHeightSmall,
-                backgroundColor: onPrimary.withValues(
-                  alpha: AppOpacities.progressTrackLight,
-                ),
-                valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-              ),
-            ),
-            const SizedBox(height: AppConstants.largePadding),
-            Expanded(
-              child: PageView(
-                controller: _controller,
-                onPageChanged: (index) => setState(() => _pageIndex = index),
-                children: _pages,
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            ElevatedButton(
-              onPressed: _next,
-              child: Text(
-                _pageIndex >= (_pages.length - 1) ? 'Klar' : 'Nästa',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
                     ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: AppConstants.smallPadding),
-            TextButton(
-              onPressed: _finish,
-              child: Text(
-                'Hoppa över',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: mutedOnPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
