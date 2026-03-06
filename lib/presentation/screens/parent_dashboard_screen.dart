@@ -602,6 +602,8 @@ class _UpdateSectionCard extends StatefulWidget {
 class _UpdateSectionCardState extends State<_UpdateSectionCard> {
   static const String _latestReleaseApiUrl =
       'https://api.github.com/repos/Cognifox-Studio/Siffersafari/releases/latest';
+  static const String _releasesApiUrl =
+      'https://api.github.com/repos/Cognifox-Studio/Siffersafari/releases?per_page=1';
 
   bool _isChecking = false;
   String? _installedVersion;
@@ -661,59 +663,92 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
   Future<_AppUpdateInfo> _fetchLatestRelease() async {
     final client = HttpClient();
     try {
-      final request = await client.getUrl(Uri.parse(_latestReleaseApiUrl));
-      request.headers
-          .set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
-      request.headers
-          .set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
+      final latestResponse = await _requestJson(client, _latestReleaseApiUrl);
 
-      final response = await request.close();
-      final body = await response.transform(utf8.decoder).join();
-
-      if (response.statusCode != 200) {
-        throw Exception('GitHub svarade ${response.statusCode}');
+      if (latestResponse.statusCode == 200) {
+        return _parseReleasePayload(latestResponse.payload);
       }
 
-      final payload = jsonDecode(body);
-      if (payload is! Map<String, dynamic>) {
-        throw Exception('Ogiltigt svar från GitHub');
-      }
-
-      final tagName = (payload['tag_name'] as String?)?.trim();
-      if (tagName == null || tagName.isEmpty) {
-        throw Exception('Ingen release-tag hittades');
-      }
-
-      final releasePageUrl = (payload['html_url'] as String?)?.trim() ??
-          'https://github.com/Cognifox-Studio/Siffersafari/releases/latest';
-      final assets = payload['assets'];
-
-      String? apkUrl;
-      if (assets is List) {
-        for (final item in assets.whereType<Map>()) {
-          final asset = item.cast<String, dynamic>();
-          final fileName = (asset['name'] as String?)?.toLowerCase();
-          final browserDownloadUrl =
-              (asset['browser_download_url'] as String?)?.trim();
-
-          if (fileName != null &&
-              fileName.endsWith('.apk') &&
-              browserDownloadUrl != null &&
-              browserDownloadUrl.isNotEmpty) {
-            apkUrl = browserDownloadUrl;
-            break;
-          }
+      // GitHub returns 404 for /releases/latest when only prereleases exist.
+      if (latestResponse.statusCode == 404) {
+        final releasesResponse = await _requestJson(client, _releasesApiUrl);
+        if (releasesResponse.statusCode != 200) {
+          throw Exception('GitHub svarade ${releasesResponse.statusCode}');
         }
+
+        final payload = releasesResponse.payload;
+        if (payload is! List || payload.isEmpty) {
+          throw Exception('Ingen release hittades ännu');
+        }
+
+        final firstRelease = payload.first;
+        if (firstRelease is! Map<String, dynamic>) {
+          throw Exception('Ogiltigt releasesvar från GitHub');
+        }
+
+        return _parseReleasePayload(firstRelease);
       }
 
-      return _AppUpdateInfo(
-        tagName: tagName,
-        releasePageUrl: releasePageUrl,
-        apkUrl: apkUrl,
-      );
+      throw Exception('GitHub svarade ${latestResponse.statusCode}');
     } finally {
       client.close(force: true);
     }
+  }
+
+  Future<({int statusCode, dynamic payload})> _requestJson(
+    HttpClient client,
+    String url,
+  ) async {
+    final request = await client.getUrl(Uri.parse(url));
+    request.headers
+        .set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
+    request.headers
+        .set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
+
+    final response = await request.close();
+    final body = await response.transform(utf8.decoder).join();
+    dynamic payload;
+    try {
+      payload = jsonDecode(body);
+    } catch (_) {
+      payload = body;
+    }
+    return (statusCode: response.statusCode, payload: payload);
+  }
+
+  _AppUpdateInfo _parseReleasePayload(Map<String, dynamic> payload) {
+    final tagName = (payload['tag_name'] as String?)?.trim();
+    if (tagName == null || tagName.isEmpty) {
+      throw Exception('Ingen release-tag hittades');
+    }
+
+    final releasePageUrl = (payload['html_url'] as String?)?.trim() ??
+        'https://github.com/Cognifox-Studio/Siffersafari/releases/latest';
+    final assets = payload['assets'];
+
+    String? apkUrl;
+    if (assets is List) {
+      for (final item in assets.whereType<Map>()) {
+        final asset = item.cast<String, dynamic>();
+        final fileName = (asset['name'] as String?)?.toLowerCase();
+        final browserDownloadUrl =
+            (asset['browser_download_url'] as String?)?.trim();
+
+        if (fileName != null &&
+            fileName.endsWith('.apk') &&
+            browserDownloadUrl != null &&
+            browserDownloadUrl.isNotEmpty) {
+          apkUrl = browserDownloadUrl;
+          break;
+        }
+      }
+    }
+
+    return _AppUpdateInfo(
+      tagName: tagName,
+      releasePageUrl: releasePageUrl,
+      apkUrl: apkUrl,
+    );
   }
 
   String _normalizeVersion(String version) {
