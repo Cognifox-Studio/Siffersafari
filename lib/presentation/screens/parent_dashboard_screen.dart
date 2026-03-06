@@ -713,6 +713,7 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     } catch (_) {
       payload = body;
     }
+
     return (statusCode: response.statusCode, payload: payload);
   }
 
@@ -780,7 +781,6 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final installedVersionText = _installedVersion ?? 'laddar...';
-
     final release = _latestRelease;
     final hasRelease = release != null;
     final hasInstalled = _installedVersion != null;

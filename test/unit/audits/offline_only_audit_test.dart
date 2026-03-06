@@ -22,6 +22,14 @@ void main() {
         RegExp(r'https?://'),
       ];
 
+      // Parent dashboard has an explicit parent-initiated update check/download flow.
+      const allowedViolations = <String, Set<String>>{
+        'lib/presentation/screens/parent_dashboard_screen.dart': {
+          r'\bHttpClient\s*\(',
+          r'https?://',
+        },
+      };
+
       final violations = <String>[];
       final dartFiles = libDir
           .listSync(recursive: true)
@@ -34,7 +42,12 @@ void main() {
 
         for (final pattern in forbiddenPatterns) {
           if (pattern.hasMatch(content)) {
-            violations.add('$path -> ${pattern.pattern}');
+            final allowedForFile = allowedViolations[path];
+            final isAllowedForFile =
+                allowedForFile != null && allowedForFile.contains(pattern.pattern);
+            if (!isAllowedForFile) {
+              violations.add('$path -> ${pattern.pattern}');
+            }
           }
         }
       }
