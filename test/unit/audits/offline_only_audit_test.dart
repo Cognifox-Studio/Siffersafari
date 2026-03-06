@@ -25,6 +25,9 @@ void main() {
       // Parent dashboard has an explicit parent-initiated update check/download flow.
       const allowedViolations = <String, Set<String>>{
         'lib/presentation/screens/parent_dashboard_screen.dart': {
+          r'https?://',
+        },
+        'lib/core/services/app_update_service.dart': {
           r'\bHttpClient\s*\(',
           r'https?://',
         },

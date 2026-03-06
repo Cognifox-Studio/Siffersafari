@@ -1,9 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:siffersafari/core/di/injection.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
 import 'test_utils.dart' as it;
+
+String? _activeOnboardingStep(WidgetTester tester) {
+  final stepPattern = RegExp(r'^\d+/\d+$');
+
+  for (final widget in tester.widgetList<Text>(find.byType(Text))) {
+    final text = widget.data?.trim();
+    if (text != null && stepPattern.hasMatch(text)) {
+      return text;
+    }
+  }
+
+  return null;
+}
+
+Future<void> _launchCleanApp(WidgetTester tester) async {
+  await app.main();
+  await it.settle(tester, const Duration(milliseconds: 1200));
+
+  if (getIt.isRegistered<LocalStorageRepository>()) {
+    await getIt<LocalStorageRepository>().clearAllData();
+    await tester.pump(const Duration(milliseconds: 120));
+  }
+
+  await app.main();
+  await it.settle(tester, const Duration(milliseconds: 1200));
+}
+
+Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
+  final activeStep = _activeOnboardingStep(tester);
+
+  if ((activeStep?.startsWith('1/') ?? true) &&
+      find.text('Vilken årskurs kör du?').evaluate().isNotEmpty) {
+    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    if (nextButton.evaluate().isNotEmpty) {
+      await it.tap(tester, nextButton);
+      await it.settle(tester, const Duration(milliseconds: 500));
+      return true;
+    }
+  }
+
+  if ((activeStep?.startsWith('2/') ?? false) &&
+      find.text('Kan barnet läsa?').evaluate().isNotEmpty) {
+    final noButton = find.widgetWithText(ElevatedButton, 'Nej');
+    if (noButton.evaluate().isNotEmpty) {
+      await it.tap(tester, noButton);
+      await it.settle(tester, const Duration(milliseconds: 500));
+      return true;
+    }
+  }
+
+  if ((activeStep?.startsWith('3/') ?? false) ||
+      ((activeStep?.startsWith('2/') ?? false) &&
+          find.text('Kan barnet läsa?').evaluate().isEmpty)) {
+    final doneButton = find.widgetWithText(ElevatedButton, 'Klar');
+    if (doneButton.evaluate().isNotEmpty) {
+      await it.tap(tester, doneButton);
+      await it.settle(tester, const Duration(milliseconds: 600));
+      return true;
+    }
+  }
+
+  final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
+  if (skipButton.evaluate().isNotEmpty) {
+    await it.tap(tester, skipButton);
+    await it.settle(tester, const Duration(milliseconds: 700));
+    return true;
+  }
+
+  return false;
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -93,33 +165,24 @@ void main() {
           );
         }
 
-        await waitFor(
-          'Home ready (settings icon or parent mode tooltip)',
-          () {
-            return find.byIcon(Icons.settings).evaluate().isNotEmpty ||
-                find.byTooltip('Föräldraläge').evaluate().isNotEmpty;
-          },
-          timeout: const Duration(seconds: 25),
-          step: const Duration(milliseconds: 150),
-        );
+        final deadline = DateTime.now().add(const Duration(seconds: 35));
+        while (DateTime.now().isBefore(deadline)) {
+          if (find.byTooltip('Föräldraläge').evaluate().isNotEmpty) return;
 
-        // If first-run UI is visible, resolve it quickly.
-        await maybeCreateProfile();
-        await maybeSkipOnboarding();
+          await maybeCreateProfile();
+          while (await _completeOnboardingStepIfVisible(tester)) {
+            // complete current onboarding flow
+          }
+          await maybeSkipOnboarding();
+          await tester.pump(const Duration(milliseconds: 150));
+        }
 
-        await waitFor(
-          'Home ready (after first-run)',
-          () {
-            return find.byIcon(Icons.settings).evaluate().isNotEmpty ||
-                find.byTooltip('Föräldraläge').evaluate().isNotEmpty;
-          },
-          timeout: const Duration(seconds: 20),
-          step: const Duration(milliseconds: 150),
+        await failWithUiState(
+          'Timed out waiting for Home ready (parent mode entry point)',
         );
       }
 
-      await app.main();
-      await tester.pump(const Duration(milliseconds: 400));
+      await _launchCleanApp(tester);
 
       await ensureHomeReady();
 
@@ -204,20 +267,25 @@ void main() {
       );
 
       // Focus answer field and keep keyboard open.
-      final answerField = find.byType(TextField);
+      final recoveryDialog = find.byType(AlertDialog);
+      expect(recoveryDialog, findsOneWidget);
+      final answerField = find.descendant(
+        of: recoveryDialog,
+        matching: find.byType(TextField),
+      );
       if (answerField.evaluate().isEmpty) {
         await failWithUiState('Answer TextField not found in recovery dialog');
       }
-      await it.tap(tester, answerField.first,
-          after: const Duration(milliseconds: 300),
-        );
       await tester.showKeyboard(answerField.first);
       await tester.pump(const Duration(milliseconds: 50));
 
       await tester.enterText(answerField.first, 'hemligt');
       await tester.pump(const Duration(milliseconds: 120));
 
-      final saveRecovery = find.text('Spara säkerhetsfråga');
+      final saveRecovery = find.descendant(
+        of: recoveryDialog,
+        matching: find.widgetWithText(ElevatedButton, 'Spara säkerhetsfråga'),
+      );
       if (saveRecovery.evaluate().isEmpty) {
         await failWithUiState('"Spara säkerhetsfråga" not found');
       }

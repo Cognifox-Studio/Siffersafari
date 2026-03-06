@@ -4,6 +4,24 @@
 > 
 > Uppdateras efter större milestones/förluster av kontext.
 
+## 2026-03-06 — Integrationstest-härdning efter release
+
+### Mål (denna del)
+✅ Få automatiska blockerare gröna efter releasearbete utan manuella tester
+
+### Gjort
+- Uppdaterat `integration_test/app_smoke_test.dart` för nuvarande onboardingflöde med 3 steg.
+- Gjort onboarding-hjälparna robusta mot `PageView` genom att styra på aktiv stegindikator (`1/3`, `2/3`, osv.) i stället för att bara matcha texter som kan finnas offscreen.
+- Gjort PIN-/säkerhetsfråge-tester robusta genom att bara interagera med `TextField` och knappar i aktiv `AlertDialog`, inte underliggande PIN-skärm.
+- Uppdaterat `integration_test/parent_pin_security_question_flow_test.dart` så keyboard-öppet-flödet verifierar rätt dialog och rätt submit-knapp.
+
+### Verifiering
+- Riktad körning: `integration_test/app_smoke_test.dart` + `integration_test/parent_pin_security_question_flow_test.dart`: ✅ 8/8 gröna
+
+### Nästa steg
+1. Valfritt: kör full integration-/testsvit igen om du vill stänga hela QA-punkten direkt.
+2. Valfritt: verifiera föräldraflödets PIN-reset manuellt på fysisk enhet, eftersom detta fortfarande är ett känsligt UI-flöde med keyboard/dialog/navigering.
+
 ## 2026-03-06 — Responsiv UI-kalibrering
 
 ### Mål (denna del)

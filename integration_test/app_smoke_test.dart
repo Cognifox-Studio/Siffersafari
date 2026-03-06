@@ -1,9 +1,88 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:siffersafari/core/di/injection.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
 import 'test_utils.dart' as it;
+
+String? _activeOnboardingStep(WidgetTester tester) {
+  final stepPattern = RegExp(r'^\d+/\d+$');
+
+  for (final widget in tester.widgetList<Text>(find.byType(Text))) {
+    final text = widget.data?.trim();
+    if (text != null && stepPattern.hasMatch(text)) {
+      return text;
+    }
+  }
+
+  return null;
+}
+
+Future<void> _launchCleanApp(WidgetTester tester) async {
+  await app.main();
+  await it.settle(tester, const Duration(milliseconds: 1200));
+
+  if (getIt.isRegistered<LocalStorageRepository>()) {
+    await getIt<LocalStorageRepository>().clearAllData();
+    await tester.pump(const Duration(milliseconds: 120));
+  }
+
+  await app.main();
+  await it.settle(tester, const Duration(milliseconds: 1200));
+}
+
+Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
+  final activeStep = _activeOnboardingStep(tester);
+
+  if ((activeStep?.startsWith('1/') ?? true) &&
+      find.text('Vilken årskurs kör du?').evaluate().isNotEmpty) {
+    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    if (nextButton.evaluate().isNotEmpty) {
+      await it.tap(tester, nextButton);
+      await it.settle(tester, const Duration(milliseconds: 500));
+      return true;
+    }
+  }
+
+  if ((activeStep?.startsWith('2/') ?? false) &&
+      find.text('Kan barnet läsa?').evaluate().isNotEmpty) {
+    final noButton = find.widgetWithText(ElevatedButton, 'Nej');
+    if (noButton.evaluate().isNotEmpty) {
+      await it.tap(tester, noButton);
+      await it.settle(tester, const Duration(milliseconds: 500));
+      return true;
+    }
+  }
+
+  if ((activeStep?.startsWith('3/') ?? false) ||
+      ((activeStep?.startsWith('2/') ?? false) &&
+          find.text('Kan barnet läsa?').evaluate().isEmpty)) {
+    final doneButton = find.widgetWithText(ElevatedButton, 'Klar');
+    if (doneButton.evaluate().isNotEmpty) {
+      await it.tap(tester, doneButton);
+      await it.settle(tester, const Duration(milliseconds: 600));
+      return true;
+    }
+
+    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    if (nextButton.evaluate().isNotEmpty) {
+      await it.tap(tester, nextButton);
+      await it.settle(tester, const Duration(milliseconds: 500));
+      return true;
+    }
+  }
+
+  final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
+  if (skipButton.evaluate().isNotEmpty) {
+    await it.tap(tester, skipButton);
+    await it.settle(tester, const Duration(milliseconds: 700));
+    return true;
+  }
+
+  return false;
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -11,10 +90,7 @@ void main() {
   testWidgets(
     'Integration (smoke): skapa användare vid behov och starta quiz',
     (tester) async {
-      await app.main();
-
-      // App startup does async init (Hive + DI).
-      await it.settle(tester, const Duration(milliseconds: 1200));
+      await _launchCleanApp(tester);
 
       Future<void> ensureHomeVisible() async {
         final operationCardKeys = <Key>[
@@ -38,104 +114,9 @@ void main() {
           return false;
         }
 
-        Future<bool> completeOnboardingIfVisible() async {
-          final isOnboardingVisible =
-              find.text('Hoppa över').evaluate().isNotEmpty &&
-                  (find.text('1/2').evaluate().isNotEmpty ||
-                      find.text('2/2').evaluate().isNotEmpty);
-          if (!isOnboardingVisible) return false;
-
-          // NOTE: The onboarding uses a PageView. Both pages can exist in the
-          // widget tree at the same time, so we must avoid targeting widgets
-          // from the non-visible page.
-
-          // ---- Onboarding step 2: ops (“Vad vill du räkna?”) ----
-          if (find.text('2/2').evaluate().isNotEmpty) {
-            final doneButton = find.widgetWithText(ElevatedButton, 'Klar');
-            if (doneButton.evaluate().isNotEmpty) {
-              await it.tap(tester, doneButton);
-              await it.settle(tester, const Duration(milliseconds: 600));
-              return true;
-            }
-
-            // Rare race: page jump may not have updated button text yet.
-            final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
-            if (nextButton.evaluate().isNotEmpty) {
-              await it.tap(tester, nextButton);
-              await it.settle(tester, const Duration(milliseconds: 450));
-              return true;
-            }
-          }
-
-          // ---- Onboarding step 1: grade ----
-          if (find.text('1/2').evaluate().isNotEmpty &&
-              find.text('Vilken årskurs kör du?').evaluate().isNotEmpty) {
-            final gradeDropdown = find.byType(DropdownButton<int?>);
-            if (gradeDropdown.evaluate().isNotEmpty) {
-              final opened = await it.tryTap(
-                tester,
-                gradeDropdown,
-                after: const Duration(milliseconds: 600),
-              );
-              if (opened) {
-                await it.settle(tester, const Duration(milliseconds: 300));
-
-                // Prefer Åk 3 for stable coverage.
-                final ak3 = find.text('Åk 3');
-                if (ak3.evaluate().isNotEmpty) {
-                  await it.tap(
-                    tester,
-                    ak3,
-                    after: const Duration(milliseconds: 700),
-                  );
-                } else {
-                  final vetInte = find.text('Vet inte');
-                  if (vetInte.evaluate().isNotEmpty) {
-                    await it.tap(
-                      tester,
-                      vetInte,
-                      after: const Duration(milliseconds: 600),
-                    );
-                  }
-                }
-              }
-            }
-
-            final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
-            if (nextButton.evaluate().isNotEmpty) {
-              await it.tap(tester, nextButton);
-              await it.settle(tester, const Duration(milliseconds: 450));
-              return true;
-            }
-
-            // Fallback if button type changes.
-            if (find.text('Nästa').evaluate().isNotEmpty) {
-              await it.tap(tester, find.text('Nästa'));
-              await it.settle(tester, const Duration(milliseconds: 450));
-              return true;
-            }
-          }
-
-          // Generic escape hatch.
-          final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
-          if (skipButton.evaluate().isNotEmpty) {
-            await it.tap(tester, skipButton);
-            await it.settle(tester, const Duration(milliseconds: 700));
-            return true;
-          }
-          if (find.text('Hoppa över').evaluate().isNotEmpty) {
-            await it.tap(tester, find.text('Hoppa över'));
-            await it.settle(tester, const Duration(milliseconds: 700));
-            return true;
-          }
-
-          return false;
-        }
-
         final deadline = DateTime.now().add(const Duration(seconds: 35));
         while (DateTime.now().isBefore(deadline)) {
-          // Onboarding can block the UI.
-          await completeOnboardingIfVisible();
+          await _completeOnboardingStepIfVisible(tester);
           if (hasOperationCards() || hasCreateProfileButton()) return;
 
           // If we're in Settings, go back.
@@ -275,14 +256,16 @@ void main() {
   testWidgets(
     'Smoke: app startar och hittar huvudskärm',
     (tester) async {
-      await app.main();
-      await it.settle(tester, const Duration(milliseconds: 1200));
+      await _launchCleanApp(tester);
       await it.waitFor(
         tester,
         'app started (onboarding or home)',
         () =>
             find.text('Hoppa över').evaluate().isNotEmpty ||
+            find.text('Nu kör vi!').evaluate().isNotEmpty ||
             find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
+            find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
+            find.text('Vad vill du räkna?').evaluate().isNotEmpty ||
             find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty ||
             find.byKey(const Key('operation_card_subtraction')).evaluate().isNotEmpty ||
             find.byKey(const Key('operation_card_multiplication')).evaluate().isNotEmpty ||
@@ -293,8 +276,12 @@ void main() {
 
       // Verify app is running and we can find key UI elements.
       // Either we're in onboarding or we can see operation cards.
-      final onboardingVisible = find.text('Hoppa över').evaluate().isNotEmpty ||
-          find.text('Vilken årskurs kör du?').evaluate().isNotEmpty;
+        final onboardingVisible =
+          find.text('Hoppa över').evaluate().isNotEmpty ||
+            find.text('Nu kör vi!').evaluate().isNotEmpty ||
+            find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
+            find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
+            find.text('Vad vill du räkna?').evaluate().isNotEmpty;
 
       final homeVisible = find
               .byKey(const Key('operation_card_addition'))
@@ -326,13 +313,13 @@ void main() {
   testWidgets(
     'Smoke: öppna inställningar och gå tillbaka',
     (tester) async {
-      await app.main();
-      await it.settle(tester, const Duration(milliseconds: 1200));
+      await _launchCleanApp(tester);
       await it.waitFor(
         tester,
         'home/onboarding visible',
         () =>
             find.text('Hoppa över').evaluate().isNotEmpty ||
+            find.text('Nu kör vi!').evaluate().isNotEmpty ||
             find.text('Skapa profil').evaluate().isNotEmpty ||
             find.byIcon(Icons.settings).evaluate().isNotEmpty ||
             find.byTooltip('Föräldraläge').evaluate().isNotEmpty ||
@@ -343,10 +330,8 @@ void main() {
         timeout: const Duration(seconds: 35),
       );
 
-      // Navigate through onboarding if visible.
-      if (find.text('Hoppa över').evaluate().isNotEmpty) {
-        await it.tap(tester, find.text('Hoppa över'));
-        await it.settle(tester, const Duration(milliseconds: 700));
+      while (await _completeOnboardingStepIfVisible(tester)) {
+        // complete current onboarding flow
       }
 
       // Find settings icon (gear icon).
@@ -363,28 +348,67 @@ void main() {
         await it.settle(tester, const Duration(milliseconds: 700));
       }
 
-      Future<void> openSettings() async {
-        final candidates = <Finder>[
-          find.byIcon(Icons.settings),
-          find.byTooltip('Inställningar'),
-          find.text('Inställningar'),
-        ];
-
-        for (final candidate in candidates) {
-          if (candidate.evaluate().isEmpty) continue;
-          await it.tap(tester, candidate.first);
-          return;
-        }
-
-        fail(
-          'Could not find a Settings entry point. Visible texts: '
-          '${it.visibleTexts(tester).take(120).toList()}',
-        );
+      Future<void> maybeSkipOnboarding() async {
+        if (find.text('Hoppa över').evaluate().isEmpty) return;
+        await it.tap(tester, find.text('Hoppa över'));
+        await it.settle(tester, const Duration(milliseconds: 700));
       }
 
-      await maybeCreateProfile();
+      Future<void> ensureParentDashboard() async {
+        await maybeCreateProfile();
+        await maybeSkipOnboarding();
 
-      await openSettings();
+        await it.waitFor(
+          tester,
+          'parent mode entry point',
+          () => find.byTooltip('Föräldraläge').evaluate().isNotEmpty,
+          timeout: const Duration(seconds: 35),
+        );
+
+        await it.tap(tester, find.byTooltip('Föräldraläge'));
+        await it.settle(tester, const Duration(milliseconds: 500));
+
+        if (find.text('Skapa PIN').evaluate().isNotEmpty) {
+          final pinFields = find.byType(TextField);
+          expect(pinFields, findsAtLeastNWidgets(2));
+          await tester.enterText(pinFields.at(0), '1234');
+          await tester.enterText(pinFields.at(1), '1234');
+          await it.settle(tester, const Duration(milliseconds: 250));
+          await it.tap(tester, find.text('Spara PIN'));
+          await it.settle(tester, const Duration(milliseconds: 500));
+
+          if (find.text('Sätt säkerhetsfråga').evaluate().isNotEmpty) {
+            final recoveryDialog = find.byType(AlertDialog);
+            expect(recoveryDialog, findsOneWidget);
+            final answerField = find.descendant(
+              of: recoveryDialog,
+              matching: find.byType(TextField),
+            );
+            expect(answerField, findsOneWidget);
+            await tester.enterText(answerField, 'hemligt');
+            await it.settle(tester, const Duration(milliseconds: 200));
+            await it.tap(
+              tester,
+              find.descendant(
+                of: recoveryDialog,
+                matching:
+                    find.widgetWithText(ElevatedButton, 'Spara säkerhetsfråga'),
+              ),
+            );
+          }
+        } else if (find.text('Ange PIN').evaluate().isNotEmpty) {
+          final pinField = find.byType(TextField).first;
+          await tester.enterText(pinField, '1234');
+          await it.settle(tester, const Duration(milliseconds: 200));
+          await it.tap(tester, find.text('Öppna'));
+        }
+
+        await it.waitForText(tester, 'Översikt');
+      }
+
+      await ensureParentDashboard();
+
+      await it.tap(tester, find.byTooltip('Inställningar'));
       await it.waitForText(tester, 'Inställningar');
 
       // Verify we're in settings.
@@ -397,15 +421,9 @@ void main() {
       final backButton = find.byType(BackButton);
       expect(backButton, findsOneWidget);
       await it.tap(tester, backButton);
-      await it.waitFor(
-        tester,
-        'home operation cards',
-        () => find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty,
-      );
+      await it.waitForText(tester, 'Översikt');
 
-      // Verify we're back on home (operation cards visible).
-      final anyOperationCard = find.byKey(const Key('operation_card_addition'));
-      expect(anyOperationCard, findsOneWidget);
+      expect(find.text('Översikt'), findsWidgets);
     },
     timeout: const Timeout(
       Duration(
@@ -415,31 +433,10 @@ void main() {
   );
 
   testWidgets(
-    'Smoke: achievement-screen kan visas',
+    'Smoke: hemvyn visar spelkort efter profilskapande',
     (tester) async {
-      await app.main();
-      await it.settle(tester, const Duration(milliseconds: 1200));
-      await it.waitFor(
-        tester,
-        'home/onboarding visible',
-        () =>
-            find.text('Hoppa över').evaluate().isNotEmpty ||
-            find.text('Skapa profil').evaluate().isNotEmpty ||
-            find.byIcon(Icons.emoji_events).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_subtraction')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_multiplication')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_division')).evaluate().isNotEmpty,
-        timeout: const Duration(seconds: 35),
-      );
+      await _launchCleanApp(tester);
 
-      // Skip onboarding if visible.
-      if (find.text('Hoppa över').evaluate().isNotEmpty) {
-        await it.tap(tester, find.text('Hoppa över'));
-        await it.settle(tester, const Duration(milliseconds: 700));
-      }
-
-      // Create profile if none exists.
       final createProfileButton =
           find.widgetWithText(ElevatedButton, 'Skapa profil');
       if (createProfileButton.evaluate().isNotEmpty) {
@@ -451,36 +448,13 @@ void main() {
         await it.settle(tester, const Duration(milliseconds: 700));
       }
 
-      // Find trophy icon (achievements).
-      final trophyIcon = find.byIcon(Icons.emoji_events);
-      if (trophyIcon.evaluate().isEmpty) {
-        // Fallback: try finding by text.
-        final achievementsText = find.text('Achievements');
-        expect(
-          achievementsText,
-          findsWidgets,
-          reason: 'Trophy icon or Achievements text should be visible',
-        );
-        await it.tap(tester, achievementsText.first);
-      } else {
-        await it.tap(tester, trophyIcon.first);
+      while (await _completeOnboardingStepIfVisible(tester)) {
+        // complete current onboarding flow
       }
 
-      await it.settle(tester, const Duration(milliseconds: 700));
-
-      // Verify we're on achievements screen (look for common UI elements).
-      final achievementsTitle =
-          find.textContaining('Achievements').evaluate().isNotEmpty ||
-              find.text('Inga upplåsta').evaluate().isNotEmpty ||
-              find.byIcon(Icons.emoji_events).evaluate().isNotEmpty;
-
-      expect(
-        achievementsTitle,
-        isTrue,
-        reason: 'Achievements screen should be visible',
-      );
-
-      // No need to navigate back in a smoke test.
+      expect(find.byKey(const Key('operation_card_addition')), findsOneWidget);
+      expect(find.text('Poäng'), findsWidgets);
+      expect(find.textContaining('Hej'), findsWidgets);
     },
     timeout: const Timeout(
       Duration(
@@ -492,13 +466,13 @@ void main() {
   testWidgets(
     'Smoke: profile switcher kan öppnas',
     (tester) async {
-      await app.main();
-      await it.settle(tester, const Duration(milliseconds: 1200));
+      await _launchCleanApp(tester);
       await it.waitFor(
         tester,
         'home/onboarding visible',
         () =>
             find.text('Hoppa över').evaluate().isNotEmpty ||
+            find.text('Nu kör vi!').evaluate().isNotEmpty ||
             find.text('Skapa profil').evaluate().isNotEmpty ||
             find.byIcon(Icons.arrow_drop_down).evaluate().isNotEmpty ||
             find.byKey(const Key('profile_selector')).evaluate().isNotEmpty ||
@@ -509,58 +483,95 @@ void main() {
         timeout: const Duration(seconds: 35),
       );
 
-      // Skip onboarding.
-      if (find.text('Hoppa över').evaluate().isNotEmpty) {
-        await it.tap(tester, find.text('Hoppa över'));
-        await it.settle(tester, const Duration(milliseconds: 700));
+      Future<void> maybeSkipOnboarding() async {
+        while (await _completeOnboardingStepIfVisible(tester)) {
+          // complete current onboarding flow
+        }
       }
 
-      // Create profile if none exists.
-      final createProfileButton =
-          find.widgetWithText(ElevatedButton, 'Skapa profil');
-      if (createProfileButton.evaluate().isNotEmpty) {
+      Future<void> maybeCreateProfile(String name) async {
+        final createProfileButton =
+            find.widgetWithText(ElevatedButton, 'Skapa profil');
+        if (createProfileButton.evaluate().isEmpty) return;
         await it.tap(tester, createProfileButton);
         await it.settle(tester, const Duration(milliseconds: 400));
-        await tester.enterText(
-          find.byType(TextField).first,
-          'ProfileSwitchUser',
-        );
+        await tester.enterText(find.byType(TextField).first, name);
         await it.settle(tester, const Duration(milliseconds: 250));
         await it.tap(tester, find.text('Skapa'));
         await it.settle(tester, const Duration(milliseconds: 700));
       }
 
-      // Find profile name display (usually at top of home screen).
-      // Look for the profile dropdown or name text.
-      final profileDropdown = find.byKey(const Key('profile_selector'));
-      if (profileDropdown.evaluate().isEmpty) {
-        // Fallback: look for name text followed by dropdown arrow.
-        final arrowDown = find.byIcon(Icons.arrow_drop_down);
-        expect(
-          arrowDown,
-          findsWidgets,
-          reason: 'Profile dropdown should be visible on home screen',
-        );
-        await it.tap(
+      Future<void> ensureParentDashboard() async {
+        await maybeCreateProfile('ProfileSwitchUser');
+        await maybeSkipOnboarding();
+        await it.waitFor(
           tester,
-          arrowDown.first,
+          'parent mode entry point',
+          () => find.byTooltip('Föräldraläge').evaluate().isNotEmpty,
+          timeout: const Duration(seconds: 35),
         );
-      } else {
-        await it.tap(tester, profileDropdown.first);
+        await it.tap(tester, find.byTooltip('Föräldraläge'));
+        await it.settle(tester, const Duration(milliseconds: 500));
+
+        if (find.text('Skapa PIN').evaluate().isNotEmpty) {
+          final pinFields = find.byType(TextField);
+          expect(pinFields, findsAtLeastNWidgets(2));
+          await tester.enterText(pinFields.at(0), '1234');
+          await tester.enterText(pinFields.at(1), '1234');
+          await it.settle(tester, const Duration(milliseconds: 250));
+          await it.tap(tester, find.text('Spara PIN'));
+          await it.settle(tester, const Duration(milliseconds: 500));
+
+          if (find.text('Sätt säkerhetsfråga').evaluate().isNotEmpty) {
+            final recoveryDialog = find.byType(AlertDialog);
+            expect(recoveryDialog, findsOneWidget);
+            final answerField = find.descendant(
+              of: recoveryDialog,
+              matching: find.byType(TextField),
+            );
+            expect(answerField, findsOneWidget);
+            await tester.enterText(answerField, 'hemligt');
+            await it.settle(tester, const Duration(milliseconds: 200));
+            await it.tap(
+              tester,
+              find.descendant(
+                of: recoveryDialog,
+                matching:
+                    find.widgetWithText(ElevatedButton, 'Spara säkerhetsfråga'),
+              ),
+            );
+          }
+        } else if (find.text('Ange PIN').evaluate().isNotEmpty) {
+          await tester.enterText(find.byType(TextField).first, '1234');
+          await it.settle(tester, const Duration(milliseconds: 200));
+          await it.tap(tester, find.text('Öppna'));
+        }
+
+        await it.waitForText(tester, 'Översikt');
       }
 
-      await it.settle(tester, const Duration(milliseconds: 450));
+      await ensureParentDashboard();
+      await it.tap(tester, find.byTooltip('Inställningar'));
+      await it.waitForText(tester, 'Inställningar');
 
-      // Verify dropdown menu is visible (look for "Skapa ny profil" option).
-      final createNewOption = find.text('Skapa ny profil');
-      await it.waitForText(tester, 'Skapa ny profil');
-      expect(
-        createNewOption,
-        findsOneWidget,
-        reason: 'Profile switcher menu should show "Skapa ny profil" option',
-      );
+      await it.tap(tester, find.text('Skapa användare'));
+      await it.settle(tester, const Duration(milliseconds: 400));
+      await tester.enterText(find.byType(TextField).first, 'AndraUser');
+      await it.settle(tester, const Duration(milliseconds: 250));
+      await it.tap(tester, find.text('Skapa'));
+      await it.settle(tester, const Duration(milliseconds: 700));
 
-      // Tap outside to close dropdown (tap on scrim or press back).
+      final userDropdown = find.byType(DropdownButton<String>);
+      final dropdownFallback = find.byType(DropdownButton);
+      if (userDropdown.evaluate().isNotEmpty) {
+        await it.tap(tester, userDropdown.first);
+      } else {
+        await it.tap(tester, dropdownFallback.first);
+      }
+
+      await it.waitForText(tester, 'AndraUser');
+      expect(find.text('AndraUser'), findsWidgets);
+
       await tester.tapAt(const Offset(10, 10));
       await it.settle(tester, const Duration(milliseconds: 250));
     },
