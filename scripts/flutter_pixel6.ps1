@@ -10,7 +10,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $PixelAvdName = 'Pixel_6'
-$AppId = 'com.example.math_game_app'
+$AppId = 'com.cognifoxstudio.siffersafari'
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $ScriptVersion = 'pixel6-script/v3-deterministic-install'
 
