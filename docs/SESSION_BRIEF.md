@@ -4,6 +4,27 @@
 > 
 > Uppdateras efter större milestones/förluster av kontext.
 
+## 2026-03-06 — Parent update check in app
+
+### Mål (denna del)
+✅ Lägga till uppdateringskontroll i Föräldraläge för GitHub Releases
+
+### Gjort
+- Ny sektion i Föräldraläge: `Appuppdatering` med knapp `Sök uppdatering`.
+- Hämtar senaste release via GitHub API (`/releases/latest`).
+- Jämför installerad appversion mot release-tag.
+- Visar status: senaste version eller ny version tillgänglig.
+- Knapp `Ladda ner` öppnar APK-länk (fallback till release-sida).
+- Visar föräldratips: installera ovanpå befintlig app för att behålla statistik.
+
+### Tekniskt
+- Ändrade filer: `lib/presentation/screens/parent_dashboard_screen.dart`, `pubspec.yaml`.
+- Nya dependencies: `package_info_plus`, `url_launcher`.
+
+### Nästa steg
+1. Kör ny release-tag och verifiera på fysisk enhet att uppdateringskortet hittar releasen.
+2. Valfritt: lägg till debounce/cache (t.ex. 30-60s) för att undvika upprepade API-anrop.
+
 ## 2026-03-05 — After Test Refactoring + Standardization
 
 ### Mål (denna session)
