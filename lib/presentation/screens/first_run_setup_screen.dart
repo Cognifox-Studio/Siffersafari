@@ -143,7 +143,9 @@ class FirstRunSetupScreen extends ConsumerWidget {
                           child: ElevatedButton(
                             onPressed: () async {
                               await showCreateUserDialog(
-                                  context: context, ref: ref);
+                                context: context,
+                                ref: ref,
+                              );
                               if (!context.mounted) return;
 
                               await ref.read(userProvider.notifier).loadUsers();

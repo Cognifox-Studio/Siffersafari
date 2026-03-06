@@ -906,7 +906,9 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
       final installedVersion = _installedVersion;
       final updateAvailable = installedVersion != null &&
           _appUpdateService.isUpdateAvailable(
-              installedVersion, release.tagName);
+          installedVersion,
+          release.tagName,
+          );
 
       setState(() {
         _latestRelease = release;
@@ -1051,7 +1053,9 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     final updateAvailable = hasRelease &&
         hasInstalled &&
         _appUpdateService.isUpdateAvailable(
-            _installedVersion!, release.tagName);
+        _installedVersion!,
+        release.tagName,
+      );
 
     String statusText;
     if (_errorMessage != null) {
