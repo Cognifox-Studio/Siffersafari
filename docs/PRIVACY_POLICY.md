@@ -84,8 +84,7 @@ Siffersafari is designed for children under 13. We comply with the **Children's 
 We use the following open-source libraries, all operating **offline on your device:**
 - **Hive** (local database) — [Apache 2.0 License](https://github.com/isar/hive)
 - **Riverpod** (state management) — [MIT License](https://github.com/rrousselGit/riverpod)
-- **Just Audio** (sound playback) — [MIT License](https://github.com/ryanheise/just_audio)
-- **BCrypt** (password hashing) — Dart SDK, [BSD 3-Clause](https://github.com/google/bcrypt-dart)
+- **bcrypt** (PIN hashing) — [BSD 3-Clause](https://github.com/google/bcrypt-dart)
 
 None of these libraries phone home or collect data.
 

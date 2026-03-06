@@ -2,7 +2,7 @@
 
 Denna guide är för **detaljerad miljökonfiguration** när något inte funkar i `GETTING_STARTED.md` eller du behöver en från-scratch-installation.
 
-Startklar snabbversion? Se [GETTING_STARTED.md](../GETTING_STARTED.md) istället.
+Startklar snabbversion? Se [GETTING_STARTED.md](GETTING_STARTED.md) istället.
 
 ---
 
@@ -230,7 +230,7 @@ emulator -avd Pixel_6 -wipe-data
 flutter analyze
 
 # Test 2: En liten test
-flutter test test/offline_only_audit_test.dart -v
+flutter test test/unit/audits/offline_only_audit_test.dart -v
 
 # Test 3: Build & deploy
 flutter run -d emulator-<id>
@@ -265,6 +265,6 @@ Rekommenderat för detta projekt:
 ## Nästa Steg
 
 ✅ Setup klar? Då:
-- [GETTING_STARTED.md](../GETTING_STARTED.md) — Kör första testningen
+- [GETTING_STARTED.md](GETTING_STARTED.md) — Kör första testningen
 - [ADD_FEATURE.md](ADD_FEATURE.md) — Lägg till en feature
-- [CONTRIBUTING.md](../CONTRIBUTING.md) — QA-rutiner innan commit
+- [CONTRIBUTING.md](CONTRIBUTING.md) — QA-rutiner innan commit

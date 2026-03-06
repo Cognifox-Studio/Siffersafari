@@ -2,13 +2,13 @@
 
 Denna mapp innehåller Lottie-animationer (.json) för appen.
 
-## Nödvändiga animationer:
+## Nuvarande animationer
 
-1. **correct_animation.json** - Animation när svar är rätt (t.ex. stjärnor, fyrverkeri)
-2. **wrong_animation.json** - Animation när svar är fel (t.ex. skaka-effekt)
-3. **loading.json** - Laddningsanimation
-4. **celebration.json** - Celebration animation (visas på resultatskärmen vid bra resultat / upplåsning)
-5. **star_collect.json** - Animation när man samlar stjärnor
+Just nu används en Lottie-fil i appen:
+
+1. **celebration.json** - visad på resultatskärmen vid bra resultat / upplåsning
+
+Ytterligare animationer kan läggas till senare, men de är inte krav i nuvarande app.
 
 ## Format:
 

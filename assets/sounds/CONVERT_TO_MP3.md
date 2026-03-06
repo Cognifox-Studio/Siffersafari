@@ -23,7 +23,7 @@ OBS: Projektet listar ljudassets explicit i `pubspec.yaml` för att undvika att 
    - **Quality**: High
 4. Konvertera och ladda ner `.mp3`-filerna
 5. Placera dem i `assets/sounds/` (samma namn som .wav men .mp3 extension)
-6. Ta INTE bort .wav-filerna ännu (AudioService har fallback)
+6. Ta INTE bort .wav-filerna ännu (AudioService har fallback, och `background_music` använder idag fortfarande WAV som primary)
 7. När MP3-filerna ligger på plats: uppdatera `pubspec.yaml` så att endast MP3 packas in
 
 ### Filnamn som appen förväntar sig
@@ -96,7 +96,7 @@ ffmpeg -i background_music.wav -codec:a libmp3lame -b:a 192k background_music.mp
 
 ## AudioService-integration
 
-AudioService försöker redan ladda `.mp3` först:
+För ljudeffekter försöker `AudioService` redan ladda `.mp3` först:
 ```dart
 await _playAssetWithFallback(
   player: _audioPlayer,
@@ -105,7 +105,7 @@ await _playAssetWithFallback(
 );
 ```
 
-När `.mp3`-filer finns kommer de användas automatiskt utan kodändringar! 🎉
+För `background_music` är ordningen just nu omvänd (`.wav` primary, `.mp3` fallback), så där behövs en liten kodjustering om MP3 ska bli förstahandsval även i runtime.
 
 ---
 
@@ -116,7 +116,7 @@ När `.mp3`-filer finns kommer de användas automatiskt utan kodändringar! 🎉
 flutter build apk --debug
 Get-Item build\app\outputs\flutter-apk\app-debug.apk | Select-Object Length
 
-# Förväntat resultat: ~126 MB → ~121 MB (5 MB minskning)
+# Jämför före/efter lokalt för att mäta faktisk minskning i detta repo
 ```
 
 ---
@@ -126,7 +126,7 @@ Get-Item build\app\outputs\flutter-apk\app-debug.apk | Select-Object Length
 För release build (Play Store):
 ```powershell
 flutter build apk --release
-# Förväntat: ~136 MB (debug) → ~50-60 MB (release) → ~45-55 MB (release + MP3)
+# Mät faktisk release-storlek lokalt efter konverteringen
 ```
 
-Kombinerat med ProGuard/R8 code minification → **40-50 MB final APK** 🚀
+Kombinerat med release-optimeringar kan detta ge en tydlig minskning av APK-storleken.

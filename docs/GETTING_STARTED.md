@@ -5,7 +5,7 @@
 
 ## Uppdatering
 
-- 2026-03-01: Aktuell implementationsstatus finns i `README.md` under sektionen **Status (2026-03-01)** och i `IMPLEMENTATION_STATUS.md`.
+- 2026-03-01: Aktuell implementationsstatus finns i `README.md` under sektionen **Status (2026-03-01)** och i `SESSION_BRIEF.md`.
 - Rekommenderad QA-rutin (före commit/push) finns även sammanfattad i `CONTRIBUTING.md`.
 
 ## TL;DR (minsta som krävs)
@@ -13,7 +13,7 @@
 ```bash
 flutter pub get
 flutter analyze
-flutter test test/app_widget_flows_test.dart
+flutter test test/widget/app_home_test.dart
 ```
 
 För deterministisk körning på Pixel_6:
@@ -26,7 +26,7 @@ powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 
 För att kunna köra och utveckla detta projekt behöver du:
 
-1. **Flutter SDK** (version 3.0+)
+1. **Flutter SDK** (version 3.10+ / Dart 3)
    - Installera från: https://flutter.dev/docs/get-started/install
    - Verifiera: `flutter doctor`
 
@@ -48,7 +48,7 @@ För att kunna köra och utveckla detta projekt behöver du:
 ### Steg 1: Klona eller navigera till projektet
 
 ```bash
-cd d:\Projects\Personal\Siffersafari  # eller din lokala projektmapp
+cd <repo-root>  # t.ex. d:\Projects\Personal\Siffersafari
 ```
 
 ### Steg 2: Installera dependencies
@@ -129,7 +129,7 @@ flutter analyze
 
 # 2) Tester: kör minsta relevanta subset för ändringen
 # Exempel:
-flutter test test/question_generator_test.dart
+flutter test test/unit/logic/adaptive_difficulty_test.dart
 
 # 3) Vid "stora" commits/merges (många filer, refactor, bred påverkan):
 flutter test
@@ -140,7 +140,7 @@ flutter test
 flutter test
 
 # Kör specifikt test
-flutter test test/question_generator_test.dart
+flutter test test/unit/logic/adaptive_difficulty_test.dart
 
 # Med coverage report
 flutter test --coverage

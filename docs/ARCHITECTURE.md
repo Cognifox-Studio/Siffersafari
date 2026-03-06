@@ -325,7 +325,7 @@ flutter test
 flutter test --coverage
 
 # Specifikt test
-flutter test test/question_generator_test.dart
+flutter test test/unit/logic/adaptive_difficulty_test.dart
 ```
 
 ### Test-typer i projektet
@@ -343,21 +343,22 @@ flutter test integration_test/app_smoke_test.dart
 flutter test integration_test/screenshots_test.dart
 ```
 
-Not: `integration_test/tap_count_test.dart` är opt-in och körs bara om `RUN_TAP_COUNT=1` är satt i environment.
-
 ## Dependencies
 
 Viktiga dependencies och deras syfte:
 
 - **flutter_riverpod** - State management
-- **hive** - Lokal databas (NoSQL)
+- **hive** / **hive_flutter** - Lokal databas (NoSQL) + Flutter-integration
+- **path_provider** - Filvägar (t.ex. app storage)
 - **audioplayers** - Ljud och musik
-- **flutter_animate** - Animationer
 - **lottie** - Vektorbaserade animationer
-- **google_fonts** - Typografi
+- **flutter_screenutil** - Responsiv UI-skalning
 - **get_it** - Dependency injection
 - **equatable** - Enkel jämförelse av objekt
 - **uuid** - Generera unika ID:n
+- **bcrypt** - PIN-hashning
+- **package_info_plus** - Appversion (t.ex. för uppdateringscheck)
+- **url_launcher** - Öppna externa länkar (t.ex. release/APK)
 
 ## Konventioner
 

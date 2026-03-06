@@ -12,7 +12,7 @@ flutter analyze
 
 # 2) Tester: kör minsta relevanta subset för ändringen
 # Exempel:
-flutter test test/question_generator_test.dart
+flutter test test/unit/logic/adaptive_difficulty_test.dart
 
 # 3) Vid "stora" commits/merges (många filer, refactor, bred påverkan):
 flutter test

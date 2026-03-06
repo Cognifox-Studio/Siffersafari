@@ -63,21 +63,39 @@ final appThemeConfigProvider = Provider<AppThemeConfig>((ref) {
 Complex state with business logic. Encapsulates mutations and invariants.
 
 **File structure:**
-1. State class (`@freezed` or manual `copyWith`)
+1. State class (manual `copyWith`)
 2. StateNotifier class (holds logic & mutations)
 3. Final provider definition
 
 ```dart
 // lib/core/providers/user_provider.dart
 
-@freezed
-class UserState with _$UserState {
-  const factory UserState({
+class UserState {
+  const UserState({
+    this.activeUser,
+    this.allUsers = const [],
+    this.isLoading = false,
+    this.errorMessage,
+  });
+
+  final UserProgress? activeUser;
+  final List<UserProgress> allUsers;
+  final bool isLoading;
+  final String? errorMessage;
+
+  UserState copyWith({
     UserProgress? activeUser,
-    @Default([]) List<UserProgress> allUsers,
-    @Default(false) bool isLoading,
+    List<UserProgress>? allUsers,
+    bool? isLoading,
     String? errorMessage,
-  }) = _UserState;
+  }) {
+    return UserState(
+      activeUser: activeUser ?? this.activeUser,
+      allUsers: allUsers ?? this.allUsers,
+      isLoading: isLoading ?? this.isLoading,
+      errorMessage: errorMessage,
+    );
+  }
 }
 
 class UserNotifier extends StateNotifier<UserState> {
@@ -213,6 +231,6 @@ lib/core/providers/
 - [ ] Provider is in a dedicated file under `lib/core/providers/`
 - [ ] Naming follows convention: `[feature]Provider` or `[feature]Notifier`
 - [ ] Dependencies use `ref.watch()` (or `ref.read()` if appropriate)
-- [ ] State class (if needed) uses `@freezed` or manual `copyWith`
+- [ ] State class (if needed) uses manual `copyWith`
 - [ ] Analyzed with `flutter analyze` (no import errors)
 - [ ] Tested in relevant test suite (unit/widget)

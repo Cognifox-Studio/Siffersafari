@@ -33,10 +33,12 @@ Research: Vilka filer behöver ändringar?
 
 **För Expert Mode:**
 ```
-lib/domain/models/difficulty.dart          → Add EXPERT enum
-lib/data/repositories/quiz_repository.dart → Add Expert questions
-lib/domain/services/adaptive_difficulty_service.dart → Handle Expert progression
-test/                                       → Add tests
+lib/domain/enums/difficulty_level.dart          → Ny svårighetsgrad i enum
+lib/core/config/difficulty_config.dart          → Regler: ranges/steps/poäng
+lib/core/services/question_generator_service.dart → Generering av frågor per svårighet
+lib/domain/services/adaptive_difficulty_service.dart → Progression/logik
+lib/presentation/…                              → UI (om svårighet visas)
+test/unit/logic/…                               → Uppdatera/lägg till unit tests
 ```
 
 ### 1.3 Create a Branch (optional men recommended)
@@ -51,31 +53,26 @@ git checkout -b feature/expert-mode
 
 ### Step 1: Update Models
 
-Öppna `lib/domain/models/difficulty.dart`:
+Öppna `lib/domain/enums/difficulty_level.dart`:
 
 ```dart
-enum Difficulty {
+enum DifficultyLevel {
   easy,
   medium,
   hard,
-  expert,  // ← Ny
+  expert, // ← Ny (exempel)
 }
 ```
 
+Obs: I projektet är `DifficultyLevel` även annoterad för Hive. Kom ihåg att uppdatera `@HiveField(...)`-index på ett kompatibelt sätt.
+
 ### Step 2: Add Data
 
-Öppna `lib/data/repositories/quiz_repository.dart`:
+I detta projekt genereras frågor primärt via `lib/core/services/question_generator_service.dart`.
 
-Lär till Expert-level questions (exempel):
-
-```dart
-static const Map<Difficulty, List<String>> questions = {
-  Difficulty.easy: ["1+1=?", ...],
-  Difficulty.medium: ["5*5=?", ...],
-  Difficulty.hard: ["99/3=?", ...],
-  Difficulty.expert: ["(√144)+(3²)=?", ...],  // ← Ny
-};
-```
+Typiskt arbetssätt:
+- Lägg till/justera logik för nya svårighetsgraden i generatorn.
+- Uppdatera regler i `lib/core/config/difficulty_config.dart` (t.ex. ranges/step-buckets).
 
 ### Step 3: Update Business Logic
 
@@ -93,60 +90,29 @@ Difficulty _calculateNextDifficulty(...) {
 }
 ```
 
+Obs: Anropa/brukar denna logik ofta från Riverpod-notifiers i `lib/core/providers/`.
+
 ### Step 4: Update UI (if needed)
 
-Om du behöver visa "Expert Mode" någonstans, uppdatera relevant UI-widget.
-
-**Exempel:** `lib/presentation/widgets/difficulty_selector_widget.dart`
-
-```dart
-Text(
-  difficulty.name,
-  style: TextStyle(
-    fontSize: difficulty == Difficulty.expert ? 16 : 14,  // Expert mode större text
-  ),
-)
-```
+Om du behöver visa "Expert Mode" i UI, sök efter `DifficultyLevel` i `lib/presentation/` och uppdatera de ställen där svårighetens label/rendering sker.
 
 ---
 
 ## 3. Testing Phase
 
-### Write Unit Tests
+### Write/Update Unit Tests
 
-Skapa `test/expert_mode_test.dart`:
+I detta repo ligger tester under `test/unit/...` och `test/widget/...`.
 
-```dart
-import 'package:flutter_test/flutter_test.dart';
-import 'package:siffersafari/domain/models/difficulty.dart';
-
-void main() {
-  group('Expert Mode', () {
-    test('Expert questions exist', () {
-      final questions = QuizRepository.getQuestions(Difficulty.expert);
-      expect(questions.isNotEmpty, true);
-    });
-
-    test('Expert questions are harder than Hard', () {
-      final expertQs = QuizRepository.getQuestions(Difficulty.expert);
-      final hardQs = QuizRepository.getQuestions(Difficulty.hard);
-      
-      // Example: Expert kan ha 3-digit multiplication
-      expect(
-        expertQs.any((q) => q.contains('√') || q.contains('³')),
-        true,
-        reason: 'Expert should have advanced operations',
-      );
-    });
-  });
-}
-```
+För en ändring i svårighetslogik är det vanligast att uppdatera/bryta ut tester i:
+- `test/unit/logic/difficulty_config_*_test.dart`
+- `test/unit/logic/adaptive_difficulty_test.dart`
 
 ### Run Tests
 
 ```bash
-# Bara denna test
-flutter test test/expert_mode_test.dart
+# Exempel: kör en relevant, liten testfil
+flutter test test/unit/logic/adaptive_difficulty_test.dart
 
 # Eller kolla alla tester
 flutter test
@@ -178,7 +144,7 @@ dart fix --apply
 flutter test
 ```
 
-**Förväntat:** Alla 85+ tester passa (inklusive dina nya).
+**Förväntat:** Alla tester passerar.
 
 ### 4.3 Manual Smoke Test
 
@@ -207,10 +173,11 @@ Se till att du bara har relevanta files:
 git status
 
 # Förväntat output (ungefär):
-# modified:   lib/domain/models/difficulty.dart
-# modified:   lib/data/repositories/quiz_repository.dart
+# modified:   lib/domain/enums/difficulty_level.dart
+# modified:   lib/core/config/difficulty_config.dart
+# modified:   lib/core/services/question_generator_service.dart
 # modified:   lib/domain/services/adaptive_difficulty_service.dart
-# new file:   test/expert_mode_test.dart
+# modified:   test/unit/logic/...
 ```
 
 ### Commit
@@ -298,11 +265,11 @@ flutter build apk --release
 Se [SERVICES_API.md](SERVICES_API.md) för hur services struktureras.
 
 **Steps:**
-1. Create `lib/domain/services/my_service.dart`
-2. Implement interface (abstract class)
-3. Create `lib/data/services/my_service_impl.dart` (impl)
-4. Register i GetIt: `lib/core/service_locator.dart`
-5. Use via `sl<MyService>()`
+1. Skapa service (domain eller core beroende på beroenden):
+  - Pure domain: `lib/domain/services/my_service.dart`
+  - Flutter-aware: `lib/core/services/my_service.dart`
+2. Exponera via provider i `lib/core/providers/` om den behövs i UI/state.
+3. Om GetIt används: registrera i `lib/core/di/injection.dart`.
 
 ### Pattern 2: Add Persistent Data
 
@@ -310,8 +277,8 @@ För data som behöver sparas offline:
 
 1. Create entity: `lib/domain/entities/my_entity.dart`
 2. Use Hive: `@HiveType(typeId: N)` och `@HiveField(0)`
-3. Create repository: `lib/data/repositories/my_repository.dart`
-4. Add to Hive adapter generation: `build_runner build`
+3. Create/uppdatera repository i `lib/data/repositories/`.
+4. Kör codegen: `dart run build_runner build --delete-conflicting-outputs`
 
 ---
 
@@ -321,7 +288,7 @@ För data som behöver sparas offline:
 - **Orsak:** Import-sökväg fel
 - **Lösning:** Kontrollera import i test-fil
   ```dart
-  import 'package:siffersafari/domain/models/difficulty.dart';
+  import 'package:siffersafari/domain/enums/difficulty_level.dart';
   ```
 
 ### "flutter analyze fails with lint error"
@@ -340,5 +307,5 @@ För data som behöver sparas offline:
 
 - **Architecture questions?** Se [ARCHITECTURE.md](ARCHITECTURE.md)
 - **Service API?** Se [SERVICES_API.md](SERVICES_API.md)
-- **Code standards?** Se [CONTRIBUTING.md](../CONTRIBUTING.md)
+- **Code standards?** Se [CONTRIBUTING.md](CONTRIBUTING.md)
 - **Folder structure?** Se [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)

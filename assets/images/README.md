@@ -6,22 +6,37 @@ Denna mapp innehåller bildresurser för appen.
 
 ```
 images/
-├── app_icon.svg        # App-ikon (SVG)
+├── app_icon/           # Källbilder för app-ikon
+│   └── icon_source.png
+├── brand/              # Branding (t.ex. Cognifox-logga)
+│   └── cognifox_logo.png
 ├── themes/
 │   ├── space/          # Rymdtema-bilder
 │   │   ├── background.png
 │   │   ├── character.png
-│   │   ├── icons/
-│   │   └── decorations/
+│   │   └── quest_hero.png
 │   └── jungle/         # Djungeltema-bilder
 │       ├── background.png
 │       ├── character_v2.png
-│       ├── icons/
-│       └── decorations/
-├── icons/              # Gemensamma ikoner
-├── badges/             # Belöningar och medaljer
-└── avatars/            # Användaravatarer
+│       ├── quest_hero.png
+│       └── character_walking/
+├── characters/         # Karaktärsstills + frame-sekvenser
+│   ├── ville/
+│   └── character_v2/
+└── generated/          # Tillfälliga genererade bilder (ej för permanent asset-användning)
 ```
+
+## Filer som används direkt i appen
+
+- `themes/jungle/background.png`
+- `themes/jungle/quest_hero.png`
+- `themes/jungle/character_v2.png`
+- `themes/space/background.png`
+- `themes/space/quest_hero.png`
+- `themes/space/character.png`
+- `characters/character_v2/idle/idle_000.png` ... `idle_007.png`
+- `brand/cognifox_logo.png`
+- `app_icon/icon_source.png`
 
 ## Bildformat:
 
@@ -46,7 +61,7 @@ images/
 └── characters/
 	└── character_v2/
 		├── idle/idle_000.png
-		└── wave/wave_000.png
+		└── idle/idle_007.png
 ```
 
 Se även `docs/CHARACTER_ANIMATIONS.md`.

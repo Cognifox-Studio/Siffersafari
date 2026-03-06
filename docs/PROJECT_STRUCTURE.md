@@ -7,7 +7,7 @@ Denna dokument mappning projektets foler-layout och namngivningskonventioner.
 ## Root Directory
 
 ```
-d:\Projects\Personal\Siffersafari/
+<repo-root>/
 ├─ lib/                          ← SOURCE CODE (Dart/Flutter)
 ├─ test/                         ← UNIT TESTS
 ├─ integration_test/             ← END-TO-END TESTS
@@ -20,10 +20,10 @@ d:\Projects\Personal\Siffersafari/
 ├─ .vscode/                      ← VS CODE CONFIG
 ├─ pubspec.yaml                  ← DEPENDENCY MANIFEST
 ├─ analysis_options.yaml         ← LINT RULES
-├─ pubspec.lock                  ← LOCKED VERSIONS (auto-generated, .gitignored)
+├─ pubspec.lock                  ← LOCKED VERSIONS (auto-generated, committed)
 ├─ README.md                     ← PROJECT OVERVIEW
-├─ GETTING_STARTED.md            ← TUTORIAL: first steps
-├─ CONTRIBUTING.md               ← HOW-TO: QA & commits
+├─ docs/GETTING_STARTED.md       ← TUTORIAL: first steps
+├─ docs/CONTRIBUTING.md          ← HOW-TO: QA & commits
 ├─ copilot-instructions.md       ← Copilot config
 └─ (andra root .md filer)        ← arkiverad dokumentation
 ```
@@ -38,78 +38,41 @@ d:\Projects\Personal\Siffersafari/
 lib/
 ├─ main.dart                          ← APP ENTRYPOINT
 │
-├─ core/                              ← CORE UTILITIES
-│  ├─ service_locator.dart            ├─ Dependencies (GetIt)
-│  ├─ hive_setup.dart                 ├─ Hive initialization
-│  └─ theme/
-│     ├─ app_colors.dart              ├─ Color constants
-│     ├─ app_text_styles.dart         ├─ Typography
-│     └─ app_theme.dart               └─ Theme definition
+├─ core/                              ← APP CORE (Flutter-aware)
+│  ├─ config/                         ├─ Feature flags, difficulty rules, app config
+│  ├─ constants/                      ├─ App constants (t.ex. app name)
+│  ├─ di/                             ├─ Dependency injection (GetIt)
+│  │  └─ injection.dart
+│  ├─ providers/                      ├─ Riverpod providers (state/services)
+│  ├─ services/                       ├─ App services (t.ex. QuestionGenerator)
+│  ├─ theme/                          ├─ Theme/tokens
+│  └─ utils/                          └─ Små utilities
 │
-├─ domain/                            ← BUSINESS LOGIC (unaware of UI)
-│  ├─ models/                         ├─ Data classes (Difficulty, UserProfile, etc.)
-│  │  ├─ difficulty.dart              │
-│  │  ├─ user_progress.dart           │
-│  │  └─ achievement.dart             │
-│  │
-│  ├─ entities/                       ├─ Hive-persistent data (decorated with @HiveType)
-│  │  ├─ user_progress.dart           │
-│  │  └─ ...                          │
-│  │
-│  ├─ repositories/ (abstract)        ├─ Interfaces (contracts)
-│  │  ├─ quiz_repository.dart         │
-│  │  ├─ profile_repository.dart      │
-│  │  └─ achievement_repository.dart  │
-│  │
-│  └─ services/ (abstract)            ├─ Business services
-│     ├─ adaptive_difficulty_service.dart  │
-│     ├─ quiz_progression_service.dart     │
-│     ├─ achievement_service.dart          │
-│     ├─ spaced_repetition_service.dart    │
-│     └─ ...                               │
+├─ domain/                            ← DOMAIN (UI-agnostic)
+│  ├─ constants/
+│  ├─ entities/                       ├─ Core entities (Question, QuizSession, ...)
+│  ├─ enums/                          ├─ AgeGroup, DifficultyLevel, OperationType, ...
+│  └─ services/                       └─ Pure domain services
 │
 ├─ data/                              ← DATA IMPLEMENTATION
-│  ├─ repositories/ (impl)            ├─ Concrete repositories (Hive, API, etc.)
-│  │  ├─ quiz_repository_impl.dart    │
-│  │  ├─ profile_repository_impl.dart │
-│  │  └─ achievement_repository_impl.dart
-│  │
-│  ├─ services/ (impl)                ├─ Concrete services
-│  │  ├─ adaptive_difficulty_service.dart
-│  │  ├─ quiz_progression_service.dart
-│  │  └─ ...
-│  │
-│  └─ hive_adapters/                 ├─ Hive type adapters (auto-generated)
-│     ├─ user_progress_adapter.g.dart │
-│     └─ ...                          │
+│  └─ repositories/                   └─ Persistence (Hive/LocalStorage)
 │
 └─ presentation/                      ← UI LAYER
-   ├─ app/                            ├─ App-level widgets
-   │  ├─ app_widget.dart              │
-   │  └─ ...                          │
-   │
-   ├─ screens/                        ├─ Full-page views (routed)
-   │  ├─ home_screen.dart             │
-   │  ├─ quiz_screen.dart             │
-   │  ├─ parent_mode_screen.dart      │
-   │  └─ ...                          │
-   │
-   ├─ widgets/                        ├─ Reusable UI components
-   │  ├─ difficulty_selector_widget.dart
-   │  ├─ quiz_card_widget.dart        │
-   │  ├─ mascot_view.dart             │  (character animations)
-   │  ├─ achievement_badge.dart       │
-   │  └─ ...                          │
-   │
-   ├─ providers/ (Riverpod)           ├─ State providers
-   │  ├─ current_profile_provider.dart │
-   │  ├─ quiz_provider.dart           │
-   │  ├─ achievement_provider.dart    │
-   │  └─ ...                          │
-   │
-   └─ routes/                         ├─ Navigation (om router används)
-      ├─ app_router.dart              │
-      └─ ...                          │
+   ├─ dialogs/
+   ├─ screens/                        ├─ Full-page views
+   │  ├─ app_entry_screen.dart
+   │  ├─ home_screen.dart
+   │  ├─ onboarding_screen.dart
+   │  ├─ quiz_screen.dart
+   │  ├─ results_screen.dart
+   │  ├─ parent_pin_screen.dart
+   │  └─ parent_dashboard_screen.dart
+   └─ widgets/                        ├─ Reusable UI components
+      ├─ answer_button.dart
+      ├─ question_card.dart
+      ├─ progress_indicator_bar.dart
+      ├─ mascot_view.dart
+      └─ themed_background_scaffold.dart
 ```
 
 ---
@@ -118,20 +81,25 @@ lib/
 
 ```
 test/
-├─ offline_only_audit_test.dart                ├─ Verificera offline-only arkitektur
-├─ curriculum_logic_coverage_test.dart         ├─ Curriculum mappning (Åk 1-9)
-├─ difficulty_config_test.dart                 ├─ Difficulty levels & progression
-├─ mix_distribution_audit_test.dart            ├─ Addition/subtraction distribution
-├─ adaptive_difficulty_service_test.dart       ├─ Service-specifikt
-├─ achievement_service_test.dart               ├─ Service-specifikt
-├─ spaced_repetition_service_test.dart         ├─ Service-specifikt
-├─ quiz_progression_service_test.dart          ├─ Service-specifikt
-├─ parent_pin_service_test.dart                ├─ Parent mode PIN system
-├─ profile_backup_service_test.dart            ├─ Backup/restore
-│
-├─ app_widget_flows_test.dart                  ├─ UI Integration tests
-├─ quiz_progression_edge_cases_test.dart       ├─ Edge cases
-└─ accessibility_widgets_test.dart             └─ Accessibility check
+├─ test_utils.dart                             ├─ Shared test helpers/mocks
+├─ unit/
+│  ├─ audits/
+│  │  ├─ offline_only_audit_test.dart
+│  │  └─ mix_distribution_audit_test.dart
+│  ├─ logic/
+│  │  ├─ difficulty_config_*_test.dart
+│  │  ├─ adaptive_difficulty_test.dart
+│  │  ├─ spaced_repetition_test.dart
+│  │  └─ quiz_progression_edge_cases_test.dart
+│  └─ services/
+│     ├─ achievement_service_test.dart
+│     ├─ parent_pin_service_test.dart
+│     ├─ profile_backup_service_test.dart
+│     └─ quest_progression_service_test.dart
+└─ widget/
+   ├─ app_home_test.dart
+   ├─ app_quiz_flow_test.dart
+   └─ app_results_test.dart
 ```
 
 **Namngivning:** `<feature>_test.dart` (wildcard `_test.dart` lookas upp av `flutter test`)
@@ -347,21 +315,24 @@ docs/
 Snabbrefenser för ofta använda paths:
 
 ```bash
-# GUI
-lib/presentation/app/app_widget.dart          # Main app
-lib/presentation/screens/home_screen.dart     # Home
+# App entry
+lib/main.dart                                 # Main entrypoint
+lib/presentation/screens/app_entry_screen.dart # Initial routing/gate
+lib/presentation/screens/home_screen.dart      # Home
 
 # Business logic
 lib/domain/services/adaptive_difficulty_service.dart
-lib/domain/services/achievement_service.dart
+lib/core/config/difficulty_config.dart
+lib/core/services/question_generator_service.dart
+lib/core/services/achievement_service.dart
 
 # Data access
-lib/data/repositories/quiz_repository_impl.dart
-lib/data/repositories/profile_repository_impl.dart
+lib/data/repositories/local_storage_repository.dart
 
 # Tests
-test/curriculum_logic_coverage_test.dart
-test/achievement_service_test.dart
+test/unit/logic/curriculum_logic_coverage_test.dart
+test/unit/services/achievement_service_test.dart
+test/widget/app_quiz_flow_test.dart
 
 # Assets
 assets/images/themes/jungle/background.png

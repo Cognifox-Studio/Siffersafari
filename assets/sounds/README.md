@@ -4,15 +4,21 @@ Denna mapp innehåller ljudfiler för appen.
 
 ## Nödvändiga ljudfiler:
 
-Appen försöker spela **MP3 först**, och faller tillbaka till **WAV** om MP3 saknas.
+Appen använder idag följande filer i `AudioService`:
+
+- `correct`: försöker `correct.mp3` först, faller tillbaka till `correct.wav`
+- `wrong`: försöker `wrong.mp3` först, faller tillbaka till `wrong.wav`
+- `celebration`: försöker `celebration.mp3` först, faller tillbaka till `celebration.wav`
+- `click`: försöker `click.mp3` först, faller tillbaka till `click.wav`
+- `background_music`: försöker just nu `background_music.wav` först, med `background_music.mp3` som fallback
+
+I repot finns för närvarande fungerande WAV-original:
 
 1. **correct.mp3** (eller **correct.wav**) - Ljud när användaren svarar rätt
 2. **wrong.mp3** (eller **wrong.wav**) - Ljud när användaren svarar fel
 3. **celebration.mp3** (eller **celebration.wav**) - Ljud vid framgång/upplåsning
 4. **click.mp3** (eller **click.wav**) - Ljud för knapptryckningar
 5. **background_music.mp3** (eller **background_music.wav**) - Bakgrundsmusik (valfritt)
-
-I projektet finns enkla, egen-genererade WAV-filer (original) som fungerar direkt.
 
 ## Generera lekiga standardljud (lokalt)
 

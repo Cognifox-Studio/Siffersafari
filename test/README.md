@@ -4,45 +4,40 @@ This document describes the organization, structure, and conventions for the Sif
 
 ## Overview
 
-The test suite contains **83 tests** organized into two main categories:
-- **Unit tests** (71 tests) – Logic, services, and audits
-- **Widget tests** (12 tests) – UI integration and user flows
+All tests run with: `flutter test`.
 
-All tests run with: `flutter test`
+Note: Håll inte hårdkodade test-antal i dokumentation (de blir snabbt stale). Kör `flutter test` för aktuell totalsiffra.
 
 ## Directory Structure
 
 ```
 test/
-├── unit/                          # Unit tests (71 tests)
-│   ├── logic/                     # Business logic (12 tests)
+├── test_utils.dart                # Shared helpers/mocks for widget tests
+├── unit/                          # Unit tests
+│   ├── logic/                     # Business logic
 │   │   ├── adaptive_difficulty_test.dart
+│   │   ├── curriculum_logic_coverage_test.dart
 │   │   ├── difficulty_config_operations_test.dart
 │   │   ├── difficulty_config_grade_test.dart
 │   │   ├── difficulty_config_ranges_test.dart
 │   │   ├── difficulty_config_helpers_test.dart
-│   │   └── quiz_progression_edge_cases_test.dart
-│   ├── services/                  # Service layer (51 tests)
+│   │   ├── quiz_progression_edge_cases_test.dart
+│   │   └── spaced_repetition_test.dart
+│   ├── services/                  # Service layer
 │   │   ├── achievement_service_test.dart
-│   │   ├── adaptive_difficulty_service_test.dart
-│   │   ├── app_settings_service_test.dart
-│   │   ├── offline_storage_service_test.dart
 │   │   ├── parent_pin_service_test.dart
 │   │   ├── profile_backup_service_test.dart
-│   │   ├── quest_progression_service_test.dart
-│   │   ├── spaced_repetition_service_test.dart
-│   │   └── session_sync_service_test.dart
-│   └── audits/                    # Verification/audit tests (8 tests)
-│       ├── accessibility_widgets_test.dart
+│   │   └── quest_progression_service_test.dart
+│   └── audits/                    # Verification/audit tests
 │       ├── mix_distribution_audit_test.dart
 │       └── offline_only_audit_test.dart
-└── widget/                        # Widget tests (12 tests)
-    ├── app_home_test.dart
-    ├── app_onboarding_test.dart
-    ├── app_parent_mode_test.dart
-    ├── app_quiz_flow_test.dart
-    ├── app_results_test.dart
-    └── [other widget tests...]
+└── widget/                        # Widget tests
+   ├── accessibility_widgets_test.dart
+   ├── app_home_test.dart
+   ├── app_onboarding_test.dart
+   ├── app_parent_mode_test.dart
+   ├── app_quiz_flow_test.dart
+   └── app_results_test.dart
 ```
 
 ### Directory Purposes
@@ -188,6 +183,3 @@ When adding new tests:
 - Focus on high-risk game logic first
 
 ---
-
-**Last Updated:** 2026-03-05  
-**Total Tests:** 83 (71 unit + 12 widget)

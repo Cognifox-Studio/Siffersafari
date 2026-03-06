@@ -59,7 +59,7 @@ Projektet är i ett fungerande MVP+-läge med:
 - Onboarding och widget-test
 - Global felhantering (för bättre diagnostik vid oväntade fel)
 
-Senaste verifiering: alla tester passerar lokalt (senast 2026-03-01).
+Senaste verifiering: kör `flutter test` lokalt för aktuell status.
 
 ## Funktioner
 
@@ -82,8 +82,9 @@ Senaste verifiering: alla tester passerar lokalt (senast 2026-03-01).
 - **Språk**: Dart 3.x
 - **State Management**: Riverpod
 - **Lokal Databas**: Hive
-- **Ljud**: audioplayers, just_audio
-- **Animationer**: flutter_animate, Lottie
+- **Ljud**: audioplayers
+- **Animationer**: Lottie
+- **UI**: flutter_screenutil
 
 ## Arkitektur
 
