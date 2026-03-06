@@ -4,11 +4,27 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/user_provider.dart';
+import '../../core/utils/adaptive_layout.dart';
 import '../dialogs/create_user_dialog.dart';
+import '../widgets/mascot_view.dart';
 import '../widgets/themed_background_scaffold.dart';
 
 class FirstRunSetupScreen extends ConsumerWidget {
   const FirstRunSetupScreen({super.key});
+
+  static const int _idleFrameCount = 8;
+
+  static final List<String> _characterV2IdleFrames = List<String>.generate(
+    _idleFrameCount,
+    (i) =>
+        'assets/images/characters/character_v2/idle/idle_${i.toString().padLeft(3, '0')}.png',
+    growable: false,
+  );
+
+  List<String>? _mascotIdleFramesFor(String characterAsset) {
+    if (!characterAsset.endsWith('/character_v2.png')) return null;
+    return _characterV2IdleFrames;
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,92 +35,165 @@ class FirstRunSetupScreen extends ConsumerWidget {
         onPrimary.withValues(alpha: AppOpacities.subtleText);
 
     final themeCfg = ref.watch(appThemeConfigProvider);
+    final characterAsset = themeCfg.characterAsset;
+    final mascotHeight =
+        layoutDependentMascotHeight(MediaQuery.sizeOf(context).height);
 
     return ThemedBackgroundScaffold(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppConstants.contentMaxWidth,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final layout = AdaptiveLayoutInfo.fromConstraints(constraints);
+          final heroMaxWidth = layout.isExpandedWidth
+              ? 460.0
+              : layout.isMediumWidth
+                  ? 500.0
+                  : AppConstants.contentMaxWidth;
+          final verticalPadding = layout.isExpandedWidth
+              ? AppConstants.largePadding * 1.5
+              : AppConstants.largePadding;
+
+          return Center(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: heroMaxWidth),
+              child: Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.largePadding,
+                  vertical: verticalPadding,
+                ),
+                decoration: BoxDecoration(
+                  color: onPrimary.withValues(alpha: AppOpacities.panelFill),
+                  borderRadius: BorderRadius.circular(
+                    AppConstants.borderRadius * 1.5,
+                  ),
+                  border: Border.all(
+                    color: onPrimary.withValues(alpha: AppOpacities.cardBorder),
+                  ),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
                       AppConstants.appName,
                       style:
                           Theme.of(context).textTheme.headlineLarge?.copyWith(
                                 color: onPrimary,
                                 fontWeight: FontWeight.bold,
                               ),
+                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppConstants.largePadding),
-              Text(
-                'Välkommen! Jag heter ${AppConstants.mascotName}.',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: mutedOnPrimary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppConstants.smallPadding),
-              Text(
-                'Skapa en profil första gången så spelet kan spara poäng, nivå och anpassa svårighetsgrad.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: subtleOnPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppConstants.largePadding),
-              ElevatedButton(
-                onPressed: () async {
-                  await showCreateUserDialog(context: context, ref: ref);
-                  if (!context.mounted) return;
-
-                  // Stay on the AppEntryScreen route and let it rebuild into
-                  // Home/ProfilePicker once a user exists.
-                  await ref.read(userProvider.notifier).loadUsers();
-                },
-                child: const Text('Skapa profil'),
-              ),
-              const SizedBox(height: AppConstants.defaultPadding),
-              Text(
-                'Du kan skapa fler profiler senare i Inställningar.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: mutedOnPrimary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: AppConstants.defaultPadding),
-              Wrap(
-                alignment: WrapAlignment.center,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: AppConstants.smallPadding,
-                children: [
-                  Icon(Icons.stars, color: themeCfg.accentColor),
-                  Text(
-                    'Redo för matte-äventyr!',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: mutedOnPrimary,
-                          fontWeight: FontWeight.bold,
+                    const SizedBox(height: AppConstants.defaultPadding),
+                    Align(
+                      alignment: Alignment.center,
+                      child: SizedBox(
+                        height: mascotHeight,
+                        child: MascotView(
+                          asset: characterAsset,
+                          frames: _mascotIdleFramesFor(characterAsset),
+                          height: mascotHeight,
+                          fit: BoxFit.contain,
                         ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.largePadding),
+                    Text(
+                      'Välkommen!',
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: mutedOnPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppConstants.microSpacing6),
+                    Text(
+                      'Jag heter ${AppConstants.mascotName}.',
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: mutedOnPrimary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppConstants.smallPadding),
+                    ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 420),
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Skapa en profil första gången så spelet kan spara poäng, nivå och anpassa svårighetsgrad.',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: subtleOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.35,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.largePadding),
+                    Align(
+                      alignment: Alignment.center,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 360),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await showCreateUserDialog(
+                                  context: context, ref: ref);
+                              if (!context.mounted) return;
+
+                              await ref.read(userProvider.notifier).loadUsers();
+                            },
+                            child: const Text('Skapa profil'),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppConstants.defaultPadding),
+                    Text(
+                      'Du kan skapa fler profiler senare i Inställningar.',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: mutedOnPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AppConstants.defaultPadding),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: AppConstants.smallPadding,
+                      runSpacing: AppConstants.microSpacing6,
+                      children: [
+                        Icon(Icons.stars, color: themeCfg.accentColor),
+                        Text(
+                          'Redo för matte-äventyr!',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  double layoutDependentMascotHeight(double screenHeight) {
+    if (screenHeight < 700) return 120;
+    if (screenHeight < 900) return 150;
+    return 180;
   }
 }

@@ -21,7 +21,7 @@
 - Textuppgifter: vid första onboarding för ett barn (om ingen inställning är sparad) frågar vi “Kan barnet läsa?”; svar Ja/Nej sparas per barn. Om onboarding hoppas över och inget är sparat: default = AV för Åk 1, annars följer global default.
 
 ## 2026-03-06
-- Uppdateringsflöde i Föräldraläge: appen kontrollerar senaste GitHub Release (`/releases/latest`) och öppnar extern APK/release-länk; ingen in-app installer för att minimera risk/komplexitet.
+- Uppdateringsflöde i Föräldraläge: appen kontrollerar senaste GitHub Release via GitHub Release API och startar Android-uppdatering i appen efter föräldrabekräftelse. Data ska bevaras genom att alltid installera ovanpå befintlig app, aldrig via avinstallation.
 - Svårighetsprogression: benchmark-steg ska vara mjukare år-för-år, inte samma block för Åk 4–6 och 7–9.
 - Högstadiet (Åk 7–9): signed +/− och M5a-specialer ska introduceras gradvis via step-gates; step 1 i Mix ska fortfarande kännas som lugn aritmetik.
 - Responsiv layout ska styras av tillgänglig fönsterbredd, inte enhetstyp: `compact < 600`, `medium >= 600`, `expanded >= 840`.

@@ -1,10 +1,7 @@
-﻿import 'dart:convert';
-import 'dart:io';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
@@ -14,6 +11,7 @@ import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
+import '../../core/services/app_update_service.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/themed_background_scaffold.dart';
@@ -856,15 +854,15 @@ class _UpdateSectionCard extends StatefulWidget {
 }
 
 class _UpdateSectionCardState extends State<_UpdateSectionCard> {
-  static const String _latestReleasePageUrl =
-      'https://github.com/Cognifox-Studio/Siffersafari/releases/latest';
-  static const String _releasesPageUrl =
-      'https://github.com/Cognifox-Studio/Siffersafari/releases';
-
+  final AppUpdateService _appUpdateService = AppUpdateService();
   bool _isChecking = false;
+  bool _isInstalling = false;
   String? _installedVersion;
   String? _errorMessage;
-  _AppUpdateInfo? _latestRelease;
+  String? _installMessage;
+  int? _installProgress;
+  AppUpdateInfo? _latestRelease;
+  StreamSubscription<AppUpdateInstallProgress>? _installSubscription;
 
   @override
   void initState() {
@@ -872,12 +870,15 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     _loadInstalledVersion();
   }
 
+  @override
+  void dispose() {
+    _installSubscription?.cancel();
+    super.dispose();
+  }
+
   Future<void> _loadInstalledVersion() async {
     try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = packageInfo.buildNumber.isEmpty
-          ? packageInfo.version
-          : '${packageInfo.version}+${packageInfo.buildNumber}';
+      final currentVersion = await _appUpdateService.getInstalledVersion();
       if (!mounted) return;
       setState(() {
         _installedVersion = currentVersion;
@@ -894,14 +895,26 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     setState(() {
       _isChecking = true;
       _errorMessage = null;
+      _installMessage = null;
+      _installProgress = null;
     });
 
     try {
-      final release = await _fetchLatestRelease();
+      final release = await _appUpdateService.fetchLatestRelease();
       if (!mounted) return;
+
+      final installedVersion = _installedVersion;
+      final updateAvailable = installedVersion != null &&
+          _appUpdateService.isUpdateAvailable(
+              installedVersion, release.tagName);
+
       setState(() {
         _latestRelease = release;
       });
+
+      if (updateAvailable) {
+        await _promptToInstall(release);
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -921,179 +934,109 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     if (message.contains('Failed host lookup')) {
       return 'Kunde inte kontrollera uppdatering: Ingen internetanslutning (DNS).';
     }
+    if (message.contains('CERTIFICATE_VERIFY_FAILED') ||
+        message.contains('certificate is not yet valid')) {
+      return 'Kunde inte kontrollera uppdatering: enhetens datum eller tid verkar vara fel. Kontrollera automatisk tid i Android och försök igen.';
+    }
+    if (message.contains('HandshakeException')) {
+      return 'Kunde inte kontrollera uppdatering: säker anslutning till GitHub misslyckades.';
+    }
 
     return 'Kunde inte kontrollera uppdatering: $error';
   }
 
-  Future<_AppUpdateInfo> _fetchLatestRelease() async {
-    final client = HttpClient();
+  Future<void> _promptToInstall(AppUpdateInfo release) async {
+    final shouldInstall = await showDialog<bool>(
+          context: context,
+          builder: (dialogContext) {
+            final noteSnippet = release.releaseNotes.trim().isEmpty
+                ? null
+                : release.releaseNotes.trim();
+
+            return AlertDialog(
+              title: const Text('Ny uppdatering hittad'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Version ${release.tagName} finns på GitHub Releases.'),
+                  const SizedBox(height: AppConstants.smallPadding),
+                  const Text(
+                    'Vill du uppdatera nu? Profiler, statistik, PIN och lokala data ligger kvar när appen installeras ovanpå den befintliga versionen.',
+                  ),
+                  if (noteSnippet != null) ...[
+                    const SizedBox(height: AppConstants.smallPadding),
+                    Text(
+                      noteSnippet.length > 240
+                          ? '${noteSnippet.substring(0, 240)}...'
+                          : noteSnippet,
+                      style: Theme.of(dialogContext).textTheme.bodySmall,
+                    ),
+                  ],
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(false),
+                  child: const Text('Inte nu'),
+                ),
+                ElevatedButton(
+                  onPressed: () => Navigator.of(dialogContext).pop(true),
+                  child: const Text('Ja, uppdatera'),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false;
+
+    if (!shouldInstall || !mounted) return;
+    await _installRelease(release);
+  }
+
+  Future<void> _installRelease(AppUpdateInfo release) async {
+    await _installSubscription?.cancel();
+
+    setState(() {
+      _isInstalling = true;
+      _errorMessage = null;
+      _installMessage = 'Förbereder uppdatering...';
+      _installProgress = null;
+    });
+
     try {
-      final byRedirect = await _fetchLatestReleaseFromRedirect(client);
-      if (byRedirect != null) return byRedirect;
-
-      final byHtml = await _fetchLatestReleaseFromReleasesHtml(client);
-      if (byHtml != null) return byHtml;
-
-      throw Exception('Kunde inte hitta någon release');
-    } finally {
-      client.close(force: true);
-    }
-  }
-
-  Future<_AppUpdateInfo?> _fetchLatestReleaseFromRedirect(
-    HttpClient client,
-  ) async {
-    final request = await client.getUrl(Uri.parse(_latestReleasePageUrl));
-    request.followRedirects = false;
-    request.headers
-        .set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
-
-    final response = await request.close();
-    await response.drain();
-
-    if (response.statusCode == 404) {
-      return null;
-    }
-
-    if (response.statusCode < 300 || response.statusCode >= 400) {
-      return null;
-    }
-
-    final location = response.headers.value(HttpHeaders.locationHeader);
-    if (location == null || location.trim().isEmpty) {
-      return null;
-    }
-
-    final resolved = Uri.parse(_latestReleasePageUrl).resolve(location.trim());
-    final tagName = resolved.pathSegments.isNotEmpty
-        ? resolved.pathSegments.last.trim()
-        : '';
-
-    if (tagName.isEmpty) return null;
-
-    return _AppUpdateInfo(
-      tagName: tagName,
-      releasePageUrl: resolved.toString(),
-      apkUrl: null,
-    );
-  }
-
-  Future<_AppUpdateInfo?> _fetchLatestReleaseFromReleasesHtml(
-    HttpClient client,
-  ) async {
-    final request = await client.getUrl(Uri.parse(_releasesPageUrl));
-    request.headers
-        .set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
-
-    final response = await request.close();
-    if (response.statusCode != 200) {
-      await response.drain();
-      return null;
-    }
-
-    final body = await response.transform(utf8.decoder).join();
-    final match = RegExp(
-      r'href="/Cognifox-Studio/Siffersafari/releases/tag/([^"]+)"',
-    ).firstMatch(body);
-
-    if (match == null) return null;
-    final tagName = match.group(1)?.trim() ?? '';
-    if (tagName.isEmpty) return null;
-
-    final releaseUri = Uri.parse(_releasesPageUrl)
-        .resolve('/Cognifox-Studio/Siffersafari/releases/tag/$tagName');
-
-    return _AppUpdateInfo(
-      tagName: tagName,
-      releasePageUrl: releaseUri.toString(),
-      apkUrl: null,
-    );
-  }
-
-  String _normalizeVersion(String version) {
-    var normalized = version.trim();
-    if (normalized.toLowerCase().startsWith('v')) {
-      normalized = normalized.substring(1);
-    }
-    return normalized.split('+').first;
-  }
-
-  int _compareSemver(String a, String b) {
-    final pa = _parseSemver(a);
-    final pb = _parseSemver(b);
-
-    for (var i = 0; i < 3; i++) {
-      final diff = pa.core[i].compareTo(pb.core[i]);
-      if (diff != 0) return diff;
-    }
-
-    final aHasPre = pa.preRelease.isNotEmpty;
-    final bHasPre = pb.preRelease.isNotEmpty;
-    if (!aHasPre && !bHasPre) return 0;
-    if (!aHasPre && bHasPre) return 1;
-    if (aHasPre && !bHasPre) return -1;
-
-    final maxLen = pa.preRelease.length > pb.preRelease.length
-        ? pa.preRelease.length
-        : pb.preRelease.length;
-    for (var i = 0; i < maxLen; i++) {
-      if (i >= pa.preRelease.length) return -1;
-      if (i >= pb.preRelease.length) return 1;
-
-      final ida = pa.preRelease[i];
-      final idb = pb.preRelease[i];
-      final na = int.tryParse(ida);
-      final nb = int.tryParse(idb);
-
-      if (na != null && nb != null) {
-        final diff = na.compareTo(nb);
-        if (diff != 0) return diff;
-      } else if (na != null && nb == null) {
-        return -1;
-      } else if (na == null && nb != null) {
-        return 1;
-      } else {
-        final diff = ida.compareTo(idb);
-        if (diff != 0) return diff;
-      }
-    }
-
-    return 0;
-  }
-
-  ({List<int> core, List<String> preRelease}) _parseSemver(String version) {
-    final normalized = _normalizeVersion(version);
-    final dashIndex = normalized.indexOf('-');
-    final coreStr =
-        dashIndex == -1 ? normalized : normalized.substring(0, dashIndex);
-    final preStr = dashIndex == -1 ? '' : normalized.substring(dashIndex + 1);
-
-    final coreParts = coreStr.split('.');
-    int readCore(int index) {
-      if (index >= coreParts.length) return 0;
-      return int.tryParse(coreParts[index]) ?? 0;
-    }
-
-    final preRelease = preStr.isEmpty ? <String>[] : preStr.split('.');
-    return (
-      core: [readCore(0), readCore(1), readCore(2)],
-      preRelease: preRelease,
-    );
-  }
-
-  bool _isUpdateAvailable(String installedVersion, String latestTag) {
-    return _compareSemver(installedVersion, latestTag) < 0;
-  }
-
-  Future<void> _openUrl(String url) async {
-    final uri = Uri.parse(url);
-    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!launched && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Kunde inte öppna länken'),
-        ),
+      _installSubscription = _appUpdateService.installUpdate(release).listen(
+        (event) {
+          if (!mounted) return;
+          setState(() {
+            _installMessage = event.message;
+            _installProgress = event.progress;
+            if (event.isError) {
+              _errorMessage = event.message;
+            }
+            if (event.isTerminal) {
+              _isInstalling = false;
+            }
+          });
+        },
+        onError: (error) {
+          if (!mounted) return;
+          setState(() {
+            _isInstalling = false;
+            _errorMessage = _friendlyUpdateError(error);
+            _installMessage = null;
+            _installProgress = null;
+          });
+        },
       );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _isInstalling = false;
+        _errorMessage = _friendlyUpdateError(error);
+        _installMessage = null;
+        _installProgress = null;
+      });
     }
   }
 
@@ -1107,11 +1050,14 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     final hasInstalled = _installedVersion != null;
     final updateAvailable = hasRelease &&
         hasInstalled &&
-        _isUpdateAvailable(_installedVersion!, release.tagName);
+        _appUpdateService.isUpdateAvailable(
+            _installedVersion!, release.tagName);
 
     String statusText;
     if (_errorMessage != null) {
       statusText = _errorMessage!;
+    } else if (_installMessage != null) {
+      statusText = _installMessage!;
     } else if (!hasRelease) {
       statusText = 'Tryck på knappen för att kontrollera om ny version finns.';
     } else if (updateAvailable) {
@@ -1155,29 +1101,45 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
             runSpacing: AppConstants.smallPadding,
             children: [
               ElevatedButton.icon(
-                onPressed: _isChecking ? null : _checkForUpdates,
+                onPressed:
+                    _isChecking || _isInstalling ? null : _checkForUpdates,
                 icon: _isChecking
                     ? const SizedBox(
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.system_update_alt),
-                label:
-                    Text(_isChecking ? 'Kontrollerar...' : 'Sök uppdatering'),
+                    : _isInstalling
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.system_update_alt),
+                label: Text(
+                  _isChecking
+                      ? 'Kontrollerar...'
+                      : _isInstalling
+                          ? 'Uppdaterar...'
+                          : 'Sök uppdatering',
+                ),
               ),
               if (updateAvailable)
                 OutlinedButton.icon(
-                  onPressed: () =>
-                      _openUrl(release.apkUrl ?? release.releasePageUrl),
-                  icon: const Icon(Icons.download),
-                  label: const Text('Ladda ner'),
+                  onPressed:
+                      _isInstalling ? null : () => _promptToInstall(release),
+                  icon: const Icon(Icons.download_for_offline_outlined),
+                  label: const Text('Uppdatera nu'),
                 ),
             ],
           ),
+          if (_isInstalling && _installProgress != null) ...[
+            const SizedBox(height: AppConstants.smallPadding),
+            LinearProgressIndicator(value: _installProgress! / 100),
+          ],
           const SizedBox(height: AppConstants.smallPadding),
           Text(
-            'Tips: Installera ovanpå befintlig app för att behålla statistik. Avinstallera inte först.',
+            'Vid uppdatering installeras APK:n ovanpå befintlig app, så profiler, PIN, statistik och historik ligger kvar. Avinstallera inte först.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: mutedOnPrimary,
                 ),
@@ -1186,18 +1148,6 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
       ),
     );
   }
-}
-
-class _AppUpdateInfo {
-  const _AppUpdateInfo({
-    required this.tagName,
-    required this.releasePageUrl,
-    required this.apkUrl,
-  });
-
-  final String tagName;
-  final String releasePageUrl;
-  final String? apkUrl;
 }
 
 // endregion

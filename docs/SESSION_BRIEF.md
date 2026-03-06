@@ -74,6 +74,27 @@
 1. Kör ny release-tag och verifiera på fysisk enhet att uppdateringskortet hittar releasen.
 2. Valfritt: lägg till debounce/cache (t.ex. 30-60s) för att undvika upprepade API-anrop.
 
+## 2026-03-06 — In-app uppdatering i Föräldraläge
+
+### Mål (denna del)
+✅ Låta förälder kontrollera GitHub Release och starta Android-uppdatering direkt i appen utan att tappa lokal data
+
+### Gjort
+- Brutit ut uppdateringslogik till `AppUpdateService`.
+- Bytt release-koll till GitHub Release API (`/repos/.../releases/latest`) och plockar nu faktisk APK-asset från releasen.
+- Föräldravyn visar nu bekräftelsedialog direkt efter hittad ny version: `Vill du uppdatera nu?`.
+- Android-uppdatering startas nu via `ota_update`, vilket laddar ned APK och triggar installation ovanpå befintlig app.
+- Status/progress visas i uppdateringskortet under nedladdning/installation.
+- Feltext för certifikatproblem förbättrad så felaktig datum/tid på enheten blir begripligt.
+- Android-konfiguration uppdaterad med `REQUEST_INSTALL_PACKAGES`, provider/receiver och `filepaths.xml`.
+
+### Data & säkerhet
+- Barnprofiler, statistik, quizhistorik och föräldra-PIN ligger kvar eftersom appen uppdateras ovanpå befintlig installation och all data ligger i Hive-boxar under appens interna lagring.
+
+### Nästa steg
+1. Verifiera på fysisk Android-enhet att installationsprompten visas korrekt efter nedladdning.
+2. Valfritt: bygg stöd för checksum-validering om release-pipelinen senare publicerar SHA-256 för APK:n.
+
 ## 2026-03-06 — Automatiska release notes ("What's new")
 
 ### Mål (denna del)
