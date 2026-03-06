@@ -277,16 +277,14 @@ class QuestionGeneratorService {
         roll >= (statsChance + probabilityChance + 0.06) &&
         roll < (statsChance + probabilityChance + 0.10);
 
-    final shouldTryM5aPercent =
-      isM5aMix && clampedMixStep >= 4 && roll < 0.18;
-    final shouldTryM5aPower =
-      isM5aMix &&
-      gradeLevel >= 8 &&
-      clampedMixStep >= 7 &&
-      roll >= 0.18 &&
-      roll < 0.30;
+    final shouldTryM5aPercent = isM5aMix && clampedMixStep >= 4 && roll < 0.18;
+    final shouldTryM5aPower = isM5aMix &&
+        gradeLevel >= 8 &&
+        clampedMixStep >= 7 &&
+        roll >= 0.18 &&
+        roll < 0.30;
     final shouldTryM5aPrecedence =
-      isM5aMix && clampedMixStep >= 6 && roll >= 0.30 && roll < 0.42;
+        isM5aMix && clampedMixStep >= 6 && roll >= 0.30 && roll < 0.42;
 
     final shouldTryWordProblemAddSub = wordProblemsEnabled &&
         gradeLevel != null &&

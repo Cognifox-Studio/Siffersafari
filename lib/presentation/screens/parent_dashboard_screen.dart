@@ -709,9 +709,9 @@ class _DashboardBody extends ConsumerWidget {
                   );
                 }
 
-                final itemWidth =
-                    (historyConstraints.maxWidth - AppConstants.defaultPadding) /
-                        2;
+                final itemWidth = (historyConstraints.maxWidth -
+                        AppConstants.defaultPadding) /
+                    2;
 
                 return Wrap(
                   spacing: AppConstants.defaultPadding,
@@ -1761,7 +1761,8 @@ class _BenchmarkSection extends ConsumerWidget {
               );
             }
 
-            final itemWidth = (constraints.maxWidth - AppConstants.smallPadding) / 2;
+            final itemWidth =
+                (constraints.maxWidth - AppConstants.smallPadding) / 2;
             return Wrap(
               spacing: AppConstants.smallPadding,
               runSpacing: AppConstants.smallPadding,
