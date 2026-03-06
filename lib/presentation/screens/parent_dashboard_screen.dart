@@ -711,10 +711,10 @@ class _UpdateSectionCard extends StatefulWidget {
 }
 
 class _UpdateSectionCardState extends State<_UpdateSectionCard> {
-  static const String _latestReleaseApiUrl =
-      'https://api.github.com/repos/Cognifox-Studio/Siffersafari/releases/latest';
-  static const String _releasesApiUrl =
-      'https://api.github.com/repos/Cognifox-Studio/Siffersafari/releases?per_page=1';
+  static const String _latestReleasePageUrl =
+    'https://github.com/Cognifox-Studio/Siffersafari/releases/latest';
+  static const String _releasesPageUrl =
+    'https://github.com/Cognifox-Studio/Siffersafari/releases';
 
   bool _isChecking = false;
   String? _installedVersion;
@@ -760,7 +760,7 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _errorMessage = 'Kunde inte kontrollera uppdatering: $e';
+        _errorMessage = _friendlyUpdateError(e);
       });
     } finally {
       if (mounted) {
@@ -771,95 +771,97 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     }
   }
 
+  String _friendlyUpdateError(Object error) {
+    if (error is SocketException) {
+      return 'Kunde inte kontrollera uppdatering: Ingen internetanslutning (DNS).';
+    }
+
+    final message = error.toString();
+    if (message.contains('Failed host lookup')) {
+      return 'Kunde inte kontrollera uppdatering: Ingen internetanslutning (DNS).';
+    }
+
+    return 'Kunde inte kontrollera uppdatering: $error';
+  }
+
   Future<_AppUpdateInfo> _fetchLatestRelease() async {
     final client = HttpClient();
     try {
-      final latestResponse = await _requestJson(client, _latestReleaseApiUrl);
+      final byRedirect = await _fetchLatestReleaseFromRedirect(client);
+      if (byRedirect != null) return byRedirect;
 
-      if (latestResponse.statusCode == 200) {
-        return _parseReleasePayload(latestResponse.payload);
-      }
+      final byHtml = await _fetchLatestReleaseFromReleasesHtml(client);
+      if (byHtml != null) return byHtml;
 
-      // GitHub returns 404 for /releases/latest when only prereleases exist.
-      if (latestResponse.statusCode == 404) {
-        final releasesResponse = await _requestJson(client, _releasesApiUrl);
-        if (releasesResponse.statusCode != 200) {
-          throw Exception('GitHub svarade ${releasesResponse.statusCode}');
-        }
-
-        final payload = releasesResponse.payload;
-        if (payload is! List || payload.isEmpty) {
-          throw Exception('Ingen release hittades ännu');
-        }
-
-        final firstRelease = payload.first;
-        if (firstRelease is! Map<String, dynamic>) {
-          throw Exception('Ogiltigt releasesvar från GitHub');
-        }
-
-        return _parseReleasePayload(firstRelease);
-      }
-
-      throw Exception('GitHub svarade ${latestResponse.statusCode}');
+      throw Exception('Kunde inte hitta någon release');
     } finally {
       client.close(force: true);
     }
   }
 
-  Future<({int statusCode, dynamic payload})> _requestJson(
-    HttpClient client,
-    String url,
-  ) async {
-    final request = await client.getUrl(Uri.parse(url));
-    request.headers
-        .set(HttpHeaders.acceptHeader, 'application/vnd.github+json');
-    request.headers
-        .set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
+  Future<_AppUpdateInfo?> _fetchLatestReleaseFromRedirect(HttpClient client) async {
+    final request = await client.getUrl(Uri.parse(_latestReleasePageUrl));
+    request.followRedirects = false;
+    request.headers.set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
 
     final response = await request.close();
-    final body = await response.transform(utf8.decoder).join();
-    dynamic payload;
-    try {
-      payload = jsonDecode(body);
-    } catch (_) {
-      payload = body;
+    await response.drain();
+
+    if (response.statusCode == 404) {
+      return null;
     }
 
-    return (statusCode: response.statusCode, payload: payload);
-  }
-
-  _AppUpdateInfo _parseReleasePayload(Map<String, dynamic> payload) {
-    final tagName = (payload['tag_name'] as String?)?.trim();
-    if (tagName == null || tagName.isEmpty) {
-      throw Exception('Ingen release-tag hittades');
+    if (response.statusCode < 300 || response.statusCode >= 400) {
+      return null;
     }
 
-    final releasePageUrl = (payload['html_url'] as String?)?.trim() ??
-        'https://github.com/Cognifox-Studio/Siffersafari/releases/latest';
-    final assets = payload['assets'];
-
-    String? apkUrl;
-    if (assets is List) {
-      for (final item in assets.whereType<Map>()) {
-        final asset = item.cast<String, dynamic>();
-        final fileName = (asset['name'] as String?)?.toLowerCase();
-        final browserDownloadUrl =
-            (asset['browser_download_url'] as String?)?.trim();
-
-        if (fileName != null &&
-            fileName.endsWith('.apk') &&
-            browserDownloadUrl != null &&
-            browserDownloadUrl.isNotEmpty) {
-          apkUrl = browserDownloadUrl;
-          break;
-        }
-      }
+    final location = response.headers.value(HttpHeaders.locationHeader);
+    if (location == null || location.trim().isEmpty) {
+      return null;
     }
+
+    final resolved = Uri.parse(_latestReleasePageUrl).resolve(location.trim());
+    final tagName = resolved.pathSegments.isNotEmpty
+        ? resolved.pathSegments.last.trim()
+        : '';
+
+    if (tagName.isEmpty) return null;
 
     return _AppUpdateInfo(
       tagName: tagName,
-      releasePageUrl: releasePageUrl,
-      apkUrl: apkUrl,
+      releasePageUrl: resolved.toString(),
+      apkUrl: null,
+    );
+  }
+
+  Future<_AppUpdateInfo?> _fetchLatestReleaseFromReleasesHtml(
+    HttpClient client,
+  ) async {
+    final request = await client.getUrl(Uri.parse(_releasesPageUrl));
+    request.headers.set(HttpHeaders.userAgentHeader, 'Siffersafari-Update-Check');
+
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      await response.drain();
+      return null;
+    }
+
+    final body = await response.transform(utf8.decoder).join();
+    final match = RegExp(
+      r'href="/Cognifox-Studio/Siffersafari/releases/tag/([^"]+)"',
+    ).firstMatch(body);
+
+    if (match == null) return null;
+    final tagName = match.group(1)?.trim() ?? '';
+    if (tagName.isEmpty) return null;
+
+    final releaseUri = Uri.parse(_releasesPageUrl)
+        .resolve('/Cognifox-Studio/Siffersafari/releases/tag/$tagName');
+
+    return _AppUpdateInfo(
+      tagName: tagName,
+      releasePageUrl: releaseUri.toString(),
+      apkUrl: null,
     );
   }
 
@@ -871,8 +873,70 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     return normalized.split('+').first;
   }
 
+  int _compareSemver(String a, String b) {
+    final pa = _parseSemver(a);
+    final pb = _parseSemver(b);
+
+    for (var i = 0; i < 3; i++) {
+      final diff = pa.core[i].compareTo(pb.core[i]);
+      if (diff != 0) return diff;
+    }
+
+    final aHasPre = pa.preRelease.isNotEmpty;
+    final bHasPre = pb.preRelease.isNotEmpty;
+    if (!aHasPre && !bHasPre) return 0;
+    if (!aHasPre && bHasPre) return 1;
+    if (aHasPre && !bHasPre) return -1;
+
+    final maxLen = pa.preRelease.length > pb.preRelease.length
+        ? pa.preRelease.length
+        : pb.preRelease.length;
+    for (var i = 0; i < maxLen; i++) {
+      if (i >= pa.preRelease.length) return -1;
+      if (i >= pb.preRelease.length) return 1;
+
+      final ida = pa.preRelease[i];
+      final idb = pb.preRelease[i];
+      final na = int.tryParse(ida);
+      final nb = int.tryParse(idb);
+
+      if (na != null && nb != null) {
+        final diff = na.compareTo(nb);
+        if (diff != 0) return diff;
+      } else if (na != null && nb == null) {
+        return -1;
+      } else if (na == null && nb != null) {
+        return 1;
+      } else {
+        final diff = ida.compareTo(idb);
+        if (diff != 0) return diff;
+      }
+    }
+
+    return 0;
+  }
+
+  ({List<int> core, List<String> preRelease}) _parseSemver(String version) {
+    final normalized = _normalizeVersion(version);
+    final dashIndex = normalized.indexOf('-');
+    final coreStr = dashIndex == -1 ? normalized : normalized.substring(0, dashIndex);
+    final preStr = dashIndex == -1 ? '' : normalized.substring(dashIndex + 1);
+
+    final coreParts = coreStr.split('.');
+    int readCore(int index) {
+      if (index >= coreParts.length) return 0;
+      return int.tryParse(coreParts[index]) ?? 0;
+    }
+
+    final preRelease = preStr.isEmpty ? <String>[] : preStr.split('.');
+    return (
+      core: [readCore(0), readCore(1), readCore(2)],
+      preRelease: preRelease,
+    );
+  }
+
   bool _isUpdateAvailable(String installedVersion, String latestTag) {
-    return _normalizeVersion(installedVersion) != _normalizeVersion(latestTag);
+    return _compareSemver(installedVersion, latestTag) < 0;
   }
 
   Future<void> _openUrl(String url) async {
