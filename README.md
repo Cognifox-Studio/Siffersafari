@@ -1,153 +1,149 @@
 # Siffersafari
 
-Ett pedagogiskt mattespel för barn (6–12 år) som lär grundläggande matematik genom interaktiva övningar, quiz och progressionssystem.
+<p align="center">
+  <img src="artifacts/animation_preview/ville_walk_final/ville_walk_animation.gif" alt="Ville mascot animation" width="320">
+</p>
 
-Fokus: **Android-only**, **offline-first**, flera barnprofiler.
+<p align="center"><strong>Offline-first mattespel för barn 6-12 år.</strong><br>Adaptiv träning, flera barnprofiler och PIN-skyddat föräldraläge i en Android-app som går att installera direkt från GitHub Releases.</p>
 
-[![Flutter CI](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml/badge.svg)](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml)
-[![Build and Release APK](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml/badge.svg)](https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml)
-[![Release](https://img.shields.io/github/v/release/Cognifox-Studio/Siffersafari?display_name=tag)](https://github.com/Cognifox-Studio/Siffersafari/releases)
+<p align="center">
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml"><img src="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml/badge.svg" alt="Flutter CI"></a>
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml"><img src="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/build.yml/badge.svg" alt="Build and Release APK"></a>
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases"><img src="https://img.shields.io/github/v/release/Cognifox-Studio/Siffersafari?display_name=tag" alt="Latest release"></a>
+</p>
 
-## Installera APK (Android)
+<p align="center">
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"><strong>Ladda ner senaste APK</strong></a>
+  ·
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases"><strong>Se releases</strong></a>
+  ·
+  <a href="docs/README.md"><strong>Dokumentation</strong></a>
+</p>
 
-1. Gå till [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases)
-2. Ladda ner `app-release.apk` (senaste version)
-3. Öppna filen på Android och installera
-4. Tillåt "Installera okända appar" för webbläsare/filhanterare vid behov
+## Varför Siffersafari?
 
-Direktlänk till senaste APK (när release finns):
+Siffersafari kombinerar lekfull matteövning med ett robust offline-flöde som fungerar utan konto, molnsync eller uppkoppling. Fokus ligger på att göra daglig träning enkel för barnet och överblickbar för förälder eller lärare.
+
+Det här projektet passar särskilt bra när du vill ha:
+
+- en Android-app som kan installeras direkt via APK
+- adaptiv svårighetsgrad i stället för statiska uppgiftspaket
+- flera barnprofiler på samma enhet
+- lokalt sparad progression och PIN-skyddade vuxeninställningar
+
+## Höjdpunkter
+
+| Område | Det användaren märker |
+| --- | --- |
+| Adaptiv träning | Frågorna justeras efter prestation för att hålla nivån lagom utmanande |
+| Årskursstyrning | Innehållet kan anpassas efter Åk 1-9 och valda räknesätt |
+| Föräldraläge | Vuxna kan låsa upp dashboard, se statistik och styra innehåll via PIN |
+| Offline-first | Kärnflödet fungerar utan internet och sparar data lokalt med Hive |
+| Motivation | Poäng, streaks, medaljer och belöningar gör övningen mer engagerande |
+| Teman | Djungel och rymd ger appen ett tydligt barnvänligt uttryck |
+
+## Produktöversikt
+
+- Quizflöde från hemskärm till resultatvy
+- Flera barnprofiler med egen progression
+- Rekommenderad övning och statistik i föräldradashboard
+- PIN-skydd med BCrypt-hashning och begränsning av felaktiga försök
+- Onboarding, widgettester och lokal release-byggning via GitHub Actions
+
+## Installera APK
+
+1. Gå till [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases).
+2. Ladda ner `app-release.apk` från senaste versionen.
+3. Öppna filen på Android-enheten och installera.
+4. Tillåt installation från okända appar för webbläsare eller filhanterare om Android frågar.
+
+Direktlänk till senaste APK:
+
 [https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk](https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk)
 
-## Snabblänkar
+## Snabbstart för utveckling
 
-- [📚 Dokumentation](#-dokumentation)
-- [Status](#status-2026-03-05)
-- [Funktioner](#funktioner)
-- [Teknisk Stack](#teknisk-stack)
-- [Arkitektur](#arkitektur)
-- [Installation (Utveckling)](#installation-utveckling)
-- [Testning](#testning)
-- [Säkerhet](SECURITY.md)
-- [Contributing](docs/CONTRIBUTING.md)
+För full setup: [docs/SETUP_ENVIRONMENT.md](docs/SETUP_ENVIRONMENT.md)
 
----
-
-## 📚 Dokumentation
-
-**Ny till projektet?** Börja här: **[docs/README.md](docs/README.md)** ← Central documentation hub
-
-Dokumentationen är organiserad enligt **Diátaxis-ramverket**:
-- 📖 **Tutorials** — Kom igång snabbt
-- 🔧 **How-To Guides** — Praktiska instruktioner
-- 📋 **Reference** — Tekniska detaljer
-- 💡 **Explanation** — Förklara varför
-
----
-
-## Status (2026-03-05)
-
-Projektet är i ett fungerande MVP+-läge med:
-- Quizflöde (hem → quiz → resultat)
-- Multi-user profiler (skapa/välj aktiv användare)
-- Profilval vid start när flera profiler finns
-- Enkel profil-avatar (emoji) per barn
-- Årskurs per användare (Åk 1-9) som styr effektiv svårighet
-- Progression (poäng, nivå, titel, medalj, svit/streak, snabbbonus ⚡)
-- Föräldraläge (PIN, dashboard, rekommenderad övning, räknesätt per användare)
-	- PIN lagras som **SHA-256-hash** (inte klartext)
-	- **Rate-limiting**: 5 felaktiga försök → 5 min lockout
-- Onboarding och widget-test
-- Global felhantering (för bättre diagnostik vid oväntade fel)
-
-Senaste verifiering: kör `flutter test` lokalt för aktuell status.
-
-## Funktioner
-
-- **Adaptiv Svårighetsgrad**: Automatisk justering baserad på prestanda (70-80% framgångsfrekvens)
-- **Spaced Repetition**: Vetenskapligt bevisad repetitionsalgoritm för långsiktig inlärning
-- **Ålders-/Årskursanpassat Innehåll**: Tre åldersgrupper och stöd för Åk 1-9
-- **Föräldra/Lärardashboard**: Detaljerad analys och framstegsvisualisering
-- **Lokal datalagring (Hive)**: Kärnflödet använder lokal persistens
-- **Temabaserad Design**: Engagerande teman (rymd, djungel)
-- **Belöningssystem**: Stjärnor, medaljer, svit/streak och snabbbonus ⚡ för motivation
-
-## Känd scope just nu
-
-- Offline-funktionalitet är implementerad via lokal lagring men ej fullständigt validerad i testplan.
-- Tillgänglighet, integrationstest och prestandaoptimering återstår.
-
-## Teknisk Stack
-
-- **Framework**: Flutter 3.x
-- **Språk**: Dart 3.x
-- **State Management**: Riverpod
-- **Lokal Databas**: Hive
-- **Ljud**: audioplayers
-- **Animationer**: Lottie
-- **UI**: flutter_screenutil
-
-## Arkitektur
-
-Projektet följer Clean Architecture-principer:
-
-```
-lib/
-├── domain/          # Business logic, entiteter
-├── data/            # Datakällor, repositories
-├── presentation/    # UI, skärmar, widgets
-└── core/            # Delad funktionalitet, services
-```
-
-**För arkitektur-detaljer:** se [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-
-**För folder-layout:** se [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
-
-**För pedagogisk mappning:** se [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md)
-
-## Installation (Utveckling)
-
-**För detaljerad setup-guide:** se [docs/SETUP_ENVIRONMENT.md](docs/SETUP_ENVIRONMENT.md)
-
-Kort version:
+Snabbaste vägen igång:
 
 ```bash
-# Installera dependencies
 flutter pub get
-
-# Generera kod (Hive adapters, Riverpod)
 dart run build_runner build --delete-conflicting-outputs
-
-# Kör appen
 flutter run
 ```
 
-**QA före commit:** se [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
-
-**Rekommenderat (Android):** Pixel_6-script för deterministisk install
-
-Om du märker att emulatorn ibland kör “fel APK” (gamla ändringar), använd scriptet som alltid riktar mot **Pixel_6** och kan köra ett deterministiskt build+install-flöde:
+För deterministisk Android-körning i detta repo finns Pixel_6-scriptet:
 
 ```bash
-# SYNC: bygg + installera exakt APK + starta om appen (säkrast när emulatorn måste matcha koden)
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
-
-# RUN: dev-läge med hot reload
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action run
 ```
 
-Det finns även VS Code tasks som använder samma flöde.
+## Kvalitet och release
 
-## Testning
+- CI kör analyze och testsvit på kodändringar
+- Release-workflow bygger signerad APK från `v*`-taggar
+- Senaste lokala sanity check inför release: `flutter analyze`, `flutter test` och `flutter build apk --release`
 
-Se `CONTRIBUTING.md` för rekommenderad QA-rutin och VS Code-tasks.
-
-Snabbkommandon:
+Snabbkommandon lokalt:
 
 ```bash
 flutter analyze
 flutter test
+flutter build apk --release
 ```
+
+## Teknisk översikt
+
+- Flutter + Dart 3
+- Riverpod för state management
+- Hive för lokal persistens
+- audioplayers för ljud
+- Lottie för animationer
+- flutter_screenutil för responsiv skalning
+
+Projektet följer en tydlig lagerindelning:
+
+```text
+lib/
+├── domain/
+├── data/
+├── presentation/
+└── core/
+```
+
+Mer detaljer finns i:
+
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
+- [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md)
+
+## Dokumentation
+
+Viktiga länkar:
+
+- [docs/README.md](docs/README.md)
+- [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
+- [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+- [SECURITY.md](SECURITY.md)
+- [docs/DEPLOY_ANDROID.md](docs/DEPLOY_ANDROID.md)
+
+## Nuvarande scope
+
+Redo idag:
+
+- Android-fokuserad APK-distribution
+- offline-first kärnflöde
+- adaptiv quizlogik
+- föräldraläge med återställningsflöde
+
+Fortsatt utveckling:
+
+- bredare integrationstestning
+- mer tillgänglighetsarbete
+- vidare prestandapolering och mer produktmedia för repo- och release-sidor
 
 ## Licens
 
-Privat projekt - Alla rättigheter förbehållna.
+Privat projekt. Alla rättigheter förbehållna.
