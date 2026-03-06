@@ -277,10 +277,16 @@ class QuestionGeneratorService {
         roll >= (statsChance + probabilityChance + 0.06) &&
         roll < (statsChance + probabilityChance + 0.10);
 
-    final shouldTryM5aPercent = isM5aMix && roll < 0.18;
+    final shouldTryM5aPercent =
+      isM5aMix && clampedMixStep >= 4 && roll < 0.18;
     final shouldTryM5aPower =
-        isM5aMix && gradeLevel >= 8 && roll >= 0.18 && roll < 0.30;
-    final shouldTryM5aPrecedence = isM5aMix && roll >= 0.30 && roll < 0.42;
+      isM5aMix &&
+      gradeLevel >= 8 &&
+      clampedMixStep >= 7 &&
+      roll >= 0.18 &&
+      roll < 0.30;
+    final shouldTryM5aPrecedence =
+      isM5aMix && clampedMixStep >= 6 && roll >= 0.30 && roll < 0.42;
 
     final shouldTryWordProblemAddSub = wordProblemsEnabled &&
         gradeLevel != null &&
@@ -2009,14 +2015,15 @@ Vilken typ av korrelation har variablerna?
     // M3 (Åk 4–6): bigger numbers but introduce carry gradually.
     final isM3Grade = gradeLevel != null && gradeLevel >= 4 && gradeLevel <= 6;
     final isM5aGrade = gradeLevel != null && gradeLevel >= 7 && gradeLevel <= 9;
+    final allowSignedArithmetic = isM5aGrade && step >= 4;
     final avoidCarryAllDigits = isM3Grade && difficultyStep <= 3;
     final requireCarrySomewhere = isM3Grade && difficultyStep >= 8;
 
     int operand1;
     int operand2;
 
-    // Åk 7–9 (M5a): allow signed operands and answers.
-    if (isM5aGrade) {
+    // Åk 7–9 (M5a): introduce signed operands after the earliest steps.
+    if (allowSignedArithmetic) {
       final maxAbs = difficultyStep <= 3
           ? min(20, max(1, range.max))
           : difficultyStep <= 6
@@ -2182,13 +2189,14 @@ Vilken typ av korrelation har variablerna?
     // M3 (Åk 4–6): bigger numbers but introduce borrowing gradually.
     final isM3Grade = gradeLevel != null && gradeLevel >= 4 && gradeLevel <= 6;
     final isM5aGrade = gradeLevel != null && gradeLevel >= 7 && gradeLevel <= 9;
+    final allowSignedArithmetic = isM5aGrade && step >= 4;
     final avoidBorrowAllDigits = isM3Grade && difficultyStep <= 3;
     final requireBorrowSomewhere = isM3Grade && difficultyStep >= 8;
 
     var operand1 = _randomInRange(range);
     var operand2 = _randomInRange(range);
 
-    if (isM5aGrade) {
+    if (allowSignedArithmetic) {
       final maxAbs = difficultyStep <= 3
           ? min(20, max(1, range.max))
           : difficultyStep <= 6
@@ -2204,7 +2212,7 @@ Vilken typ av korrelation har variablerna?
     }
 
     for (var i = 0; i < 120; i++) {
-      if (!isM5aGrade && operand2 > operand1) {
+      if (!allowSignedArithmetic && operand2 > operand1) {
         final temp = operand1;
         operand1 = operand2;
         operand2 = temp;

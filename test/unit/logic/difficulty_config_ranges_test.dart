@@ -5,7 +5,26 @@ import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 
 void main() {
-  group('[Unit] DifficultyConfig – Curriculum number ranges (Åk 4–6)', () {
+  group('[Unit] DifficultyConfig – Curriculum number ranges (Åk 3–6)', () {
+    test('Åk 3 (+): step-tabell mjukar ut vägen mot 1000', () {
+      final maxByStep = List<int>.generate(
+        10,
+        (i) => DifficultyConfig.curriculumNumberRangeForStep(
+          gradeLevel: 3,
+          operationType: OperationType.addition,
+          difficultyStep: i + 1,
+        ).max,
+      );
+
+      expect(maxByStep.first, 10);
+      expect(maxByStep[3], 100);
+      expect(maxByStep[6], 500);
+      expect(maxByStep.last, 1000);
+      for (var i = 1; i < maxByStep.length; i++) {
+        expect(maxByStep[i], greaterThanOrEqualTo(maxByStep[i - 1]));
+      }
+    });
+
     test('Åk 4 (+): step-tabell är monotont ökande och slutar på 10 000', () {
       final maxByStep = List<int>.generate(
         10,

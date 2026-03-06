@@ -4,6 +4,30 @@
 > 
 > Uppdateras efter större milestones/förluster av kontext.
 
+## 2026-03-06 — Svårighetskalibrering per årskurs
+
+### Mål (denna del)
+✅ Mjukare progression i frågesvårighet per årskurs, särskilt runt Åk 3 och tidigt högstadium
+
+### Gjort
+- `DifficultyConfig.expectedDifficultyStepForGrade(...)` är nu mjukare år-för-år i stället för grova 3-årsblock.
+- Åk 3 (+/−) har fått egen step-tabell: `[10, 20, 50, 100, 200, 350, 500, 700, 850, 1000]`.
+- Åk 7–9 signed +/− introduceras först från step 4.
+- Åk 7–9 Mix-specialer är nu step-gatade:
+   - procent från step 4
+   - prioriteringsregler från step 6
+   - potenser från step 7 och endast Åk 8–9
+- `docs/KUNSKAPSNIVA_PER_AK.md` synkad med den faktiska logiken.
+
+### Verifiering
+- `flutter analyze`: ✅ grönt
+- Relevanta logiktester: ✅ grönt
+- Sample-audit visade att Åk 7 step 1 nu ger lugnare aritmetik (`+`, `−`, `×`, `÷`) utan tidig procent/negativa tal, medan step 4 och 6 öppnar högstadieinnehåll gradvis.
+
+### Nästa steg
+1. Valfritt: kör full testsvit om detta ska direkt in i release.
+2. Valfritt: gör en separat pedagogisk fintrimning av Åk 4–6 Mix-specialer om ni vill minska M4-inslaget ytterligare på låga steps.
+
 ## 2026-03-06 — Parent update check in app
 
 ### Mål (denna del)

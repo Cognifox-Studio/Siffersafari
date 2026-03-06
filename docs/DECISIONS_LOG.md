@@ -22,3 +22,5 @@
 
 ## 2026-03-06
 - Uppdateringsflöde i Föräldraläge: appen kontrollerar senaste GitHub Release (`/releases/latest`) och öppnar extern APK/release-länk; ingen in-app installer för att minimera risk/komplexitet.
+- Svårighetsprogression: benchmark-steg ska vara mjukare år-för-år, inte samma block för Åk 4–6 och 7–9.
+- Högstadiet (Åk 7–9): signed +/− och M5a-specialer ska introduceras gradvis via step-gates; step 1 i Mix ska fortfarande kännas som lugn aritmetik.

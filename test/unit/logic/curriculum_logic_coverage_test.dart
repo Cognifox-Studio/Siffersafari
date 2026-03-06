@@ -163,7 +163,7 @@ void main() {
         difficultyStep: step,
       );
 
-      final isM5a = grade >= 7;
+      final isM5a = grade >= 7 && step >= 4;
 
       switch (op) {
         case OperationType.addition:
@@ -469,14 +469,32 @@ void main() {
           expectNever(obs.m4Percent, 'M4 procent', context: ctx);
           expectNever(obs.m4NegativeNumbers, 'M4 negativa tal', context: ctx);
 
-          expectSometimes(obs.m5aPercent, 'M5a procent', context: ctx);
-          expectSometimes(
-            obs.m5aPrecedence,
-            'M5a prioriteringsregler',
-            context: ctx,
-          );
+          if (step < 4) {
+            expectNever(obs.m5aPercent, 'M5a procent', context: ctx);
+            expectNever(
+              obs.m5aPrecedence,
+              'M5a prioriteringsregler',
+              context: ctx,
+            );
+          } else {
+            expectSometimes(obs.m5aPercent, 'M5a procent', context: ctx);
+          }
 
-          if (grade == 7) {
+          if (step < 6) {
+            expectNever(
+              obs.m5aPrecedence,
+              'M5a prioriteringsregler',
+              context: ctx,
+            );
+          } else {
+            expectSometimes(
+              obs.m5aPrecedence,
+              'M5a prioriteringsregler',
+              context: ctx,
+            );
+          }
+
+          if (grade == 7 || step < 7) {
             // Power is only enabled for grade 8+.
             expectNever(obs.m5aPower, 'M5a potenser', context: ctx);
           } else {

@@ -53,11 +53,13 @@ class DifficultyConfig {
       return isMulDiv ? 2 : 3;
     }
 
-    if (grade <= 6) {
-      return isMulDiv ? 4 : 5;
-    }
-
-    return isMulDiv ? 6 : 7;
+    return switch (grade) {
+      4 => isMulDiv ? 3 : 4,
+      5 => isMulDiv ? 4 : 5,
+      6 => isMulDiv ? 5 : 6,
+      7 => isMulDiv ? 5 : 6,
+      _ => isMulDiv ? 6 : 7,
+    };
   }
 
   static GradeBenchmark compareDifficultyStepToGrade({
@@ -248,49 +250,64 @@ class DifficultyConfig {
     final t =
         (step - minDifficultyStep) / (maxDifficultyStep - minDifficultyStep);
 
-    // For Åk 4–6 (+/−) we use a step-table to avoid big "jumps".
-    // A pure linear interpolation up to 10 000 / 100 000 becomes too steep.
-    if (grade >= 4 && grade <= 6) {
-      if (operationType == OperationType.addition ||
-          operationType == OperationType.subtraction) {
-        final maxVal = switch (grade) {
-          4 => const <int>[
-              20,
-              50,
-              100,
-              200,
-              500,
-              1000,
-              2000,
-              4000,
-              7000,
-              10000,
-            ],
-          5 => const <int>[
-              50,
-              100,
-              200,
-              500,
-              1000,
-              2000,
-              5000,
-              10000,
-              30000,
-              100000,
-            ],
-          _ => const <int>[
-              100,
-              200,
-              500,
-              1000,
-              2000,
-              5000,
-              10000,
-              20000,
-              50000,
-              100000,
-            ],
-        }[step - 1];
+    // For Åk 3–6 (+/−) we use step-tables to avoid big "jumps".
+    // A pure linear interpolation becomes too steep too early.
+    if (operationType == OperationType.addition ||
+        operationType == OperationType.subtraction) {
+      final stepTable = switch (grade) {
+        3 => const <int>[
+            10,
+            20,
+            50,
+            100,
+            200,
+            350,
+            500,
+            700,
+            850,
+            1000,
+          ],
+        4 => const <int>[
+            20,
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            4000,
+            7000,
+            10000,
+          ],
+        5 => const <int>[
+            50,
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            30000,
+            100000,
+          ],
+        6 => const <int>[
+            100,
+            200,
+            500,
+            1000,
+            2000,
+            5000,
+            10000,
+            20000,
+            50000,
+            100000,
+          ],
+        _ => null,
+      };
+
+      if (stepTable != null) {
+        final maxVal = stepTable[step - 1];
         return NumberRange(0, maxVal);
       }
     }

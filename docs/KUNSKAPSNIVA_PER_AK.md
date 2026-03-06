@@ -33,15 +33,15 @@ Tabellen visar **caps vid step 10** (maxnivå) för respektive räknesätt enlig
 |---:|---|---:|---:|---:|---:|---:|---:|
 | 1 | +, − | 2 | 1 | 20 | 5 | 5 | 5 |
 | 2 | +, − | 2 | 1 | 100 | 10 | 10 | 10 |
-| 3 | +, −, ×, ÷ | 3 | 2 | 1000 | 12 | 12 | 12 |
-| 4 | +, −, ×, ÷ | 5 | 4 | 10000* | 99 | 20 | 20 |
+| 3 | +, −, ×, ÷ | 3 | 2 | 1000* | 12 | 12 | 12 |
+| 4 | +, −, ×, ÷ | 4 | 3 | 10000* | 99 | 20 | 20 |
 | 5 | +, −, ×, ÷ | 5 | 4 | 100000* | 199 | 50 | 30 |
-| 6 | +, −, ×, ÷ | 5 | 4 | 100000* | 299 | 100 | 60 |
-| 7 | +, −, ×, ÷ | 7 | 6 | 1000000 | 299 | 100 | 60 |
+| 6 | +, −, ×, ÷ | 6 | 5 | 100000* | 299 | 100 | 60 |
+| 7 | +, −, ×, ÷ | 6 | 5 | 1000000 | 299 | 100 | 60 |
 | 8 | +, −, ×, ÷ | 7 | 6 | 1000000 | 299 | 100 | 60 |
 | 9 | +, −, ×, ÷ | 7 | 6 | 1000000 | 299 | 100 | 60 |
 
-\* Åk 4–6 (+/−) använder en **step-tabell** (inte linjär interpolation) för att undvika stora “hopp”.
+\* Åk 3–6 (+/−) använder en **step-tabell** (inte linjär interpolation) för att undvika stora “hopp”.
 
 Notiser:
 - `Synliga räknesätt (default)` kommer från `visibleOperationsForGrade` och kan fortfarande begränsas av förälderns val.
@@ -108,6 +108,8 @@ Notiser:
 ### App-logik (exakt)
 - Räknesätt (default): `+`, `−`, `×`, `÷`.
 - Benchmark-step: +/−=3, ×/÷=2.
+- +/− step-tabell (Åk 3, min=0):
+  - step 1..10 max = `[10, 20, 50, 100, 200, 350, 500, 700, 850, 1000]`
 - Caps vid step 10: +/− 1000, × 12, ÷ 12, Mix 12.
 - Feature-gates:
   - Textuppgift +/−: Åk 1–3.
@@ -129,7 +131,7 @@ Notiser:
 - `NU`: Problemlösning 1–2 steg (kort text).
 
 ### App-logik (exakt)
-- Benchmark-step: +/−=5, ×/÷=4.
+- Benchmark-step: +/−=4, ×/÷=3.
 - +/− step-tabell (Åk 4, min=0):
   - step 1..10 max = `[20, 50, 100, 200, 500, 1000, 2000, 4000, 7000, 10000]`
 - Caps vid step 10: × 99, ÷ 20, Mix 20.
@@ -162,7 +164,7 @@ Notiser:
 - `SEN`: Bråk/decimal/procent som vardagsmat, geometri/koordinater.
 
 ### App-logik (exakt)
-- Benchmark-step: +/−=5, ×/÷=4.
+- Benchmark-step: +/−=6, ×/÷=5.
 - +/− step-tabell (Åk 6, min=0):
   - step 1..10 max = `[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]`
 - Caps vid step 10: × 299, ÷ 100, Mix 60.
@@ -176,12 +178,13 @@ Notiser:
 - `SEN`: Algebra/funktioner med tydlig representation.
 
 ### App-logik (exakt)
-- Benchmark-step: +/−=7, ×/÷=6.
+- Benchmark-step: +/−=6, ×/÷=5.
 - Caps vid step 10: +/− 1 000 000, × 299, ÷ 100, Mix 60.
 - Mix feature-gates (Åk 7–9):
-  - M5a procent: roll < 0.18.
+  - Signed +/− i kärnflödet: introduceras från step 4.
+  - M5a procent: från step 4, roll < 0.18.
   - M5a potenser: bara Åk 8–9 (se nästa).
-  - M5a prioriteringsregler: roll i `[0.30, 0.42)`.
+  - M5a prioriteringsregler: från step 6, roll i `[0.30, 0.42)`.
   - M5b (extra typer): endast om `mixBaselineStep` (clamped) ≥ 8:
     - Linjär funktion (textformat): roll i `[0.42, 0.52)`.
     - Geometrisk transformation (textformat): roll i `[0.52, 0.62)`.
@@ -195,8 +198,12 @@ Notiser:
 - `SEN`: Fullt algebraspår (kräver mer än heltalssvar i många uppgifter).
 
 ### App-logik (exakt)
-- Samma benchmark/caps som Åk 7.
-- M5a potenser: roll i `[0.18, 0.30)` (endast Åk≥8).
+- Benchmark-step: +/−=7, ×/÷=6.
+- Samma caps som Åk 7.
+- Signed +/− i kärnflödet: från step 4.
+- M5a procent: från step 4.
+- M5a potenser: från step 7, roll i `[0.18, 0.30)` (endast Åk≥8).
+- M5a prioriteringsregler: från step 6.
 - M5b: samma rollfönster som Åk 7 när step≥8.
 
 ## Åk 9
@@ -206,7 +213,12 @@ Notiser:
 - `SEN`: Resonemang, modeller, algebra, funktioner, geometri med figurer.
 
 ### App-logik (exakt)
-- Samma benchmark/caps som Åk 7.
+- Benchmark-step: +/−=7, ×/÷=6.
+- Samma caps som Åk 7.
+- Signed +/− i kärnflödet: från step 4.
+- M5a procent: från step 4.
+- M5a prioriteringsregler: från step 6.
+- M5a potenser: från step 7.
 
 ---
 

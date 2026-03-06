@@ -22,12 +22,12 @@ void main() {
     });
 
     test('compareDifficultyStepToGrade klassar under/i linje/över', () {
-      // Åk 4: plus expected 5.
+      // Åk 4: plus expected 4.
       final expected = DifficultyConfig.expectedDifficultyStepForGrade(
         gradeLevel: 4,
         operation: OperationType.addition,
       );
-      expect(expected, 5);
+      expect(expected, 4);
 
       final under = DifficultyConfig.compareDifficultyStepToGrade(
         gradeLevel: 4,
@@ -57,6 +57,39 @@ void main() {
         difficultyStep: expected + 3,
       );
       expect(over.level, GradeBenchmarkLevel.over);
+    });
+
+    test('benchmark progression är mjukare år-för-år från Åk 4', () {
+      final expectedByGrade = <int, ({int add, int mul})>{
+        1: (add: 2, mul: 1),
+        2: (add: 2, mul: 1),
+        3: (add: 3, mul: 2),
+        4: (add: 4, mul: 3),
+        5: (add: 5, mul: 4),
+        6: (add: 6, mul: 5),
+        7: (add: 6, mul: 5),
+        8: (add: 7, mul: 6),
+        9: (add: 7, mul: 6),
+      };
+
+      for (final entry in expectedByGrade.entries) {
+        expect(
+          DifficultyConfig.expectedDifficultyStepForGrade(
+            gradeLevel: entry.key,
+            operation: OperationType.addition,
+          ),
+          entry.value.add,
+          reason: 'Åk ${entry.key} addition',
+        );
+        expect(
+          DifficultyConfig.expectedDifficultyStepForGrade(
+            gradeLevel: entry.key,
+            operation: OperationType.multiplication,
+          ),
+          entry.value.mul,
+          reason: 'Åk ${entry.key} multiplication',
+        );
+      }
     });
 
     test(
