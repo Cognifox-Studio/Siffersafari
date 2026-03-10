@@ -32,5 +32,8 @@
 - Standard-pathen för storykartan ska vara 20 riktiga uppdrag/checkpoints för normal progression; kartans layout får därför inte ha en fast maxhöjd som klipper senare noder.
 - När kartan har många checkpoints ska den delas upp visuellt i etapper (t.ex. block om 5) så lång scroll fortfarande känns läsbar och avsiktlig.
 
-## 2026-03-08
-- När separata Ville-spritepacks saknas ska standardfallback för UI-animation vara procedural rörelse i Flutter ovanpå befintliga mascot-assets.
+## 2026-03-09
+- Ville- och mascot-animationer ska standardiseras på Lottie. Sprite-sekvenser, procedural mascot-rörelse och lokala browser/generator-preview-spår ska inte längre vara aktiva alternativ i repo:t.
+- Om en avsedd mascot-Lottie ännu inte finns på sin path ska UI:t visa placeholder i mascot-ytor, inte falla tillbaka till bild- eller spriteanimation.
+- Om en lokal preview behövs för snabb visuell kontroll ska den läsa samma JSON från `assets/animations/` som appen använder eller planerar att använda, inte en separat preview-spec.
+- Adaptiv svårighetsgrad: hybrid-modell med mikro (3 rätt / 2 fel i rad) + makro (5-fråge-fönster, 0.85/0.60) + 2-fråge-cooldown. Steg ändras när mikro+makro är överens eller mikro neutral + makro har signal. Persisteras per räknesätt i `UserProgress.operationDifficultySteps`.

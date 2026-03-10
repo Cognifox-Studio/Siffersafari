@@ -1,9 +1,5 @@
 # Siffersafari
 
-<p align="center">
-  <img src="artifacts/animation_preview/ville_walk_final/ville_walk_animation.gif" alt="Ville mascot animation" width="320">
-</p>
-
 <p align="center"><strong>Offline-first mattespel för barn 6-12 år.</strong><br>Adaptiv träning, flera barnprofiler och PIN-skyddat föräldraläge i en Android-app som går att installera direkt från GitHub Releases.</p>
 
 <p align="center">

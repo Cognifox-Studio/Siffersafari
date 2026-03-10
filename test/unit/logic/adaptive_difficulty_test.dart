@@ -114,5 +114,54 @@ void main() {
 
       expect(step, 1);
     });
+
+    test('steg – höjer inte när micro och macro är i konflikt', () {
+      final results = [false, false, false, false, true, true, true];
+      final step = service.suggestDifficultyStep(
+        currentStep: 5,
+        recentResults: results,
+        minStep: 1,
+        maxStep: 10,
+      );
+
+      expect(step, 5);
+    });
+
+    test('steg – ändrar inte på micro-signal utan macro-bekräftelse', () {
+      final results = [true, true, true];
+      final step = service.suggestDifficultyStep(
+        currentStep: 5,
+        recentResults: results,
+        minStep: 1,
+        maxStep: 10,
+      );
+
+      expect(step, 5);
+    });
+
+    test('steg – tillåter macro-only när ingen micro-signal finns', () {
+      final results = [true, false, true, false, true];
+      final step = service.suggestDifficultyStep(
+        currentStep: 5,
+        recentResults: results,
+        minStep: 1,
+        maxStep: 10,
+      );
+
+      expect(step, 4);
+    });
+
+    test('steg – cooldown blockerar nivåändring', () {
+      final results = [true, true, true, true, true];
+      final step = service.suggestDifficultyStep(
+        currentStep: 5,
+        recentResults: results,
+        minStep: 1,
+        maxStep: 10,
+        questionsSinceLastStepChange: 1,
+      );
+
+      expect(step, 5);
+    });
   });
 }

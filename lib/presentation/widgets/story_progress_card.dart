@@ -194,7 +194,7 @@ class StoryProgressCard extends StatelessWidget {
                           ),
                           const SizedBox(height: AppConstants.microSpacing2),
                           Text(
-                            'Ville spanar efter nästa ledtråd',
+                            'Nästa mål: ${story.currentObjectiveTitle}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style:
@@ -238,13 +238,6 @@ class StoryProgressCard extends StatelessWidget {
                         ),
                   ),
                 ),
-                Text(
-                  '${story.completedNodes}/${story.totalNodes}',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
               ],
             ),
             const SizedBox(height: AppConstants.smallPadding),
@@ -266,14 +259,6 @@ class StoryProgressCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppConstants.microSpacing6),
-            Text(
-              story.worldSubtitle,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: subtleOnPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
             if (story.currentNode != null) ...[
               const SizedBox(height: AppConstants.smallPadding),
               Container(
@@ -293,6 +278,8 @@ class StoryProgressCard extends StatelessWidget {
                     Expanded(
                       child: Text(
                         story.currentNode!.landmarkHint,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                               color: mutedOnPrimary,
                               fontWeight: FontWeight.w600,
@@ -322,6 +309,8 @@ class StoryProgressCard extends StatelessWidget {
                 ),
                 child: Text(
                   story.notice!,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w600,
@@ -340,6 +329,8 @@ class StoryProgressCard extends StatelessWidget {
             const SizedBox(height: AppConstants.smallPadding),
             Text(
               story.currentObjectiveDescription,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: subtleOnPrimary,
                     fontWeight: FontWeight.w600,
@@ -562,10 +553,10 @@ class _StoryPath extends StatelessWidget {
   }
 
   List<StoryNode> _selectVisibleNodes(List<StoryNode> nodes, int currentIndex) {
-    if (nodes.length <= 5) return nodes;
+    if (nodes.length <= 4) return nodes;
 
-    final start = (currentIndex - 1).clamp(0, nodes.length - 5);
-    final end = (start + 5).clamp(0, nodes.length);
+    final start = (currentIndex - 1).clamp(0, nodes.length - 4);
+    final end = (start + 4).clamp(0, nodes.length);
     return nodes.sublist(start, end);
   }
 }
@@ -635,7 +626,7 @@ class _StoryNodeBadge extends StatelessWidget {
           const SizedBox(height: AppConstants.microSpacing4),
           Text(
             node.landmark,
-            maxLines: 2,
+            maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(

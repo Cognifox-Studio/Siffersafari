@@ -34,6 +34,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   int? _selectedAnswer;
   String? _momentText;
   Timer? _momentTimer;
+  bool _feedbackDialogVisible = false;
 
   static const int _showStreakFrom = 2;
 
@@ -189,21 +190,29 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final question = session.currentQuestion!;
     final progress =
         (session.currentQuestionIndex + 1) / session.totalQuestions;
+    final isLastQuestion =
+        session.currentQuestionIndex >= session.totalQuestions - 1;
 
     // Show feedback dialog when available
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (feedback != null && _selectedAnswer != null) {
+      if (feedback != null &&
+          _selectedAnswer != null &&
+          !_feedbackDialogVisible) {
+        _feedbackDialogVisible = true;
         showDialog(
           context: context,
           barrierDismissible: false,
           builder: (_) => FeedbackDialog(
             feedback: feedback,
             onContinue: _handleNextQuestion,
+            continueLabel: isLastQuestion ? 'Se resultat' : 'Nästa',
             continueButtonColor: primaryActionColor,
             dialogBackgroundColor: cardColor,
             messageTextColor: mutedTextColor,
           ),
-        );
+        ).whenComplete(() {
+          _feedbackDialogVisible = false;
+        });
       }
     });
 

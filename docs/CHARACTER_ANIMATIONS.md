@@ -1,48 +1,55 @@
-# Karaktärsanimationer (Ville / character_v2)
+# Karaktärsanimationer (Ville / mascot)
 
-Mål: använda maskoten (t.ex. `character_v2`) som **animerad** figur i UI utan att introducera nya flöden.
+Mål: hålla ett enda tydligt animationsspår för Ville och andra karaktärer i UI:t.
 
-## Nuläge (2026-03-05)
+## Riktning
 
-- ✅ **Idle-animation** används i appen (`assets/images/characters/character_v2/idle/`)
-- ✅ Widgeten `MascotView` stödjer frame-sekvenser (loop)
-- ✅ `MascotView` stödjer nu också procedural rörelse i Flutter (`float` / `bounce`) ovanpå befintliga assets, som fallback när separata sprite-animationer saknas
-- ❌ Jump/Run/Wave är inte implementerade (assets borttagna)
+Från och med 2026-03-09 är Lottie enda godkända animationsspår för Ville i repo:t.
 
-## Rekommenderad fallback just nu
+Det innebär:
 
-När nya spriteframes saknas ska Ville inte blockera UI-arbetet. Använd i första hand:
+- inga frame-sekvenser för Ville i produktkoden
+- inga procedural mascot-animationer i Flutter som alternativt huvudspår
+- inga lokala generatorflöden för spritepacks i repo:t
 
-- idle-frame-sekvens om den finns
-- procedural rörelse i `MascotView` för att ge liv åt karaktären utan nya assets
+## Nuläge
 
-Det här ersätter inte riktiga run/jump-framepacks, men det är den mest tidseffektiva vägen för appens nuvarande behov.
+- `lottie` är appens animationspaket för förhandsgranskade och godkända animationer
+- `ThemeMascot` renderar mascot-animation endast från en Lottie-fil som är definierad för temat
+- om en kuraterad mascot-Lottie ännu inte finns visas en tydlig placeholder i UI:t tills animationen är klar
+
+## Rekommenderat arbetsflöde
+
+1. Ta fram eller exportera en färdig Lottie-animation utanför appen.
+2. Lägg utkast i `artifacts/` tills animationen är godkänd.
+3. Flytta godkänd `.json` till `assets/animations/`.
+4. Koppla in animationen via temat och visa den genom `ThemeMascot`.
+
+## Rekommenderade Ville-animationer
+
+De första animationerna bör vara små och tydliga:
+
+- idle loop
+- walk loop
+- wave / greeting
+- celebrate / reward
+- thinking / hint
 
 ## Asset-struktur
 
-Lägg bara in **kuraterade** frames i `assets/`.
-Allt som genereras under iteration ska ligga i `artifacts/` tills det är godkänt.
+Lägg bara in godkända Lottie-filer i `assets/animations/`.
 
-Struktur:
-```
-assets/images/characters/
-  character_v2/
-    idle/
-      idle_000.png
-      idle_001.png
-      ...
-```
+Exempel:
 
-Konvention:
-- Filnamn: `<anim>_<frameno start 000>.png`
-- Samma dimensioner för alla frames i en animation
-- Transparent bakgrund
+```
+assets/animations/
+  ville_idle.json
+  ville_walk.json
+  ville_wave.json
+```
 
 ## Praktisk användning i appen
 
-Använd i första hand `MascotView` på ett av två sätt:
+Karaktärsanimationer ska kopplas via `AppThemeConfig.characterLottieAsset`.
 
-- frame-sekvens när en färdig idle-animation finns i `assets/images/characters/character_v2/idle/`
-- procedural rörelse via `MascotMotionPreset` när en vy behöver liv men inga extra spritepacks finns
-
-Det gör att nya skärmar kan få en levande Ville direkt utan att vänta på fler assetleveranser.
+Om Lottie-filen saknas eller inte kan laddas ska `ThemeMascot` visa en placeholder, inte byta till något annat animationsspår.

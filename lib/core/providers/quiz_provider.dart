@@ -7,11 +7,13 @@ import 'package:uuid/uuid.dart';
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
 import '../../data/repositories/local_storage_repository.dart';
+import '../../domain/constants/learning_constants.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/enums/age_group.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
+import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
 import '../services/audio_service.dart';
 import '../services/question_generator_service.dart';
@@ -31,6 +33,7 @@ class QuizState {
     this.feedback,
     this.difficultyStepsByOperation = const {},
     this.recentResultsByOperation = const {},
+    this.questionsSinceLastStepChangeByOperation = const {},
     this.correctStreak = 0,
     this.bestCorrectStreak = 0,
     this.speedBonusCount = 0,
@@ -43,6 +46,7 @@ class QuizState {
   final FeedbackResult? feedback;
   final Map<OperationType, int> difficultyStepsByOperation;
   final Map<OperationType, List<bool>> recentResultsByOperation;
+  final Map<OperationType, int> questionsSinceLastStepChangeByOperation;
   final int correctStreak;
   final int bestCorrectStreak;
   final int speedBonusCount;
@@ -55,6 +59,7 @@ class QuizState {
     FeedbackResult? feedback,
     Map<OperationType, int>? difficultyStepsByOperation,
     Map<OperationType, List<bool>>? recentResultsByOperation,
+    Map<OperationType, int>? questionsSinceLastStepChangeByOperation,
     int? correctStreak,
     int? bestCorrectStreak,
     int? speedBonusCount,
@@ -69,6 +74,9 @@ class QuizState {
           difficultyStepsByOperation ?? this.difficultyStepsByOperation,
       recentResultsByOperation:
           recentResultsByOperation ?? this.recentResultsByOperation,
+        questionsSinceLastStepChangeByOperation:
+          questionsSinceLastStepChangeByOperation ??
+          this.questionsSinceLastStepChangeByOperation,
       correctStreak: correctStreak ?? this.correctStreak,
       bestCorrectStreak: bestCorrectStreak ?? this.bestCorrectStreak,
       speedBonusCount: speedBonusCount ?? this.speedBonusCount,
@@ -95,13 +103,17 @@ class QuizNotifier extends StateNotifier<QuizState> {
     this._questionGenerator,
     this._feedbackService,
     this._audioService,
-    this._repository,
-  ) : super(const QuizState());
+    this._repository, {
+    AdaptiveDifficultyService? adaptiveDifficultyService,
+  }) : _adaptiveDifficultyService =
+           adaptiveDifficultyService ?? AdaptiveDifficultyService(),
+       super(const QuizState());
 
   final QuestionGeneratorService _questionGenerator;
   final FeedbackService _feedbackService;
   final AudioService _audioService;
   final LocalStorageRepository _repository;
+  final AdaptiveDifficultyService _adaptiveDifficultyService;
   final _uuid = const Uuid();
 
   void _persistInProgressSession({
@@ -254,6 +266,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       feedback: null,
       difficultyStepsByOperation: steps,
       recentResultsByOperation: const {},
+      questionsSinceLastStepChangeByOperation: const {},
       correctStreak: 0,
       bestCorrectStreak: 0,
       speedBonusCount: 0,
@@ -345,6 +358,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       feedback: null,
       difficultyStepsByOperation: steps,
       recentResultsByOperation: const {},
+      questionsSinceLastStepChangeByOperation: const {},
       correctStreak: 0,
       bestCorrectStreak: 0,
       speedBonusCount: 0,
@@ -420,6 +434,33 @@ class QuizNotifier extends StateNotifier<QuizState> {
     }
     updatedResultsByOperation[op] = updatedOpResults;
 
+    final currentStep = DifficultyConfig.clampDifficultyStep(
+      state.difficultyStepsByOperation[op] ?? DifficultyConfig.minDifficultyStep,
+    );
+    final questionsSinceLastStepChange =
+        state.questionsSinceLastStepChangeByOperation[op] ??
+        LearningConstants.cooldownQuestionsAfterStepChange;
+
+    final suggestedStep = _adaptiveDifficultyService.suggestDifficultyStep(
+      currentStep: currentStep,
+      recentResults: updatedOpResults,
+      minStep: DifficultyConfig.minDifficultyStep,
+      maxStep: DifficultyConfig.maxDifficultyStep,
+      questionsSinceLastStepChange: questionsSinceLastStepChange,
+    );
+
+    final updatedDifficultySteps =
+        Map<OperationType, int>.from(state.difficultyStepsByOperation)
+          ..[op] = suggestedStep;
+
+    final updatedQuestionsSinceLastStepChangeByOperation =
+        Map<OperationType, int>.from(
+          state.questionsSinceLastStepChangeByOperation,
+        )
+          ..[op] = suggestedStep != currentStep
+              ? 0
+              : questionsSinceLastStepChange + 1;
+
     final feedback = _feedbackService.buildFeedback(
       question: question,
       userAnswer: answer,
@@ -430,13 +471,24 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
 
     state = state.copyWith(
-      session: updatedSession,
+      session: updatedSession.copyWith(
+        difficultyStepsByOperation: Map<OperationType, int>.unmodifiable(
+          updatedDifficultySteps,
+        ),
+      ),
       feedback: feedback,
+      difficultyStepsByOperation: Map<OperationType, int>.unmodifiable(
+        updatedDifficultySteps,
+      ),
       recentResultsByOperation: Map<OperationType, List<bool>>.unmodifiable(
         updatedResultsByOperation.map(
           (k, v) => MapEntry(k, List<bool>.unmodifiable(v)),
         ),
       ),
+      questionsSinceLastStepChangeByOperation:
+          Map<OperationType, int>.unmodifiable(
+            updatedQuestionsSinceLastStepChangeByOperation,
+          ),
       correctStreak: newStreak,
       bestCorrectStreak: newBestStreak,
       speedBonusCount: newSpeedBonusCount,

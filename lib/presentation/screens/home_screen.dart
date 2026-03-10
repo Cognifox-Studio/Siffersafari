@@ -20,8 +20,8 @@ import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 import '../dialogs/create_user_dialog.dart';
 import '../screens/story_map_screen.dart';
-import '../widgets/interactive_mascot.dart';
 import '../widgets/story_progress_card.dart';
+import '../widgets/theme_mascot.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'onboarding_screen.dart';
 import 'parent_pin_screen.dart';
@@ -43,20 +43,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _checkedOnboardingForUserId;
   String _appVersionLabel = '...';
   bool _onboardingPushInFlight = false;
-
-  static const int _idleFrameCount = 8;
-
-  static final List<String> _characterV2IdleFrames = List<String>.generate(
-    _idleFrameCount,
-    (i) =>
-        'assets/images/characters/character_v2/idle/idle_${i.toString().padLeft(3, '0')}.png',
-    growable: false,
-  );
-
-  List<String>? _mascotIdleFramesFor(String characterAsset) {
-    if (!characterAsset.endsWith('/character_v2.png')) return null;
-    return _characterV2IdleFrames;
-  }
 
   @override
   void initState() {
@@ -162,6 +148,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final backgroundAsset = themeCfg.backgroundAsset;
     final questHeroAsset = themeCfg.questHeroAsset;
     final characterAsset = themeCfg.characterAsset;
+    final characterLottieAsset = themeCfg.characterLottieAsset;
     final accentColor = themeCfg.accentColor;
 
     final scheme = Theme.of(context).colorScheme;
@@ -357,9 +344,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: AppConstants.defaultPadding),
                       SizedBox(
                         height: isWideScreen ? 140 : 120,
-                        child: InteractiveMascot(
-                          asset: characterAsset,
-                          idleFrames: _mascotIdleFramesFor(characterAsset),
+                        child: ThemeMascot(
+                          lottieAsset: characterLottieAsset,
                           height: isWideScreen ? 140 : 120,
                         ),
                       ),

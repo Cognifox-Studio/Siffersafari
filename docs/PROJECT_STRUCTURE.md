@@ -71,7 +71,7 @@ lib/
       ├─ answer_button.dart
       ├─ question_card.dart
       ├─ progress_indicator_bar.dart
-      ├─ mascot_view.dart
+      ├─ theme_mascot.dart
       └─ themed_background_scaffold.dart
 ```
 
@@ -124,23 +124,20 @@ integration_test/
 
 ```
 assets/
+├─ animations/
+│  ├─ celebration.json             ├─ Produktgodkänd Lottie-animation
+│  └─ ...                          └─ Fler godkända Lottie-filer
+│
 ├─ images/
 │  ├─ themes/
 │  │  ├─ jungle/
 │  │  │  ├─ background.png          ├─ Tema-bakgrund
 │  │  │  ├─ quest_hero.png          ├─ Större illustration
-│  │  │  └─ character.png           └─ Alternativ sprite
+│  │  │  └─ character_v2.png        └─ Statisk illustration (ej mascot-animation)
 │  │  └─ space/
 │  │     ├─ background.png
 │  │     ├─ quest_hero.png
 │  │     └─ character.png
-│  │
-│  └─ characters/
-│     └─ character_v2/
-│        └─ idle/
-│           ├─ idle_000.png
-│           ├─ idle_001.png
-│           └─ ... (8 frames)
 │
 └─ sounds/
    ├─ background_music.wav          ← PLAN: Konvertera till MP3
@@ -170,10 +167,6 @@ artifacts/
 │  ├─ home_screen_1.png             │
 │  ├─ quiz_screen_2.png             │
 │  └─ ...                           │
-│
-└─ mascot_frames/                   └─ Character animation work-in-progress
-   ├─ pose_pack_v1/
-   └─ ...
 ```
 
 ---

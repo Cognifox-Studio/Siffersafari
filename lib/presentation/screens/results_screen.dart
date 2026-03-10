@@ -17,6 +17,7 @@ import '../../core/utils/adaptive_layout.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
 import '../../domain/entities/story_progress.dart';
+import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/operation_type.dart';
 import '../widgets/star_rating.dart';
 import '../widgets/themed_background_scaffold.dart';
@@ -213,6 +214,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       bonusPoints: bonusPoints,
       didUnlockSomething: didUnlockSomething,
     );
+    final activeUser = userState.activeUser;
 
     final summaryHero = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -316,6 +318,18 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
             panelColor: panelColor,
             storyProgress: storyProgress,
             questCompletion: questCompletion,
+          ),
+        ],
+        if (activeUser != null) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildProgressSummaryPanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            user: activeUser,
+            session: session,
+            quizState: quizState,
           ),
         ],
         const SizedBox(height: AppConstants.largePadding),
@@ -706,6 +720,85 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
                   color: scheme.secondary,
                   fontWeight: FontWeight.w800,
+                ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProgressSummaryPanel(
+    BuildContext context, {
+    required Color panelColor,
+    required Color onPrimary,
+    required Color mutedOnPrimary,
+    required UserProgress user,
+    required QuizSession session,
+    required QuizState quizState,
+  }) {
+    final headline = switch (session.successRate) {
+      >= 0.9 => 'Du är verkligen på gång!',
+      >= 0.7 => 'Bra jobbat, du är på rätt spår!',
+      >= 0.5 => 'Bra kämpat, lite till så sitter det!',
+      _ => 'Fortsätt lugnt, det här kommer lossna.',
+    };
+
+    final nextLevelText = user.pointsToNextLevel == UserProgress.pointsPerLevel
+        ? 'Du startade en ny nivå den här rundan.'
+        : '${user.pointsToNextLevel} poäng kvar till nivå ${user.level + 1}.';
+
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(AppConstants.largePadding.w),
+      decoration: BoxDecoration(
+        color: panelColor,
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(
+          color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Ditt nästa steg',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          SizedBox(height: AppConstants.smallPadding.h),
+          Text(
+            headline,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          SizedBox(height: AppConstants.defaultPadding.h),
+          Text(
+            'Du klarade ${session.correctAnswers} av ${session.totalQuestions} frågor rätt.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          if (quizState.bestCorrectStreak >= 2) ...[
+            SizedBox(height: AppConstants.smallPadding.h),
+            Text(
+              'Bästa svit den här rundan: ${quizState.bestCorrectStreak}.',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: mutedOnPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
+          SizedBox(height: AppConstants.smallPadding.h),
+          Text(
+            nextLevelText,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
           ),
         ],

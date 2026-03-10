@@ -266,6 +266,13 @@ class _DashboardBody extends ConsumerWidget {
         .where((s) => s['isComplete'] != false)
         .take(5)
         .toList(growable: false);
+    final parentSummary = history.isEmpty
+        ? 'Barnet har inte spelat klart något quiz ännu.'
+        : user.successRate >= 0.85
+            ? 'Det flyter på bra just nu. Fortsätt i samma lugna takt.'
+            : user.successRate >= 0.65
+                ? 'Lagom nivå just nu. Lite mer träning bygger säkerhet.'
+                : 'Det är lite kämpigt just nu. Kortare pass kan hjälpa.';
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);
 
     final settingsNotifier = ref.read(parentSettingsProvider.notifier);
@@ -319,6 +326,38 @@ class _DashboardBody extends ConsumerWidget {
           _StatRow(
             label: 'Antal quiz',
             value: user.totalQuizzesTaken.toString(),
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+            decoration: BoxDecoration(
+              color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+              border: Border.all(
+                color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Kort lägesbild',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.smallPadding),
+                Text(
+                  parentSummary,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

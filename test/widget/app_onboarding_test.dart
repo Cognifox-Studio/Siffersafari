@@ -150,7 +150,7 @@ void main() {
         expect(find.text('2/2'), findsOneWidget);
       }
 
-      expect(find.text('Vad vill du räkna?'), findsOneWidget);
+      expect(find.text('Vad vill du räkna först?'), findsOneWidget);
 
       // Regression check: addition should be preselected by default.
       final additionTile = find.widgetWithText(
@@ -163,7 +163,7 @@ void main() {
         isTrue,
       );
 
-      await tester.tap(find.text('Klar'));
+      await tester.tap(find.text('Starta'));
 
       final homeTitle = find.text(AppConstants.appName);
       final finishSteps =

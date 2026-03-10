@@ -18,11 +18,7 @@ images/
 │   └── jungle/         # Djungeltema-bilder
 │       ├── background.png
 │       ├── character_v2.png
-│       ├── quest_hero.png
-│       └── character_walking/
-├── characters/         # Karaktärsstills + frame-sekvenser
-│   ├── ville/
-│   └── character_v2/
+│       └── quest_hero.png
 └── generated/          # Tillfälliga genererade bilder (ej för permanent asset-användning)
 ```
 
@@ -34,7 +30,6 @@ images/
 - `themes/space/background.png`
 - `themes/space/quest_hero.png`
 - `themes/space/character.png`
-- `characters/character_v2/idle/idle_000.png` ... `idle_007.png`
 - `brand/cognifox_logo.png`
 - `app_icon/icon_source.png`
 
@@ -50,19 +45,9 @@ images/
 - Bakgrunder: minst 1080x1920 (portrait)
 - Karaktärer: 256x256 eller 512x512
 
-## Karaktärsanimationer (frames)
+## Karaktärer och animation
 
-För enkla animationer (t.ex. idle/wave) kan vi använda frame-sekvenser.
-
-Rekommenderad struktur:
-
-```
-images/
-└── characters/
-	└── character_v2/
-		├── idle/idle_000.png
-		└── idle/idle_007.png
-```
+Denna mapp innehåller statiska bildassets. När en karaktär ska animeras i appen ska animationen i stället ligga som Lottie-fil under `assets/animations/`.
 
 Se även `docs/CHARACTER_ANIMATIONS.md`.
 

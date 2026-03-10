@@ -62,11 +62,6 @@ app.*.map.json
 artifacts/ui*.xml
 artifacts/screenshots/**/ui*.xml
 
-artifacts/mascot_frames/
-
-# Artifacts (procedural mascot capture / experiments)
-artifacts/procedural_idle_poc/
-
 # Local generated images (keep out of git)
 assets/images/generated/
 

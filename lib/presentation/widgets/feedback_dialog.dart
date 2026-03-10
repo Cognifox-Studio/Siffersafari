@@ -9,6 +9,7 @@ class FeedbackDialog extends StatefulWidget {
   const FeedbackDialog({
     required this.feedback,
     required this.onContinue,
+    this.continueLabel = 'Nästa',
     this.continueButtonColor,
     this.dialogBackgroundColor,
     this.messageTextColor,
@@ -17,6 +18,7 @@ class FeedbackDialog extends StatefulWidget {
 
   final FeedbackResult feedback;
   final VoidCallback onContinue;
+  final String continueLabel;
   final Color? continueButtonColor;
   final Color? dialogBackgroundColor;
   final Color? messageTextColor;
@@ -183,6 +185,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
             // Continue button
             ElevatedButton(
+              autofocus: true,
               onPressed: () {
                 Navigator.of(context).pop();
                 widget.onContinue();
@@ -194,7 +197,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 foregroundColor: WidgetStatePropertyAll(scheme.onPrimary),
               ),
               child: Text(
-                'Nästa!',
+                widget.continueLabel,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: scheme.onPrimary,
                       fontWeight: FontWeight.bold,

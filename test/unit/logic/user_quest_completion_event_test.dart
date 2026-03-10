@@ -112,5 +112,44 @@ void main() {
       expect(notifier.state.lastQuestCompletion, isNull);
       expect(notifier.state.questStatus?.quest.id, 'q_plus_easy');
     });
+
+    test('persisterar uppdaterade difficulty steps från quiz till user profile',
+        () async {
+      const question = Question(
+        id: 'q_mult',
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+        operand1: 3,
+        operand2: 4,
+        correctAnswer: 12,
+        wrongAnswers: [11, 13, 14],
+        explanation: '3 × 4 = 12',
+      );
+
+      // Session med uppdaterade difficulty steps (5 → 6 för multiplikation)
+      const session = QuizSession(
+        sessionId: 's_persist',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+        questions: [question],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 80,
+        answers: {'q_mult': 12},
+        difficultyStepsByOperation: {
+          OperationType.multiplication: 6, // Uppdaterad under quiz
+          OperationType.addition: 4, // Tidigare känd operation
+        },
+      );
+
+      await notifier.applyQuizResult(session);
+
+      final updatedUser = notifier.state.activeUser;
+      expect(updatedUser, isNotNull);
+      expect(updatedUser!.operationDifficultySteps['multiplication'], 6);
+      expect(updatedUser.operationDifficultySteps['addition'], 4);
+    });
   });
 }

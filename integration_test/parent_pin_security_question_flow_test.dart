@@ -59,7 +59,7 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   if ((activeStep?.startsWith('3/') ?? false) ||
       ((activeStep?.startsWith('2/') ?? false) &&
           find.text('Kan barnet läsa?').evaluate().isEmpty)) {
-    final doneButton = find.widgetWithText(ElevatedButton, 'Klar');
+    final doneButton = find.widgetWithText(ElevatedButton, 'Starta');
     if (doneButton.evaluate().isNotEmpty) {
       await it.tap(tester, doneButton);
       await it.settle(tester, const Duration(milliseconds: 600));

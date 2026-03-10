@@ -397,6 +397,14 @@ class UserNotifier extends StateNotifier<UserState> {
       ...reward.unlockedIds.where((id) => !user.achievements.contains(id)),
     ];
 
+    // Merge updated difficulty steps from the session into user profile,
+    // preserving steps for operations not played in this session.
+    final updatedDifficultySteps = {
+      ...user.operationDifficultySteps,
+      ...session.difficultyStepsByOperation
+          .map((op, step) => MapEntry(op.name, step)),
+    };
+
     final updatedUser = user.copyWith(
       totalQuizzesTaken: user.totalQuizzesTaken + 1,
       totalQuestionsAnswered:
@@ -408,6 +416,7 @@ class UserNotifier extends StateNotifier<UserState> {
       lastSessionDate: now,
       masteryLevels: updatedMastery,
       achievements: updatedAchievements,
+      operationDifficultySteps: updatedDifficultySteps,
     );
 
     await _reconcileQuestPointer(user);

@@ -28,7 +28,7 @@ Grafik till appen tas fram utanför runtime-koden och läggs sedan in manuellt i
 Vanliga mål:
 - tema-bakgrunder
 - quest-illustrationer
-- karaktärsbilder och eventuella frame-sekvenser
+- karaktärsbilder och Lottie-animationer
 
 ### Rekommenderat arbetsflöde
 
@@ -41,8 +41,8 @@ Vanliga mål:
 ### Ville i UI
 
 För Ville gäller just nu:
-- använd idle-frame-sekvensen om den redan finns i `assets/images/characters/character_v2/idle/`
-- använd procedural rörelse i `MascotView` när en vy behöver liv utan nya sprites
+- använd en kuraterad Lottie-fil när Ville ska vara animerad
+- om Lottie ännu inte är klar ska ytan visa placeholder tills animationen finns
 
 Se `docs/CHARACTER_ANIMATIONS.md` för hur den delen är tänkt att användas i UI:t.
 
@@ -52,12 +52,12 @@ Se `docs/CHARACTER_ANIMATIONS.md` för hur den delen är tänkt att användas i 
 # Exempel: bakgrund
 cp artifacts/jungle/background_v3.png assets/images/themes/jungle/background.png
 
-# Exempel: idle-frames
-cp artifacts/mascot_frames/idle_000.png assets/images/characters/character_v2/idle/idle_000.png
-cp artifacts/mascot_frames/idle_001.png assets/images/characters/character_v2/idle/idle_001.png
+# Exempel: Lottie-animation
+cp artifacts/ville/ville_idle.json assets/animations/ville_idle.json
 
 # Verifiera att assets finns med i pubspec
 grep -r "assets/images" pubspec.yaml
+grep -r "assets/animations" pubspec.yaml
 grep -r "assets/sounds" pubspec.yaml
 ```
 

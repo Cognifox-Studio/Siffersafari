@@ -13,4 +13,9 @@ class LearningConstants {
   static const int questionsBeforeAdjustment = 5;
   static const double difficultyIncreaseThreshold = 0.85;
   static const double difficultyDecreaseThreshold = 0.60;
+
+  // Hybrid adaptive difficulty (micro + macro)
+  static const int consecutiveCorrectForIncrease = 3;
+  static const int consecutiveIncorrectForDecrease = 2;
+  static const int cooldownQuestionsAfterStepChange = 2;
 }

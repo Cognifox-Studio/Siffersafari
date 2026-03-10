@@ -9,6 +9,7 @@ class AppThemeConfig {
     required this.backgroundAsset,
     required this.questHeroAsset,
     required this.characterAsset,
+    required this.characterLottieAsset,
     required this.baseBackgroundColor,
     required this.primaryActionColor,
     required this.secondaryActionColor,
@@ -22,6 +23,7 @@ class AppThemeConfig {
   final String backgroundAsset;
   final String questHeroAsset;
   final String characterAsset;
+  final String characterLottieAsset;
 
   final Color baseBackgroundColor;
   final Color primaryActionColor;
@@ -42,6 +44,7 @@ class AppThemeConfig {
           backgroundAsset: 'assets/images/themes/jungle/background.png',
           questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
           characterAsset: 'assets/images/themes/jungle/character_v2.png',
+          characterLottieAsset: 'assets/animations/ville_jungle_idle.json',
           baseBackgroundColor: AppColors.jungleBackground,
           primaryActionColor: AppColors.junglePrimary,
           secondaryActionColor: AppColors.jungleSecondary,
@@ -57,6 +60,7 @@ class AppThemeConfig {
           backgroundAsset: 'assets/images/themes/space/background.png',
           questHeroAsset: 'assets/images/themes/space/quest_hero.png',
           characterAsset: 'assets/images/themes/space/character.png',
+          characterLottieAsset: 'assets/animations/ville_space_idle.json',
           baseBackgroundColor: AppColors.spaceBackground,
           primaryActionColor: AppColors.spacePrimary,
           secondaryActionColor: AppColors.spaceSecondary,

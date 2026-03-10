@@ -48,8 +48,8 @@ class FeedbackService {
 
     if (isCorrect) {
       final message = (hint != null && hint.isNotEmpty)
-          ? '✨ $hint'
-          : '✨ ${question.questionText} = $correct';
+          ? 'Rätt svar: $correct\n✨ $hint'
+          : 'Rätt svar: $correct';
 
       final metaLines = _buildMetaLines(
         pointsEarned: safePointsEarned,
@@ -165,9 +165,9 @@ class FeedbackService {
     final correct = question.correctAnswer;
     final hintLine = (hint != null && hint.isNotEmpty)
         ? '💡 $hint'
-        : '💡 ${question.questionText} = $correct';
+        : '💡 Titta lugnt en gång till nästa gång.';
 
-    return 'Du valde $userAnswer\nRätt är $correct\n$hintLine';
+    return 'Ditt svar: $userAnswer\nRätt svar: $correct\n$hintLine';
   }
 
   List<String> _buildMetaLines({

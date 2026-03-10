@@ -46,7 +46,6 @@ class _AppEntryScreenState extends ConsumerState<AppEntryScreen> {
           await Future.wait([
             precacheImage(AssetImage(cfg.backgroundAsset), context),
             precacheImage(AssetImage(cfg.questHeroAsset), context),
-            precacheImage(AssetImage(cfg.characterAsset), context),
           ]);
         } catch (_) {
           // Ignore precache failures.

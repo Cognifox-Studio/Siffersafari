@@ -26,29 +26,42 @@ class AdaptiveDifficultyService {
   /// - Otherwise, keeps current step
   ///
   /// Returns a value clamped between [minStep] and [maxStep].
-  /// Requires at least [questionsBeforeAdjustment] recent results before
-  /// suggesting an increase.
+  ///
+  /// Hybrid behavior:
+  /// - Micro signal: recent streaks (fast reaction)
+  /// - Macro signal: rolling success rate (stable confirmation)
+  /// - Cooldown: prevents repeated step changes too quickly
+  ///
+  /// The service applies a step change when:
+  /// - Micro and macro agree, or
+  /// - No micro signal exists and macro alone indicates a change.
   int suggestDifficultyStep({
     required int currentStep,
     required List<bool> recentResults,
     required int minStep,
     required int maxStep,
+    int questionsSinceLastStepChange =
+        LearningConstants.cooldownQuestionsAfterStepChange,
   }) {
-    if (recentResults.length < LearningConstants.questionsBeforeAdjustment) {
-      return currentStep.clamp(minStep, maxStep);
+    final clampedCurrentStep = currentStep.clamp(minStep, maxStep);
+
+    if (questionsSinceLastStepChange <
+        LearningConstants.cooldownQuestionsAfterStepChange) {
+      return clampedCurrentStep;
     }
 
-    final successRate = calculateSuccessRate(recentResults);
+    final microStepDelta = _microStepDelta(recentResults);
+    final macroStepDelta = _macroStepDelta(recentResults);
 
-    if (successRate >= LearningConstants.difficultyIncreaseThreshold) {
-      return (currentStep + 1).clamp(minStep, maxStep);
+    if (microStepDelta != 0 && microStepDelta == macroStepDelta) {
+      return (clampedCurrentStep + microStepDelta).clamp(minStep, maxStep);
     }
 
-    if (successRate <= LearningConstants.difficultyDecreaseThreshold) {
-      return (currentStep - 1).clamp(minStep, maxStep);
+    if (microStepDelta == 0 && macroStepDelta != 0) {
+      return (clampedCurrentStep + macroStepDelta).clamp(minStep, maxStep);
     }
 
-    return currentStep.clamp(minStep, maxStep);
+    return clampedCurrentStep;
   }
 
   /// Suggests a new [DifficultyLevel] (easy/medium/hard) based on performance.
@@ -96,5 +109,58 @@ class AdaptiveDifficultyService {
       case DifficultyLevel.hard:
         return DifficultyLevel.medium;
     }
+  }
+
+  int _macroStepDelta(List<bool> recentResults) {
+    if (recentResults.length < LearningConstants.questionsBeforeAdjustment) {
+      return 0;
+    }
+
+    final successRate = calculateSuccessRate(recentResults);
+    if (successRate >= LearningConstants.difficultyIncreaseThreshold) {
+      return 1;
+    }
+    if (successRate <= LearningConstants.difficultyDecreaseThreshold) {
+      return -1;
+    }
+    return 0;
+  }
+
+  int _microStepDelta(List<bool> recentResults) {
+    if (_trailingCorrectCount(recentResults) >=
+        LearningConstants.consecutiveCorrectForIncrease) {
+      return 1;
+    }
+
+    if (_trailingIncorrectCount(recentResults) >=
+        LearningConstants.consecutiveIncorrectForDecrease) {
+      return -1;
+    }
+
+    return 0;
+  }
+
+  int _trailingCorrectCount(List<bool> recentResults) {
+    var count = 0;
+    for (var i = recentResults.length - 1; i >= 0; i--) {
+      if (recentResults[i]) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
+  }
+
+  int _trailingIncorrectCount(List<bool> recentResults) {
+    var count = 0;
+    for (var i = recentResults.length - 1; i >= 0; i--) {
+      if (!recentResults[i]) {
+        count++;
+      } else {
+        break;
+      }
+    }
+    return count;
   }
 }

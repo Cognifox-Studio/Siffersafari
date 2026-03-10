@@ -25,6 +25,26 @@ Använd årskurs-informationen (Åk 1–9) för att:
 - `NU (stöds i appen)`: kan uttryckas i nuvarande quiz-format (text + heltalssvar och/eller befintliga Mix-typer).
 - `SEN (kräver UI/representation)`: kräver nya widgets/visualisering (klocka, pengar, figurer, grafer/diagram, bråkbitar, koordinatsystem osv.).
 
+## Adaptiv svårighetsgrad (hybrid-modell)
+
+**System:** Appen använder ett hybrid-adaptivt system som kombinerar **mikro-signaler** (snabba streaks) med **makro-bekräftelse** (rullande 5-fråge-fönster) för att justera `difficultyStep` per räknesätt under quiz.
+
+**Regler:**
+- **Mikro-signal uppåt:** 3 rätt i rad → föreslår +1 step
+- **Mikro-signal nedåt:** 2 fel i rad → föreslår −1 step
+- **Makro-bekräftelse:** Rullande 5-fråge-fönster med trösklar:
+  - ≥ 85% rätt → föreslår +1 step
+  - ≤ 60% rätt → föreslår −1 step
+- **Konfliktlösning:** Steg ändras endast när mikro och makro är överens, **eller** när mikro är neutral (0) och makro har ett förslag
+- **Cooldown:** 2 frågor måste passera efter varje step-ändring innan nästa justering tillåts (förhindrar thrashing)
+
+**Resultat:** Barn som svarar snabbt och korrekt får snabbare progression utan att vänta på 5-fråge-fönstret (mikro), men långsamma fel eller jämn blandad prestanda regleras fortfarande av makro-fönstret. Steg persisteras per räknesätt i `UserProgress.operationDifficultySteps` och fortsätter mellan quiz-sessioner.
+
+**Implementation:**
+- Service-lager: `AdaptiveDifficultyService.suggestDifficultyStep`
+- Runtime: `QuizNotifier.submitAnswer` räknar streaks och updaterar steg
+- Persistence: `UserNotifier.applyQuizResult` sparar steg till profildata
+
 ## Snabböversikt (exakt app-mappning)
 
 Tabellen visar **caps vid step 10** (maxnivå) för respektive räknesätt enligt `DifficultyConfig.curriculumNumberRangeForStep`.

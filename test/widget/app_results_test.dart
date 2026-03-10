@@ -11,6 +11,33 @@ import '../test_utils.dart';
 void main() {
   late InMemoryLocalStorageRepository repository;
 
+  Future<void> tapContinueButton(WidgetTester tester) async {
+    const timeout = Duration(seconds: 4);
+    final steps = (timeout.inMilliseconds / 50).ceil().clamp(1, 400);
+
+    for (var i = 0; i < steps; i++) {
+      await skipOnboardingIfPresent(tester);
+
+      final next = find.text('Nästa').hitTestable();
+      if (next.evaluate().isNotEmpty) {
+        await tester.tap(next.last, warnIfMissed: false);
+        await tester.pump();
+        return;
+      }
+
+      final results = find.text('Se resultat').hitTestable();
+      if (results.evaluate().isNotEmpty) {
+        await tester.tap(results.last, warnIfMissed: false);
+        await tester.pump();
+        return;
+      }
+
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+
+    throw TestFailure('Kunde inte hitta fortsatt-knappen i feedbackflödet.');
+  }
+
   setUpAll(TestWidgetsFlutterBinding.ensureInitialized);
 
   setUp(() async {
@@ -64,9 +91,7 @@ void main() {
         await tester.ensureVisible(find.text('42'));
         await tester.pump();
         await tester.tap(find.text('42'));
-        await pumpUntilFound(tester, find.text('Nästa!'));
-        await tester.ensureVisible(find.text('Nästa!'));
-        await tester.tap(find.text('Nästa!'));
+        await tapContinueButton(tester);
         if (i < 9) {
           await pumpUntilFound(tester, find.textContaining('Fråga'));
         }
@@ -129,9 +154,7 @@ void main() {
         await tester.ensureVisible(find.text('42'));
         await tester.pump();
         await tester.tap(find.text('42'));
-        await pumpUntilFound(tester, find.text('Nästa!'));
-        await tester.ensureVisible(find.text('Nästa!'));
-        await tester.tap(find.text('Nästa!'));
+        await tapContinueButton(tester);
         if (i < 9) {
           await pumpUntilFound(tester, find.textContaining('Fråga'));
         }
@@ -191,9 +214,7 @@ void main() {
         await tester.ensureVisible(find.text('42'));
         await tester.pump();
         await tester.tap(find.text('42'));
-        await pumpUntilFound(tester, find.text('Nästa!'));
-        await tester.ensureVisible(find.text('Nästa!'));
-        await tester.tap(find.text('Nästa!'));
+        await tapContinueButton(tester);
         if (i < 9) {
           await pumpUntilFound(tester, find.textContaining('Fråga'));
         }

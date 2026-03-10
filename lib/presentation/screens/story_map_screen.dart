@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,12 +59,6 @@ class StoryMapScreen extends ConsumerWidget {
                         subtleOnPrimary: subtleOnPrimary,
                       ),
                       const SizedBox(height: AppConstants.largePadding),
-                      _StoryMapLegend(
-                        accentColor: scheme.secondary,
-                        onPrimary: onPrimary,
-                        mutedOnPrimary: mutedOnPrimary,
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
                       _StoryMapCanvas(
                         story: story,
                         accentColor: scheme.secondary,
@@ -290,15 +282,9 @@ class _StoryMapCanvas extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final positions = _buildNodePositions(story.nodes.length);
     final totalChapters = ((story.nodes.length - 1) ~/ 5) + 1;
-    final mapHeight = math.max(
-      520.0,
-      (story.nodes.length * 148.0) + (totalChapters * 72.0) + 120.0,
-    );
 
     return Container(
-      height: mapHeight,
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -314,92 +300,45 @@ class _StoryMapCanvas extends StatelessWidget {
           color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
         ),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final mapWidth = constraints.maxWidth;
-
-          return Stack(
-            children: [
-              Positioned(
-                left: 16,
-                top: 20,
-                child: _LeafBlob(
-                  color: accentColor.withValues(alpha: 0.10),
-                  size: 78,
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _StoryMapLegend(
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          for (var chapterIndex = 0;
+              chapterIndex < totalChapters;
+              chapterIndex++) ...[
+            _ChapterMarker(
+              title: _chapterTitle(chapterIndex),
+              subtitle: _chapterSubtitle(chapterIndex),
+              accentColor: accentColor,
+              onPrimary: onPrimary,
+            ),
+            const SizedBox(height: AppConstants.defaultPadding),
+            for (var i = chapterIndex * 5;
+                i < ((chapterIndex + 1) * 5).clamp(0, story.nodes.length);
+                i++) ...[
+              _StoryTimelineRow(
+                node: story.nodes[i],
+                accentColor: accentColor,
+                onPrimary: onPrimary,
+                mutedOnPrimary: mutedOnPrimary,
+                subtleOnPrimary: subtleOnPrimary,
+                isLast: i == story.nodes.length - 1,
               ),
-              Positioned(
-                right: 24,
-                top: 120,
-                child: _LeafBlob(
-                  color: onPrimary.withValues(alpha: 0.08),
-                  size: 56,
-                ),
-              ),
-              Positioned(
-                left: 36,
-                bottom: 46,
-                child: _LeafBlob(
-                  color: accentColor.withValues(alpha: 0.08),
-                  size: 64,
-                ),
-              ),
-              Positioned.fill(
-                child: CustomPaint(
-                  painter: _StoryPathPainter(
-                    positions: positions,
-                    accentColor: accentColor,
-                    faintColor: subtleOnPrimary,
-                    progressIndex: story.currentNodeIndex,
-                  ),
-                ),
-              ),
-              for (var chapterIndex = 0;
-                  chapterIndex < totalChapters;
-                  chapterIndex++)
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  top: math.max(0.0, positions[chapterIndex * 5].dy - 54),
-                  child: Center(
-                    child: _ChapterMarker(
-                      title: _chapterTitle(chapterIndex),
-                      subtitle: _chapterSubtitle(chapterIndex),
-                      accentColor: accentColor,
-                      onPrimary: onPrimary,
-                    ),
-                  ),
-                ),
-              for (var i = 0; i < story.nodes.length; i++)
-                Positioned(
-                  left: (mapWidth * positions[i].dx) - (mapWidth * 0.22),
-                  top: positions[i].dy,
-                  child: SizedBox(
-                    width: mapWidth * 0.44,
-                    child: _StoryMapNodeCard(
-                      node: story.nodes[i],
-                      accentColor: accentColor,
-                      onPrimary: onPrimary,
-                      mutedOnPrimary: mutedOnPrimary,
-                      subtleOnPrimary: subtleOnPrimary,
-                    ),
-                  ),
-                ),
+              if (i < ((chapterIndex + 1) * 5).clamp(0, story.nodes.length) - 1)
+                const SizedBox(height: AppConstants.smallPadding),
             ],
-          );
-        },
+            if (chapterIndex < totalChapters - 1)
+              const SizedBox(height: AppConstants.largePadding),
+          ],
+        ],
       ),
     );
-  }
-
-  List<Offset> _buildNodePositions(int count) {
-    const pattern = <double>[0.18, 0.72, 0.30, 0.80, 0.25, 0.68, 0.22, 0.76];
-    return List<Offset>.generate(count, (index) {
-      final x = pattern[index % pattern.length];
-      final chapterOffset = (index ~/ 5) * 56.0;
-      final y = 52.0 + (index * 148.0) + chapterOffset;
-      return Offset(x, y);
-    });
   }
 
   String _chapterTitle(int chapterIndex) => 'Etapp ${chapterIndex + 1}';
@@ -415,6 +354,73 @@ class _StoryMapCanvas extends StatelessWidget {
       default:
         return 'Den sista vägen mot templet';
     }
+  }
+}
+
+class _StoryTimelineRow extends StatelessWidget {
+  const _StoryTimelineRow({
+    required this.node,
+    required this.accentColor,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+    required this.subtleOnPrimary,
+    required this.isLast,
+  });
+
+  final StoryNode node;
+  final Color accentColor;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+  final Color subtleOnPrimary;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    final isCurrent = node.state == StoryNodeState.current;
+    final isCompleted = node.state == StoryNodeState.completed;
+    final markerColor = isCompleted || isCurrent ? accentColor : mutedOnPrimary;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 28,
+          child: Column(
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: isCompleted ? accentColor : Colors.transparent,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: markerColor, width: 2),
+                ),
+                child: isCurrent
+                    ? Icon(Icons.place, size: 10, color: accentColor)
+                    : null,
+              ),
+              if (!isLast)
+                Container(
+                  width: 2,
+                  height: 88,
+                  margin: const EdgeInsets.symmetric(vertical: 4),
+                  color: mutedOnPrimary.withValues(alpha: 0.45),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: AppConstants.smallPadding),
+        Expanded(
+          child: _StoryMapNodeCard(
+            node: node,
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            subtleOnPrimary: subtleOnPrimary,
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -456,7 +462,7 @@ class _StoryMapNodeCard extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      padding: const EdgeInsets.all(AppConstants.smallPadding),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -481,19 +487,6 @@ class _StoryMapNodeCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 14,
-                height: 14,
-                decoration: BoxDecoration(
-                  color: isCompleted ? accentColor : Colors.transparent,
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: isCurrent ? accentColor : mutedOnPrimary,
-                    width: 2,
-                  ),
-                ),
-              ),
-              const SizedBox(width: AppConstants.smallPadding),
               Expanded(
                 child: Text(
                   'Checkpoint ${node.stepIndex + 1}',
@@ -504,52 +497,30 @@ class _StoryMapNodeCard extends StatelessWidget {
                       ),
                 ),
               ),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppConstants.microSpacing6,
+                  vertical: AppConstants.microSpacing4,
+                ),
+                decoration: BoxDecoration(
+                  color:
+                      (isCompleted || isCurrent ? accentColor : mutedOnPrimary)
+                          .withValues(alpha: 0.14),
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                child: Text(
+                  stateLabel,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: isCompleted || isCurrent
+                            ? accentColor
+                            : mutedOnPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AppConstants.microSpacing4),
-          Text(
-            'Etapp ${chapterIndex + 1}',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: motif.foreground.withValues(alpha: 0.82),
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: 0.3,
-                ),
-          ),
-          const SizedBox(height: AppConstants.microSpacing6),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.microSpacing6,
-                vertical: AppConstants.microSpacing4,
-              ),
-              decoration: BoxDecoration(
-                color: motif.tint.withValues(alpha: 0.20),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(
-                  color: motif.tint.withValues(alpha: 0.55),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(motif.icon, size: 14, color: motif.foreground),
-                  const SizedBox(width: AppConstants.microSpacing4),
-                  Flexible(
-                    child: Text(
-                      motif.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: motif.foreground,
-                            fontWeight: FontWeight.w800,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
           const SizedBox(height: AppConstants.smallPadding),
           Text(
             node.landmark,
@@ -561,155 +532,39 @@ class _StoryMapNodeCard extends StatelessWidget {
           const SizedBox(height: AppConstants.microSpacing4),
           Text(
             node.landmarkHint,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: subtleOnPrimary,
                   fontWeight: FontWeight.w600,
                 ),
           ),
           const SizedBox(height: AppConstants.smallPadding),
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.smallPadding,
-              vertical: AppConstants.microSpacing6,
-            ),
-            decoration: BoxDecoration(
-              color: motif.tint.withValues(alpha: 0.14),
-              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-            ),
-            child: Row(
-              children: [
-                Icon(motif.icon, size: 16, color: motif.foreground),
-                const SizedBox(width: AppConstants.microSpacing6),
-                Expanded(
-                  child: Text(
-                    motif.description,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: motif.foreground,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
-          Text(
-            stateLabel,
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color:
-                      isCompleted || isCurrent ? accentColor : mutedOnPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
-          Text(
-            '${node.operation.emoji} ${node.title}',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: onPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          const SizedBox(height: AppConstants.microSpacing4),
-          Text(
-            'Svårighet: ${node.difficulty.displayName}',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: subtleOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+          Wrap(
+            spacing: AppConstants.smallPadding,
+            runSpacing: AppConstants.microSpacing6,
+            children: [
+              _MiniTag(
+                icon: motif.icon,
+                label: motif.label,
+                color: motif.foreground,
+                fill: motif.tint.withValues(alpha: 0.18),
+              ),
+              _MiniTag(
+                icon: Icons.auto_awesome,
+                label: '${node.operation.emoji} ${node.title}',
+                color: onPrimary,
+                fill: onPrimary.withValues(alpha: 0.10),
+              ),
+              _MiniTag(
+                icon: Icons.flag_outlined,
+                label: 'Etapp ${chapterIndex + 1}',
+                color: mutedOnPrimary,
+                fill: mutedOnPrimary.withValues(alpha: 0.10),
+              ),
+            ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _StoryPathPainter extends CustomPainter {
-  const _StoryPathPainter({
-    required this.positions,
-    required this.accentColor,
-    required this.faintColor,
-    required this.progressIndex,
-  });
-
-  final List<Offset> positions;
-  final Color accentColor;
-  final Color faintColor;
-  final int progressIndex;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (positions.length < 2) return;
-
-    final completedPaint = Paint()
-      ..color = accentColor.withValues(alpha: 0.9)
-      ..strokeWidth = 8
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final upcomingPaint = Paint()
-      ..color = faintColor.withValues(alpha: 0.7)
-      ..strokeWidth = 6
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final glowPaint = Paint()
-      ..color = accentColor.withValues(alpha: 0.12)
-      ..strokeWidth = 18
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-
-    for (var i = 0; i < positions.length - 1; i++) {
-      final from = Offset(size.width * positions[i].dx, positions[i].dy + 52);
-      final to =
-          Offset(size.width * positions[i + 1].dx, positions[i + 1].dy + 18);
-      final controlX = (from.dx + to.dx) / 2;
-
-      final path = Path()
-        ..moveTo(from.dx, from.dy)
-        ..cubicTo(controlX, from.dy + 50, controlX, to.dy - 50, to.dx, to.dy);
-
-      if (i < progressIndex) {
-        canvas.drawPath(path, glowPaint);
-      }
-      canvas.drawPath(path, i < progressIndex ? completedPaint : upcomingPaint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _StoryPathPainter oldDelegate) {
-    return oldDelegate.positions != positions ||
-        oldDelegate.accentColor != accentColor ||
-        oldDelegate.faintColor != faintColor ||
-        oldDelegate.progressIndex != progressIndex;
-  }
-}
-
-class _LeafBlob extends StatelessWidget {
-  const _LeafBlob({
-    required this.color,
-    required this.size,
-  });
-
-  final Color color;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Transform.rotate(
-      angle: 0.6,
-      child: Container(
-        width: size,
-        height: size * 0.72,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(size * 0.8),
-            topRight: Radius.circular(size * 0.2),
-            bottomLeft: Radius.circular(size * 0.2),
-            bottomRight: Radius.circular(size * 0.8),
-          ),
-        ),
       ),
     );
   }
@@ -863,6 +718,53 @@ class _LegendItem extends StatelessWidget {
               ),
         ),
       ],
+    );
+  }
+}
+
+class _MiniTag extends StatelessWidget {
+  const _MiniTag({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.fill,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+  final Color fill;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.microSpacing6,
+        vertical: AppConstants.microSpacing4,
+      ),
+      decoration: BoxDecoration(
+        color: fill,
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: AppConstants.microSpacing4),
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 180),
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

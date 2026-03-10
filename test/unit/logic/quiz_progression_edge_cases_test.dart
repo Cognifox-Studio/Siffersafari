@@ -7,6 +7,7 @@ import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:mocktail/mocktail.dart';
 
@@ -170,6 +171,84 @@ void main() {
 
       expect(notifier.state.session, isNull);
       expect(repo.quizHistory, isEmpty);
+    });
+
+    test('Unit (QuizNotifier): hybrid step increases when micro+macro agree',
+        () async {
+      final repo = _InMemoryLocalStorageRepository();
+      final audio = _MockAudioService();
+      when(() => audio.playCorrectSound()).thenAnswer((_) async {});
+      when(() => audio.playWrongSound()).thenAnswer((_) async {});
+
+      final notifier = QuizNotifier(
+        _FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repo,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+      );
+
+      notifier.startSession(
+        userId: 'u1',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+        initialDifficultyStepsByOperation: const {
+          OperationType.multiplication: 5,
+        },
+      );
+
+      for (var i = 0; i < 5; i++) {
+        notifier.submitAnswer(
+          answer: _FakeQuestionGeneratorService.question.correctAnswer,
+          responseTime: const Duration(seconds: 3),
+          ageGroup: AgeGroup.middle,
+        );
+        notifier.goToNextQuestion();
+      }
+
+      final step = notifier
+          .state.difficultyStepsByOperation[OperationType.multiplication];
+      expect(step, 6);
+    });
+
+    test('Unit (QuizNotifier): cooldown blocks immediate second increase',
+        () async {
+      final repo = _InMemoryLocalStorageRepository();
+      final audio = _MockAudioService();
+      when(() => audio.playCorrectSound()).thenAnswer((_) async {});
+      when(() => audio.playWrongSound()).thenAnswer((_) async {});
+
+      final notifier = QuizNotifier(
+        _FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repo,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+      );
+
+      notifier.startSession(
+        userId: 'u1',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+        initialDifficultyStepsByOperation: const {
+          OperationType.multiplication: 5,
+        },
+      );
+
+      for (var i = 0; i < 6; i++) {
+        notifier.submitAnswer(
+          answer: _FakeQuestionGeneratorService.question.correctAnswer,
+          responseTime: const Duration(seconds: 3),
+          ageGroup: AgeGroup.middle,
+        );
+        notifier.goToNextQuestion();
+      }
+
+      final step = notifier
+          .state.difficultyStepsByOperation[OperationType.multiplication];
+      expect(step, 6);
     });
   });
 }

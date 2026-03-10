@@ -189,6 +189,17 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Det här går snabbt, sen kör vi igång.',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: mutedOnPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
                             ],
                           ),
                         ),
@@ -232,7 +243,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     ElevatedButton(
                       onPressed: _next,
                       child: Text(
-                        _pageIndex >= (_pages.length - 1) ? 'Klar' : 'Nästa',
+                        _pageIndex >= (_pages.length - 1) ? 'Starta' : 'Nästa',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: onPrimary,
@@ -373,7 +384,7 @@ class _OnboardingGradePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Så fixar ${AppConstants.mascotName} lagom svår nivå.',
+            'Vi väljer en lagom startnivå tillsammans.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -447,12 +458,12 @@ class _OnboardingOpsPage extends StatelessWidget {
 
     return _OnboardingCard(
       icon: Icons.grid_view,
-      title: 'Vad vill du räkna?',
+      title: 'Vad vill du räkna först?',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Det går att ändra senare i Föräldraläge.',
+            'Välj det ni vill börja med. Det går att ändra senare.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -523,7 +534,7 @@ class _OnboardingReadingPage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Om ja kan spelet ibland visa korta textuppgifter istället för bara tal.',
+            'Om barnet kan läsa kan spelet ibland visa korta textuppgifter.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -550,7 +561,7 @@ class _OnboardingReadingPage extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.smallPadding),
           Text(
-            'Du kan ändra detta senare i Föräldraläge.',
+            'Det går att ändra senare i Föräldraläge.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: subtleOnPrimary,
                   fontWeight: FontWeight.w600,

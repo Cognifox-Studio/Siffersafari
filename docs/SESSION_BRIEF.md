@@ -6,6 +6,47 @@
 
 ## 2026-03-06 — Jungle story progression, fas 1
 
+## 2026-03-09 — UX-polisering av quiz, onboarding och resultatflöde
+
+### Mål (denna del)
+✅ Genomföra den prioriterade 2-veckorsplanen för tydligare barnflöde utan nya komplexa system
+
+### Gjort
+- Förtydligat feedbackflödet i quiz: enklare rätt/fel-text, tydligare fortsättknapp och `Se resultat` på sista frågan.
+- Säkrat quizflödet mot dubbla feedbackdialoger genom en intern guard i quizskärmen.
+- Förenklat onboardingcopy och bytt sista CTA från `Klar` till `Starta`.
+- Lagt till en tydligare progresspanel på resultatskärmen med rätt antal, streak och nästa steg.
+- Lagt till en kort föräldrasammanfattning i dashboarden (`Kort lägesbild`).
+- Uppdaterat widget- och integrationstester till det nya flödet och härdat testinteraktioner runt feedbackdialoger.
+
+### Verifiering
+- `flutter analyze`: ✅ grönt
+- Full test suite: ✅ 107/107 gröna
+
+### Nästa steg
+1. Validera de nya texterna och resultatsammanfattningen manuellt på fysisk enhet med riktigt barnflöde.
+2. Om ni vill fortsätta på samma spår: prioritera nästa polish på progression/storytydlighet eller tillgänglighet, inte nya system.
+
+## 2026-03-09 — Lottie-only för Ville-animationer
+
+### Mål (denna del)
+✅ Ta bort parallella mascot-animationsspår och standardisera repo:t på Lottie
+
+### Gjort
+- Bytt produktkoden från sprite/procedural mascot-animation till ett Lottie-only-widgetlager via `ThemeMascot`.
+- Tagit bort idle-frame-assets, mascot-generator-skript och lokala preview-/experimentmappar för Ville-animationer.
+- Synkat README, docs, `.gitignore` och repo-beslut till en tydlig Lottie-riktning.
+- Levererat en första lokal konceptfil `assets/animations/ville2_walk_cycle.json` samt en HTML-preview som laddar exakt samma JSON utanför emulatorn.
+
+### Verifiering
+- Berörda Flutter-filer är fria från editorfel.
+- `ville2_walk_cycle.json` renderar i lokal browser-preview och previewkontrollerna svarar.
+
+### Nästa steg
+1. Avgör om `ville2_walk_cycle.json` ska vidareförädlas till en riktig runtime-animation eller bara fungera som rörelsereferens.
+2. Leverera första riktiga Ville-Lottie för jungle-temat på den redan reserverade asset-pathen.
+3. Leverera motsvarande Lottie per tema tills placeholdern inte längre visas i mascot-ytorna.
+
 ## 2026-03-08 — Releaseförberedelser för v1.3.0
 
 ### Mål (denna del)
@@ -58,23 +99,19 @@
 2. Förfina vidare med ännu tydligare node-illustrationer eller små platsdekaler ovanpå de nya sceneTag-motiven om du vill gå längre visuellt.
 3. Vid behov: extrahera story-HUD/kartan till gemensamma widgets om fler skärmar ska dela samma visual language.
 
-## 2026-03-08 — Procedural fallback för Ville-animationer
+## 2026-03-08 — Tidigare mascotspår (avvecklat)
 
 ### Mål (denna del)
-✅ Säkerställa att Ville känns levande i UI:t utan att blockera arbetet på nya assetleveranser
+✅ Historisk notering om ett tidigare mellanläge som inte längre används
 
 ### Gjort
-- `MascotView` stöder nu procedural rörelse direkt i Flutter via `MascotMotionPreset` (`none`, `float`, `bounce`).
-- `InteractiveMascot` använder nu en subtil flytrörelse i idle och extra bounce/rotation vid tap-celebration.
-- `FirstRunSetupScreen` använder nu också procedural rörelse för Ville, även utan nya spritepacks.
-- `docs/CHARACTER_ANIMATIONS.md` beskriver procedural rörelse som rekommenderad fallback när separata jump/run/wave-assets saknas.
+- Detta spår är avvecklat i och med Lottie-standardiseringen 2026-03-09.
 
 ### Verifiering
-- Editorfel: inga fel i berörda Flutter-filer.
+- Senare cleanup har ersatt detta arbetsflöde.
 
 ### Nästa steg
-1. Verifiera visuellt på startskärm och first-run att rörelsen känns lekfull men inte distraherande.
-2. Om det känns bra: använd samma pattern på fler Ville-ytor i appen i stället för att vänta på nya framepacks.
+1. Ingen. Behåll sektionen endast som historisk kontext.
 
 ## 2026-03-08 — Rensning av borttaget assetspår
 
@@ -223,7 +260,7 @@
 - Optimerat väntlogik i `integration_test/app_smoke_test.dart` (mer `waitFor(...)`/kort `settle(...)`, mindre “sov i sekunder”).
 - Förbättrat `integration_test/test_utils.dart`:
    - `backOnce()` är nu defensiv (Back/Close/arrow/tooltips) och undviker `tester.pageBack()` som kan asserta.
-- Städ: `scripts/extract_sprites.dart` är markerad som dev-script (minskar lint-brus), och `path` ligger i `dev_dependencies` så `flutter analyze` inte klagar.
+- Städ kring äldre dev-scripts genomförd i senare repo-rensning.
 
 ### Nästa steg
 1. Kör snabb sanity på enskilt test: `flutter test integration_test/app_smoke_test.dart --plain-name "Smoke: öppna inställningar och gå tillbaka"`.

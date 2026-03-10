@@ -285,10 +285,10 @@ void main() {
           await shot('onboarding_ops_toggled');
         }
 
-        if (find.text('Klar').evaluate().isNotEmpty) {
+        if (find.text('Starta').evaluate().isNotEmpty) {
           await it.tap(
             tester,
-            find.text('Klar'),
+            find.text('Starta'),
             after: const Duration(seconds: 1),
           );
         }
