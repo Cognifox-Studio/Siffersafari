@@ -4,7 +4,10 @@ Mål: hålla ett enda tydligt animationsspår för Ville och andra karaktärer i
 
 ## Riktning
 
-Från och med 2026-03-09 är Lottie enda godkända animationsspår för Ville i repo:t.
+Från och med 2026-03-10 är riktningen hybrid:
+
+- Rive för karaktärer (Ville och andra interaktiva figurer)
+- Lottie för UI-effekter (konfetti, stjärnor, korta sekvenser)
 
 Från och med 2026-03-10 stöder vi flera animationsstater per tema (idle, happy, celebrate, error) via `CharacterAnimationState` enum och flexibel asset-konfigurering i `AppThemeConfig`.
 
@@ -18,27 +21,31 @@ Det innebär:
 
 ## Nuläge
 
-- `lottie` är appens animationspaket för förhandsgranskade och godkända animationer
-- `ThemeMascot` och nya `CharacterAnimationPlayer` rendererar mascot-animationer från Lottie-filer
-- `AppThemeConfig` definierar animationsstater per tema via `characterIdleAsset`, `characterHappyAsset`, etc.
-- om en kuraterad mascot-Lottie ännu inte finns visas en tydlig placeholder i UI:t tills animationen är klar
+- `ThemeMascot` och `CharacterAnimationPlayer` använder Rive om `characterRiveAsset` finns och är aktiverad
+- annars fallback till Lottie per state (`characterIdleAsset`, `characterHappyAsset`, etc.)
+- om varken Rive eller Lottie kan laddas visas en tydlig placeholder i UI:t
 
 ## Rekommenderat arbetsflöde
 
 ### 1. Ta fram animationen
-1. Ta fram eller exportera en färdig Lottie-animation utanför appen
-2. Namnge enligt mönster: `ville_{tema}_{state}.json` (t.ex. `ville_jungle_happy.json`)
+1. Ta fram eller exportera en färdig Rive-animation (`.riv`) för karaktären
+2. Lägg state machine i filen (idle, happy, celebrate, error)
+3. Namnge enligt mönster: `ville_{tema}.riv` (t.ex. `ville_jungle.riv`)
+4. Om ni saknar Rive för ett tema: använd tillfällig Lottie fallback per state
+5. Namnge Lottie-fallback enligt mönster: `ville_{tema}_{state}.json` (t.ex. `ville_jungle_happy.json`)
 3. Lägg utkast i `artifacts/` tills animationen är godkänd
 4. Testa i lokal preview (se HTML-preview i `artifacts/animation_preview/`)
 
 ### 2. Integrera i appen
-1. Flytta godkänd `.json` till `assets/animations/`
+1. Flytta godkänd `.riv` och eventuella `.json` till `assets/animations/`
 2. Registrera i `pubspec.yaml` (i assets-sektionen)
 3. Uppdatera `lib/core/theme/app_theme_config.dart`:
    ```dart
    case AppTheme.jungle:
      return const AppThemeConfig(
        // ...
+       characterRiveAsset: 'assets/animations/ville_jungle.riv',
+       characterRiveStateMachine: 'State Machine 1',
        characterIdleAsset: 'assets/animations/ville_jungle_idle.json',
        characterHappyAsset: 'assets/animations/ville_jungle_happy.json',
        characterCelebrateAsset: 'assets/animations/ville_jungle_celebrate.json',
@@ -83,13 +90,14 @@ De första animationerna bör vara små och tydliga:
 
 ## Asset-struktur
 
-Lägg bara in godkända Lottie-filer i `assets/animations/`.
+Lägg bara in godkända karaktärsassets i `assets/animations/`.
 
 Exempel:
 
 ```
 assets/animations/
   celebration.json              (feedback, generisk)
+  ville_jungle.riv              (primär karaktärsanimation via Rive)
   ville_jungle_idle.json        (Ville i djungel, idle)
   ville_jungle_happy.json       (Ville i djungel, happy)
   ville_jungle_celebrate.json   (Ville i djungel, celebrate)
@@ -116,9 +124,14 @@ Helpermetod som returnerar rätt asset för en state:
 - Om specifik state-asset saknas fallback till `idle`
 - Om idle-asset saknas fallback till legacy `characterLottieAsset`
 
+### AppThemeConfig.shouldUseRiveCharacter
+Helper som styr rendering:
+- `true` när `preferRiveCharacter` är aktivt och `characterRiveAsset` är satt
+- annars används Lottie-fallback per state
+
 ## Nästa steg
 
 1. **Fas 1 (denna vecka):** Exportera `ville_jungle_idle.json`, `ville_jungle_happy.json`, `ville_jungle_celebrate.json` från valfri editor
 2. **Fas 2 (nästa vecka):** Test i `CharacterAnimationPlayer` med quiz-integration
 3. **Fas 3:** Exportera övriga teman (space, underwater, fantasy)
-4. **Framtid:** Om komplex riggning behövs → evaluera Rive (men Lottie räcker för nu)
+4. **Framtid:** Flytta fler karaktärer till Rive, behåll Lottie för UI-juicing

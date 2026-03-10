@@ -21,6 +21,7 @@ dependencies:
   
   # Animations & Graphics
   lottie: ^3.3.0
+  rive: ^0.13.20
   
   # Audio
   audioplayers: ^6.6.0
@@ -64,6 +65,11 @@ flutter:
     - assets/sounds/correct.wav
     - assets/sounds/wrong.wav
     - assets/animations/
+    - assets/characters/ville/rive/ville_character.riv
+    - assets/ui/lottie/confetti.json
+    - assets/ui/lottie/stars.json
+    - assets/ui/lottie/success_pulse.json
+    - assets/ui/lottie/error_shake.json
     - assets/images/
     - assets/images/brand/
     - assets/images/app_icon/

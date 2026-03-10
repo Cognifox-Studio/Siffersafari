@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:rive/rive.dart';
 
 import '../../core/theme/app_theme_config.dart';
 
@@ -31,6 +32,20 @@ class ThemeMascot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (appThemeConfig != null && appThemeConfig!.shouldUseRiveCharacter) {
+      return SizedBox(
+        height: height,
+        child: RiveAnimation.asset(
+          appThemeConfig!.characterRiveAsset!,
+          fit: fit,
+          stateMachines: appThemeConfig!.characterRiveStateMachine != null
+              ? [appThemeConfig!.characterRiveStateMachine!]
+              : const <String>[],
+          onInit: (_) {},
+        ),
+      );
+    }
+
     // Determine which asset to use
     final asset = lottieAsset ?? appThemeConfig?.getCharacterAnimation(state);
     

@@ -19,6 +19,7 @@ import '../widgets/feedback_dialog.dart';
 import '../widgets/progress_indicator_bar.dart';
 import '../widgets/question_card.dart';
 import '../widgets/themed_background_scaffold.dart';
+import '../widgets/ville_character.dart';
 import 'home_screen.dart';
 import 'results_screen.dart';
 
@@ -35,6 +36,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   String? _momentText;
   Timer? _momentTimer;
   bool _feedbackDialogVisible = false;
+  VilleReaction _villeReaction = VilleReaction.idle;
+  int _villeReactionNonce = 0;
 
   static const int _showStreakFrom = 2;
 
@@ -100,6 +103,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       ref.read(quizProvider.notifier).clearFeedback();
       setState(() {
         _selectedAnswer = null;
+        _villeReaction = VilleReaction.screenChange;
+        _villeReactionNonce++;
       });
       context.pushReplacementSmooth(const ResultsScreen());
       return;
@@ -109,6 +114,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     setState(() {
       _selectedAnswer = null;
       _questionStartTime = DateTime.now();
+      _villeReaction = VilleReaction.idle;
+      _villeReactionNonce++;
     });
   }
 
@@ -130,6 +137,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       if (nextSpeed > prevSpeed) {
         _showMoment('⚡ Snabbbonus!');
         return;
+      }
+
+      final previousFeedback = previous.feedback;
+      final nextFeedback = next.feedback;
+      if (nextFeedback != null && nextFeedback != previousFeedback) {
+        setState(() {
+          _villeReaction = nextFeedback.isCorrect
+              ? VilleReaction.answerCorrect
+              : VilleReaction.answerWrong;
+          _villeReactionNonce++;
+        });
       }
 
       final prevStreak = previous.correctStreak;
@@ -525,6 +543,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              height: 72.h,
+              child: VilleCharacter(
+                reaction: _villeReaction,
+                reactionNonce: _villeReactionNonce,
+                height: 72.h,
+              ),
+            ),
+          ),
+          SizedBox(height: AppConstants.microSpacing6.h),
           _buildPlayHud(
             context,
             question: question,

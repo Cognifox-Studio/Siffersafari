@@ -22,6 +22,9 @@ class AppThemeConfig {
     required this.questHeroAsset,
     required this.characterAsset,
     required this.characterLottieAsset,
+    this.characterRiveAsset,
+    this.characterRiveStateMachine,
+    this.preferRiveCharacter = true,
     this.characterIdleAsset,
     this.characterHappyAsset,
     this.characterCelebrateAsset,
@@ -42,6 +45,15 @@ class AppThemeConfig {
   
   /// Legacy: defaults to characterIdleAsset if available, otherwise used directly
   final String characterLottieAsset;
+
+  /// Preferred runtime character asset (Rive). Keep null until a .riv exists.
+  final String? characterRiveAsset;
+
+  /// Optional state machine name inside the .riv file.
+  final String? characterRiveStateMachine;
+
+  /// If true and [characterRiveAsset] is set, UI should prefer Rive for character.
+  final bool preferRiveCharacter;
   
   /// New: separate animation states
   /// If null, falls back to characterLottieAsset as idle animation
@@ -72,6 +84,11 @@ class AppThemeConfig {
     };
   }
 
+  bool get shouldUseRiveCharacter =>
+      preferRiveCharacter &&
+      characterRiveAsset != null &&
+      characterRiveAsset!.isNotEmpty;
+
   static AppThemeConfig forTheme(AppTheme theme) {
     switch (theme) {
       case AppTheme.jungle:
@@ -81,6 +98,9 @@ class AppThemeConfig {
           questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
           characterAsset: 'assets/images/themes/jungle/character_v2.png',
           characterLottieAsset: 'assets/animations/ville_jungle_idle.json',
+          // Enable when a real .riv is added to assets/animations.
+          characterRiveAsset: null,
+          characterRiveStateMachine: 'State Machine 1',
           // New: separate animation states for more dynamic character
           characterIdleAsset: 'assets/animations/ville_jungle_idle.json',
           characterHappyAsset: 'assets/animations/ville_jungle_happy.json',
@@ -102,6 +122,9 @@ class AppThemeConfig {
           questHeroAsset: 'assets/images/themes/space/quest_hero.png',
           characterAsset: 'assets/images/themes/space/character.png',
           characterLottieAsset: 'assets/animations/ville_space_idle.json',
+          // Enable when a real .riv is added to assets/animations.
+          characterRiveAsset: null,
+          characterRiveStateMachine: 'State Machine 1',
           // New: separate animation states (fallback to idle for now)
           characterIdleAsset: 'assets/animations/ville_space_idle.json',
           characterHappyAsset: 'assets/animations/ville_space_happy.json',

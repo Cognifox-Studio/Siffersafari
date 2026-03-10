@@ -13,6 +13,7 @@ import '../../core/providers/quiz_provider.dart';
 import '../../core/providers/story_progress_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
+import '../../core/theme/app_theme_config.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../core/utils/page_transitions.dart';
 import '../../domain/entities/user_progress.dart';
@@ -148,7 +149,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final backgroundAsset = themeCfg.backgroundAsset;
     final questHeroAsset = themeCfg.questHeroAsset;
     final characterAsset = themeCfg.characterAsset;
-    final characterLottieAsset = themeCfg.characterLottieAsset;
     final accentColor = themeCfg.accentColor;
 
     final scheme = Theme.of(context).colorScheme;
@@ -344,8 +344,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: AppConstants.defaultPadding),
                       SizedBox(
                         height: isWideScreen ? 140 : 120,
-                        child: ThemeMascot(
-                          lottieAsset: characterLottieAsset,
+                        child: ThemeMascot.withState(
+                          appThemeConfig: themeCfg,
+                          state: CharacterAnimationState.idle,
                           height: isWideScreen ? 140 : 120,
                         ),
                       ),

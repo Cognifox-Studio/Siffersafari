@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/user_provider.dart';
+import '../../core/theme/app_theme_config.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../dialogs/create_user_dialog.dart';
 import '../widgets/theme_mascot.dart';
@@ -21,7 +22,6 @@ class FirstRunSetupScreen extends ConsumerWidget {
         onPrimary.withValues(alpha: AppOpacities.subtleText);
 
     final themeCfg = ref.watch(appThemeConfigProvider);
-    final characterLottieAsset = themeCfg.characterLottieAsset;
     final mascotHeight =
         layoutDependentMascotHeight(MediaQuery.sizeOf(context).height);
 
@@ -84,8 +84,9 @@ class FirstRunSetupScreen extends ConsumerWidget {
                           alignment: Alignment.center,
                           child: SizedBox(
                             height: mascotHeight,
-                            child: ThemeMascot(
-                              lottieAsset: characterLottieAsset,
+                            child: ThemeMascot.withState(
+                              appThemeConfig: themeCfg,
+                              state: CharacterAnimationState.idle,
                               height: mascotHeight,
                               fit: BoxFit.contain,
                             ),
