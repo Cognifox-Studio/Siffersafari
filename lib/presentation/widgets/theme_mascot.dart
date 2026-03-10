@@ -1,22 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
+import '../../core/theme/app_theme_config.dart';
+
 class ThemeMascot extends StatelessWidget {
+  /// Legacy constructor for backward compatibility
+  /// Uses idle state by default
   const ThemeMascot({
     super.key,
     required this.lottieAsset,
     required this.height,
     this.fit = BoxFit.contain,
-  });
+  })  : appThemeConfig = null,
+        state = CharacterAnimationState.idle;
 
-  final String lottieAsset;
+  /// New constructor using AppThemeConfig and animation state
+  const ThemeMascot.withState({
+    super.key,
+    required this.appThemeConfig,
+    required this.height,
+    this.state = CharacterAnimationState.idle,
+    this.fit = BoxFit.contain,
+  }) : lottieAsset = null;
+
+  final String? lottieAsset;
+  final AppThemeConfig? appThemeConfig;
   final double height;
+  final CharacterAnimationState state;
   final BoxFit fit;
 
   @override
   Widget build(BuildContext context) {
+    // Determine which asset to use
+    final asset = lottieAsset ?? appThemeConfig?.getCharacterAnimation(state);
+    
+    if (asset == null) {
+      return _buildMissingLottiePlaceholder(context);
+    }
+
     return Lottie.asset(
-      lottieAsset,
+      asset,
       height: height,
       fit: fit,
       repeat: true,
