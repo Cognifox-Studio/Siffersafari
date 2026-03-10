@@ -100,7 +100,36 @@ flutter build apk --release
 - Lottie för UI-effekter (konfetti, stjärnor, pulser)
 - flutter_screenutil för responsiv skalning
 
-Karaktärspipelinen är nu hybrid:
+### AI-driven Asset Pipeline ⚡
+
+All visuell grafik genereras via kod – ingen handritning krävs:
+
+- **SVG-delar:** `dart run scripts/generate_ville_svg_parts.dart` → 12 SVG parts
+- **Lottie UI-effekter:** `dart run scripts/generate_lottie_effects.dart` → 4 JSON animations
+- **Rive Blueprint:** `dart run scripts/generate_rive_blueprint.dart` → rigging guide
+
+Kör alla med ett kommando:
+```bash
+# Via VS Code Task (rekommenderat)
+Tasks → Run Task → "Assets: Generate All"
+
+# Eller via terminal
+dart run scripts/generate_ville_svg_parts.dart
+dart run scripts/generate_lottie_effects.dart
+dart run scripts/generate_rive_blueprint.dart
+```
+
+**Fördelar:**
+- Konsekvent stil via JSON-specs
+- Git-vänlig versionhantering
+- Snabb iteration (sekunder istället för timmar)
+- Ingen handritning
+
+Se [docs/AI_ASSET_PIPELINE.md](docs/AI_ASSET_PIPELINE.md) för komplett guide.
+
+### Animation Pipeline
+
+Karaktärspipelinen är hybrid:
 
 - Karaktärsrigg/specs under `assets/characters/ville/`
 - UI-effekter under `assets/ui/lottie/`
@@ -118,6 +147,7 @@ lib/
 
 Mer detaljer finns i:
 
+- [docs/AI_ASSET_PIPELINE.md](docs/AI_ASSET_PIPELINE.md) ← AI asset generation
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
 - [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md)

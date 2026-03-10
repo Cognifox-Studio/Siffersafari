@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400.0" height="200.0" viewBox="0 0 400.0 200.0" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head base -->
+  <ellipse cx="200.0" cy="100.0" rx="100.0" ry="90.9090909090909" 
+           fill="#F2D3A0" 
+           stroke="#2E2E2E" 
+           stroke-width="4"/>
+  
+  <!-- Subtle cheek blush -->
+  <ellipse cx="150.0" cy="120.0" rx="25" ry="18" 
+           fill="#FFB3BA" opacity="0.4"/>
+  <ellipse cx="250.0" cy="120.0" rx="25" ry="18" 
+           fill="#FFB3BA" opacity="0.4"/>
+
+</svg>

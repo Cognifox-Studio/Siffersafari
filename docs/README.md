@@ -25,6 +25,7 @@ Steg-för-steg instruktioner för vanliga uppgifter:
 | [ADD_FEATURE.md](ADD_FEATURE.md) | Lägg till en ny feature (praktiskt exempel: Expert Mode) |
 | [DEPLOY_ANDROID.md](DEPLOY_ANDROID.md) | Build debug/release APK, signering, Google Play upload |
 | [ASSET_GENERATION.md](ASSET_GENERATION.md) | Kuratera grafik, animationer, ljud-effekter och ikoner |
+| [AI_ASSET_PIPELINE.md](AI_ASSET_PIPELINE.md) | **AI-driven asset-fabrik** – generera SVG, Lottie & Rive via kod |
 
 ---
 
@@ -75,7 +76,8 @@ Dokumentation för icke-utvecklare:
 | QA före commit | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | **Förstå arkitekturen** | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | Se en services API | [SERVICES_API.md](SERVICES_API.md) |
-| **Generera assets** | [ASSET_GENERATION.md](ASSET_GENERATION.md) |
+| **Generera assets via AI** ⚡ | [AI_ASSET_PIPELINE.md](AI_ASSET_PIPELINE.md) |
+| Kuratera assets manuellt | [ASSET_GENERATION.md](ASSET_GENERATION.md) |
 | Slå upp folder-layout | [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) |
 | **Releasa** | [DEPLOY_ANDROID.md](DEPLOY_ANDROID.md) |
 | Föräldrars perspektiv | [PARENTS_TEACHERS_GUIDE.md](PARENTS_TEACHERS_GUIDE.md) |

@@ -21,6 +21,72 @@ dart run scripts/generate_android_launcher_icons.dart --input assets/images/app_
 
 ---
 
+## AI-Driven Asset Pipeline ⚡
+
+**Nyhet 2026-03-10:** All visuell grafik kan nu genereras via kod – ingen manuell ritning krävs.
+
+### Automated Asset Generators
+
+```bash
+# Generera Ville SVG-delar (12 filer)
+dart run scripts/generate_ville_svg_parts.dart
+# → assets/characters/ville/svg/*.svg
+
+# Generera Lottie UI-effekter (4 filer)
+dart run scripts/generate_lottie_effects.dart
+# → assets/ui/lottie/*.json
+
+# Generera Rive riggnings-blueprint
+dart run scripts/generate_rive_blueprint.dart
+# → artifacts/ville_rive_blueprint.json
+# → artifacts/VILLE_RIVE_GUIDE.md
+
+# Kör allt på en gång via VS Code task:
+# Tasks → Run Task → "Assets: Generate All (SVG + Lottie + Rive Blueprint)"
+```
+
+### Vad kan AI-genereras?
+
+| Asset Type | Generator | Output | Status |
+|----------|----------|--------|--------|
+| **SVG-delar** | `generate_ville_svg_parts.dart` | 12 modular SVG parts (head, eyes, body, arms, legs, antennas) | ✅ Production-ready |
+| **Lottie UI** | `generate_lottie_effects.dart` | confetti, stars, success_pulse, error_shake (JSON) | ✅ Production-ready |
+| **Rive Blueprint** | `generate_rive_blueprint.dart` | JSON + Markdown guide för manuell riggning i Rive Editor | 📋 Guide (requires manual Rive work) |
+| **Ljud** | `generate_sfx_wav.dart` | WAV-filer via AI-prompt | ✅ Production-ready |
+
+### Workflow: Kod → Asset
+
+```
+1. SPEC (JSON)
+   ├─ ville_visual_spec.json      → colors, proportions, style
+   └─ ville_animation_spec.json   → bones, animations, states
+
+2. GENERATE (Dart script)
+   ├─ dart run scripts/generate_ville_svg_parts.dart
+   ├─ dart run scripts/generate_lottie_effects.dart
+   └─ dart run scripts/generate_rive_blueprint.dart
+
+3. REVIEW (artifacts/)
+   └─ Inspektera output i artifacts/ eller assets/
+
+4. VERIFY (app)
+   └─ flutter run → testa visuellt
+
+5. COMMIT
+   └─ git add assets/ scripts/ docs/
+   └─ git commit -m "assets: regenerate Ville SVG parts with updated spec"
+```
+
+### Fördelar med kod-baserad asset-generation
+
+✅ **Ingen handritning** – AI skriver kod som ritar  
+✅ **Konsekvent stil** – specs styr allt  
+✅ **Iterativ utveckling** – ändra spec → kör script → nya assets  
+✅ **Git-vänlig** – JSON specs + Dart code = full version control  
+✅ **Snabb iteration** – sekunder istället för timmar
+
+---
+
 ## 1. Graphics & Animation Assets
 
 Grafik till appen tas fram utanför runtime-koden och läggs sedan in manuellt i `assets/` efter granskning.
