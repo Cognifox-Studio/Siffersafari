@@ -72,6 +72,7 @@ flutter:
     - assets/ui/lottie/stars.json
     - assets/ui/lottie/success_pulse.json
     - assets/ui/lottie/error_shake.json
+    - assets/ui/lottie/ville_walk.json
     - assets/images/
     - assets/images/brand/
     - assets/images/app_icon/
