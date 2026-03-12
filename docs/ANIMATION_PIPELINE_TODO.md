@@ -1,75 +1,44 @@
 # Animation Pipeline TODO (Rive + Lottie)
 
 ## Goal
-Use Rive for characters (Ville) and Lottie for UI effects.
+Use Rive for characters and Lottie for UI effects, while keeping preview work outside the product UI.
 
-## Build Exact This
-1. Create and maintain this structure:
-  - assets/characters/ville/svg/
-  - assets/characters/ville/rive/
-  - assets/characters/ville/config/
-  - assets/ui/lottie/
-2. Keep visual + animation specs as single source of truth under config/
-3. Build Ville in Rive with artboard `Ville` and state machine `VilleStateMachine`
-4. Wire Flutter triggers from quiz flow: correct/wrong/tap/screen change
-5. Keep Lottie only for UI effects (confetti/stars/pulses/shakes)
-
-## Asset Structure
-- assets/characters/ville/svg/
-- assets/characters/ville/rive/
-- assets/characters/ville/config/
-- assets/ui/lottie/
+## Runtime Structure
+- `assets/characters/ville/config/`
+- `assets/characters/ville/svg/`
+- `assets/characters/ville/rive/`
+- `assets/ui/lottie/`
+- `artifacts/animation_preview/` for preview and motion labs only
 
 ## Specs
-- [x] assets/characters/ville/config/ville_visual_spec.json
-- [x] assets/characters/ville/config/ville_animation_spec.json
+- [x] `assets/characters/ville/config/ville_visual_spec.json`
+- [x] `assets/characters/ville/config/ville_animation_spec.json`
 
 ## Rive Build Requirements
-In assets/characters/ville/rive/ville_character.riv:
-- Artboard: Ville
-- State machine: VilleStateMachine
+In `assets/characters/ville/rive/ville_character.riv`:
+- Artboard: `Ville`
+- State machine: `VilleStateMachine`
 - Triggers:
-  - answer_correct
-  - answer_wrong
-  - user_tap
-  - screen_change
-
-Nodes / Components:
-- root
-- spine
-- head
-- eyes
-- mouth
-- arm_left
-- arm_right
-- leg_left
-- leg_right
-- antenna_left
-- antenna_right
-
-Animations:
-- idle
-- idle_blink
-- happy
-- very_happy
-- sad
-- confused
-- react_tap
-- enter
-- exit
+  - `answer_correct`
+  - `answer_wrong`
+  - `user_tap`
+  - `screen_change`
 
 ## Flutter Integration
-- [x] Add rive dependency
-- [x] Add VilleCharacter widget
-- [x] Wire first quiz trigger to character reaction
-- [ ] Add real .riv file and set characterRiveAsset in theme config
-- [ ] Connect additional triggers in result/home transitions
+- [x] Add `rive` dependency
+- [x] Add `VilleCharacter` widget
+- [x] Wire triggers in home, quiz and results flows
+- [x] Set `characterRiveAsset` in theme config
+- [x] Remove preview walk fallback from runtime character rendering
+- [ ] Replace placeholder/demo `.riv` with a production-approved export
+- [ ] Review whether passive mascot surfaces should keep Lottie state fallbacks or move fully to approved Rive assets
 
-## Current Integration Notes
-- `VilleCharacter` exists in `lib/presentation/widgets/ville_character.dart`
-- Quiz reactions are connected in `lib/presentation/screens/quiz_screen.dart`
-- `ThemeMascot` + `CharacterAnimationPlayer` are Rive-ready with Lottie fallback
+## Current Runtime Notes
+- `VilleCharacter` is the triggered runtime widget for `home_screen.dart`, `quiz_screen.dart` and `results_screen.dart`
+- `ThemeMascot.withState` is for passive mascot rendering
+- Preview/test motion belongs in `artifacts/animation_preview/`, not in product UI
 
 ## Lottie Policy
-- Keep Lottie under assets/ui/lottie for confetti/stars/pulses
-- Keep character Lottie files only as fallback during migration
+- Keep Lottie under `assets/ui/lottie/` for approved UI effects such as confetti, stars and feedback pulses
+- Keep character Lottie files only if they are approved runtime state fallbacks
+- Do not use preview walk cycles as runtime fallback for `VilleCharacter`

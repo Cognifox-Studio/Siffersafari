@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:lottie/lottie.dart';
 import 'package:rive/rive.dart';
 
 enum VilleReaction {
@@ -43,7 +42,7 @@ class _VilleCharacterState extends State<VilleCharacter> {
   SMITrigger? _screenChange;
 
   bool _loadFailed = false;
-  bool _useAnimatedFallback = false;
+  bool _hasMatchingStateMachine = false;
 
   @override
   void initState() {
@@ -75,18 +74,21 @@ class _VilleCharacterState extends State<VilleCharacter> {
       );
 
       if (controller != null) {
-        debugPrint('VilleCharacter: using state machine ${widget.stateMachineName}');
+        debugPrint(
+          'VilleCharacter: using state machine ${widget.stateMachineName}',
+        );
         artboard.addController(controller);
         _answerCorrect =
             controller.findInput<bool>('answer_correct') as SMITrigger?;
-        _answerWrong = controller.findInput<bool>('answer_wrong') as SMITrigger?;
+        _answerWrong =
+            controller.findInput<bool>('answer_wrong') as SMITrigger?;
         _userTap = controller.findInput<bool>('user_tap') as SMITrigger?;
-        _screenChange = controller.findInput<bool>('screen_change') as SMITrigger?;
+        _screenChange =
+            controller.findInput<bool>('screen_change') as SMITrigger?;
       } else {
-        // Community-riggar utan vår state machine blir ofta en statisk pose.
-        // Använd den säkra Lottie-fallbacken i stället så att Ville alltid rör sig.
+        // Files without the expected state machine are treated as preview-only.
         debugPrint(
-          'VilleCharacter: no matching state machine, using animated Lottie fallback',
+          'VilleCharacter: no matching state machine, using static SVG fallback',
         );
       }
 
@@ -94,14 +96,16 @@ class _VilleCharacterState extends State<VilleCharacter> {
       setState(() {
         _artboard = artboard;
         _loadFailed = false;
-        _useAnimatedFallback = controller == null;
+        _hasMatchingStateMachine = controller != null;
       });
     } catch (_) {
-      debugPrint('VilleCharacter: failed to load Rive asset ${widget.riveAssetPath}');
+      debugPrint(
+        'VilleCharacter: failed to load Rive asset ${widget.riveAssetPath}',
+      );
       if (!mounted) return;
       setState(() {
         _loadFailed = true;
-        _useAnimatedFallback = false;
+        _hasMatchingStateMachine = false;
       });
     }
   }
@@ -127,12 +131,8 @@ class _VilleCharacterState extends State<VilleCharacter> {
 
   @override
   Widget build(BuildContext context) {
-    if (_loadFailed || _artboard == null) {
+    if (_loadFailed || _artboard == null || !_hasMatchingStateMachine) {
       return _fallback(context);
-    }
-
-    if (_useAnimatedFallback) {
-      return _lottieFallback();
     }
 
     return SizedBox(
@@ -150,25 +150,13 @@ class _VilleCharacterState extends State<VilleCharacter> {
   }
 
   Widget _fallback(BuildContext context) {
-    // Show composite SVG as fallback when Rive file is not available
+    // Use a static, approved fallback when runtime animation is unavailable.
     return SizedBox(
       height: widget.height,
       child: SvgPicture.asset(
         'assets/characters/ville/svg/ville_composite.svg',
         fit: widget.fit,
         placeholderBuilder: (context) => _iconFallback(context),
-      ),
-    );
-  }
-
-  Widget _lottieFallback() {
-    return SizedBox(
-      height: widget.height,
-      width: widget.height,
-      child: Lottie.asset(
-        'assets/ui/lottie/ville_walk.json',
-        repeat: true,
-        fit: widget.fit,
       ),
     );
   }

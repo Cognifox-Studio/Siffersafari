@@ -20,7 +20,6 @@ import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 import '../dialogs/create_user_dialog.dart';
 import '../screens/story_map_screen.dart';
-import '../widgets/loke_walk_character.dart';
 import '../widgets/story_progress_card.dart';
 import '../widgets/themed_background_scaffold.dart';
 import '../widgets/ville_character.dart';
@@ -366,28 +365,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           stateMachineName:
                               themeCfg.characterRiveStateMachine ??
                                   'VilleStateMachine',
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.smallPadding),
-                      // DEMO: Walk animation preview
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: Colors.black12,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Column(
-                          children: [
-                            Text(
-                              'Loke Walk Demo',
-                              style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(height: 4),
-                            LokeWalkCharacter(height: 110),
-                          ],
                         ),
                       ),
                       const SizedBox(height: AppConstants.smallPadding),
