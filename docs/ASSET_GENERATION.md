@@ -28,13 +28,14 @@ dart run scripts/generate_android_launcher_icons.dart --input assets/images/app_
 ### Automated Asset Generators
 
 ```bash
-# Generera Ville SVG-delar (12 filer)
-dart run scripts/generate_ville_svg_parts.dart
-# → assets/characters/ville/svg/*.svg
 
-# Generera Lottie UI-effekter (4 filer)
+# Generera Ville SVG-delar (13 filer)
+dart run scripts/generate_ville_svg_parts.dart
+# → assets/characters/ville/svg/*.svg (inklusive ville_composite.svg)
+
+# Generera Lottie UI-effekter (5 filer)
 dart run scripts/generate_lottie_effects.dart
-# → assets/ui/lottie/*.json
+# → assets/ui/lottie/*.json (inklusive ville_walk.json)
 
 # Generera Rive riggnings-blueprint
 dart run scripts/generate_rive_blueprint.dart
@@ -49,32 +50,35 @@ dart run scripts/generate_rive_blueprint.dart
 
 | Asset Type | Generator | Output | Status |
 |----------|----------|--------|--------|
-| **SVG-delar** | `generate_ville_svg_parts.dart` | 12 modular SVG parts (head, eyes, body, arms, legs, antennas) | ✅ Production-ready |
-| **Lottie UI** | `generate_lottie_effects.dart` | confetti, stars, success_pulse, error_shake (JSON) | ✅ Production-ready |
+| **SVG-delar** | `generate_ville_svg_parts.dart` | 13 modular SVG parts (head, eyes, body, arms, legs, antennas, composite) | ✅ Production-ready |
+| **Lottie UI** | `generate_lottie_effects.dart` | confetti, stars, success_pulse, error_shake, ville_walk (JSON) | ✅ Production-ready |
 | **Rive Blueprint** | `generate_rive_blueprint.dart` | JSON + Markdown guide för manuell riggning i Rive Editor | 📋 Guide (requires manual Rive work) |
 | **Ljud** | `generate_sfx_wav.dart` | WAV-filer via AI-prompt | ✅ Production-ready |
 
+
 ### Workflow: Kod → Asset
+
+Se även [AI_ASSET_PIPELINE.md](AI_ASSET_PIPELINE.md) för detaljerad pipeline och filöversikt.
 
 ```
 1. SPEC (JSON)
-   ├─ ville_visual_spec.json      → colors, proportions, style
-   └─ ville_animation_spec.json   → bones, animations, states
+  ├─ ville_visual_spec.json      → colors, proportions, style
+  └─ ville_animation_spec.json   → bones, animations, states
 
 2. GENERATE (Dart script)
-   ├─ dart run scripts/generate_ville_svg_parts.dart
-   ├─ dart run scripts/generate_lottie_effects.dart
-   └─ dart run scripts/generate_rive_blueprint.dart
+  ├─ dart run scripts/generate_ville_svg_parts.dart
+  ├─ dart run scripts/generate_lottie_effects.dart
+  └─ dart run scripts/generate_rive_blueprint.dart
 
 3. REVIEW (artifacts/)
-   └─ Inspektera output i artifacts/ eller assets/
+  └─ Inspektera output i artifacts/ eller assets/
 
 4. VERIFY (app)
-   └─ flutter run → testa visuellt
+  └─ flutter run → testa visuellt
 
 5. COMMIT
-   └─ git add assets/ scripts/ docs/
-   └─ git commit -m "assets: regenerate Ville SVG parts with updated spec"
+  └─ git add assets/ scripts/ docs/
+  └─ git commit -m "assets: regenerate Ville SVG parts with updated spec"
 ```
 
 ### Fördelar med kod-baserad asset-generation

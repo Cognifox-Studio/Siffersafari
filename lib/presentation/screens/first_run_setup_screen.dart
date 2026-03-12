@@ -56,12 +56,14 @@ class FirstRunSetupScreen extends ConsumerWidget {
                       vertical: verticalPadding,
                     ),
                     decoration: BoxDecoration(
-                      color: onPrimary.withValues(alpha: AppOpacities.panelFill),
+                      color:
+                          onPrimary.withValues(alpha: AppOpacities.panelFill),
                       borderRadius: BorderRadius.circular(
                         AppConstants.borderRadius * 1.5,
                       ),
                       border: Border.all(
-                        color: onPrimary.withValues(alpha: AppOpacities.cardBorder),
+                        color: onPrimary.withValues(
+                            alpha: AppOpacities.cardBorder),
                       ),
                     ),
                     child: Column(
@@ -162,10 +164,11 @@ class FirstRunSetupScreen extends ConsumerWidget {
                         const SizedBox(height: AppConstants.defaultPadding),
                         Text(
                           'Du kan skapa fler profiler senare i Inställningar.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: mutedOnPrimary,
-                                fontWeight: FontWeight.w600,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: AppConstants.defaultPadding),

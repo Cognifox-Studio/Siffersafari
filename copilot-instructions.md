@@ -16,3 +16,10 @@
 - När ett beslut tas (t.ex. standardflöde, device-target, port/paths): lägg till en kort punkt i `docs/DECISIONS_LOG.md`.
 - Undvik att fylla chatten med långa loggar/outputs: hämta via verktyg, sammanfatta bara det viktiga och lägg ev. rådata i filer under `artifacts/` vid behov.
 - När något refereras som "som förra gången": utgå från repo-sök + dessa två filer istället för att förlita dig på chat-historik.
+
+## Bildbaserad karaktärspipeline
+
+- När användaren bifogar en bild och ber om en användbar eller spelklar karaktär, följ `.github/instructions/character-pipeline.instructions.md`.
+- Målet är faktiska repo-filer under `assets/characters/<slug>/` och `artifacts/`, inte bara generell rådgivning.
+- Följ repo:ts hybridstandard: Rive för karaktärer, Lottie för UI-effekter.
+- Var tydlig om `.riv` måste exporteras manuellt från Rive Editor.

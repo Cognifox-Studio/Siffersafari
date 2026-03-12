@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 /// Example widget showing how to use Ville walk animation.
-/// 
+///
 /// Usage:
 /// ```dart
 /// VilleWalkAnimation(

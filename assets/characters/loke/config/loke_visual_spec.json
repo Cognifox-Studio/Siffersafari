@@ -1,0 +1,75 @@
+{
+  "name": "Loke",
+  "version": 1,
+  "style": "cartoon_safari_child",
+  "inspiration": "Child explorer with safari hat, green overalls, backpack and yellow shoes",
+  "baseFormRef": "../../_shared/config/humanoid_base_form_v1.json",
+  "colors": {
+    "skin": "#E7A279",
+    "hair": "#412524",
+    "hat": "#F4E4BB",
+    "hatShadow": "#D8B98C",
+    "hatBand": "#58302A",
+    "shirt": "#F7DC29",
+    "overallsPrimary": "#73E9CA",
+    "overallsSecondary": "#1DBE90",
+    "backpack": "#17A984",
+    "strap": "#0D7E66",
+    "shoe": "#F4C835",
+    "lace": "#D65033",
+    "sole": "#FFFDF9",
+    "outline": "#6A2E31",
+    "blush": "#EF8F79",
+    "shadow": "#0000001A"
+  },
+  "proportions": {
+    "headToBodyRatio": 0.52,
+    "eyeSizeRelativeToHead": 0.12,
+    "mouthWidthRelativeToHead": 0.2,
+    "armLengthRelativeToBody": 0.72,
+    "legLengthRelativeToBody": 0.55,
+    "hatWidthRelativeToHead": 1.12,
+    "shoeWidthRelativeToLeg": 1.7
+  },
+  "styleSettings": {
+    "strokeWidth": 4,
+    "cornerRadius": 14,
+    "useGradients": false,
+    "useTextures": false,
+    "rigFriendly": true
+  },
+  "tPosePreviewAlignment": {
+    "armUpperTranslateY": {
+      "left": 17,
+      "right": 16
+    },
+    "armLowerTranslateY": {
+      "left": -2,
+      "right": -2
+    },
+    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+  },
+  "parts": {
+    "head": "svg/loke_head.svg",
+    "eyes_open": "svg/loke_eyes_open.svg",
+    "eyes_blink": "svg/loke_eyes_blink.svg",
+    "mouth_neutral": "svg/loke_mouth_neutral.svg",
+    "mouth_happy": "svg/loke_mouth_happy.svg",
+    "mouth_sad": "svg/loke_mouth_sad.svg",
+    "torso": "svg/loke_torso.svg",
+    "arm_upper_left": "svg/loke_arm_upper_left.svg",
+    "arm_lower_left": "svg/loke_arm_lower_left.svg",
+    "arm_upper_right": "svg/loke_arm_upper_right.svg",
+    "arm_lower_right": "svg/loke_arm_lower_right.svg",
+    "leg_upper_left": "svg/loke_leg_upper_left.svg",
+    "leg_lower_left": "svg/loke_leg_lower_left.svg",
+    "leg_upper_right": "svg/loke_leg_upper_right.svg",
+    "leg_lower_right": "svg/loke_leg_lower_right.svg",
+    "shoe_left": "svg/loke_shoe_left.svg",
+    "shoe_right": "svg/loke_shoe_right.svg",
+    "hat": "svg/loke_hat.svg",
+    "backpack": "svg/loke_backpack.svg",
+    "shadow": "svg/loke_shadow.svg",
+    "composite": "svg/loke_composite.svg"
+  }
+}

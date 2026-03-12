@@ -1,44 +1,56 @@
-# Beslut & antaganden (Siffersafari)
+﻿# Beslut och antaganden (Siffersafari)
 
-> Syfte: hålla stabila beslut/antaganden utanför chatten så vi kan återuppta arbetet utan att du behöver repetera.
-> Princip: kortfattat, datumstämplat, max 1–3 rader per punkt.
+Syfte: samla stabila beslut utanfor chatten.
+Princip: senaste datum vinner vid konflikt.
 
-## 2026-03-03
-- Vi hanterar långt kontextbehov via "extern kontext": uppdatera `docs/SESSION_BRIEF.md` och denna logg, och hämta detaljer via repo-sök istället för chat-historik.
-- Standard QA-flöde: `flutter analyze` → minsta relevanta `flutter test`-subset (full suite bara vid stora ändringar).
-- När device-target behövs: defaulta till Pixel_6 om inget annat sägs.
-- Appnamn: **Siffersafari**.
-- Android-only + offline-first + flera profiler (målgrupp 6–12).
-- Install/run ska vara deterministiskt när det behövs: använd `scripts/flutter_pixel6.ps1` (särskilt `-Action sync`).
-- UI-screenshot-regression: föredra Flutter-side screenshots via `integration_test/screenshots_test.dart` och extrahera PNG med `scripts/extract_integration_screenshots.ps1` till `artifacts/`.
+## Gallande nulage (2026-03-11)
 
-## 2026-03-04
-- Mix-coverage-testet för Åk+step+range stänger av `missing-number`, och gör range/invariant-checks bara för frågor där `operationType != mixed` (specialfrågor som tid/M4/M5 använder `operationType: mixed` och följer inte operand-regler).
-- För att ligga närmare Skolverkets centrala innehåll utan att göra appen “för svår för tidigt”: procent och negativa tal introduceras försiktigt som Mix-specialfrågor i Åk 5–6 på höga steps (9–10). Kärn-flödets +/− för Åk 1–6 förblir icke-negativt.
-- Textuppgifter: vid första onboarding för ett barn (om ingen inställning är sparad) frågar vi “Kan barnet läsa?”; svar Ja/Nej sparas per barn. Om onboarding hoppas över och inget är sparat: default = AV för Åk 1, annars följer global default.
+- Plattform: Android-first, offline-first, flera barnprofiler.
+- Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
+- Animation: hybridstrategi
+  - Rive for karaktarer (primart Ville)
+  - Lottie for UI-effekter och fallback
+- Responsiv layout styrs av tillganglig bredd (`compact < 600`, `medium >= 600`, `expanded >= 840`).
+- Quizens adaptiva svarighetsmodell ar hybrid (micro + macro + cooldown) och persisteras per raknesatt.
+- Uppdateringsflode i foraldralage anvander GitHub Releases + OTA pa Android, utan avinstallation.
 
-## 2026-03-06
-- Uppdateringsflöde i Föräldraläge: appen kontrollerar senaste GitHub Release via GitHub Release API och startar Android-uppdatering i appen efter föräldrabekräftelse. Data ska bevaras genom att alltid installera ovanpå befintlig app, aldrig via avinstallation.
-- Svårighetsprogression: benchmark-steg ska vara mjukare år-för-år, inte samma block för Åk 4–6 och 7–9.
-- Högstadiet (Åk 7–9): signed +/− och M5a-specialer ska introduceras gradvis via step-gates; step 1 i Mix ska fortfarande kännas som lugn aritmetik.
-- Responsiv layout ska styras av tillgänglig fönsterbredd, inte enhetstyp: `compact < 600`, `medium >= 600`, `expanded >= 840`.
-- På smala skärmar ska dropdown-/inställningskontroller ligga under texten i stället för i `ListTile.trailing` för att undvika overflow i portrait/landscape och vid större textskalning.
-- På `expanded`-bredd ska informationsrika skärmar föredra riktiga tvåkolumnslayouter framför en ensam centrerad telefonkolumn.
-- Quizvyn ska också styras av tillgänglig bredd/höjd, inte bara orientation: använd split-layout först när ytan faktiskt räcker, och låt svarsalternativ växla till 2 kolumner på bred eller kort svarspanel.
-- Story-reveal i resultat ska triggas av faktisk quest-completion/advance, inte av stjärnor eller score ensamt.
-- Storyns jungle-landmarks ska definieras i derived progression-lagret och återanvändas i Home/karta/results, inte hårdkodas separat per skärm.
-- Storykortets hero på Home ska i första hand återanvända befintliga tema-assets (`questHeroAsset` + `characterAsset`) i stället för att kräva en separat story-specifik assetpipeline.
-- Kartans checkpointkort ska få sina motiv från derived storydata (`sceneTag`) och vara responsiva nog att fungera även på smala test-/mobilbredder.
-- Standard-pathen för storykartan ska vara 20 riktiga uppdrag/checkpoints för normal progression; kartans layout får därför inte ha en fast maxhöjd som klipper senare noder.
-- När kartan har många checkpoints ska den delas upp visuellt i etapper (t.ex. block om 5) så lång scroll fortfarande känns läsbar och avsiktlig.
+## Historik (kort)
 
-## 2026-03-09
-- Ville- och mascot-animationer ska standardiseras på Lottie. Sprite-sekvenser, procedural mascot-rörelse och lokala browser/generator-preview-spår ska inte längre vara aktiva alternativ i repo:t.
-- Om en avsedd mascot-Lottie ännu inte finns på sin path ska UI:t visa placeholder i mascot-ytor, inte falla tillbaka till bild- eller spriteanimation.
-- Om en lokal preview behövs för snabb visuell kontroll ska den läsa samma JSON från `assets/animations/` som appen använder eller planerar att använda, inte en separat preview-spec.
-- Adaptiv svårighetsgrad: hybrid-modell med mikro (3 rätt / 2 fel i rad) + makro (5-fråge-fönster, 0.85/0.60) + 2-fråge-cooldown. Steg ändras när mikro+makro är överens eller mikro neutral + makro har signal. Persisteras per räknesätt i `UserProgress.operationDifficultySteps`.
+### 2026-03-03
+- Extern kontext via dokument i `docs/` i stallet for chat-historik.
+- Standard QA-flode: analyze -> relevanta tester -> full suite vid storre andringar.
+- Pixel_6-script anvands for deterministisk lokal korning vid behov.
 
-## 2026-03-10
-- Karaktärsanimationer går vidare med hybridstrategi: **Rive för karaktärer** (Ville med state machine) och **Lottie för UI-effekter** (confetti/stars/success/error).
-- Assetstruktur för karaktärer ligger under `assets/characters/ville/{svg,rive,config}` och UI-effekter under `assets/ui/lottie`.
-- Triggerkoppling för Ville ska finnas i huvudscreens: `home` (enter/screen change), `quiz` (answer_correct/answer_wrong/user_tap/screen_change), `results` (celebrate).
+### 2026-03-04
+- Mix-audits och curriculum-gates kalibrerades for att undvika for tidiga svarighetshopp.
+- Textuppgifter sparas per barnprofil och styrs av onboarding/installing.
+
+### 2026-03-06
+- Story progression och quest-reveal kopplades till faktisk quest completion.
+- Storykarta utokad till 20 checkpoints med etappvis visualisering.
+- Parent update-check + in-app update etablerad i dashboard.
+
+### 2026-03-09
+- Adaptiv svarighetsmodell hardenades till hybrid-regler med cooldown.
+- Tidigare Lottie-only-spor finns i historiken, men ersattes av senare hybridbeslut.
+
+### 2026-03-10
+- Hybrid animation faststalldes som gallande riktning.
+- Bilddriven karaktarsprocess etablerades (assetkit + spec + Rive-guide).
+- Loke introducerades som forsta verifierade karaktar i detta arbetsflode.
+
+### 2026-03-11
+- Humanoid-standard faststalld: nya humanoid-karaktarer ska utga fran `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef` i respektive visual spec.
+- Humanoid-standard utokad: den gemensamma riggmodellen ska nu stotta pelvis, shoulders, wrists, hips, ankles och toes som standard, med fallback-bindning till samma bilddel nar separata assets saknas.
+
+### 2026-03-12
+- Aterkommande Copilot-arbetsfloden for assetproduktion och kvalitetskontroll ska i forsta hand paketeras som workspace-skills under `.github/skills/` i stallet for att bara beskrivas i fri text.
+- For detta repo ar foljande skills etablerade som basuppsattning: `game-character-pipeline`, `animation-preview-lab`, `asset-generation-runner`, `flutter-qa-guard`, `release-readiness-check`.
+- Preview-strukturen for humanoid-animationer ska anvanda en tydlig labbkedja: `reference_preview` -> `still_preview` -> `motion_lab` -> `clean_preview` -> `scene_preview`, och canonical previews ska markeras i den centrala preview-hubben under `artifacts/animation_preview/`.
+
+## Relaterade dokument
+
+- `docs/ARCHITECTURE.md` (systemets faktiska nulage)
+- `docs/PROJECT_STRUCTURE.md` (faktisk filstruktur)
+- `docs/SERVICES_API.md` (aktuella servicekontrakt)
+- `docs/SESSION_BRIEF.md` (detaljerad sessionshistorik)

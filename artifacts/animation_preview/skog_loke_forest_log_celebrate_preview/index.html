@@ -1,0 +1,597 @@
+<!doctype html>
+<html lang="sv">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Skogshjalten + Loke Forest Log Celebrate Preview</title>
+  <style>
+    :root {
+      --sky-top: #86b7c6;
+      --sky-bottom: #d6ebdf;
+      --ground-1: #57713f;
+      --ground-2: #3f5a2d;
+      --skog-main: #3e8a4e;
+      --skog-accent: #86c792;
+      --loke-main: #5876c7;
+      --loke-accent: #a8baf0;
+      --loop: 18s;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 25% 12%, #edf7ef 0%, #d7ebde 42%, #c9dfd1 100%);
+      font-family: "Trebuchet MS", "Verdana", sans-serif;
+      color: #1f2d1d;
+    }
+
+    .scene {
+      width: min(1200px, 96vw);
+      aspect-ratio: 1200 / 560;
+      position: relative;
+      overflow: hidden;
+      border-radius: 20px;
+      border: 3px solid #2d4224;
+      box-shadow: 0 20px 40px rgba(31, 49, 24, 0.25);
+      background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom) 58%, var(--ground-1) 58%, var(--ground-2) 100%);
+    }
+
+    .hud {
+      position: absolute;
+      top: 14px;
+      left: 16px;
+      z-index: 20;
+      background: rgba(246, 253, 244, 0.86);
+      border: 1px solid rgba(38, 61, 29, 0.25);
+      border-radius: 12px;
+      padding: 10px 14px;
+      max-width: min(92%, 660px);
+      backdrop-filter: blur(3px);
+    }
+
+    .hud h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1rem, 1.8vw, 1.3rem);
+    }
+
+    .hud p {
+      margin: 0;
+      font-size: clamp(0.8rem, 1.4vw, 0.96rem);
+      line-height: 1.35;
+    }
+
+    .tree {
+      position: absolute;
+      bottom: 210px;
+      width: 120px;
+      height: 210px;
+      opacity: 0.75;
+    }
+
+    .tree::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: 18px;
+      height: 85px;
+      border-radius: 8px;
+      background: #5a432d;
+    }
+
+    .tree::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 64px;
+      width: 108px;
+      height: 124px;
+      border-radius: 56% 58% 44% 48%;
+      background: radial-gradient(circle at 35% 35%, #93cc7d 0%, #5f9957 56%, #477845 100%);
+    }
+
+    .tree.t1 { left: 120px; }
+    .tree.t2 { left: 350px; bottom: 225px; transform: scale(0.9); opacity: 0.6; }
+    .tree.t3 { left: 760px; }
+    .tree.t4 { left: 1010px; bottom: 225px; transform: scale(0.88); opacity: 0.6; }
+
+    .log {
+      position: absolute;
+      left: 330px;
+      bottom: 170px;
+      width: 230px;
+      height: 52px;
+      border-radius: 26px;
+      border: 3px solid #4e331f;
+      background: repeating-linear-gradient(
+        -14deg,
+        #91663d 0px,
+        #91663d 16px,
+        #7e562f 16px,
+        #7e562f 32px
+      );
+      transform: rotate(-8deg);
+      box-shadow: 0 7px 0 rgba(55, 36, 21, 0.22);
+      z-index: 7;
+    }
+
+    .hero {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 96px;
+      height: 190px;
+      transform-origin: 50% 100%;
+      z-index: 11;
+      animation-duration: var(--loop);
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .hero .body {
+      position: absolute;
+      left: 50%;
+      bottom: 18px;
+      width: 16px;
+      height: 98px;
+      transform: translateX(-50%);
+      border-radius: 8px;
+      background: var(--main);
+    }
+
+    .hero .head {
+      position: absolute;
+      left: 50%;
+      top: 16px;
+      width: 42px;
+      height: 42px;
+      transform: translateX(-50%);
+      border-radius: 50%;
+      border: 2px solid rgba(26, 32, 23, 0.45);
+      background: radial-gradient(circle at 36% 30%, #f2d8b8 0%, #e4b784 72%, #ce985f 100%);
+    }
+
+    .hero .cape {
+      position: absolute;
+      left: 50%;
+      top: 72px;
+      width: 44px;
+      height: 54px;
+      transform: translateX(-48%);
+      border-radius: 48% 52% 46% 54%;
+      background: var(--accent);
+      opacity: 0.9;
+      z-index: -1;
+    }
+
+    .limb {
+      position: absolute;
+      left: 50%;
+      width: 10px;
+      border-radius: 6px;
+      transform-origin: top center;
+      background: var(--main);
+      animation-duration: var(--loop);
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+
+    .arm {
+      top: 74px;
+      height: 62px;
+    }
+
+    .arm.left { margin-left: -20px; }
+    .arm.right { margin-left: 10px; }
+
+    .leg {
+      top: 126px;
+      height: 70px;
+    }
+
+    .leg.left { margin-left: -13px; }
+    .leg.right { margin-left: 3px; }
+
+    .hero.skog {
+      --main: var(--skog-main);
+      --accent: var(--skog-accent);
+      animation-name: skogPath;
+    }
+
+    .hero.loke {
+      --main: var(--loke-main);
+      --accent: var(--loke-accent);
+      animation-name: lokePath;
+    }
+
+    .hero.skog .arm.left { animation-name: skogArmLeft; }
+    .hero.skog .arm.right { animation-name: skogArmRight; }
+    .hero.skog .leg.left { animation-name: skogLegLeft; }
+    .hero.skog .leg.right { animation-name: skogLegRight; }
+
+    .hero.loke .arm.left { animation-name: lokeArmLeft; }
+    .hero.loke .arm.right { animation-name: lokeArmRight; }
+    .hero.loke .leg.left { animation-name: lokeLegLeft; }
+    .hero.loke .leg.right { animation-name: lokeLegRight; }
+
+    .phase-label {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      z-index: 30;
+      background: rgba(26, 39, 20, 0.78);
+      color: #f0ffe8;
+      border-radius: 12px;
+      padding: 8px 12px;
+      min-width: 180px;
+      font-size: 0.86rem;
+      line-height: 1.35;
+      text-align: right;
+    }
+
+    .phase-label span {
+      display: block;
+      opacity: 0.45;
+    }
+
+    /* Each span is bright exactly during its 1/3 of the 18s loop */
+    .phase-label span:nth-child(1) { animation: labelWalk    var(--loop) linear infinite; }
+    .phase-label span:nth-child(2) { animation: labelHelp    var(--loop) linear infinite; }
+    .phase-label span:nth-child(3) { animation: labelCelebrate var(--loop) linear infinite; }
+
+    @keyframes labelWalk {
+      0%,  30% { opacity: 1; }
+      34%, 100% { opacity: 0.4; }
+    }
+
+    @keyframes labelHelp {
+      0%,  32%  { opacity: 0.4; }
+      35%, 65%  { opacity: 1; }
+      68%, 100% { opacity: 0.4; }
+    }
+
+    @keyframes labelCelebrate {
+      0%,  67%  { opacity: 0.4; }
+      70%, 99%  { opacity: 1; }
+      100%      { opacity: 0.4; }
+    }
+
+    @keyframes skogPath {
+      /* WALK IN — Skog leads */
+      0%   { transform: translate(10px,   304px); }
+      10%  { transform: translate(120px,  304px); }
+      20%  { transform: translate(230px,  304px); }
+      /* APPROACH log (log at x=330) */
+      28%  { transform: translate(308px,  304px); }
+      /* CLIMB UP — ease-in means slow start, fast finish */
+      33%  { transform: translate(348px,  265px); animation-timing-function: ease-in; }
+      40%  { transform: translate(394px,  138px); animation-timing-function: ease-out; }
+      /* LAND ON OTHER SIDE */
+      47%  { transform: translate(462px,  290px); }
+      /* PAUSE — reach LEFT arm back to help Loke */
+      52%  { transform: translate(490px,  304px); }
+      58%  { transform: translate(495px,  301px); }
+      /* LOKE IS OVER — walk to celebrate zone */
+      65%  { transform: translate(530px,  304px); }
+      72%  { transform: translate(740px,  304px); }
+      /* CELEBRATE DANCE */
+      80%  { transform: translate(756px,  281px) rotate(8deg); }
+      88%  { transform: translate(742px,  301px) rotate(-6deg); }
+      94%  { transform: translate(758px,  280px) rotate(9deg); }
+      100% { transform: translate(744px,  298px) rotate(-5deg); }
+    }
+
+    @keyframes lokePath {
+      /* WALK IN — Loke slightly behind */
+      0%   { transform: translate(-50px, 308px); }
+      10%  { transform: translate(52px,  308px); }
+      20%  { transform: translate(154px, 308px); }
+      28%  { transform: translate(234px, 308px); }
+      /* APPROACH — slows down at log while Skog climbs */
+      33%  { transform: translate(280px, 308px); }
+      38%  { transform: translate(310px, 306px); }
+      /* CLIMB — Skog on other side, Loke grabs hand and climbs */
+      44%  { transform: translate(350px, 260px); animation-timing-function: ease-in; }
+      50%  { transform: translate(408px, 142px); animation-timing-function: ease-out; }
+      /* LAND */
+      57%  { transform: translate(466px, 295px); }
+      63%  { transform: translate(498px, 304px); }
+      /* WALK TO CELEBRATE ZONE */
+      72%  { transform: translate(700px, 304px); }
+      /* CELEBRATE DANCE (offset from Skog) */
+      80%  { transform: translate(714px, 293px) rotate(-6deg); }
+      88%  { transform: translate(726px, 279px) rotate(7deg); }
+      94%  { transform: translate(712px, 292px) rotate(-6deg); }
+      100% { transform: translate(724px, 280px) rotate(7deg); }
+    }
+
+    /* === SKOGSHJÄLTEN ARMS === */
+    @keyframes skogArmLeft {
+      /* WALK */
+      0%   { transform: rotate(20deg); }
+      5%   { transform: rotate(-18deg); }
+      10%  { transform: rotate(20deg); }
+      15%  { transform: rotate(-18deg); }
+      20%  { transform: rotate(20deg); }
+      25%  { transform: rotate(-18deg); }
+      28%  { transform: rotate(16deg); }
+      /* CLIMB — arms wide for balance */
+      33%  { transform: rotate(-36deg); }
+      40%  { transform: rotate(-48deg); }
+      47%  { transform: rotate(-10deg); }
+      /* HELP — left arm swings BACK to reach Loke */
+      52%  { transform: rotate(74deg); }
+      58%  { transform: rotate(78deg); }
+      63%  { transform: rotate(68deg); }
+      /* CELEBRATE */
+      72%  { transform: rotate(10deg); }
+      80%  { transform: rotate(-80deg); }
+      88%  { transform: rotate(72deg); }
+      94%  { transform: rotate(-78deg); }
+      100% { transform: rotate(68deg); }
+    }
+
+    @keyframes skogArmRight {
+      /* WALK */
+      0%   { transform: rotate(-18deg); }
+      5%   { transform: rotate(24deg); }
+      10%  { transform: rotate(-18deg); }
+      15%  { transform: rotate(24deg); }
+      20%  { transform: rotate(-18deg); }
+      25%  { transform: rotate(24deg); }
+      28%  { transform: rotate(-18deg); }
+      /* CLIMB */
+      33%  { transform: rotate(38deg); }
+      40%  { transform: rotate(52deg); }
+      47%  { transform: rotate(10deg); }
+      /* HELP — right arm forward/stable */
+      52%  { transform: rotate(-8deg); }
+      58%  { transform: rotate(-10deg); }
+      63%  { transform: rotate(-6deg); }
+      /* CELEBRATE */
+      72%  { transform: rotate(-12deg); }
+      80%  { transform: rotate(74deg); }
+      88%  { transform: rotate(-70deg); }
+      94%  { transform: rotate(76deg); }
+      100% { transform: rotate(-66deg); }
+    }
+
+    /* === SKOGSHJÄLTEN LEGS === */
+    @keyframes skogLegLeft {
+      /* WALK */
+      0%   { transform: rotate(15deg); }
+      5%   { transform: rotate(-15deg); }
+      10%  { transform: rotate(15deg); }
+      15%  { transform: rotate(-15deg); }
+      20%  { transform: rotate(15deg); }
+      25%  { transform: rotate(-15deg); }
+      28%  { transform: rotate(12deg); }
+      /* CLIMB — step up */
+      33%  { transform: rotate(-44deg); }
+      40%  { transform: rotate(-22deg); }
+      47%  { transform: rotate(30deg); }
+      /* STANDING HELP */
+      52%  { transform: rotate(8deg); }
+      63%  { transform: rotate(6deg); }
+      72%  { transform: rotate(12deg); }
+      /* CELEBRATE */
+      80%  { transform: rotate(-40deg); }
+      88%  { transform: rotate(34deg); }
+      94%  { transform: rotate(-38deg); }
+      100% { transform: rotate(32deg); }
+    }
+
+    @keyframes skogLegRight {
+      /* WALK */
+      0%   { transform: rotate(-14deg); }
+      5%   { transform: rotate(16deg); }
+      10%  { transform: rotate(-14deg); }
+      15%  { transform: rotate(16deg); }
+      20%  { transform: rotate(-14deg); }
+      25%  { transform: rotate(16deg); }
+      28%  { transform: rotate(-12deg); }
+      /* CLIMB — push off */
+      33%  { transform: rotate(40deg); }
+      40%  { transform: rotate(18deg); }
+      47%  { transform: rotate(-24deg); }
+      /* STANDING HELP */
+      52%  { transform: rotate(-4deg); }
+      63%  { transform: rotate(-6deg); }
+      72%  { transform: rotate(-12deg); }
+      /* CELEBRATE */
+      80%  { transform: rotate(36deg); }
+      88%  { transform: rotate(-32deg); }
+      94%  { transform: rotate(34deg); }
+      100% { transform: rotate(-30deg); }
+    }
+
+    /* === LOKE ARMS === */
+    @keyframes lokeArmLeft {
+      /* WALK */
+      0%   { transform: rotate(18deg); }
+      5%   { transform: rotate(-16deg); }
+      10%  { transform: rotate(18deg); }
+      15%  { transform: rotate(-16deg); }
+      20%  { transform: rotate(18deg); }
+      25%  { transform: rotate(-16deg); }
+      28%  { transform: rotate(16deg); }
+      33%  { transform: rotate(-14deg); }
+      /* WAITING */
+      38%  { transform: rotate(6deg); }
+      /* CLIMB — balance arm */
+      44%  { transform: rotate(-32deg); }
+      50%  { transform: rotate(-24deg); }
+      57%  { transform: rotate(12deg); }
+      63%  { transform: rotate(8deg); }
+      /* CELEBRATE */
+      72%  { transform: rotate(-10deg); }
+      80%  { transform: rotate(70deg); }
+      88%  { transform: rotate(-74deg); }
+      94%  { transform: rotate(72deg); }
+      100% { transform: rotate(-70deg); }
+    }
+
+    @keyframes lokeArmRight {
+      /* WALK */
+      0%   { transform: rotate(-18deg); }
+      5%   { transform: rotate(22deg); }
+      10%  { transform: rotate(-18deg); }
+      15%  { transform: rotate(22deg); }
+      20%  { transform: rotate(-18deg); }
+      25%  { transform: rotate(22deg); }
+      28%  { transform: rotate(-16deg); }
+      33%  { transform: rotate(18deg); }
+      /* WAITING */
+      38%  { transform: rotate(-22deg); }
+      /* CLIMB — right arm REACHES UP to grab Skog's hand */
+      44%  { transform: rotate(-82deg); }
+      50%  { transform: rotate(-78deg); }
+      /* LETTING GO — landing */
+      57%  { transform: rotate(-14deg); }
+      63%  { transform: rotate(6deg); }
+      72%  { transform: rotate(12deg); }
+      /* CELEBRATE */
+      80%  { transform: rotate(-72deg); }
+      88%  { transform: rotate(70deg); }
+      94%  { transform: rotate(-74deg); }
+      100% { transform: rotate(66deg); }
+    }
+
+    /* === LOKE LEGS === */
+    @keyframes lokeLegLeft {
+      /* WALK */
+      0%   { transform: rotate(14deg); }
+      5%   { transform: rotate(-14deg); }
+      10%  { transform: rotate(14deg); }
+      15%  { transform: rotate(-14deg); }
+      20%  { transform: rotate(14deg); }
+      25%  { transform: rotate(-14deg); }
+      28%  { transform: rotate(12deg); }
+      33%  { transform: rotate(-12deg); }
+      38%  { transform: rotate(10deg); }
+      /* CLIMB */
+      44%  { transform: rotate(-40deg); }
+      50%  { transform: rotate(-18deg); }
+      57%  { transform: rotate(26deg); }
+      63%  { transform: rotate(10deg); }
+      72%  { transform: rotate(8deg); }
+      /* CELEBRATE */
+      80%  { transform: rotate(-36deg); }
+      88%  { transform: rotate(30deg); }
+      94%  { transform: rotate(-34deg); }
+      100% { transform: rotate(28deg); }
+    }
+
+    @keyframes lokeLegRight {
+      /* WALK */
+      0%   { transform: rotate(-13deg); }
+      5%   { transform: rotate(14deg); }
+      10%  { transform: rotate(-13deg); }
+      15%  { transform: rotate(14deg); }
+      20%  { transform: rotate(-13deg); }
+      25%  { transform: rotate(14deg); }
+      28%  { transform: rotate(-12deg); }
+      33%  { transform: rotate(12deg); }
+      38%  { transform: rotate(-10deg); }
+      /* CLIMB */
+      44%  { transform: rotate(34deg); }
+      50%  { transform: rotate(16deg); }
+      57%  { transform: rotate(-22deg); }
+      63%  { transform: rotate(-8deg); }
+      72%  { transform: rotate(-8deg); }
+      /* CELEBRATE */
+      80%  { transform: rotate(32deg); }
+      88%  { transform: rotate(-28deg); }
+      94%  { transform: rotate(30deg); }
+      100% { transform: rotate(-26deg); }
+    }
+
+    /* Hand-reach contact point - appears during help phase */
+    .hand-reach {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #ffe48a 0%, #f5a623 70%);
+      box-shadow: 0 0 8px 3px rgba(245, 166, 35, 0.55);
+      z-index: 13;
+      pointer-events: none;
+      animation:
+        handReachMove var(--loop) linear infinite,
+        handReachFade var(--loop) linear infinite;
+    }
+
+    @keyframes handReachMove {
+      0%   { transform: translate(50px,  300px); }
+      50%  { transform: translate(448px, 178px); }
+      55%  { transform: translate(468px, 190px); }
+      61%  { transform: translate(480px, 210px); }
+      100% { transform: translate(760px, 288px); }
+    }
+
+    @keyframes handReachFade {
+      0%, 44%  { opacity: 0; }
+      50%      { opacity: 1; }
+      61%      { opacity: 1; }
+      66%, 100% { opacity: 0; }
+    }
+
+    @media (max-width: 900px) {
+      .scene { width: 98vw; }
+      .hero { transform-origin: 50% 100%; scale: 0.86; }
+      .log { transform: rotate(-8deg) scale(0.9); left: 310px; }
+      .tree { transform: scale(0.82); }
+      .tree.t2, .tree.t4 { transform: scale(0.72); }
+    }
+  </style>
+</head>
+<body>
+  <main class="scene" aria-label="Skogspromenad med samarbete över stock och firardans">
+    <section class="hud">
+      <h1>Skogshjalten + Loke: Walk, Help, Celebrate</h1>
+      <p>Tidslinje: 1) Går genom skogen, 2) Hjälper varandra över fallen stock, 3) Firar med gemensam dans.</p>
+    </section>
+
+    <aside class="phase-label" aria-hidden="true">
+      <span>Fas 1: Walk in</span>
+      <span>Fas 2: Help over log</span>
+      <span>Fas 3: Celebrate dance</span>
+    </aside>
+
+    <div class="tree t1"></div>
+    <div class="tree t2"></div>
+    <div class="tree t3"></div>
+    <div class="tree t4"></div>
+    <div class="log" aria-hidden="true"></div>
+    <div class="hand-reach" aria-hidden="true"></div>
+
+    <article class="hero skog" aria-label="Skogshjalten">
+      <div class="head"></div>
+      <div class="cape"></div>
+      <div class="body"></div>
+      <div class="limb arm left"></div>
+      <div class="limb arm right"></div>
+      <div class="limb leg left"></div>
+      <div class="limb leg right"></div>
+    </article>
+
+    <article class="hero loke" aria-label="Loke">
+      <div class="head"></div>
+      <div class="cape"></div>
+      <div class="body"></div>
+      <div class="limb arm left"></div>
+      <div class="limb arm right"></div>
+      <div class="limb leg left"></div>
+      <div class="limb leg right"></div>
+    </article>
+  </main>
+</body>
+</html>

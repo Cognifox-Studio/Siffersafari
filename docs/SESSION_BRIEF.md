@@ -4,7 +4,140 @@
 >
 > Uppdateras efter större milestones/förluster av kontext.
 
+## 2026-03-12 — Workspace-skills för asset-, animation-, QA- och releaseflöden
+
+### Mål (denna del)
+✅ Göra återkommande Copilot-arbetsflöden körbara som repo-skills i stället för att förlita sig på fri promptning.
+
+### Gjort
+- Skapat workspace-skills under `.github/skills/` för:
+   - `game-character-pipeline`
+   - `animation-preview-lab`
+   - `asset-generation-runner`
+   - `flutter-qa-guard`
+   - `release-readiness-check`
+- Fokuserat skill-uppsättningen på repo:ts faktiska flaskhals: karaktärer, animation previews, genererade assets, QA och releasekontroller.
+- Formulerat beskrivningar och triggerord så skillsen kan upptäckas automatiskt av Copilot vid relevanta uppgifter.
+
+### Nästa steg
+1. Prova skillsen i praktiskt arbete när nästa karaktär, preview-iteration eller asset-regenerering görs.
+2. Om någon skill visar sig bli för bred: dela upp den i smalare skills eller flytta lång referenstext till skill-specifika `references/`.
+
+## 2026-03-12 — Preview-hub för humanoid-animationer
+
+### Mål (denna del)
+✅ Göra animation-preview-spåret lättare att använda praktiskt för Skogshjalte och Loke.
+
+### Gjort
+- Skapat en samlad hubb i `artifacts/animation_preview/index.html` som länkar alla lokala previews.
+- Dokumenterat preview-pipelinen i `artifacts/animation_preview/README.md` med tydliga roller: reference, still, motion_lab, clean_preview och scene_preview.
+- Uppdaterat `docs/CHARACTER_ANIMATIONS.md` med canonical previews och arbetsregler för humanoid-animationer.
+- Markerat `skogshjalte_pivot_clean_preview` och `loke_walk_preview` som nuvarande canonical previews för respektive rörelsetyp.
+
+### Nästa steg
+1. När nästa Skogshjalte- eller Loke-rörelse tas fram: börja från preview-hubben i stället för direkt i en enskild preview-mapp.
+2. Om en ny preview blir canonical: uppdatera hubben och `CHARACTER_ANIMATIONS.md` i samma ändring.
+
 ## 2026-03-10 — Rive + Lottie hybrid för Ville-pipeline
+
+## 2026-03-11 — Gemensam humanoid-basform
+
+### Mal (denna del)
+✅ Spara arm- och kroppsjusteringar som ateranvandbar standard for nya humanoid-karaktarer.
+
+### Gjort
+- Skapat gemensam basform i `assets/characters/_shared/config/humanoid_base_form_v1.json`.
+- Lagt till `baseFormRef` i Lokes visual spec samt sparat T-pose-justeringar i specen.
+- Uppdaterat karaktar-pipeline-instruktionen sa nya humanoids ska utga fran denna bas.
+- Dokumenterat beslutet i `docs/DECISIONS_LOG.md`.
+
+### Nasta steg
+1. Nar nasta humanoid skapas: borja med ny visual spec som refererar `humanoid_base_form_v1.json`.
+2. Vid behov: extrahera en gemensam generator for humanoids som laser `baseFormRef` direkt.
+
+## 2026-03-11 — Ny humanoid fran bild: Skogshjalte
+
+### Mal (denna del)
+✅ Testa bild->humanoid-pipelinen end-to-end med fulla assets och still-preview.
+
+### Gjort
+- Skapat ny karaktarsmapp `assets/characters/skogshjalte/` med config, svg-delar och rive-readme.
+- Kopplat visual spec till gemensam humanoid-bas via `baseFormRef`.
+- Skapat `artifacts/skogshjalte_rive_blueprint.json` och `artifacts/SKOGSHJALTE_RIVE_GUIDE.md`.
+- Skapat statisk preview i `artifacts/animation_preview/skogshjalte_still_preview/index.html`.
+
+### Nasta steg
+1. Rigga i Rive Editor och exportera `assets/characters/skogshjalte/rive/skogshjalte_character.riv` nar designen ar godkand.
+
+## 2026-03-11 — Utokad humanoid-ledmodell
+
+### Mal (denna del)
+✅ Uppgradera humanoid-logiken sa att den stoder en rikare Pivot-inspirerad ledmodell.
+
+### Gjort
+- Uppdaterat `assets/characters/_shared/config/humanoid_base_form_v1.json` med ett utokat standardrigg-skelett for pelvis, shoulders, wrists, hips, ankles och toes.
+- Synkat `loke_animation_spec.json` och `skogshjalte_animation_spec.json` till samma flerledsprofil.
+- Dokumenterat i pipeline-instruktionen att humanoids ska byggas mot den rikare ledmodellen aven nar vissa delar delar samma faktiska bildasset i forsta versionen.
+
+### Nasta steg
+1. Om du vill ga vidare hela vagen: dela upp SVG-delar for hand/fot/toe separat i de humanoider som ska utnyttja hela riggen.
+2. Oversatt sedan preview-logiken sa att fler leder animeras i HTML/Rive, inte bara spec-filerna.
+
+## 2026-03-11 — Pivot Animator referensimport
+
+### Mal (denna del)
+✅ Fa in en extern Pivot Animator-GIF som lokal referens i repo:t och skapa en separat preview for den.
+
+### Gjort
+- Importerat `GIF.gif` och `GIF PIV.piv` till `artifacts/reference/pivot_animator/`.
+- Skapat lokal preview i `artifacts/animation_preview/pivot_reference_preview/index.html` som visar GIF:en direkt i browser.
+
+### Nasta steg
+1. Extrahera timing och huvudposer fran Pivot-referensen.
+2. Oversatt dem till Skogshjaltens inline-SVG-keyframes eller vidare Rive-spec.
+
+## 2026-03-10 — Copilot-instruktion för bild -> karaktär
+
+### Mål (denna del)
+✅ Göra bildbaserad karaktärsgenerering återanvändbar direkt i Copilot för detta repo.
+
+### Gjort
+- Lagt till en dedikerad workspace-instruktion för triggerfraser som `Gör en användbar karaktär av denna`.
+- Styrt arbetsflödet mot konkreta repo-artifacts: `assets/characters/<slug>/{config,svg,rive}` samt `artifacts/` för blueprint/guide.
+- Förtydligat att karaktärer ska följa repo:ts hybridstrategi: Rive för karaktärer, Lottie för UI-effekter.
+- Förtydligat att Copilot ska skapa faktiska filer när uppgiften efterfrågar utförande, och inte låtsas att en `.riv` finns om export fortfarande måste göras manuellt.
+
+### Verifiering
+- Instruktionsfil skapad i `.github/instructions/`.
+- Huvudinstruktionen synkad i `copilot-instructions.md`.
+
+### Nästa steg
+1. Prova flödet genom att klistra in en bild i chatten och skriva `Gör en användbar karaktär av denna`.
+2. Om du vill ha ännu mer determinism senare: lägg till en separat `.prompt.md` för ett explicit slash-kommando.
+
+## 2026-03-10 — Ny karaktär: Loke
+
+### Mål (denna del)
+✅ Skapa en ny användbar karaktär från referensbild och döpa den till Loke.
+
+### Gjort
+- Skapat ny karaktärsstruktur under `assets/characters/loke/`.
+- Lagt in `loke_visual_spec.json` och `loke_animation_spec.json` som source-of-truth för utseende, rigg och animationer.
+- Skapat rigg-vänliga SVG-delar för huvud, ansikte, torso, armar, ben, skor, hatt, ryggsäck, skugga och en komplett `loke_composite.svg`.
+- Skapat Rive-underlag via `artifacts/loke_rive_blueprint.json` och `artifacts/LOKE_RIVE_GUIDE.md`.
+- Behållit den visuella kärnan från referensbilden men förenklat formen för bättre riggning.
+- Segmenterat Lokes armar och ben i över-/underdelar så att appdemon kan använda fler leder i walk-animationen.
+- Byggt om `LokeWalkCharacter` i Flutter till separata axel/armbågs- och höft/knävinklar.
+
+### Verifiering
+- JSON- och markdownfiler för Loke validerade utan editorfel.
+- Assetmappar och förväntad filstruktur finns på plats.
+- Riktat widgettest för `LokeWalkCharacter`: ✅ grönt.
+
+### Nästa steg
+1. Förhandsgranska `loke_composite.svg` visuellt och justera form/färger om du vill komma närmare referensbilden.
+2. Rigga Loke i Rive Editor och exportera `assets/characters/loke/rive/loke_character.riv`.
+3. Om Loke ska in i appen: koppla in asset-path och state machine i tema/widget-konfiguration.
 
 ### Mål (denna del)
 ✅ Etablera konkret och körbar pipeline: Rive för Ville-karaktär + Lottie för UI-effekter.

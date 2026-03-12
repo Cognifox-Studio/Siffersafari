@@ -1,126 +1,162 @@
-# Services – API (MVP)
+﻿# Services API (As-Is)
 
-Det här dokumentet beskriver appens centrala “services” på en nivå som är praktiskt användbar för utveckling/test.
+Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-03-11).
 
-## Mermaid – service-karta
+## Oversikt
 
-```mermaid
-flowchart TB
-	UI[Presentation / UI]
+Services finns i tva lager:
+- `lib/core/services/`: appnara/tekniska tjanster
+- `lib/domain/services/`: Flutter-fria domantjanster
 
-	subgraph Domain[Domain (Flutter-fritt)]
-		ADS[AdaptiveDifficultyService]
-		SRS[SpacedRepetitionService]
-		FS[FeedbackService]
-	end
+## Core services
 
-	subgraph Core[Core (tekniskt)]
-		QS[QuestionGeneratorService]
-		AS[AchievementService]
-		AU[AudioService]
-	end
+### QuestionGeneratorService
+Fil: `lib/core/services/question_generator_service.dart`
 
-	UI --> QS
-	UI --> ADS
-	UI --> SRS
-	UI --> FS
-	UI --> AS
-	UI --> AU
+Ansvar:
+- generera fragor per age group, grade, operation och difficulty/step
+- hantera mix-fragor och curriculum-gates
+- stod for word problems och missing-number varianter
 
-	QS --> LSR[LocalStorageRepository]
-	ADS --> LSR
-	SRS --> LSR
-	AS --> LSR
-	AU --> LSR
+Anvands av:
+- `QuizNotifier` (start + nasta fraga)
 
-	LSR --> H[(Hive)]
-```
+### AudioService
+Fil: `lib/core/services/audio_service.dart`
 
-## Mermaid – typiskt quiz-flöde (översikt)
+Ansvar:
+- spela click/correct/wrong/celebration/music
+- respektera profilernas sound/music settings
 
-```mermaid
-sequenceDiagram
-	autonumber
-	participant UI as Quiz UI
-	participant QS as QuestionGeneratorService
-	participant ADS as AdaptiveDifficultyService
-	participant SRS as SpacedRepetitionService
-	participant FS as FeedbackService
-	participant AS as AchievementService
-	participant LSR as LocalStorageRepository
-	participant H as Hive
+Anvands av:
+- quizflow, results, home
 
-	UI->>ADS: Hämta rekommenderad svårighet
-	ADS-->>UI: DifficultyLevel
+### AchievementService
+Fil: `lib/core/services/achievement_service.dart`
 
-	UI->>SRS: Hämta repetitionsprioritet
-	SRS-->>UI: Prioriteringsdata
+Ansvar:
+- evaluera session + userprogress
+- returnera upplasta achievements och bonus
 
-	UI->>QS: Generera nästa fråga
-	QS-->>UI: Question (+ svarsalternativ)
+Anvands av:
+- `UserNotifier.applyQuizResult(...)`
 
-	UI->>FS: Skapa feedback för svar
-	FS-->>UI: Feedback-model
+### QuestProgressionService
+Fil: `lib/core/services/quest_progression_service.dart`
 
-	UI->>LSR: Spara quizresultat/progression
-	LSR->>H: Persist
-	H-->>LSR: OK
+Ansvar:
+- bygga quest-path utifran grade/age
+- ge current status och next quest
+- filtrera path pa tillatna operationer
 
-	UI->>AS: Utvärdera achievements
-	AS->>LSR: Läs/spara milestones
-	LSR->>H: Persist
-```
+Anvands av:
+- `UserNotifier`
+- story-providerlagret
 
-> Not: Namn och exakta signaturer kan ändras; se källkod för detaljer.
+### StoryProgressionService
+Fil: `lib/core/services/story_progression_service.dart`
 
-## QuestionGeneratorService
-**Syfte:** Skapa matematikfrågor anpassade till ålder/årskurs, räknesätt och svårighet.
+Ansvar:
+- mappa quest-status till UI-fardig storymodell
+- satta node states (completed/current/upcoming)
+- skapa chapter/landmark metadata
 
-**Beteende (översikt):**
-- Genererar `Question` med operand(er) inom intervall från `DifficultyConfig.getNumberRange(...)`.
-- Ska producera svarsalternativ (inkl rätt svar) för UI.
+Anvands av:
+- `storyProgressProvider`
 
-## AdaptiveDifficultyService
-**Syfte:** Justera svårighetsnivå baserat på användarens prestation.
+### AppUpdateService
+Fil: `lib/core/services/app_update_service.dart`
 
-**Beteende (översikt):**
-- Tar hänsyn till success rate och ev. response times.
-- Returnerar rekommenderad `DifficultyLevel` för framtida frågor/sessioner.
+Ansvar:
+- hamta senaste release via GitHub API
+- jamfora installerad version med release-tag
+- starta OTA-installation pa Android via `ota_update`
 
-## SpacedRepetitionService
-**Syfte:** Prioritera repetition av sådant användaren nyligen haft svårt för.
+Anvands av:
+- `ParentDashboardScreen`
 
-**Beteende (översikt):**
-- Lagrar och uppdaterar “styrkor/svagheter” per fråga/område.
-- Väljer uppgifter för repetition med jämna mellanrum.
+## Domain services
 
-## FeedbackService
-**Syfte:** Ge åldersanpassad feedback efter varje svar.
+### AdaptiveDifficultyService
+Fil: `lib/domain/services/adaptive_difficulty_service.dart`
 
-**Fil:** `lib/domain/services/feedback_service.dart`
+Ansvar:
+- foresla nasta `difficultyStep` (inte bara easy/medium/hard)
+- hybridmodell med micro/macro-signal + cooldown
 
-**Beteende (översikt):**
-- Skapar en feedbackmodell som UI visar i `FeedbackDialog`.
-- Kan variera språk/ton baserat på `AgeGroup`.
-- Kan inkludera “spel-metadata” som UI visar (t.ex. 🪙 poäng, ⚡ snabbbonus, 🔥 svit).
+Anvands av:
+- `QuizNotifier.submitAnswer(...)`
 
-## AchievementService
-**Syfte:** Hantera achievements (låsa upp, namnge, presentera).
+### FeedbackService
+Fil: `lib/domain/services/feedback_service.dart`
 
-**Beteende (översikt):**
-- Utvärderar “milestones” baserat på quizresultat och användarprogress.
-- Levererar display-namn för achievements.
+Ansvar:
+- skapa `FeedbackResult` efter varje svar
+- inkludera poang/snabbbonus/streak och alderanpassad text
 
-## AudioService
-**Syfte:** Spela ljudeffekter/musik (och respektera inställningar per användare).
+Anvands av:
+- `QuizNotifier.submitAnswer(...)`
+- `FeedbackDialog`
 
-**Beteende (översikt):**
-- Spelar “correct”, “wrong”, “celebration”.
-- Läser inställningar (ljud/musik on/off) och ska inte spela om avstängt.
+### ParentPinService
+Fil: `lib/domain/services/parent_pin_service.dart`
 
-## LocalStorageRepository
-**Syfte:** Lokal persistens (Hive) för users, quizhistorik och settings.
+Ansvar:
+- lagra PIN som BCrypt-hash
+- verifiera PIN med lockout efter upprepade fel
+- hantera security-question recovery
 
-**Beteende (översikt):**
-- Spara/ladda användarprofiler, aktiv användare, quizhistorik.
-- Spara/ladda settings (t.ex. onboarding flag, audio settings, parent PIN).
+Anvands av:
+- `ParentPinScreen`
+- `PinRecoveryScreen`
+
+### DataExportService
+Fil: `lib/domain/services/data_export_service.dart`
+
+Ansvar:
+- exportera profildata/metadata till JSON-filer
+- lista och radera exporterade filer
+
+Anvands av:
+- `ParentDashboardScreen`
+
+### ProfileBackupService
+Fil: `lib/domain/services/profile_backup_service.dart`
+
+Ansvar:
+- encode/decode av backup payload
+- schema-validering och defensiv parse
+
+Anvands av:
+- testat och klar for vidare integration
+
+### SpacedRepetitionService
+Fil: `lib/domain/services/spaced_repetition_service.dart`
+
+Ansvar:
+- repetitionsintervall och due-berakning
+
+Status:
+- implementerad och unit-testad
+- registrerad i DI
+- ej aktivt inkopplad i quiz-notifierflodet an
+
+## Repository-kontrakt
+
+### LocalStorageRepository
+Fil: `lib/data/repositories/local_storage_repository.dart`
+
+Ansvar:
+- CRUD for `UserProgress`
+- quizhistorik (in-progress + complete)
+- settings helpers (active user, onboarding, quest state, operation filters)
+- defensiv validering/rensning av korrupt sessiondata
+
+## DI och providers
+
+- DI: `lib/core/di/injection.dart`
+- Providers: `lib/core/providers/*.dart`
+
+Notera:
+- Providers konsumerar services/repository via Riverpod.
+- DI registrerar singleton/lazy-singleton for globala tjanster.

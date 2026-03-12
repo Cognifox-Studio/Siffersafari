@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skogshjalte Walk Preview</title>
+  <style>
+    :root {
+      --sky-top: #f8f0c9;
+      --sky-bottom: #9ddac9;
+      --track: #d7bd7e;
+      --card: rgba(255, 252, 243, 0.82);
+      --ink: #3f2d24;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.55), transparent 24%),
+        radial-gradient(circle at 80% 12%, rgba(255, 248, 209, 0.7), transparent 20%),
+        linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+      max-width: 380px;
+      padding: 16px 18px;
+      border: 2px solid rgba(63, 45, 36, 0.15);
+      border-radius: 18px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 16px 40px rgba(73, 57, 26, 0.14);
+    }
+
+    .hud h1 {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+    }
+
+    .hud p {
+      margin: 0;
+      line-height: 1.45;
+      font-size: 0.95rem;
+    }
+
+    .hud-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .hud button {
+      border: 1px solid rgba(63, 45, 36, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--ink);
+      padding: 7px 11px;
+      font: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: background 120ms ease, border-color 120ms ease, transform 120ms ease;
+    }
+
+    .hud button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(63, 45, 36, 0.32);
+    }
+
+    .hud button.is-active {
+      background: rgba(78, 159, 90, 0.18);
+      border-color: rgba(47, 122, 58, 0.42);
+    }
+
+    .hud-status {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: rgba(63, 45, 36, 0.78);
+    }
+
+    .stage {
+      position: relative;
+      width: min(92vw, 760px);
+      aspect-ratio: 19 / 12;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0) 32%),
+        linear-gradient(180deg, rgba(255, 253, 247, 0.26), rgba(255, 236, 176, 0.08));
+      box-shadow: 0 22px 60px rgba(62, 53, 20, 0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .sun {
+      position: absolute;
+      top: 28px;
+      right: 44px;
+      width: 92px;
+      height: 92px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #fff9dd, #ffd76c 68%, #f1ba43 100%);
+      box-shadow: 0 0 50px rgba(255, 211, 94, 0.55);
+    }
+
+    .hill {
+      position: absolute;
+      bottom: 112px;
+      background: #77c46d;
+      border-radius: 50%;
+      opacity: 0.95;
+    }
+
+    .hill.a {
+      left: -40px;
+      width: 320px;
+      height: 120px;
+    }
+
+    .hill.b {
+      right: -30px;
+      width: 360px;
+      height: 136px;
+      background: #6bb961;
+    }
+
+    .track {
+      position: absolute;
+      left: -10%;
+      bottom: 0;
+      width: 120%;
+      height: 148px;
+      background:
+        linear-gradient(180deg, #ead296, var(--track)),
+        linear-gradient(90deg, transparent 0 12%, rgba(255,255,255,0.08) 12% 14%, transparent 14% 100%);
+      border-top-left-radius: 52% 40px;
+      border-top-right-radius: 52% 40px;
+    }
+
+    .track::before {
+      content: "";
+      position: absolute;
+      inset: 42px -25% 58px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0 48px,
+        rgba(126, 96, 43, 0.5) 48px 62px,
+        transparent 62px 118px
+      );
+      animation: trackMove 1s linear infinite;
+      opacity: 0.38;
+    }
+
+    .character-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 10px;
+      width: 360px;
+      height: 520px;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: end center;
+    }
+
+    svg {
+      overflow: visible;
+    }
+
+    #pelvis-group,
+    #chest-group,
+    #neck-group,
+    #cape,
+    #hat,
+    #arm-left-rig,
+    #arm-right-rig,
+    #leg-left-rig,
+    #leg-right-rig,
+    #shoulder-left,
+    #shoulder-right,
+    #arm-left-upper,
+    #arm-left-lower,
+    #arm-right-upper,
+    #arm-right-lower,
+    #wrist-left,
+    #wrist-right,
+    #hip-left,
+    #hip-right,
+    #leg-left-upper,
+    #leg-left-lower,
+    #leg-right-upper,
+    #leg-right-lower,
+    #ankle-left,
+    #ankle-right,
+    #foot-left,
+    #foot-right,
+    #toe-left,
+    #toe-right,
+    #head-group,
+    #shadow {
+      transform-box: fill-box;
+    }
+
+    #character {
+      animation: bodyBob 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 84%;
+    }
+
+    #arm-left-rig,
+    #leg-left-rig {
+      opacity: 0.9;
+    }
+
+    #arm-right-rig,
+    #leg-right-rig {
+      opacity: 1;
+    }
+
+    #shadow {
+      animation: shadowPulse 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: center;
+    }
+
+    #pelvis-group {
+      animation: pelvisDrive 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 66%;
+    }
+
+    #chest-group {
+      animation: chestCounter 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 35%;
+    }
+
+    #neck-group {
+      animation: neckFollow 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 88%;
+    }
+
+    #cape {
+      animation: capeSway 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 5%;
+    }
+
+    #hat {
+      animation: hatFollow 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 92%;
+    }
+
+    #shoulder-left {
+      animation: shoulderLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 86% 8%;
+    }
+
+    #shoulder-right {
+      animation: shoulderRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 14% 8%;
+    }
+
+    #arm-left-upper {
+      animation: armUpperLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 84% 8%;
+    }
+
+    #arm-left-lower {
+      animation: armLowerLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 52% 8%;
+    }
+
+    #arm-right-upper {
+      animation: armUpperRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 16% 8%;
+    }
+
+    #arm-right-lower {
+      animation: armLowerRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 48% 8%;
+    }
+
+    #wrist-left {
+      animation: wristLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 48% 10%;
+    }
+
+    #wrist-right {
+      animation: wristRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 52% 10%;
+    }
+
+    #hip-left {
+      animation: hipLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 66% 10%;
+    }
+
+    #hip-right {
+      animation: hipRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 34% 10%;
+    }
+
+    #leg-left-upper {
+      animation: legUpperLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 56% 7%;
+    }
+
+    #leg-left-lower {
+      animation: legLowerLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 48% 7%;
+    }
+
+    #leg-right-upper {
+      animation: legUpperRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 44% 7%;
+    }
+
+    #leg-right-lower {
+      animation: legLowerRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 52% 7%;
+    }
+
+    #ankle-left {
+      animation: ankleLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 12%;
+    }
+
+    #ankle-right {
+      animation: ankleRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 12%;
+    }
+
+    #foot-left {
+      animation: footLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 24% 32%;
+    }
+
+    #foot-right {
+      animation: footRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 24% 32%;
+    }
+
+    #toe-left {
+      animation: toeLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 8% 56%;
+    }
+
+    #toe-right {
+      animation: toeRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 8% 56%;
+    }
+
+    #head-group {
+      animation: headBob 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+      transform-origin: 50% 78%;
+    }
+
+    #eyes-open {
+      animation: blinkOpen 4s linear infinite;
+    }
+
+    #eyes-blink {
+      opacity: 0;
+      animation: blinkClosed 4s linear infinite;
+    }
+
+    .pose-review .track::before,
+    .pose-review #character,
+    .pose-review #shadow,
+    .pose-review #pelvis-group,
+    .pose-review #chest-group,
+    .pose-review #neck-group,
+    .pose-review #cape,
+    .pose-review #hat,
+    .pose-review #shoulder-left,
+    .pose-review #shoulder-right,
+    .pose-review #arm-left-upper,
+    .pose-review #arm-left-lower,
+    .pose-review #arm-right-upper,
+    .pose-review #arm-right-lower,
+    .pose-review #wrist-left,
+    .pose-review #wrist-right,
+    .pose-review #hip-left,
+    .pose-review #hip-right,
+    .pose-review #leg-left-upper,
+    .pose-review #leg-left-lower,
+    .pose-review #leg-right-upper,
+    .pose-review #leg-right-lower,
+    .pose-review #ankle-left,
+    .pose-review #ankle-right,
+    .pose-review #foot-left,
+    .pose-review #foot-right,
+    .pose-review #toe-left,
+    .pose-review #toe-right,
+    .pose-review #head-group,
+    .pose-review #eyes-open,
+    .pose-review #eyes-blink {
+      animation: none !important;
+    }
+
+    .pose-review #eyes-open {
+      opacity: 1;
+    }
+
+    .pose-review #eyes-blink {
+      opacity: 0;
+    }
+
+    .pose-review #shadow {
+      opacity: 0.2;
+    }
+
+    .pose-contact-right #character {
+      transform: translateX(-2px) translateY(1px);
+    }
+
+    .pose-contact-right #shadow {
+      transform: scaleX(1.06) scaleY(0.99);
+      opacity: 0.22;
+    }
+
+    .pose-contact-right #pelvis-group { transform: translateX(2px) translateY(1px) rotate(1.5deg); }
+    .pose-contact-right #chest-group { transform: translateX(-1px) rotate(-1.2deg); }
+    .pose-contact-right #neck-group { transform: translateX(-1px) rotate(0.55deg); }
+    .pose-contact-right #cape { transform: rotate(-1deg) translateX(-1px); }
+    .pose-contact-right #hat { transform: rotate(0deg); }
+    .pose-contact-right #arm-left-upper { transform: rotate(16deg); }
+    .pose-contact-right #arm-left-lower { transform: rotate(12deg); }
+    .pose-contact-right #arm-right-upper { transform: rotate(-14deg); }
+    .pose-contact-right #arm-right-lower { transform: rotate(-4deg); }
+    .pose-contact-right #wrist-left { transform: rotate(-1deg); }
+    .pose-contact-right #wrist-right { transform: rotate(2deg); }
+      .pose-contact-right #hip-left { transform: rotate(5deg); }
+      .pose-contact-right #hip-right { transform: rotate(-5deg); }
+      .pose-contact-right #leg-left-upper { transform: translateX(-5px) rotate(-22deg) translateY(-1px); }
+      .pose-contact-right #leg-left-lower { transform: translateX(-8px) rotate(10deg); }
+      .pose-contact-right #leg-right-upper { transform: translateX(2px) rotate(22deg) translateY(6px); }
+      .pose-contact-right #leg-right-lower { transform: translateX(6px) rotate(2deg); }
+      .pose-contact-right #ankle-left { transform: rotate(10deg); }
+      .pose-contact-right #ankle-right { transform: rotate(-8deg); }
+      .pose-contact-right #foot-left { transform: translateX(-13px) translateY(-4px) rotate(10deg); }
+      .pose-contact-right #foot-right { transform: translateX(13px) translateY(-1px) rotate(-13deg); }
+      .pose-contact-right #toe-left { transform: rotate(-11deg); }
+      .pose-contact-right #toe-right { transform: rotate(-9deg); }
+    .pose-contact-right #head-group { transform: translateY(0) rotate(0deg); }
+
+    .pose-passing-right #character {
+      transform: translateX(0) translateY(-1px);
+    }
+
+    .pose-passing-right #shadow {
+      transform: scaleX(0.97) scaleY(0.92);
+      opacity: 0.16;
+    }
+
+    .pose-passing-right #pelvis-group { transform: translateX(-1px) translateY(0) rotate(-0.6deg); }
+    .pose-passing-right #chest-group { transform: translateX(1px) rotate(0.8deg); }
+    .pose-passing-right #neck-group { transform: translateX(1px) rotate(-0.35deg); }
+    .pose-passing-right #cape { transform: rotate(2deg) translateX(1px); }
+    .pose-passing-right #hat { transform: rotate(-0.5deg); }
+    .pose-passing-right #arm-left-upper { transform: rotate(4deg); }
+    .pose-passing-right #arm-left-lower { transform: rotate(6deg); }
+    .pose-passing-right #arm-right-upper { transform: rotate(0deg); }
+    .pose-passing-right #arm-right-lower { transform: rotate(4deg); }
+    .pose-passing-right #wrist-left { transform: rotate(2deg); }
+    .pose-passing-right #wrist-right { transform: rotate(0deg); }
+    .pose-passing-right #hip-left { transform: rotate(-0.5deg); }
+    .pose-passing-right #hip-right { transform: rotate(-1deg); }
+    .pose-passing-right #leg-left-upper { transform: translateX(-1px) rotate(10deg) translateY(0); }
+    .pose-passing-right #leg-left-lower { transform: translateX(0) rotate(34deg); }
+    .pose-passing-right #leg-right-upper { transform: translateX(-1px) rotate(2deg) translateY(1px); }
+    .pose-passing-right #leg-right-lower { transform: translateX(0) rotate(8deg); }
+      .pose-passing-right #ankle-left { transform: rotate(-6deg); }
+      .pose-passing-right #ankle-right { transform: rotate(2deg); }
+      .pose-passing-right #foot-left { transform: translateX(-3px) translateY(-15px) rotate(-5deg); }
+      .pose-passing-right #foot-right { transform: translateX(1px) translateY(0) rotate(-1deg); }
+      .pose-passing-right #toe-left { transform: rotate(-2deg); }
+      .pose-passing-right #toe-right { transform: rotate(1deg); }
+    .pose-passing-right #head-group { transform: translateY(-1px) rotate(0.3deg); }
+
+    .pose-contact-left #character {
+      transform: translateX(2px) translateY(1px);
+    }
+
+    .pose-contact-left #shadow {
+      transform: scaleX(1.06) scaleY(0.99);
+      opacity: 0.22;
+    }
+
+    .pose-contact-left #pelvis-group { transform: translateX(-2px) translateY(1px) rotate(-1.5deg); }
+    .pose-contact-left #chest-group { transform: translateX(1px) rotate(1.2deg); }
+    .pose-contact-left #neck-group { transform: translateX(1px) rotate(-0.55deg); }
+    .pose-contact-left #cape { transform: rotate(0deg) translateX(2px); }
+    .pose-contact-left #hat { transform: rotate(0.4deg); }
+    .pose-contact-left #arm-left-upper { transform: rotate(-14deg); }
+    .pose-contact-left #arm-left-lower { transform: rotate(-4deg); }
+    .pose-contact-left #arm-right-upper { transform: rotate(16deg); }
+    .pose-contact-left #arm-right-lower { transform: rotate(14deg); }
+    .pose-contact-left #wrist-left { transform: rotate(3deg); }
+    .pose-contact-left #wrist-right { transform: rotate(-3deg); }
+    .pose-contact-left #hip-left { transform: rotate(-5deg); }
+    .pose-contact-left #hip-right { transform: rotate(5deg); }
+    .pose-contact-left #leg-left-upper { transform: translateX(-2px) rotate(22deg) translateY(6px); }
+    .pose-contact-left #leg-left-lower { transform: translateX(6px) rotate(2deg); }
+    .pose-contact-left #leg-right-upper { transform: translateX(-5px) rotate(-22deg) translateY(-1px); }
+    .pose-contact-left #leg-right-lower { transform: translateX(-8px) rotate(10deg); }
+      .pose-contact-left #ankle-left { transform: rotate(-8deg); }
+      .pose-contact-left #ankle-right { transform: rotate(10deg); }
+      .pose-contact-left #foot-left { transform: translateX(13px) translateY(-1px) rotate(-13deg); }
+      .pose-contact-left #foot-right { transform: translateX(-13px) translateY(-4px) rotate(10deg); }
+      .pose-contact-left #toe-left { transform: rotate(-9deg); }
+      .pose-contact-left #toe-right { transform: rotate(-11deg); }
+    .pose-contact-left #head-group { transform: translateY(-2px) rotate(-0.45deg); }
+
+    .pose-passing-left #character {
+      transform: translateX(0) translateY(-1px);
+    }
+
+    .pose-passing-left #shadow {
+      transform: scaleX(0.97) scaleY(0.92);
+      opacity: 0.16;
+    }
+
+    .pose-passing-left #pelvis-group { transform: translateX(1px) translateY(0) rotate(0.6deg); }
+    .pose-passing-left #chest-group { transform: translateX(-1px) rotate(-0.8deg); }
+    .pose-passing-left #neck-group { transform: translateX(-1px) rotate(0.35deg); }
+    .pose-passing-left #cape { transform: rotate(-2.5deg) translateX(-1px); }
+    .pose-passing-left #hat { transform: rotate(0.9deg); }
+    .pose-passing-left #arm-left-upper { transform: rotate(1deg); }
+    .pose-passing-left #arm-left-lower { transform: rotate(4deg); }
+    .pose-passing-left #arm-right-upper { transform: rotate(4deg); }
+    .pose-passing-left #arm-right-lower { transform: rotate(6deg); }
+    .pose-passing-left #wrist-left { transform: rotate(0deg); }
+    .pose-passing-left #wrist-right { transform: rotate(-1deg); }
+    .pose-passing-left #hip-left { transform: rotate(-1deg); }
+    .pose-passing-left #hip-right { transform: rotate(-0.5deg); }
+    .pose-passing-left #leg-left-upper { transform: translateX(-1px) rotate(2deg) translateY(1px); }
+    .pose-passing-left #leg-left-lower { transform: translateX(0) rotate(8deg); }
+    .pose-passing-left #leg-right-upper { transform: translateX(-1px) rotate(10deg) translateY(0); }
+    .pose-passing-left #leg-right-lower { transform: translateX(0) rotate(34deg); }
+      .pose-passing-left #ankle-left { transform: rotate(2deg); }
+      .pose-passing-left #ankle-right { transform: rotate(-6deg); }
+      .pose-passing-left #foot-left { transform: translateX(1px) translateY(0) rotate(-1deg); }
+      .pose-passing-left #foot-right { transform: translateX(-3px) translateY(-15px) rotate(-5deg); }
+      .pose-passing-left #toe-left { transform: rotate(1deg); }
+      .pose-passing-left #toe-right { transform: rotate(-2deg); }
+    .pose-passing-left #head-group { transform: translateY(-1px) rotate(-0.15deg); }
+
+    @keyframes trackMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-118px); }
+    }
+
+    @keyframes bodyBob {
+      0%, 100% { transform: translateX(-2px) translateY(1px); }
+      12.5% { transform: translateX(-1px) translateY(1px); }
+      25% { transform: translateX(0) translateY(-1px); }
+      37.5% { transform: translateX(1px) translateY(-2px); }
+      50% { transform: translateX(2px) translateY(1px); }
+      62.5% { transform: translateX(1px) translateY(1px); }
+      75% { transform: translateX(0) translateY(-1px); }
+      87.5% { transform: translateX(-1px) translateY(-2px); }
+    }
+
+    @keyframes shadowPulse {
+      0%, 100% { transform: scaleX(1.06) scaleY(0.99); opacity: 0.22; }
+      12.5% { transform: scaleX(1.04) scaleY(0.98); opacity: 0.2; }
+      25% { transform: scaleX(0.97) scaleY(0.92); opacity: 0.16; }
+      37.5% { transform: scaleX(0.94) scaleY(0.89); opacity: 0.14; }
+      50% { transform: scaleX(1.06) scaleY(0.99); opacity: 0.22; }
+      62.5% { transform: scaleX(1.04) scaleY(0.98); opacity: 0.2; }
+      75% { transform: scaleX(0.97) scaleY(0.92); opacity: 0.16; }
+      87.5% { transform: scaleX(0.94) scaleY(0.89); opacity: 0.14; }
+    }
+
+    @keyframes pelvisDrive {
+      0%, 100% { transform: translateX(2px) translateY(1px) rotate(1.5deg); }
+      12.5% { transform: translateX(1px) translateY(1px) rotate(0.9deg); }
+      25% { transform: translateX(-1px) translateY(0) rotate(-0.6deg); }
+      37.5% { transform: translateX(-2px) translateY(-1px) rotate(-1.5deg); }
+      50% { transform: translateX(-2px) translateY(1px) rotate(-1.5deg); }
+      62.5% { transform: translateX(-1px) translateY(1px) rotate(-0.9deg); }
+      75% { transform: translateX(1px) translateY(0) rotate(0.6deg); }
+      87.5% { transform: translateX(2px) translateY(-1px) rotate(1.5deg); }
+    }
+
+    @keyframes chestCounter {
+      0%, 100% { transform: translateX(-1px) rotate(-1.2deg); }
+      12.5% { transform: translateX(-1px) rotate(-0.6deg); }
+      25% { transform: translateX(1px) rotate(0.8deg); }
+      37.5% { transform: translateX(1px) rotate(1.5deg); }
+      50% { transform: translateX(1px) rotate(1.2deg); }
+      62.5% { transform: translateX(1px) rotate(0.6deg); }
+      75% { transform: translateX(-1px) rotate(-0.8deg); }
+      87.5% { transform: translateX(-1px) rotate(-1.5deg); }
+    }
+
+    @keyframes neckFollow {
+      0%, 100% { transform: translateX(-1px) rotate(0.55deg); }
+      12.5% { transform: translateX(0) rotate(0.2deg); }
+      25% { transform: translateX(1px) rotate(-0.35deg); }
+      37.5% { transform: translateX(1px) rotate(-0.8deg); }
+      50% { transform: translateX(1px) rotate(-0.55deg); }
+      62.5% { transform: translateX(0) rotate(-0.2deg); }
+      75% { transform: translateX(-1px) rotate(0.35deg); }
+      87.5% { transform: translateX(-1px) rotate(0.8deg); }
+    }
+
+    @keyframes capeSway {
+      0%, 100% { transform: rotate(-1deg) translateX(-1px); }
+      25% { transform: rotate(2deg) translateX(1px); }
+      50% { transform: rotate(0deg) translateX(2px); }
+      75% { transform: rotate(-2.5deg) translateX(-1px); }
+    }
+
+    @keyframes hatFollow {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-0.5deg); }
+      50% { transform: rotate(0.4deg); }
+      75% { transform: rotate(0.9deg); }
+    }
+
+    @keyframes shoulderLeft {
+      0%, 100% { transform: rotate(1.5deg); }
+      25% { transform: rotate(-1deg); }
+      50% { transform: rotate(-2deg); }
+      75% { transform: rotate(0.5deg); }
+    }
+
+    @keyframes shoulderRight {
+      0%, 100% { transform: rotate(-2deg); }
+      25% { transform: rotate(0.5deg); }
+      50% { transform: rotate(1.5deg); }
+      75% { transform: rotate(-1deg); }
+    }
+
+    @keyframes armUpperLeft {
+      0%, 100% { transform: rotate(16deg); }
+      12.5% { transform: rotate(11deg); }
+      25% { transform: rotate(4deg); }
+      37.5% { transform: rotate(-8deg); }
+      50% { transform: rotate(-14deg); }
+      62.5% { transform: rotate(-8deg); }
+      75% { transform: rotate(1deg); }
+      87.5% { transform: rotate(9deg); }
+    }
+
+    @keyframes armLowerLeft {
+      0%, 100% { transform: rotate(12deg); }
+      12.5% { transform: rotate(9deg); }
+      25% { transform: rotate(6deg); }
+      37.5% { transform: rotate(1deg); }
+      50% { transform: rotate(-4deg); }
+      62.5% { transform: rotate(-1deg); }
+      75% { transform: rotate(4deg); }
+      87.5% { transform: rotate(8deg); }
+    }
+
+    @keyframes armUpperRight {
+      0%, 100% { transform: rotate(-14deg); }
+      12.5% { transform: rotate(-8deg); }
+      25% { transform: rotate(0deg); }
+      37.5% { transform: rotate(9deg); }
+      50% { transform: rotate(16deg); }
+      62.5% { transform: rotate(11deg); }
+      75% { transform: rotate(4deg); }
+      87.5% { transform: rotate(-8deg); }
+    }
+
+    @keyframes armLowerRight {
+      0%, 100% { transform: rotate(-4deg); }
+      12.5% { transform: rotate(-2deg); }
+      25% { transform: rotate(4deg); }
+      37.5% { transform: rotate(9deg); }
+      50% { transform: rotate(14deg); }
+      62.5% { transform: rotate(9deg); }
+      75% { transform: rotate(6deg); }
+      87.5% { transform: rotate(-2deg); }
+    }
+
+    @keyframes wristLeft {
+      0%, 100% { transform: rotate(-1deg); }
+      25% { transform: rotate(2deg); }
+      50% { transform: rotate(3deg); }
+      75% { transform: rotate(0deg); }
+    }
+
+    @keyframes wristRight {
+      0%, 100% { transform: rotate(2deg); }
+      25% { transform: rotate(0deg); }
+      50% { transform: rotate(-3deg); }
+      75% { transform: rotate(-1deg); }
+    }
+
+    @keyframes hipLeft {
+      0%, 100% { transform: rotate(5deg); }
+      12.5% { transform: rotate(3deg); }
+      25% { transform: rotate(0.5deg); }
+      37.5% { transform: rotate(-3deg); }
+      50% { transform: rotate(-5deg); }
+      62.5% { transform: rotate(-3deg); }
+      75% { transform: rotate(-0.5deg); }
+      87.5% { transform: rotate(3deg); }
+    }
+
+    @keyframes hipRight {
+      0%, 100% { transform: rotate(-5deg); }
+      12.5% { transform: rotate(-3deg); }
+      25% { transform: rotate(-0.5deg); }
+      37.5% { transform: rotate(3deg); }
+      50% { transform: rotate(5deg); }
+      62.5% { transform: rotate(3deg); }
+      75% { transform: rotate(0.5deg); }
+      87.5% { transform: rotate(-3deg); }
+    }
+
+    @keyframes legUpperLeft {
+      0%, 100% { transform: translateX(-5px) rotate(-22deg) translateY(-1px); }
+      12.5% { transform: translateX(-4px) rotate(-14deg) translateY(0); }
+      25% { transform: translateX(-1px) rotate(2deg) translateY(1px); }
+      37.5% { transform: translateX(0) rotate(14deg) translateY(4px); }
+      50% { transform: translateX(2px) rotate(22deg) translateY(6px); }
+      62.5% { transform: translateX(1px) rotate(15deg) translateY(4px); }
+      75% { transform: translateX(0) rotate(3deg) translateY(1px); }
+      87.5% { transform: translateX(-4px) rotate(-13deg) translateY(0); }
+    }
+
+    @keyframes legLowerLeft {
+      0%, 100% { transform: translateX(-8px) rotate(10deg); }
+      12.5% { transform: translateX(-5px) rotate(18deg); }
+      25% { transform: translateX(0) rotate(34deg); }
+      37.5% { transform: translateX(3px) rotate(20deg); }
+      50% { transform: translateX(6px) rotate(2deg); }
+      62.5% { transform: translateX(4px) rotate(4deg); }
+      75% { transform: translateX(1px) rotate(8deg); }
+      87.5% { transform: translateX(-4px) rotate(12deg); }
+    }
+
+    @keyframes legUpperRight {
+      0%, 100% { transform: translateX(2px) rotate(22deg) translateY(6px); }
+      12.5% { transform: translateX(1px) rotate(15deg) translateY(4px); }
+      25% { transform: translateX(0) rotate(3deg) translateY(1px); }
+      37.5% { transform: translateX(-4px) rotate(-13deg) translateY(0); }
+      50% { transform: translateX(-5px) rotate(-22deg) translateY(-1px); }
+      62.5% { transform: translateX(-4px) rotate(-14deg) translateY(0); }
+      75% { transform: translateX(-1px) rotate(2deg) translateY(1px); }
+      87.5% { transform: translateX(0) rotate(14deg) translateY(4px); }
+    }
+
+    @keyframes legLowerRight {
+      0%, 100% { transform: translateX(6px) rotate(2deg); }
+      12.5% { transform: translateX(4px) rotate(4deg); }
+      25% { transform: translateX(1px) rotate(8deg); }
+      37.5% { transform: translateX(-4px) rotate(12deg); }
+      50% { transform: translateX(-8px) rotate(10deg); }
+      62.5% { transform: translateX(-5px) rotate(18deg); }
+      75% { transform: translateX(0) rotate(34deg); }
+      87.5% { transform: translateX(3px) rotate(20deg); }
+    }
+
+    @keyframes ankleLeft {
+      0%, 100% { transform: rotate(10deg); }
+      12.5% { transform: rotate(12deg); }
+      25% { transform: rotate(-6deg); }
+      37.5% { transform: rotate(-11deg); }
+      50% { transform: rotate(-8deg); }
+      62.5% { transform: rotate(-3deg); }
+      75% { transform: rotate(2deg); }
+      87.5% { transform: rotate(7deg); }
+    }
+
+    @keyframes ankleRight {
+      0%, 100% { transform: rotate(-8deg); }
+      12.5% { transform: rotate(-3deg); }
+      25% { transform: rotate(2deg); }
+      37.5% { transform: rotate(7deg); }
+      50% { transform: rotate(10deg); }
+      62.5% { transform: rotate(12deg); }
+      75% { transform: rotate(-6deg); }
+      87.5% { transform: rotate(-11deg); }
+    }
+
+    @keyframes footLeft {
+      0%, 100% { transform: translateX(-13px) translateY(-4px) rotate(10deg); }
+      12.5% { transform: translateX(-9px) translateY(-10px) rotate(3deg); }
+      25% { transform: translateX(-3px) translateY(-15px) rotate(-5deg); }
+      37.5% { transform: translateX(6px) translateY(-9px) rotate(-9deg); }
+      50% { transform: translateX(13px) translateY(-1px) rotate(-13deg); }
+      62.5% { transform: translateX(9px) translateY(0) rotate(-6deg); }
+      75% { transform: translateX(1px) translateY(0) rotate(-1deg); }
+      87.5% { transform: translateX(-6px) translateY(-2px) rotate(5deg); }
+    }
+
+    @keyframes footRight {
+      0%, 100% { transform: translateX(13px) translateY(-1px) rotate(-13deg); }
+      12.5% { transform: translateX(9px) translateY(0) rotate(-6deg); }
+      25% { transform: translateX(1px) translateY(0) rotate(-1deg); }
+      37.5% { transform: translateX(-6px) translateY(-2px) rotate(5deg); }
+      50% { transform: translateX(-13px) translateY(-4px) rotate(10deg); }
+      62.5% { transform: translateX(-9px) translateY(-10px) rotate(3deg); }
+      75% { transform: translateX(-3px) translateY(-15px) rotate(-5deg); }
+      87.5% { transform: translateX(6px) translateY(-9px) rotate(-9deg); }
+    }
+
+    @keyframes toeLeft {
+      0%, 100% { transform: rotate(-11deg); }
+      12.5% { transform: rotate(-6deg); }
+      25% { transform: rotate(-2deg); }
+      37.5% { transform: rotate(-1deg); }
+      50% { transform: rotate(-9deg); }
+      62.5% { transform: rotate(-4deg); }
+      75% { transform: rotate(1deg); }
+      87.5% { transform: rotate(-6deg); }
+    }
+
+    @keyframes toeRight {
+      0%, 100% { transform: rotate(-9deg); }
+      12.5% { transform: rotate(-4deg); }
+      25% { transform: rotate(1deg); }
+      37.5% { transform: rotate(-6deg); }
+      50% { transform: rotate(-11deg); }
+      62.5% { transform: rotate(-6deg); }
+      75% { transform: rotate(-2deg); }
+      87.5% { transform: rotate(-1deg); }
+    }
+
+    @keyframes headBob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-1px) rotate(0.3deg); }
+      50% { transform: translateY(-2px) rotate(-0.45deg); }
+      75% { transform: translateY(-1px) rotate(-0.15deg); }
+    }
+
+    @keyframes blinkOpen {
+      0%, 88%, 100% { opacity: 1; }
+      90%, 94% { opacity: 0; }
+    }
+
+    @keyframes blinkClosed {
+      0%, 88%, 100% { opacity: 0; }
+      90%, 94% { opacity: 1; }
+    }
+
+    @media (max-width: 820px) {
+      .hud {
+        max-width: calc(100vw - 32px);
+        right: 16px;
+        left: 16px;
+        top: 16px;
+      }
+
+      .character-wrap {
+        width: min(86vw, 360px);
+        transform: translateX(-50%) scale(0.88);
+        transform-origin: bottom center;
+      }
+    }
+  </style>
+</head>
+<body class="walk-preview">
+  <main class="scene">
+    <section class="hud">
+      <h1>Skogshjalte Walk Preview</h1>
+      <p>Dedikerad walk-cycle for Skogshjalte. Denna preview lyfter fram tyngdskifte, fotrullning och secondary motion i cape och torso utan att blanda in pivot-vinkningen.</p>
+      <div class="hud-controls" aria-label="Preview controls">
+        <button type="button" class="is-active" data-pose="live">Live</button>
+        <button type="button" data-pose="contact-right">Kontakt H</button>
+        <button type="button" data-pose="passing-right">Passing H</button>
+        <button type="button" data-pose="contact-left">Kontakt V</button>
+        <button type="button" data-pose="passing-left">Passing V</button>
+      </div>
+      <div class="hud-status" id="pose-status">Lage: live-loop</div>
+    </section>
+
+    <section class="stage" aria-label="Skogshjalte walk animation preview">
+      <div class="sun"></div>
+      <div class="hill a"></div>
+      <div class="hill b"></div>
+      <div class="track"></div>
+
+      <div class="character-wrap">
+        <svg viewBox="0 -40 400 640" width="360" height="540" role="img" aria-label="Skogshjalte walking">
+          <g id="character">
+            <g transform="translate(70 510)">
+              <g id="shadow">
+                <ellipse cx="130" cy="40" rx="98" ry="20" fill="#0000001A"/>
+              </g>
+            </g>
+
+            <g id="pelvis-group">
+            <g id="chest-group">
+            <g id="cape" transform="translate(86 208)">
+              <path d="M104 40 C84 54, 74 88, 78 134 L86 262 C88 286, 108 304, 132 302 C155 300, 172 280, 172 256 L172 112 C172 80, 160 52, 138 40 Z" fill="#2B6FD6" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round" opacity="0.95"/>
+              <path d="M96 50 C107 42, 121 38, 136 38 C149 38, 161 41, 172 49" fill="none" stroke="#1F4C98" stroke-width="8" stroke-linecap="round"/>
+            </g>
+
+            <g id="leg-left-rig" transform="translate(118 376) scale(0.86 0.8)">
+              <g id="hip-left">
+              <g id="leg-left-upper">
+                <path d="M42 18 C50 11, 61 9, 72 12 C82 15, 89 24, 90 36 L89 92 C89 105, 79 116, 66 116 C53 116, 43 106, 43 93 L41 38 C41 30, 41 23, 42 18 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M46 68 L84 68" fill="none" stroke="#4E9F5A" stroke-width="6" stroke-linecap="round"/>
+                <g transform="translate(34 82)">
+                  <g id="leg-left-lower">
+                    <path d="M10 12 C18 4, 34 2, 45 8 C53 12, 58 20, 58 30 L57 92 C57 106, 46 116, 32 116 C18 116, 7 105, 7 91 L8 30 C8 22, 9 16, 10 12 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M13 62 L55 62" fill="none" stroke="#4E9F5A" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M15 99 C19 110, 27 116, 32 116 C39 116, 46 110, 50 99" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <g transform="translate(-46 86) scale(0.52)">
+                      <g id="ankle-left">
+                      <g id="foot-left">
+                        <path d="M42 56 C54 42, 71 36, 97 36 C122 36, 137 46, 149 62 L149 84 C149 95, 140 104, 129 104 L48 104 C36 104, 28 95, 28 84 L28 70 C28 63, 33 59, 42 56 Z" fill="#8B5A2B" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M92 36 L92 103" fill="none" stroke="#6A2E31" stroke-width="4"/>
+                        <path d="M44 86 L138 86" fill="none" stroke="#6A2E31" stroke-width="4"/>
+                        <path d="M48 79 L66 67" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M59 84 L79 70" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M72 86 L92 71" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <g id="toe-left">
+                          <path d="M96 50 C118 50, 133 56, 146 68 L146 91 C146 98, 140 104, 133 104 L94 104 Z" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                        </g>
+                      </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+              </g>
+            </g>
+
+            <g id="leg-right-rig" transform="translate(156 370) scale(1.04 0.9)">
+              <g id="hip-right">
+              <g id="leg-right-upper">
+                <path d="M42 18 C50 11, 61 9, 72 12 C82 15, 89 24, 90 36 L89 92 C89 105, 79 116, 66 116 C53 116, 43 106, 43 93 L41 38 C41 30, 41 23, 42 18 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M46 68 L84 68" fill="none" stroke="#4E9F5A" stroke-width="6" stroke-linecap="round"/>
+                <g transform="translate(32 82)">
+                  <g id="leg-right-lower">
+                    <path d="M10 12 C18 4, 34 2, 45 8 C53 12, 58 20, 58 30 L57 92 C57 106, 46 116, 32 116 C18 116, 7 105, 7 91 L8 30 C8 22, 9 16, 10 12 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <path d="M13 62 L55 62" fill="none" stroke="#4E9F5A" stroke-width="5" stroke-linecap="round"/>
+                    <path d="M15 99 C19 110, 27 116, 32 116 C39 116, 46 110, 50 99" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <g transform="translate(-6 86) scale(0.52)">
+                      <g id="ankle-right">
+                      <g id="foot-right">
+                        <path d="M42 56 C54 42, 71 36, 97 36 C122 36, 137 46, 149 62 L149 84 C149 95, 140 104, 129 104 L48 104 C36 104, 28 95, 28 84 L28 70 C28 63, 33 59, 42 56 Z" fill="#8B5A2B" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                        <path d="M92 36 L92 103" fill="none" stroke="#6A2E31" stroke-width="4"/>
+                        <path d="M44 86 L138 86" fill="none" stroke="#6A2E31" stroke-width="4"/>
+                        <path d="M48 79 L66 67" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M59 84 L79 70" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M72 86 L92 71" fill="none" stroke="#2C5EA8" stroke-width="4" stroke-linecap="round"/>
+                        <g id="toe-right">
+                          <path d="M96 50 C118 50, 133 56, 146 68 L146 91 C146 98, 140 104, 133 104 L94 104 Z" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                        </g>
+                      </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+              </g>
+            </g>
+
+            <g id="arm-left-rig" transform="translate(92 226) scale(0.9 0.94)">
+              <g id="shoulder-left">
+              <g id="arm-left-upper">
+                <path d="M76 26 C58 34, 46 52, 42 71 L39 111 C38 123, 46 133, 58 135 C70 137, 80 129, 84 117 L89 75 C90 54, 87 37, 76 26 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M78 28 C67 27, 56 30, 46 35" fill="none" stroke="#2E7D32" stroke-width="14" stroke-linecap="round"/>
+                <g transform="translate(42 98)">
+                  <g id="arm-left-lower">
+                    <path d="M16 9 C24 3, 38 3, 48 9 C56 14, 61 23, 61 33 L60 82 C60 96, 48 107, 33 107 C18 107, 6 96, 6 82 L7 33 C7 23, 11 14, 16 9 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <g id="wrist-left">
+                      <path d="M13 95 C16 108, 23 117, 32 121" fill="none" stroke="#6A2E31" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M27 95 L23 121" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M38 95 L38 124" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M49 95 L54 121" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+              </g>
+            </g>
+
+            <g id="torso" transform="translate(100 210)">
+              <path d="M60 44 C63 24, 80 12, 101 12 C129 12, 149 24, 152 46 L154 156 C156 180, 134 198, 111 198 L90 198 C69 198, 50 180, 52 156 L55 48 C56 46, 57 45, 60 44 Z" fill="#4E9F5A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M69 45 C73 30, 85 21, 103 21 C122 21, 136 31, 140 45 L141 54 C131 51, 120 49, 105 49 C90 49, 78 50, 68 53 Z" fill="#2E7D32" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M72 50 L85 50 L87 146 L73 146 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M118 50 L137 50 L135 146 L116 146 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              <rect x="88" y="62" width="30" height="68" rx="10" fill="#8AF1D7" stroke="#6A2E31" stroke-width="4"/>
+              <circle cx="100" cy="106" r="4" fill="#6A2E31"/>
+              <path d="M84 148 L120 148 L114 198 L90 198 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              <path d="M60 45 C55 54, 54 68, 55 86" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+              <path d="M149 44 C156 55, 156 70, 154 92" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+            </g>
+
+            <g id="arm-right-rig" transform="translate(190 220) scale(1.06 1)">
+              <g id="shoulder-right">
+              <g id="arm-right-upper">
+                <path d="M44 26 C62 34, 74 52, 78 71 L81 111 C82 123, 74 133, 62 135 C50 137, 40 129, 36 117 L31 75 C30 54, 33 37, 44 26 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M42 28 C53 27, 64 30, 74 35" fill="none" stroke="#2E7D32" stroke-width="14" stroke-linecap="round"/>
+                <g transform="translate(16 98)">
+                  <g id="arm-right-lower">
+                    <path d="M16 9 C24 3, 38 3, 48 9 C56 14, 61 23, 61 33 L60 82 C60 96, 48 107, 33 107 C18 107, 6 96, 6 82 L7 33 C7 23, 11 14, 16 9 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                    <g id="wrist-right">
+                      <path d="M13 95 C16 108, 23 117, 32 121" fill="none" stroke="#6A2E31" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M27 95 L23 121" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M38 95 L38 124" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                      <path d="M49 95 L54 121" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+              </g>
+            </g>
+
+            <g id="neck-group">
+            <g id="head-group">
+              <g id="hat" transform="translate(38 28)">
+                <ellipse cx="164" cy="102" rx="114" ry="25" fill="#3D9448" stroke="#6A2E31" stroke-width="4"/>
+                <path d="M106 95 C108 52, 131 20, 166 20 C199 20, 224 49, 226 95 Z" fill="#3D9448" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <path d="M118 77 C131 69, 148 64, 167 64 C187 64, 203 69, 215 77 L215 90 C203 83, 187 79, 167 79 C149 79, 133 83, 118 90 Z" fill="#D7C27A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+              </g>
+
+              <g id="head" transform="translate(74 48)">
+                <ellipse cx="134" cy="126" rx="72" ry="72" fill="#E7A279" stroke="#6A2E31" stroke-width="4"/>
+                <path d="M82 100 C90 56, 118 38, 139 38 C165 38, 191 56, 194 96 L194 112 C181 105, 166 99, 136 98 C106 97, 91 101, 78 110 Z" fill="#D6B25C" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+                <ellipse cx="70" cy="132" rx="12" ry="17" fill="#E7A279" stroke="#6A2E31" stroke-width="4"/>
+                <ellipse cx="198" cy="130" rx="17" ry="21" fill="#E7A279" stroke="#6A2E31" stroke-width="4"/>
+                <ellipse cx="101" cy="150" rx="11" ry="8" fill="#EF8F79" opacity="0.55"/>
+                <ellipse cx="171" cy="150" rx="15" ry="10" fill="#EF8F79" opacity="0.65"/>
+                <ellipse cx="138" cy="154" rx="7" ry="5" fill="#F08B6F" stroke="#6A2E31" stroke-width="3"/>
+                <path d="M101 88 Q113 76 123 88" fill="none" stroke="#6A2E31" stroke-width="6" stroke-linecap="round"/>
+                <path d="M148 88 Q163 72 179 88" fill="none" stroke="#6A2E31" stroke-width="6" stroke-linecap="round"/>
+              </g>
+
+              <g id="eyes-open" transform="translate(74 48)">
+                <ellipse cx="110" cy="120" rx="14" ry="20" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4"/>
+                <ellipse cx="162" cy="120" rx="19" ry="23" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4"/>
+                <circle cx="112" cy="125" r="7" fill="#2B1A1A"/>
+                <circle cx="164" cy="125" r="10" fill="#2B1A1A"/>
+                <circle cx="115" cy="120" r="3" fill="#FFFDF9"/>
+                <circle cx="168" cy="120" r="3.5" fill="#FFFDF9"/>
+              </g>
+
+              <g id="eyes-blink" transform="translate(74 48)">
+                <path d="M96 120 Q110 127 123 120" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+                <path d="M145 120 Q162 129 180 120" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+              </g>
+
+              <g id="mouth" transform="translate(74 48)">
+                <path d="M118 180 Q138 197 155 179" fill="none" stroke="#6A2E31" stroke-width="4" stroke-linecap="round"/>
+              </g>
+
+            </g>
+            </g>
+            </g>
+            </g>
+
+          </g>
+        </svg>
+      </div>
+    </section>
+  </main>
+  <script>
+    const poseButtons = Array.from(document.querySelectorAll('[data-pose]'));
+    const poseStatus = document.getElementById('pose-status');
+    const poseClasses = [
+      'pose-review',
+      'pose-contact-right',
+      'pose-passing-right',
+      'pose-contact-left',
+      'pose-passing-left',
+    ];
+
+    const poseLabels = {
+      live: 'Lage: live-loop',
+      'contact-right': 'Lage: kontakt hoger',
+      'passing-right': 'Lage: passing hoger',
+      'contact-left': 'Lage: kontakt vanster',
+      'passing-left': 'Lage: passing vanster',
+    };
+
+    const poseClassMap = {
+      'contact-right': 'pose-contact-right',
+      'passing-right': 'pose-passing-right',
+      'contact-left': 'pose-contact-left',
+      'passing-left': 'pose-passing-left',
+    };
+
+    function applyPose(pose) {
+      document.body.classList.remove(...poseClasses);
+
+      if (pose !== 'live') {
+        document.body.classList.add('pose-review', poseClassMap[pose]);
+      }
+
+      poseButtons.forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.pose === pose);
+      });
+
+      poseStatus.textContent = poseLabels[pose];
+    }
+
+    poseButtons.forEach((button) => {
+      button.addEventListener('click', () => applyPose(button.dataset.pose));
+    });
+  </script>
+</body>
+</html>

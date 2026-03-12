@@ -48,7 +48,7 @@ class ThemeMascot extends StatelessWidget {
 
     // Determine which asset to use
     final asset = lottieAsset ?? appThemeConfig?.getCharacterAnimation(state);
-    
+
     if (asset == null) {
       return _buildMissingLottiePlaceholder(context);
     }

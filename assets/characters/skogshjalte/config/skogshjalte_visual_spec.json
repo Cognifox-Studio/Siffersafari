@@ -1,0 +1,75 @@
+{
+  "name": "Skogshjalte",
+  "version": 1,
+  "style": "cartoon_forest_hero_child",
+  "inspiration": "Original child forest hero with green tunic silhouette, blond hair and blue cape-inspired accessory",
+  "baseFormRef": "../../_shared/config/humanoid_base_form_v1.json",
+  "colors": {
+    "skin": "#E7A279",
+    "hair": "#D6B25C",
+    "hat": "#3D9448",
+    "hatShadow": "#2D6F36",
+    "hatBand": "#D7C27A",
+    "shirt": "#2E7D32",
+    "overallsPrimary": "#4E9F5A",
+    "overallsSecondary": "#2F7A3A",
+    "backpack": "#2B6FD6",
+    "strap": "#1F4C98",
+    "shoe": "#8B5A2B",
+    "lace": "#2C5EA8",
+    "sole": "#FFFDF9",
+    "outline": "#6A2E31",
+    "blush": "#EF8F79",
+    "shadow": "#0000001A"
+  },
+  "proportions": {
+    "headToBodyRatio": 0.52,
+    "eyeSizeRelativeToHead": 0.12,
+    "mouthWidthRelativeToHead": 0.2,
+    "armLengthRelativeToBody": 0.72,
+    "legLengthRelativeToBody": 0.55,
+    "hatWidthRelativeToHead": 1.12,
+    "shoeWidthRelativeToLeg": 1.7
+  },
+  "styleSettings": {
+    "strokeWidth": 4,
+    "cornerRadius": 14,
+    "useGradients": false,
+    "useTextures": false,
+    "rigFriendly": true
+  },
+  "tPosePreviewAlignment": {
+    "armUpperTranslateY": {
+      "left": 17,
+      "right": 16
+    },
+    "armLowerTranslateY": {
+      "left": -2,
+      "right": -2
+    },
+    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+  },
+  "parts": {
+    "head": "svg/skogshjalte_head.svg",
+    "eyes_open": "svg/skogshjalte_eyes_open.svg",
+    "eyes_blink": "svg/skogshjalte_eyes_blink.svg",
+    "mouth_neutral": "svg/skogshjalte_mouth_neutral.svg",
+    "mouth_happy": "svg/skogshjalte_mouth_happy.svg",
+    "mouth_sad": "svg/skogshjalte_mouth_sad.svg",
+    "torso": "svg/skogshjalte_torso.svg",
+    "arm_upper_left": "svg/skogshjalte_arm_upper_left.svg",
+    "arm_lower_left": "svg/skogshjalte_arm_lower_left.svg",
+    "arm_upper_right": "svg/skogshjalte_arm_upper_right.svg",
+    "arm_lower_right": "svg/skogshjalte_arm_lower_right.svg",
+    "leg_upper_left": "svg/skogshjalte_leg_upper_left.svg",
+    "leg_lower_left": "svg/skogshjalte_leg_lower_left.svg",
+    "leg_upper_right": "svg/skogshjalte_leg_upper_right.svg",
+    "leg_lower_right": "svg/skogshjalte_leg_lower_right.svg",
+    "shoe_left": "svg/skogshjalte_shoe_left.svg",
+    "shoe_right": "svg/skogshjalte_shoe_right.svg",
+    "hat": "svg/skogshjalte_hat.svg",
+    "backpack": "svg/skogshjalte_backpack.svg",
+    "shadow": "svg/skogshjalte_shadow.svg",
+    "composite": "svg/skogshjalte_composite.svg"
+  }
+}

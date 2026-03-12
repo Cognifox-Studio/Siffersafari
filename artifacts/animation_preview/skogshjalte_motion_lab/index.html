@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Skogshjalte Motion Lab</title>
+  <style>
+    :root {
+      --bg-top: #f2ecd9;
+      --bg-bottom: #c9e0d6;
+      --panel: rgba(255, 251, 244, 0.84);
+      --ink: #30261f;
+      --line: rgba(48, 38, 31, 0.1);
+      --forest: #3d8a53;
+      --forest-dark: #2a6840;
+      --sand: #ddc58a;
+      --skin: #e7a279;
+      --outline: #6a2e31;
+      --blue: #2b6fd6;
+      --joint: #1f4d98;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 10%, rgba(255,255,255,0.48), transparent 18%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    }
+
+    .layout {
+      min-height: 100vh;
+      padding: 24px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 20px;
+    }
+
+    .hud {
+      max-width: 740px;
+      padding: 18px 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: var(--panel);
+      box-shadow: 0 20px 48px rgba(38, 33, 18, 0.1);
+    }
+
+    .hud h1 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
+    .hud p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 22px;
+      align-items: stretch;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background: var(--panel);
+      box-shadow: 0 24px 54px rgba(38, 33, 18, 0.12);
+    }
+
+    .card header {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(48, 38, 31, 0.08);
+      background: rgba(255,255,255,0.4);
+    }
+
+    .card header strong,
+    .card header span {
+      display: block;
+    }
+
+    .card header strong {
+      font-size: 1rem;
+      margin-bottom: 3px;
+    }
+
+    .card header span {
+      font-size: 0.92rem;
+      color: rgba(48, 38, 31, 0.72);
+    }
+
+    .source-stage,
+    .lab-stage {
+      min-height: 620px;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+    }
+
+    .source-stage {
+      background: linear-gradient(180deg, #ececec, #dddddd);
+    }
+
+    .source-stage img {
+      width: min(100%, 440px);
+      height: auto;
+      display: block;
+      background: #e3e3e3;
+      border-radius: 16px;
+      box-shadow: 0 14px 34px rgba(0,0,0,0.08);
+    }
+
+    .lab-stage {
+      position: relative;
+      background:
+        radial-gradient(circle at 75% 14%, rgba(255, 222, 146, 0.9), rgba(255, 222, 146, 0.18) 18%, transparent 19%),
+        linear-gradient(180deg, rgba(255,255,255,0.24), rgba(255,255,255,0.06)),
+        linear-gradient(180deg, #ecf1de, #d9ead1 55%, #dfcb95 55%, #dfcb95 100%);
+    }
+
+    .lab-stage::before,
+    .lab-stage::after {
+      content: "";
+      position: absolute;
+      bottom: 128px;
+      width: 280px;
+      height: 110px;
+      border-radius: 50%;
+      background: #74bf67;
+      opacity: 0.9;
+    }
+
+    .lab-stage::before { left: -54px; }
+    .lab-stage::after { right: -36px; }
+
+    .track {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 140px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), transparent 30%), linear-gradient(180deg, #e7d297, var(--sand));
+    }
+
+    .track::before {
+      content: "";
+      position: absolute;
+      inset: 34px 0 56px;
+      background: repeating-linear-gradient(90deg, transparent 0 80px, rgba(135, 109, 58, 0.28) 80px 94px, transparent 94px 170px);
+    }
+
+    svg {
+      overflow: visible;
+      position: relative;
+      z-index: 1;
+    }
+
+    #root,
+    #pelvis,
+    #chest,
+    #neck,
+    #head,
+    #shoulder-left,
+    #shoulder-right,
+    #arm-left-upper,
+    #arm-left-lower,
+    #arm-right-upper,
+    #arm-right-lower,
+    #wrist-left,
+    #wrist-right,
+    #hip-left,
+    #hip-right,
+    #leg-left-upper,
+    #leg-left-lower,
+    #leg-right-upper,
+    #leg-right-lower,
+    #ankle-left,
+    #ankle-right,
+    #foot-left,
+    #foot-right,
+    #toe-left,
+    #toe-right,
+    #shadow {
+      transform-box: fill-box;
+    }
+
+    #shadow {
+      transform-origin: center;
+      animation: shadowPulse 1.08s linear infinite;
+    }
+
+    #root {
+      transform-origin: center 88%;
+      animation: rootSettle 1.08s linear infinite;
+    }
+
+    #pelvis {
+      transform-origin: center center;
+      animation: pelvisWave 1.08s linear infinite;
+    }
+
+    #chest {
+      transform-origin: center 40%;
+      animation: chestCounter 1.08s linear infinite;
+    }
+
+    #neck {
+      transform-origin: center top;
+      animation: neckCounter 1.08s linear infinite;
+    }
+
+    #head {
+      transform-origin: center 62%;
+      animation: headCounter 1.08s linear infinite;
+    }
+
+    #shoulder-left,
+    #shoulder-right,
+    #hip-left,
+    #hip-right,
+    #arm-left-upper,
+    #arm-left-lower,
+    #arm-right-upper,
+    #arm-right-lower,
+    #wrist-left,
+    #wrist-right,
+    #leg-left-upper,
+    #leg-left-lower,
+    #leg-right-upper,
+    #leg-right-lower,
+    #ankle-left,
+    #ankle-right,
+    #foot-left,
+    #foot-right,
+    #toe-left,
+    #toe-right {
+      transform-origin: center top;
+    }
+
+    #shoulder-left { animation: shoulderLeftRest 1.08s linear infinite; }
+    #shoulder-right { animation: shoulderRightWave 1.08s linear infinite; }
+    #arm-left-upper { animation: armLeftUpperRest 1.08s linear infinite; }
+    #arm-left-lower { animation: armLeftLowerRest 1.08s linear infinite; }
+    #arm-right-upper { animation: armRightUpperWave 1.08s linear infinite; }
+    #arm-right-lower { animation: armRightLowerWave 1.08s linear infinite; }
+    #wrist-left { animation: wristLeftRest 1.08s linear infinite; }
+    #wrist-right { animation: wristRightWave 1.08s linear infinite; }
+    #hip-left { animation: hipLeftRest 1.08s linear infinite; }
+    #hip-right { animation: hipRightRest 1.08s linear infinite; }
+    #leg-left-upper { animation: legLeftUpperRest 1.08s linear infinite; }
+    #leg-left-lower { animation: legLeftLowerRest 1.08s linear infinite; }
+    #leg-right-upper { animation: legRightUpperRest 1.08s linear infinite; }
+    #leg-right-lower { animation: legRightLowerRest 1.08s linear infinite; }
+    #ankle-left { animation: ankleLeftRest 1.08s linear infinite; }
+    #ankle-right { animation: ankleRightRest 1.08s linear infinite; }
+    #foot-left { animation: footLeftRest 1.08s linear infinite; }
+    #foot-right { animation: footRightRest 1.08s linear infinite; }
+    #toe-left { animation: toeLeftRest 1.08s linear infinite; }
+    #toe-right { animation: toeRightRest 1.08s linear infinite; }
+
+    .joint {
+      fill: var(--joint);
+      opacity: 0.88;
+    }
+
+    .outline {
+      stroke: var(--outline);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    @keyframes shadowPulse {
+      0%, 100% { transform: scaleX(1) scaleY(1); opacity: 0.18; }
+      43% { transform: scaleX(0.94) scaleY(0.9); opacity: 0.13; }
+    }
+
+    @keyframes rootSettle {
+      0%, 100% { transform: translateY(0px); }
+      43% { transform: translateY(-2px); }
+      64% { transform: translateY(-1px); }
+    }
+
+    @keyframes pelvisWave {
+      0%, 100% { transform: rotate(0deg) translateY(0px); }
+      21% { transform: rotate(-0.8deg) translateY(-1px); }
+      43% { transform: rotate(-1.4deg) translateY(-2px); }
+      64% { transform: rotate(-0.6deg) translateY(-1px); }
+    }
+
+    @keyframes chestCounter {
+      0%, 100% { transform: rotate(0deg); }
+      21% { transform: rotate(0.9deg); }
+      43% { transform: rotate(1.8deg); }
+      64% { transform: rotate(0.8deg); }
+    }
+
+    @keyframes neckCounter {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-1.1deg); }
+      64% { transform: rotate(-0.5deg); }
+    }
+
+    @keyframes headCounter {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-1.4deg); }
+      64% { transform: rotate(-0.7deg); }
+    }
+
+    @keyframes shoulderLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(1deg); }
+    }
+
+    @keyframes shoulderRightWave {
+      0% { transform: rotate(0deg); }
+      7% { transform: rotate(-5deg); }
+      14% { transform: rotate(-9deg); }
+      21% { transform: rotate(-13deg); }
+      29% { transform: rotate(-18deg); }
+      36% { transform: rotate(-22deg); }
+      43% { transform: rotate(-24deg); }
+      50% { transform: rotate(-22deg); }
+      57% { transform: rotate(-18deg); }
+      64% { transform: rotate(-13deg); }
+      71% { transform: rotate(-9deg); }
+      79% { transform: rotate(-6deg); }
+      86% { transform: rotate(-3deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes armLeftUpperRest {
+      0%, 100% { transform: rotate(6deg); }
+      43% { transform: rotate(8deg); }
+    }
+
+    @keyframes armLeftLowerRest {
+      0%, 100% { transform: rotate(6deg); }
+      43% { transform: rotate(7deg); }
+    }
+
+    @keyframes armRightUpperWave {
+      0% { transform: rotate(-10deg); }
+      7% { transform: rotate(-18deg); }
+      14% { transform: rotate(-28deg); }
+      21% { transform: rotate(-40deg); }
+      29% { transform: rotate(-54deg); }
+      36% { transform: rotate(-66deg); }
+      43% { transform: rotate(-74deg); }
+      50% { transform: rotate(-68deg); }
+      57% { transform: rotate(-58deg); }
+      64% { transform: rotate(-44deg); }
+      71% { transform: rotate(-32deg); }
+      79% { transform: rotate(-22deg); }
+      86% { transform: rotate(-14deg); }
+      100% { transform: rotate(-10deg); }
+    }
+
+    @keyframes armRightLowerWave {
+      0% { transform: rotate(-2deg); }
+      7% { transform: rotate(2deg); }
+      14% { transform: rotate(8deg); }
+      21% { transform: rotate(14deg); }
+      29% { transform: rotate(22deg); }
+      36% { transform: rotate(31deg); }
+      43% { transform: rotate(36deg); }
+      50% { transform: rotate(34deg); }
+      57% { transform: rotate(28deg); }
+      64% { transform: rotate(20deg); }
+      71% { transform: rotate(13deg); }
+      79% { transform: rotate(8deg); }
+      86% { transform: rotate(3deg); }
+      100% { transform: rotate(-2deg); }
+    }
+
+    @keyframes wristLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(2deg); }
+    }
+
+    @keyframes wristRightWave {
+      0% { transform: rotate(0deg); }
+      14% { transform: rotate(6deg); }
+      36% { transform: rotate(14deg); }
+      43% { transform: rotate(18deg); }
+      64% { transform: rotate(8deg); }
+      100% { transform: rotate(0deg); }
+    }
+
+    @keyframes hipLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(1deg); }
+    }
+
+    @keyframes hipRightRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-1deg); }
+    }
+
+    @keyframes legLeftUpperRest {
+      0%, 100% { transform: rotate(-1deg); }
+      43% { transform: rotate(1deg); }
+    }
+
+    @keyframes legLeftLowerRest {
+      0%, 100% { transform: rotate(2deg); }
+      43% { transform: rotate(5deg); }
+    }
+
+    @keyframes legRightUpperRest {
+      0%, 100% { transform: rotate(1deg); }
+      43% { transform: rotate(-1deg); }
+    }
+
+    @keyframes legRightLowerRest {
+      0%, 100% { transform: rotate(2deg); }
+      43% { transform: rotate(4deg); }
+    }
+
+    @keyframes ankleLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(3deg); }
+    }
+
+    @keyframes ankleRightRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-3deg); }
+    }
+
+    @keyframes footLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(4deg); }
+    }
+
+    @keyframes footRightRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-4deg); }
+    }
+
+    @keyframes toeLeftRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(7deg); }
+    }
+
+    @keyframes toeRightRest {
+      0%, 100% { transform: rotate(0deg); }
+      43% { transform: rotate(-7deg); }
+    }
+
+    @media (max-width: 980px) {
+      .compare { grid-template-columns: 1fr; }
+      .source-stage,
+      .lab-stage { min-height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="hud">
+      <h1>Skogshjalte Motion Lab</h1>
+      <p>Det här är den rena mellanriggen. Vänster sida visar Pivot-källan. Höger sida visar en förenklad humanoid med riktig flerledsstruktur. När den här känns bra mappar vi tillbaka rörelsen till slutdesignen.</p>
+    </section>
+
+    <section class="compare">
+      <article class="card">
+        <header>
+          <strong>Pivot-källa</strong>
+          <span>Det faktiska originalet som rörelsen ska matcha</span>
+        </header>
+        <div class="source-stage">
+          <img src="../../reference/pivot_animator/gif_reference.gif" alt="Pivot Animator GIF-referens" />
+        </div>
+      </article>
+
+      <article class="card">
+        <header>
+          <strong>Förenklad humanoid-rigg</strong>
+          <span>Pelvis, chest, neck, shoulder, wrist, hip, ankle och toe används aktivt</span>
+        </header>
+        <div class="lab-stage">
+          <div class="track"></div>
+          <svg viewBox="0 0 520 620" width="100%" height="100%" role="img" aria-label="Skogshjalte motion lab">
+            <g id="root" transform="translate(260 480)">
+              <g id="shadow">
+                <ellipse cx="0" cy="70" rx="72" ry="18" fill="#00000020" />
+              </g>
+
+              <g id="pelvis">
+                <ellipse class="joint" cx="0" cy="0" rx="8" ry="8" />
+
+                <g id="hip-left" transform="translate(-26 6)">
+                  <ellipse class="joint" cx="0" cy="0" rx="6" ry="6" />
+                  <g id="leg-left-upper" transform="rotate(16)">
+                    <rect x="-14" y="0" width="28" height="92" rx="14" fill="var(--forest)" class="outline" />
+                    <g id="leg-left-lower" transform="translate(0 82) rotate(-14)">
+                      <rect x="-12" y="0" width="24" height="92" rx="12" fill="var(--forest-dark)" class="outline" />
+                      <g id="ankle-left" transform="translate(0 84)">
+                        <ellipse class="joint" cx="0" cy="0" rx="5" ry="5" />
+                        <g id="foot-left" transform="rotate(12)">
+                          <path d="M-16 0 C-6 -4, 14 -4, 26 2 L28 15 C21 22, 6 24, -10 20 L-18 12 Z" fill="#8b5a2b" class="outline" />
+                          <g id="toe-left" transform="translate(14 6)">
+                            <path d="M0 0 C8 -1, 15 2, 18 7 L18 14 C12 17, 5 17, 0 14 Z" fill="#fffdf9" class="outline" />
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+
+                <g id="hip-right" transform="translate(26 6)">
+                  <ellipse class="joint" cx="0" cy="0" rx="6" ry="6" />
+                  <g id="leg-right-upper" transform="rotate(-16)">
+                    <rect x="-14" y="0" width="28" height="92" rx="14" fill="var(--forest)" class="outline" />
+                    <g id="leg-right-lower" transform="translate(0 82) rotate(14)">
+                      <rect x="-12" y="0" width="24" height="92" rx="12" fill="var(--forest-dark)" class="outline" />
+                      <g id="ankle-right" transform="translate(0 84)">
+                        <ellipse class="joint" cx="0" cy="0" rx="5" ry="5" />
+                        <g id="foot-right" transform="rotate(-12)">
+                          <path d="M-26 2 C-14 -4, 6 -4, 16 0 L18 12 C10 18, -6 21, -22 16 L-28 8 Z" fill="#8b5a2b" class="outline" />
+                          <g id="toe-right" transform="translate(0 4)">
+                            <path d="M0 0 C8 -2, 15 0, 18 5 L18 13 C12 16, 5 16, 0 13 Z" fill="#fffdf9" class="outline" />
+                          </g>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+
+                <g id="chest" transform="translate(0 -106)">
+                  <path d="M-42 24 C-42 -18, -18 -52, 0 -52 C18 -52, 42 -18, 42 24 L34 110 C32 126, 18 138, 0 138 C-18 138, -32 126, -34 110 Z" fill="#4e9f5a" class="outline" />
+                  <rect x="-14" y="4" width="28" height="66" rx="10" fill="#8af1d7" class="outline" />
+                  <circle cx="0" cy="45" r="4" fill="var(--outline)" />
+
+                  <g id="shoulder-left" transform="translate(-36 4)">
+                    <ellipse class="joint" cx="0" cy="0" rx="6" ry="6" />
+                    <g id="arm-left-upper" transform="rotate(20)">
+                      <rect x="-14" y="0" width="28" height="88" rx="14" fill="var(--skin)" class="outline" />
+                      <g id="arm-left-lower" transform="translate(0 78) rotate(8)">
+                        <rect x="-12" y="0" width="24" height="78" rx="12" fill="var(--skin)" class="outline" />
+                        <g id="wrist-left" transform="translate(0 74)">
+                          <ellipse class="joint" cx="0" cy="0" rx="5" ry="5" />
+                          <path d="M-8 0 C-2 10, 4 18, 10 22" fill="none" class="outline" />
+                          <path d="M0 0 L-2 22" fill="none" class="outline" />
+                          <path d="M8 0 L8 22" fill="none" class="outline" />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+
+                  <g id="shoulder-right" transform="translate(36 4)">
+                    <ellipse class="joint" cx="0" cy="0" rx="6" ry="6" />
+                    <g id="arm-right-upper" transform="rotate(-20)">
+                      <rect x="-14" y="0" width="28" height="88" rx="14" fill="var(--skin)" class="outline" />
+                      <g id="arm-right-lower" transform="translate(0 78) rotate(-4)">
+                        <rect x="-12" y="0" width="24" height="78" rx="12" fill="var(--skin)" class="outline" />
+                        <g id="wrist-right" transform="translate(0 74)">
+                          <ellipse class="joint" cx="0" cy="0" rx="5" ry="5" />
+                          <path d="M-8 0 C-2 10, 4 18, 10 22" fill="none" class="outline" />
+                          <path d="M0 0 L-2 22" fill="none" class="outline" />
+                          <path d="M8 0 L8 22" fill="none" class="outline" />
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+
+                  <g id="neck" transform="translate(0 -58)">
+                    <ellipse class="joint" cx="0" cy="0" rx="6" ry="6" />
+                    <g id="head" transform="translate(0 -10)">
+                      <ellipse cx="0" cy="-34" rx="44" ry="46" fill="var(--skin)" class="outline" />
+                      <path d="M-35 -50 C-26 -76, -8 -90, 0 -90 C12 -90, 28 -76, 35 -52 L35 -40 C18 -44, 8 -46, 0 -46 C-8 -46, -18 -44, -35 -40 Z" fill="#d6b25c" class="outline" />
+                      <ellipse cx="-14" cy="-38" rx="10" ry="14" fill="#fffdf9" class="outline" />
+                      <ellipse cx="14" cy="-38" rx="10" ry="14" fill="#fffdf9" class="outline" />
+                      <circle cx="-12" cy="-35" r="5" fill="#231616" />
+                      <circle cx="16" cy="-35" r="5" fill="#231616" />
+                      <path d="M-16 0 Q0 14 16 0" fill="none" class="outline" />
+                      <path d="M-50 -70 C-48 -100, -24 -118, 0 -118 C24 -118, 48 -100, 50 -70" fill="#3d9448" class="outline" />
+                      <ellipse cx="0" cy="-70" rx="68" ry="18" fill="#3d9448" class="outline" />
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+          </svg>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>

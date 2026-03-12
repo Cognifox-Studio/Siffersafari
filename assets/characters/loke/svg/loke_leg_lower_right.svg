@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72" height="138" viewBox="0 0 72 138" xmlns="http://www.w3.org/2000/svg">
+  <g id="leg_lower_right">
+    <path d="M22 10 L51 10 L57 92 C58 108, 48 120, 34 120 C20 120, 9 108, 11 92 Z" fill="#1DBE90" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M20 84 L48 84 L52 112 C53 123, 45 132, 34 132 C23 132, 15 123, 16 112 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+</svg>

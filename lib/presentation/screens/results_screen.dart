@@ -223,9 +223,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         SizedBox(
           height: 112.h,
           child: VilleCharacter(
-            reaction: shouldCelebrate
-                ? VilleReaction.celebrate
-                : VilleReaction.idle,
+            reaction:
+                shouldCelebrate ? VilleReaction.celebrate : VilleReaction.idle,
             reactionNonce: shouldCelebrate ? 1 : 0,
             height: 112.h,
           ),

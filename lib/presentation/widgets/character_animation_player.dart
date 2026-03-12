@@ -36,7 +36,7 @@ class CharacterAnimationPlayer extends StatelessWidget {
     }
 
     final lottieAsset = appThemeConfig.getCharacterAnimation(state);
-    
+
     return Lottie.asset(
       lottieAsset,
       height: height,

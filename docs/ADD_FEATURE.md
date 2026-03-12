@@ -2,11 +2,11 @@
 
 Denna guide visar **steg-för-steg** hur du lägger till en ny feature i Siffersafari.
 
-Exempel: Vi lägger till en ny quiz-svårighetsgrad kallad "Expert Mode".
+
 
 ---
 
-## Overview: Feature Development Pipeline
+
 
 ```
 1. Plan             (Vad gör den? Hur integreras den?)
@@ -20,20 +20,22 @@ Exempel: Vi lägger till en ny quiz-svårighetsgrad kallad "Expert Mode".
 
 ## 1. Planning Phase
 
-### 1.1 Define the Feature
+
+### 1.1 Definiera din feature
 
 Beskriv i ett par meningar:
-- **What:** "Expert Mode - 3rd difficulty level för Åk 7-9"
-- **Why:** "Högpresterande barn behöver högre svårighet"
-- **Scope:** "Config only - ingen ny UI ännu"
+- **What:** "Ny svårighetsgrad, t.ex. 'Hard'"
+- **Why:** "För att utmana elever på högre nivå"
+- **Scope:** "Config och logik, UI vid behov"
 
-### 1.2 Identify Touch Points
 
-Research: Vilka filer behöver ändringar?
+### 1.2 Identifiera berörda filer
 
-**För Expert Mode:**
+Research: Vilka filer behöver ändras?
+
+**Exempel:**
 ```
-lib/domain/enums/difficulty_level.dart          → Ny svårighetsgrad i enum
+lib/domain/enums/difficulty_level.dart          → Lägg till/ändra svårighetsgrad i enum
 lib/core/config/difficulty_config.dart          → Regler: ranges/steps/poäng
 lib/core/services/question_generator_service.dart → Generering av frågor per svårighet
 lib/domain/services/adaptive_difficulty_service.dart → Progression/logik
@@ -51,7 +53,8 @@ git checkout -b feature/expert-mode
 
 ## 2. Implementation Phase
 
-### Step 1: Update Models
+
+### Steg 1: Uppdatera modeller
 
 Öppna `lib/domain/enums/difficulty_level.dart`:
 
@@ -60,7 +63,6 @@ enum DifficultyLevel {
   easy,
   medium,
   hard,
-  expert, // ← Ny (exempel)
 }
 ```
 
@@ -74,33 +76,24 @@ Typiskt arbetssätt:
 - Lägg till/justera logik för nya svårighetsgraden i generatorn.
 - Uppdatera regler i `lib/core/config/difficulty_config.dart` (t.ex. ranges/step-buckets).
 
-### Step 3: Update Business Logic
 
-Öppna `lib/domain/services/adaptive_difficulty_service.dart`:
+### Steg 3: Uppdatera affärslogik
 
-```dart
-Difficulty _calculateNextDifficulty(...) {
-  // Befintlig logik...
-  
-  if (currentScore > 95 && points >= 500) {
-    return Difficulty.expert;  // ← Ny
-  }
-  
-  // resten...
-}
-```
+Öppna `lib/domain/services/adaptive_difficulty_service.dart` och justera logik för progression mellan befintliga svårighetsgrader (`easy`, `medium`, `hard`).
 
-Obs: Anropa/brukar denna logik ofta från Riverpod-notifiers i `lib/core/providers/`.
+Obs: Denna logik används ofta från Riverpod-notifiers i `lib/core/providers/`.
 
-### Step 4: Update UI (if needed)
 
-Om du behöver visa "Expert Mode" i UI, sök efter `DifficultyLevel` i `lib/presentation/` och uppdatera de ställen där svårighetens label/rendering sker.
+### Steg 4: Uppdatera UI (vid behov)
+
+Om du behöver visa en ny eller ändrad svårighetsgrad i UI, sök efter `DifficultyLevel` i `lib/presentation/` och uppdatera de ställen där svårighetens label/rendering sker.
 
 ---
 
 ## 3. Testing Phase
 
-### Write/Update Unit Tests
+
+### Skriv/uppdatera tester
 
 I detta repo ligger tester under `test/unit/...` och `test/widget/...`.
 
@@ -118,7 +111,8 @@ flutter test test/unit/logic/adaptive_difficulty_test.dart
 flutter test
 ```
 
-**Förväntat:** Alla tester passa.
+
+**Förväntat:** Alla tester ska passera.
 
 ---
 
@@ -154,11 +148,11 @@ Starta appen på emulator och testa manuellt:
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 ```
 
+
 **Test checklist:**
 - [ ] Appen startar
-- [ ] Gamla difficultyes fungerar fortfarande
-- [ ] Expert Mode är tillgänglig efter vissa poäng
-- [ ] Expert Mode frågor är svårare
+- [ ] Alla svårighetsgrader fungerar
+- [ ] Frågor genereras korrekt per nivå
 - [ ] Achievements sparas offline
 
 ---
@@ -173,6 +167,7 @@ Se till att du bara har relevanta files:
 git status
 
 # Förväntat output (ungefär):
+
 # modified:   lib/domain/enums/difficulty_level.dart
 # modified:   lib/core/config/difficulty_config.dart
 # modified:   lib/core/services/question_generator_service.dart
@@ -184,12 +179,11 @@ git status
 
 ```bash
 git add .
-git commit -m "feat: add Expert Mode difficulty level
 
-- Added Difficulty.expert enum value
-- Added 50+ Expert-level questions to quiz database
-- Updated adaptive_difficulty_service to unlock Expert at 95%+ score
-- Added unit tests for Expert Mode questions
+git commit -m "feat: uppdatera svårighetsgrader
+
+- Justerat DifficultyLevel-enum och relaterad logik
+- Uppdaterat frågor och tester för nya nivåer
 
 Closes #42 (if applicable)"
 ```
@@ -239,16 +233,17 @@ flutter build apk --release
 
 ---
 
-## Example Checklist for Expert Mode
+
+## Exempel-checklista för ny/ändrad svårighetsgrad
 
 ```markdown
-- [x] Models updated (Difficulty enum)
-- [x] Questions added to database
+- [x] Models updated (DifficultyLevel enum)
+- [x] Questions/logic updated
 - [x] Business logic updated (progression)
 - [x] UI updated (if needed)
 - [x] Unit tests written and passing
 - [x] flutter analyze passing
-- [x] Manual smoke test on Pixel_6
+- [x] Manual smoke test på emulator
 - [x] Committed with clear message
 - [x] Pushed to GitHub
 - [ ] Release notes prepared (for Play Store)

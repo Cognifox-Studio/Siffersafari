@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180" height="120" viewBox="0 0 180 120" xmlns="http://www.w3.org/2000/svg">
+  <g id="shoe_right">
+    <path d="M138 56 C126 42, 109 36, 83 36 C58 36, 43 46, 31 62 L31 84 C31 95, 40 104, 51 104 L132 104 C144 104, 152 95, 152 84 L152 70 C152 63, 147 59, 138 56 Z" fill="#F4C835" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M88 36 L88 103" fill="none" stroke="#6A2E31" stroke-width="4"/>
+    <path d="M42 86 L136 86" fill="none" stroke="#6A2E31" stroke-width="4"/>
+    <path d="M132 79 L114 67" fill="none" stroke="#D65033" stroke-width="4" stroke-linecap="round"/>
+    <path d="M121 84 L101 70" fill="none" stroke="#D65033" stroke-width="4" stroke-linecap="round"/>
+    <path d="M108 86 L88 71" fill="none" stroke="#D65033" stroke-width="4" stroke-linecap="round"/>
+    <path d="M34 50 C56 50, 71 56, 84 68 L84 104 L49 104 C42 104, 34 98, 34 91 Z" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+  </g>
+</svg>

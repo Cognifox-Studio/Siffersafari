@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:rive/rive.dart';
 
 enum VilleReaction {
@@ -42,6 +43,7 @@ class _VilleCharacterState extends State<VilleCharacter> {
   SMITrigger? _screenChange;
 
   bool _loadFailed = false;
+  bool _useAnimatedFallback = false;
 
   @override
   void initState() {
@@ -62,29 +64,44 @@ class _VilleCharacterState extends State<VilleCharacter> {
     try {
       final data = await RiveFile.asset(widget.riveAssetPath);
       final artboard = data.mainArtboard;
+      debugPrint(
+        'VilleCharacter: artboard=${artboard.name}, '
+        'animations=${artboard.animations.map((a) => a.name).toList()}, '
+        'stateMachines=${artboard.stateMachines.map((m) => m.name).toList()}',
+      );
       final controller = StateMachineController.fromArtboard(
         artboard,
         widget.stateMachineName,
       );
 
       if (controller != null) {
+        debugPrint('VilleCharacter: using state machine ${widget.stateMachineName}');
         artboard.addController(controller);
         _answerCorrect =
             controller.findInput<bool>('answer_correct') as SMITrigger?;
         _answerWrong = controller.findInput<bool>('answer_wrong') as SMITrigger?;
         _userTap = controller.findInput<bool>('user_tap') as SMITrigger?;
         _screenChange = controller.findInput<bool>('screen_change') as SMITrigger?;
+      } else {
+        // Community-riggar utan vår state machine blir ofta en statisk pose.
+        // Använd den säkra Lottie-fallbacken i stället så att Ville alltid rör sig.
+        debugPrint(
+          'VilleCharacter: no matching state machine, using animated Lottie fallback',
+        );
       }
 
       if (!mounted) return;
       setState(() {
         _artboard = artboard;
         _loadFailed = false;
+        _useAnimatedFallback = controller == null;
       });
     } catch (_) {
+      debugPrint('VilleCharacter: failed to load Rive asset ${widget.riveAssetPath}');
       if (!mounted) return;
       setState(() {
         _loadFailed = true;
+        _useAnimatedFallback = false;
       });
     }
   }
@@ -114,6 +131,10 @@ class _VilleCharacterState extends State<VilleCharacter> {
       return _fallback(context);
     }
 
+    if (_useAnimatedFallback) {
+      return _lottieFallback();
+    }
+
     return SizedBox(
       height: widget.height,
       child: GestureDetector(
@@ -136,6 +157,18 @@ class _VilleCharacterState extends State<VilleCharacter> {
         'assets/characters/ville/svg/ville_composite.svg',
         fit: widget.fit,
         placeholderBuilder: (context) => _iconFallback(context),
+      ),
+    );
+  }
+
+  Widget _lottieFallback() {
+    return SizedBox(
+      height: widget.height,
+      width: widget.height,
+      child: Lottie.asset(
+        'assets/ui/lottie/ville_walk.json',
+        repeat: true,
+        fit: widget.fit,
       ),
     );
   }

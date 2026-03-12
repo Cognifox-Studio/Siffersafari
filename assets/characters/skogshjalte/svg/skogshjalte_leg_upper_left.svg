@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="80" height="132" viewBox="0 0 80 132" xmlns="http://www.w3.org/2000/svg">
+  <g id="leg_upper_left">
+    <path d="M21 10 L60 10 L66 103 C67 116, 57 126, 44 126 L38 126 C25 126, 15 116, 16 103 Z" fill="#2F7A3A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M19 79 L63 79" fill="none" stroke="#4E9F5A" stroke-width="6" stroke-linecap="round"/>
+  </g>
+</svg>

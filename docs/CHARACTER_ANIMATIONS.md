@@ -36,6 +36,46 @@ Det innebär:
 3. Lägg utkast i `artifacts/` tills animationen är godkänd
 4. Testa i lokal preview (se HTML-preview i `artifacts/animation_preview/`)
 
+## Preview-labb for humanoider
+
+For Loke, Skogshjalte och framtida humanoider ska animationer inte tas fram direkt i produktkod eller scenpreview. Anvand i stallet denna preview-kedja:
+
+1. `reference_preview`
+   - rorelsereferens eller kallmaterial
+2. `still_preview`
+   - baspose, siluett, lager och proportioner
+3. `motion_lab`
+   - timing, amplitud, ledkedjor och articulation
+4. `clean_preview`
+   - ren oversattning av godkand rorelse till final preview-rigg
+5. `scene_preview`
+   - fler karaktarer eller mer produktlika situationer
+
+Aktuella canonical previews:
+
+- `artifacts/animation_preview/skogshjalte_walk_preview/`
+  - canonical walk-preview for Skogshjaltes gangcykel
+- `artifacts/animation_preview/loke_walk_preview/`
+  - walk-reference for segmenterad humanoidstandard
+- `artifacts/animation_preview/skogshjalte_pivot_clean_preview/`
+  - canonical clean preview for Skogshjaltes Pivot-vinkning
+
+Aktiva stodpreviews:
+
+- `artifacts/animation_preview/pivot_reference_preview/`
+  - kallmaterial och timingreferens
+- `artifacts/animation_preview/skogshjalte_still_preview/`
+  - pose och assetkontroll
+- `artifacts/animation_preview/skogshjalte_motion_lab/`
+  - experimentyta for flerledsrorelse
+- `artifacts/animation_preview/skog_loke_forest_log_celebrate_preview/`
+  - scenpreview, inte rigg-source-of-truth
+
+Historisk preview:
+
+- `artifacts/animation_preview/ville2_walk_preview/`
+  - bevarad som referens, men inte canonical humanoidstandard
+
 ### 2. Integrera i appen
 1. Flytta godkänd `.riv` och eventuella `.json` till `assets/animations/`
 2. Registrera i `pubspec.yaml` (i assets-sektionen)

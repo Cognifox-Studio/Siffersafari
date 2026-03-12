@@ -7,10 +7,13 @@ import '../constants/app_constants.dart';
 enum CharacterAnimationState {
   /// Default idle/resting state
   idle,
+
   /// Happy/pleased state
   happy,
+
   /// Celebration/victory state
   celebrate,
+
   /// Error/confused state
   error,
 }
@@ -42,7 +45,7 @@ class AppThemeConfig {
   final String backgroundAsset;
   final String questHeroAsset;
   final String characterAsset;
-  
+
   /// Legacy: defaults to characterIdleAsset if available, otherwise used directly
   final String characterLottieAsset;
 
@@ -54,7 +57,7 @@ class AppThemeConfig {
 
   /// If true and [characterRiveAsset] is set, UI should prefer Rive for character.
   final bool preferRiveCharacter;
-  
+
   /// New: separate animation states
   /// If null, falls back to characterLottieAsset as idle animation
   final String? characterIdleAsset;
@@ -72,15 +75,19 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
-  
+
   /// Get the animation asset for a given character state
   /// Falls back to characterLottieAsset if specific state not available
   String getCharacterAnimation(CharacterAnimationState state) {
     return switch (state) {
-      CharacterAnimationState.idle => characterIdleAsset ?? characterLottieAsset,
-      CharacterAnimationState.happy => characterHappyAsset ?? (characterIdleAsset ?? characterLottieAsset),
-      CharacterAnimationState.celebrate => characterCelebrateAsset ?? (characterIdleAsset ?? characterLottieAsset),
-      CharacterAnimationState.error => characterErrorAsset ?? (characterIdleAsset ?? characterLottieAsset),
+      CharacterAnimationState.idle =>
+        characterIdleAsset ?? characterLottieAsset,
+      CharacterAnimationState.happy =>
+        characterHappyAsset ?? (characterIdleAsset ?? characterLottieAsset),
+      CharacterAnimationState.celebrate =>
+        characterCelebrateAsset ?? (characterIdleAsset ?? characterLottieAsset),
+      CharacterAnimationState.error =>
+        characterErrorAsset ?? (characterIdleAsset ?? characterLottieAsset),
     };
   }
 
@@ -98,12 +105,14 @@ class AppThemeConfig {
           questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
           characterAsset: 'assets/images/themes/jungle/character_v2.png',
           characterLottieAsset: 'assets/animations/ville_jungle_idle.json',
-          characterRiveAsset: 'assets/characters/ville/rive/ville_character.riv',
+          characterRiveAsset:
+              'assets/characters/ville/rive/ville_character.riv',
           characterRiveStateMachine: 'VilleStateMachine',
           // New: separate animation states for more dynamic character
           characterIdleAsset: 'assets/animations/ville_jungle_idle.json',
           characterHappyAsset: 'assets/animations/ville_jungle_happy.json',
-          characterCelebrateAsset: 'assets/animations/ville_jungle_celebrate.json',
+          characterCelebrateAsset:
+              'assets/animations/ville_jungle_celebrate.json',
           characterErrorAsset: 'assets/animations/ville_jungle_error.json',
           baseBackgroundColor: AppColors.jungleBackground,
           primaryActionColor: AppColors.junglePrimary,
@@ -121,12 +130,14 @@ class AppThemeConfig {
           questHeroAsset: 'assets/images/themes/space/quest_hero.png',
           characterAsset: 'assets/images/themes/space/character.png',
           characterLottieAsset: 'assets/animations/ville_space_idle.json',
-          characterRiveAsset: 'assets/characters/ville/rive/ville_character.riv',
+          characterRiveAsset:
+              'assets/characters/ville/rive/ville_character.riv',
           characterRiveStateMachine: 'VilleStateMachine',
           // New: separate animation states (fallback to idle for now)
           characterIdleAsset: 'assets/animations/ville_space_idle.json',
           characterHappyAsset: 'assets/animations/ville_space_happy.json',
-          characterCelebrateAsset: 'assets/animations/ville_space_celebrate.json',
+          characterCelebrateAsset:
+              'assets/animations/ville_space_celebrate.json',
           characterErrorAsset: 'assets/animations/ville_space_error.json',
           baseBackgroundColor: AppColors.spaceBackground,
           primaryActionColor: AppColors.spacePrimary,

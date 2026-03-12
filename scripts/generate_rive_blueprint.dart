@@ -1,13 +1,12 @@
 // ignore_for_file: avoid_print
 
 /// Generates Rive rig specification and blueprint for manual rigging.
-/// 
+///
 /// Usage: dart run scripts/generate_rive_blueprint.dart
-/// 
+///
 /// Reads: assets/characters/ville/config/ville_animation_spec.json
 /// Outputs: artifacts/ville_rive_blueprint.json (detailed rigging guide)
 library;
-
 
 import 'dart:convert';
 import 'dart:io';
@@ -17,7 +16,8 @@ void main() async {
   print('━' * 50);
 
   // Load animation spec
-  final specFile = File('assets/characters/ville/config/ville_animation_spec.json');
+  final specFile =
+      File('assets/characters/ville/config/ville_animation_spec.json');
   if (!specFile.existsSync()) {
     print('❌ Error: ville_animation_spec.json not found');
     exit(1);
@@ -26,7 +26,8 @@ void main() async {
   final spec = jsonDecode(await specFile.readAsString());
 
   // Load visual spec for reference
-  final visualSpecFile = File('assets/characters/ville/config/ville_visual_spec.json');
+  final visualSpecFile =
+      File('assets/characters/ville/config/ville_visual_spec.json');
   final visualSpec = jsonDecode(await visualSpecFile.readAsString());
 
   final outputDir = Directory('artifacts');
@@ -79,7 +80,8 @@ class RiveBlueprintGenerator {
       'meta': {
         'version': '1.0',
         'character': animationSpec['character'],
-        'description': "Complete Rive rigging blueprint for ${animationSpec['character']}",
+        'description':
+            "Complete Rive rigging blueprint for ${animationSpec['character']}",
         'target_artboard_name': 'Ville',
         'target_state_machine': 'VilleStateMachine',
       },
@@ -95,18 +97,54 @@ class RiveBlueprintGenerator {
   Map<String, dynamic> _generateImportAssets() {
     return {
       'svg_parts': [
-        {'file': 'assets/characters/ville/svg/ville_head.svg', 'layer_name': 'head'},
-        {'file': 'assets/characters/ville/svg/ville_eyes_open.svg', 'layer_name': 'eyes_open'},
-        {'file': 'assets/characters/ville/svg/ville_eyes_closed.svg', 'layer_name': 'eyes_closed'},
-        {'file': 'assets/characters/ville/svg/ville_mouth_smile.svg', 'layer_name': 'mouth_smile'},
-        {'file': 'assets/characters/ville/svg/ville_mouth_sad.svg', 'layer_name': 'mouth_sad'},
-        {'file': 'assets/characters/ville/svg/ville_mouth_neutral.svg', 'layer_name': 'mouth_neutral'},
-        {'file': 'assets/characters/ville/svg/ville_body.svg', 'layer_name': 'body'},
-        {'file': 'assets/characters/ville/svg/ville_arm_left.svg', 'layer_name': 'arm_left'},
-        {'file': 'assets/characters/ville/svg/ville_arm_right.svg', 'layer_name': 'arm_right'},
-        {'file': 'assets/characters/ville/svg/ville_leg_left.svg', 'layer_name': 'leg_left'},
-        {'file': 'assets/characters/ville/svg/ville_leg_right.svg', 'layer_name': 'leg_right'},
-        {'file': 'assets/characters/ville/svg/ville_antennas.svg', 'layer_name': 'antennas'},
+        {
+          'file': 'assets/characters/ville/svg/ville_head.svg',
+          'layer_name': 'head'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_eyes_open.svg',
+          'layer_name': 'eyes_open'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_eyes_closed.svg',
+          'layer_name': 'eyes_closed'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_mouth_smile.svg',
+          'layer_name': 'mouth_smile'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_mouth_sad.svg',
+          'layer_name': 'mouth_sad'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_mouth_neutral.svg',
+          'layer_name': 'mouth_neutral'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_body.svg',
+          'layer_name': 'body'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_arm_left.svg',
+          'layer_name': 'arm_left'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_arm_right.svg',
+          'layer_name': 'arm_right'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_leg_left.svg',
+          'layer_name': 'leg_left'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_leg_right.svg',
+          'layer_name': 'leg_right'
+        },
+        {
+          'file': 'assets/characters/ville/svg/ville_antennas.svg',
+          'layer_name': 'antennas'
+        },
       ],
       'import_order': [
         'body (bottom layer)',
@@ -153,7 +191,9 @@ class RiveBlueprintGenerator {
           'bind_mesh': _getBoneMesh(boneName),
         };
       }).toList(),
-      'constraints': (rig['constraints'] as List<dynamic>).map((c) => c.toString()).toList(),
+      'constraints': (rig['constraints'] as List<dynamic>)
+          .map((c) => c.toString())
+          .toList(),
     };
   }
 
@@ -215,37 +255,44 @@ class RiveBlueprintGenerator {
       {
         'step': 1,
         'title': 'Import SVG Assets',
-        'instructions': 'Import all 12 SVG files from assets/characters/ville/svg/ into Rive. Keep layer names matching file names.',
+        'instructions':
+            'Import all 12 SVG files from assets/characters/ville/svg/ into Rive. Keep layer names matching file names.',
       },
       {
         'step': 2,
         'title': 'Create Artboard',
-        'instructions': "Create artboard named 'Ville' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas.",
+        'instructions':
+            "Create artboard named 'Ville' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas.",
       },
       {
         'step': 3,
         'title': 'Add Bones',
-        'instructions': 'Create 9 bones: root (at feet), spine (center body), head (top of neck), arm_left, arm_right, leg_left, leg_right, antenna_left, antenna_right. Parent correctly.',
+        'instructions':
+            'Create 9 bones: root (at feet), spine (center body), head (top of neck), arm_left, arm_right, leg_left, leg_right, antenna_left, antenna_right. Parent correctly.',
       },
       {
         'step': 4,
         'title': 'Bind Meshes',
-        'instructions': "Use Rive's Weight Painting tool to bind each SVG mesh to appropriate bones. Arms → arm bones, legs → leg bones, head → head bone, etc.",
+        'instructions':
+            "Use Rive's Weight Painting tool to bind each SVG mesh to appropriate bones. Arms → arm bones, legs → leg bones, head → head bone, etc.",
       },
       {
         'step': 5,
         'title': 'Create Animations',
-        'instructions': 'Create all animations from blueprint. Start with idle, idle_blink. Use timeline to keyframe bone rotations and positions.',
+        'instructions':
+            'Create all animations from blueprint. Start with idle, idle_blink. Use timeline to keyframe bone rotations and positions.',
       },
       {
         'step': 6,
         'title': 'Build State Machine',
-        'instructions': "Create state machine 'VilleStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions.",
+        'instructions':
+            "Create state machine 'VilleStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions.",
       },
       {
         'step': 7,
         'title': 'Test & Export',
-        'instructions': 'Test all triggers in Rive preview. Export as .riv file to assets/characters/ville/rive/ville_character.riv',
+        'instructions':
+            'Test all triggers in Rive preview. Export as .riv file to assets/characters/ville/rive/ville_character.riv',
       },
     ];
   }
@@ -310,7 +357,12 @@ class RiveBlueprintGenerator {
       'idle': ['breathing (scale 1.0 → 1.02)', 'antenna sway (±5°)'],
       'idle_blink': ['eyes: open → closed → open', 'duration: 0.2s'],
       'celebrate_small': ['jump 20px', 'arms up', 'smile visible'],
-      'celebrate_big': ['jump 50px', 'arms wave', 'antennas spring', 'smile big'],
+      'celebrate_big': [
+        'jump 50px',
+        'arms wave',
+        'antennas spring',
+        'smile big'
+      ],
       'sad': ['head tilt down 15°', 'arms down', 'sad mouth visible'],
       'confused': ['head tilt left/right', 'eyes narrow', 'neutral mouth'],
       'tap_react': ['scale 1.1 → 1.0', 'slight rotate', 'eyes wide'],
@@ -377,12 +429,14 @@ Use Rive's Weight Painting tool:
 - Antennas: spring-like weights from head
 
 ## Step 5: Create Animations
-${_generateAnimationList()['animations'].map((a) => '''
+${_generateAnimationList()['animations'].map(
+              (a) => '''
 ### ${a['name']} (${a['duration_seconds']}s)
 Category: ${a['category']}
 Keyframes:
 ${(a['keyframes'] as List).map((k) => '  - $k').join('\n')}
-''',).join('\n')}
+''',
+            ).join('\n')}
 
 ## Step 6: Build State Machine
 Name: **VilleStateMachine**

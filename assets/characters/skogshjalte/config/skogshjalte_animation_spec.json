@@ -1,0 +1,282 @@
+{
+  "character": "Skogshjalte",
+  "artboard": "Skogshjalte",
+  "state_machine": "SkogshjalteStateMachine",
+  "rig": {
+    "profile": "segmented_humanoid_multi_joint_v2",
+    "bones": [
+      "root",
+      "pelvis",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "shoulder_left",
+      "upper_arm_left",
+      "lower_arm_left",
+      "wrist_left",
+      "hand_left",
+      "shoulder_right",
+      "upper_arm_right",
+      "lower_arm_right",
+      "wrist_right",
+      "hand_right",
+      "hip_left",
+      "upper_leg_left",
+      "lower_leg_left",
+      "ankle_left",
+      "foot_left",
+      "toe_left",
+      "hip_right",
+      "upper_leg_right",
+      "lower_leg_right",
+      "ankle_right",
+      "foot_right",
+      "toe_right",
+      "hat",
+      "backpack"
+    ],
+    "constraints": [
+      "head_follow_chest",
+      "shoulder_follow_chest_soft",
+      "hat_follow_head_80",
+      "backpack_follow_torso_100",
+      "elbow_soft_limit",
+      "wrist_soft_limit",
+      "pelvis_counterbalance",
+      "knee_soft_limit",
+      "ankle_soft_limit",
+      "feet_ground_lock",
+      "toe_roll_optional"
+    ],
+    "bindingOverrides": {
+      "hand_left": "lower_arm_left",
+      "hand_right": "lower_arm_right",
+      "foot_left": "shoe_left",
+      "foot_right": "shoe_right",
+      "toe_left": "shoe_left",
+      "toe_right": "shoe_right"
+      }
+  },
+  "animations": {
+    "base": [
+      "idle",
+      "idle_blink",
+      "idle_head_bob"
+    ],
+    "locomotion": [
+      "walk"
+    ],
+    "positive": [
+      "happy",
+      "celebrate_small"
+    ],
+    "negative": [
+      "sad",
+      "head_drop"
+    ],
+    "interactive": [
+      "tap_react",
+      "enter_screen",
+      "exit_screen"
+    ]
+  },
+  "motion_profiles": {
+    "walk": {
+      "canonical": true,
+      "source_preview": "artifacts/animation_preview/skogshjalte_walk_preview/index.html",
+      "duration_seconds": 1.16,
+      "fps": 60,
+      "total_frames": 70,
+      "loop": true,
+      "easing": "cubic-bezier(0.42, 0, 0.28, 1)",
+      "notes": [
+        "Current walk data is best treated as a rigging/blockout reference, not as final approved motion.",
+        "Use the segmented SVG kit, approved pivots, and layer-depth relationships as the real handoff into Rive.",
+        "Author the final production walk manually in Rive instead of trying to copy the HTML preview 1:1."
+      ],
+      "approved_pivots": {
+        "pelvis_group": "50% 66%",
+        "chest_group": "50% 35%",
+        "neck_group": "50% 88%",
+        "head_group": "50% 78%",
+        "shoulder_left": "86% 8%",
+        "shoulder_right": "14% 8%",
+        "upper_arm_left": "84% 8%",
+        "upper_arm_right": "16% 8%",
+        "lower_arm_left": "52% 8%",
+        "lower_arm_right": "48% 8%",
+        "hip_left": "66% 10%",
+        "hip_right": "34% 10%",
+        "upper_leg_left": "56% 7%",
+        "upper_leg_right": "44% 7%",
+        "lower_leg_left": "48% 7%",
+        "lower_leg_right": "52% 7%",
+        "ankle_left": "50% 12%",
+        "ankle_right": "50% 12%",
+        "foot_left": "24% 32%",
+        "foot_right": "24% 32%",
+        "toe_left": "8% 56%",
+        "toe_right": "8% 56%"
+      },
+      "rive_prep": {
+        "preferred_view": "three_quarter_front",
+        "far_side": "left",
+        "near_side": "right",
+        "depth_order": [
+          "shadow",
+          "backpack",
+          "upper_leg_left",
+          "lower_leg_left",
+          "shoe_left",
+          "upper_arm_left",
+          "lower_arm_left",
+          "torso",
+          "head",
+          "eyes",
+          "mouth",
+          "hat",
+          "upper_arm_right",
+          "lower_arm_right",
+          "upper_leg_right",
+          "lower_leg_right",
+          "shoe_right"
+        ]
+      },
+      "frame_map_percent_to_frame": {
+        "0%": 0,
+        "12.5%": 9,
+        "25%": 18,
+        "37.5%": 26,
+        "50%": 35,
+        "62.5%": 44,
+        "75%": 53,
+        "87.5%": 61,
+        "100_loop": 70
+      },
+      "key_pose_samples": {
+        "contact_right": {
+          "frame": 0,
+          "root_translateY_px": 2,
+          "pelvis": { "translateY_px": 1, "rotation_deg": 1.0 },
+          "chest_rotation_deg": -0.6,
+          "neck_rotation_deg": 0.35,
+          "arm_upper_left_rotation_deg": 16,
+          "arm_lower_left_rotation_deg": 12,
+          "arm_upper_right_rotation_deg": -14,
+          "arm_lower_right_rotation_deg": -4,
+          "leg_upper_left": { "translateX_px": -3, "translateY_px": 0, "rotation_deg": -16 },
+          "leg_lower_left": { "translateX_px": -6, "rotation_deg": 17 },
+          "leg_upper_right": { "translateX_px": 0, "translateY_px": 6, "rotation_deg": 18 },
+          "leg_lower_right": { "translateX_px": 6, "rotation_deg": -6 },
+          "foot_left": { "translateX_px": -14, "rotation_deg": 6 },
+          "foot_right": { "translateX_px": 13, "rotation_deg": -11 },
+          "toe_left_rotation_deg": 0,
+          "toe_right_rotation_deg": -7,
+          "head": { "translateY_px": 0, "rotation_deg": 0 }
+        },
+        "passing_right": {
+          "frame": 18,
+          "root_translateY_px": -3,
+          "pelvis": { "translateY_px": -1, "rotation_deg": -0.15 },
+          "chest_rotation_deg": 0.5,
+          "neck_rotation_deg": -0.3,
+          "arm_upper_left_rotation_deg": 4,
+          "arm_lower_left_rotation_deg": 6,
+          "arm_upper_right_rotation_deg": 0,
+          "arm_lower_right_rotation_deg": 4,
+          "leg_upper_left": { "translateX_px": -2, "translateY_px": 2, "rotation_deg": -1 },
+          "leg_lower_left": { "translateX_px": -2, "rotation_deg": 12 },
+          "leg_upper_right": { "translateX_px": -2, "translateY_px": 2, "rotation_deg": 2 },
+          "leg_lower_right": { "translateX_px": -1, "rotation_deg": 8 },
+          "foot_left": { "translateX_px": -4, "rotation_deg": 1 },
+          "foot_right": { "translateX_px": 0, "rotation_deg": -1 },
+          "toe_left_rotation_deg": -3,
+          "toe_right_rotation_deg": 1,
+          "head": { "translateY_px": -1, "rotation_deg": 0.3 }
+        },
+        "contact_left": {
+          "frame": 35,
+          "root_translateY_px": 2,
+          "pelvis": { "translateY_px": 1, "rotation_deg": -1.0 },
+          "chest_rotation_deg": 0.6,
+          "neck_rotation_deg": -0.35,
+          "arm_upper_left_rotation_deg": -14,
+          "arm_lower_left_rotation_deg": -4,
+          "arm_upper_right_rotation_deg": 16,
+          "arm_lower_right_rotation_deg": 14,
+          "leg_upper_left": { "translateX_px": 0, "translateY_px": 6, "rotation_deg": 18 },
+          "leg_lower_left": { "translateX_px": 6, "rotation_deg": -6 },
+          "leg_upper_right": { "translateX_px": -3, "translateY_px": 0, "rotation_deg": -16 },
+          "leg_lower_right": { "translateX_px": -6, "rotation_deg": 17 },
+          "foot_left": { "translateX_px": 13, "rotation_deg": -11 },
+          "foot_right": { "translateX_px": -14, "rotation_deg": 6 },
+          "toe_left_rotation_deg": -7,
+          "toe_right_rotation_deg": 0,
+          "head": { "translateY_px": -2, "rotation_deg": -0.45 }
+        },
+        "passing_left": {
+          "frame": 53,
+          "root_translateY_px": -3,
+          "pelvis": { "translateY_px": -1, "rotation_deg": 0.15 },
+          "chest_rotation_deg": -0.5,
+          "neck_rotation_deg": 0.3,
+          "arm_upper_left_rotation_deg": 1,
+          "arm_lower_left_rotation_deg": 4,
+          "arm_upper_right_rotation_deg": 4,
+          "arm_lower_right_rotation_deg": 6,
+          "leg_upper_left": { "translateX_px": -2, "translateY_px": 2, "rotation_deg": 2 },
+          "leg_lower_left": { "translateX_px": -1, "rotation_deg": 8 },
+          "leg_upper_right": { "translateX_px": -2, "translateY_px": 2, "rotation_deg": -1 },
+          "leg_lower_right": { "translateX_px": -2, "rotation_deg": 12 },
+          "foot_left": { "translateX_px": 0, "rotation_deg": -1 },
+          "foot_right": { "translateX_px": -4, "rotation_deg": 1 },
+          "toe_left_rotation_deg": 1,
+          "toe_right_rotation_deg": -3,
+          "head": { "translateY_px": -1, "rotation_deg": -0.15 }
+        }
+      },
+      "secondary_motion": {
+        "cape": {
+          "0%": { "rotation_deg": -1, "translateX_px": -1 },
+          "25%": { "rotation_deg": 2, "translateX_px": 1 },
+          "50%": { "rotation_deg": 0, "translateX_px": 2 },
+          "75%": { "rotation_deg": -2.5, "translateX_px": -1 }
+        },
+        "hat": {
+          "0%": { "rotation_deg": 0 },
+          "25%": { "rotation_deg": -0.5 },
+          "50%": { "rotation_deg": 0.4 },
+          "75%": { "rotation_deg": 0.9 }
+        }
+      }
+    }
+  },
+  "states": {
+    "initial": "idle",
+    "list": [
+      "idle",
+      "walk",
+      "happy",
+      "sad",
+      "tap_react",
+      "enter",
+      "exit"
+    ],
+    "transitions": [
+      { "from": "idle", "to": "walk", "trigger": "start_walking" },
+      { "from": "walk", "to": "idle", "trigger": "stop_walking" },
+      { "from": "idle", "to": "happy", "trigger": "answer_correct" },
+      { "from": "walk", "to": "happy", "trigger": "answer_correct" },
+      { "from": "idle", "to": "sad", "trigger": "answer_wrong" },
+      { "from": "walk", "to": "sad", "trigger": "answer_wrong" },
+      { "from": "idle", "to": "tap_react", "trigger": "user_tap" },
+      { "from": "walk", "to": "tap_react", "trigger": "user_tap" },
+      { "from": "any", "to": "exit", "trigger": "screen_change" },
+      { "from": "enter", "to": "idle", "trigger": "animation_done" },
+      { "from": "happy", "to": "idle", "trigger": "animation_done" },
+      { "from": "sad", "to": "idle", "trigger": "animation_done" },
+      { "from": "tap_react", "to": "idle", "trigger": "animation_done" }
+    ]
+  }
+}

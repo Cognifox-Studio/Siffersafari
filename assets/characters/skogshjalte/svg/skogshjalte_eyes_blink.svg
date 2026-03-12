@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="260" height="140" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg">
+  <g id="eyes_blink">
+    <path d="M84 70 Q102 78 120 70" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+    <path d="M140 70 Q158 78 176 70" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
+  </g>
+</svg>

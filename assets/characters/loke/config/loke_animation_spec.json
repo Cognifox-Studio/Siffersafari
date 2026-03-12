@@ -1,0 +1,102 @@
+{
+  "character": "Loke",
+  "artboard": "Loke",
+  "state_machine": "LokeStateMachine",
+  "rig": {
+    "profile": "segmented_humanoid_multi_joint_v2",
+    "bones": [
+      "root",
+      "pelvis",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "shoulder_left",
+      "upper_arm_left",
+      "lower_arm_left",
+      "wrist_left",
+      "hand_left",
+      "shoulder_right",
+      "upper_arm_right",
+      "lower_arm_right",
+      "wrist_right",
+      "hand_right",
+      "hip_left",
+      "upper_leg_left",
+      "lower_leg_left",
+      "ankle_left",
+      "foot_left",
+      "toe_left",
+      "hip_right",
+      "upper_leg_right",
+      "lower_leg_right",
+      "ankle_right",
+      "foot_right",
+      "toe_right",
+      "hat",
+      "backpack"
+    ],
+    "constraints": [
+      "head_follow_chest",
+      "shoulder_follow_chest_soft",
+      "hat_follow_head_80",
+      "backpack_follow_torso_100",
+      "elbow_soft_limit",
+      "wrist_soft_limit",
+      "pelvis_counterbalance",
+      "knee_soft_limit",
+      "ankle_soft_limit",
+      "feet_ground_lock",
+      "toe_roll_optional"
+    ],
+    "bindingOverrides": {
+      "hand_left": "lower_arm_left",
+      "hand_right": "lower_arm_right",
+      "foot_left": "shoe_left",
+      "foot_right": "shoe_right",
+      "toe_left": "shoe_left",
+      "toe_right": "shoe_right"
+    ]
+  },
+  "animations": {
+    "base": [
+      "idle",
+      "idle_blink",
+      "idle_head_bob"
+    ],
+    "positive": [
+      "happy",
+      "celebrate_small"
+    ],
+    "negative": [
+      "sad",
+      "head_drop"
+    ],
+    "interactive": [
+      "tap_react",
+      "enter_screen",
+      "exit_screen"
+    ]
+  },
+  "states": {
+    "initial": "idle",
+    "list": [
+      "idle",
+      "happy",
+      "sad",
+      "tap_react",
+      "enter",
+      "exit"
+    ],
+    "transitions": [
+      { "from": "idle", "to": "happy", "trigger": "answer_correct" },
+      { "from": "idle", "to": "sad", "trigger": "answer_wrong" },
+      { "from": "idle", "to": "tap_react", "trigger": "user_tap" },
+      { "from": "any", "to": "exit", "trigger": "screen_change" },
+      { "from": "enter", "to": "idle", "trigger": "animation_done" },
+      { "from": "happy", "to": "idle", "trigger": "animation_done" },
+      { "from": "sad", "to": "idle", "trigger": "animation_done" },
+      { "from": "tap_react", "to": "idle", "trigger": "animation_done" }
+    ]
+  }
+}

@@ -1,13 +1,12 @@
 // ignore_for_file: avoid_print
 
 /// Generates SVG parts for Ville character based on visual spec.
-/// 
+///
 /// Usage: dart run scripts/generate_ville_svg_parts.dart
-/// 
+///
 /// Reads: assets/characters/ville/config/ville_visual_spec.json
 /// Outputs: assets/characters/ville/svg/*.svg (12 files)
 library;
-
 
 import 'dart:convert';
 import 'dart:io';
@@ -17,7 +16,8 @@ void main() async {
   print('━' * 50);
 
   // Load spec
-  final specFile = File('assets/characters/ville/config/ville_visual_spec.json');
+  final specFile =
+      File('assets/characters/ville/config/ville_visual_spec.json');
   if (!specFile.existsSync()) {
     print('❌ Error: ville_visual_spec.json not found');
     exit(1);
@@ -91,7 +91,8 @@ class VilleSVGGenerator {
     required this.bodySize,
   });
 
-  String _wrapSVG(String content, {double? width, double? height, String? viewBox}) {
+  String _wrapSVG(String content,
+      {double? width, double? height, String? viewBox}) {
     final w = width ?? baseSize;
     final h = height ?? baseSize;
     final vb = viewBox ?? '0 0 $w $h';
@@ -108,7 +109,8 @@ $content
     final ry = headSize / 2.2;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Head base -->
   <ellipse cx="$cx" cy="$cy" rx="$rx" ry="$ry" 
            fill="${colors['skin']}" 
@@ -120,7 +122,9 @@ $content
            fill="#FFB3BA" opacity="0.4"/>
   <ellipse cx="${cx + 50}" cy="${cy + 20}" rx="25" ry="18" 
            fill="#FFB3BA" opacity="0.4"/>
-''', height: headSize,);
+''',
+      height: headSize,
+    );
   }
 
   String generateEyesOpen() {
@@ -130,7 +134,8 @@ $content
     final cy = headSize / 3;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Left eye -->
   <circle cx="${cx - eyeOffset}" cy="$cy" r="$eyeSize" 
           fill="white" 
@@ -150,7 +155,9 @@ $content
           fill="${colors['eyes']}"/>
   <circle cx="${cx + eyeOffset + eyeSize * 0.2}" cy="${cy - eyeSize * 0.2}" r="${eyeSize * 0.25}" 
           fill="white" opacity="0.9"/>
-''', height: headSize * 0.6,);
+''',
+      height: headSize * 0.6,
+    );
   }
 
   String generateEyesClosed() {
@@ -160,7 +167,8 @@ $content
     final cy = headSize / 3;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Left eye closed -->
   <path d="M ${cx - eyeOffset - eyeSize} $cy Q ${cx - eyeOffset} ${cy + 5} ${cx - eyeOffset + eyeSize} $cy" 
         stroke="${colors['eyes']}" 
@@ -174,54 +182,68 @@ $content
         stroke-width="$strokeW" 
         stroke-linecap="round" 
         fill="none"/>
-''', height: headSize * 0.6,);
+''',
+      height: headSize * 0.6,
+    );
   }
 
   String generateMouthSmile() {
     final cx = baseSize / 2;
-    final mouthWidth = headSize * (proportions['mouthWidthRelativeToHead'] as num);
+    final mouthWidth =
+        headSize * (proportions['mouthWidthRelativeToHead'] as num);
     final cy = headSize * 0.65;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Smile curve -->
   <path d="M ${cx - mouthWidth} $cy Q $cx ${cy + 25} ${cx + mouthWidth} $cy" 
         stroke="${colors['mouth']}" 
         stroke-width="$strokeW" 
         stroke-linecap="round" 
         fill="none"/>
-''', height: headSize * 0.4,);
+''',
+      height: headSize * 0.4,
+    );
   }
 
   String generateMouthSad() {
     final cx = baseSize / 2;
-    final mouthWidth = headSize * (proportions['mouthWidthRelativeToHead'] as num);
+    final mouthWidth =
+        headSize * (proportions['mouthWidthRelativeToHead'] as num);
     final cy = headSize * 0.7;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Sad curve -->
   <path d="M ${cx - mouthWidth} ${cy + 15} Q $cx $cy ${cx + mouthWidth} ${cy + 15}" 
         stroke="${colors['mouth']}" 
         stroke-width="$strokeW" 
         stroke-linecap="round" 
         fill="none"/>
-''', height: headSize * 0.4,);
+''',
+      height: headSize * 0.4,
+    );
   }
 
   String generateMouthNeutral() {
     final cx = baseSize / 2;
-    final mouthWidth = headSize * (proportions['mouthWidthRelativeToHead'] as num);
+    final mouthWidth =
+        headSize * (proportions['mouthWidthRelativeToHead'] as num);
     final cy = headSize * 0.68;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Neutral line -->
   <line x1="${cx - mouthWidth}" y1="$cy" x2="${cx + mouthWidth}" y2="$cy" 
         stroke="${colors['mouth']}" 
         stroke-width="$strokeW" 
         stroke-linecap="round"/>
-''', height: headSize * 0.4,);
+''',
+      height: headSize * 0.4,
+    );
   }
 
   String generateBody() {
@@ -231,7 +253,8 @@ $content
     final radius = style['cornerRadius'] as num;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Body main shape -->
   <rect x="${cx - width / 2}" y="20" 
         width="$width" height="$height" 
@@ -245,16 +268,20 @@ $content
            rx="${width * 0.35}" ry="${height * 0.25}" 
            fill="${colors['bodySecondary']}" 
            opacity="0.6"/>
-''', height: bodySize + 40,);
+''',
+      height: bodySize + 40,
+    );
   }
 
   String generateArmLeft() {
-    final armLength = bodySize * (proportions['armLengthRelativeToBody'] as num);
+    final armLength =
+        bodySize * (proportions['armLengthRelativeToBody'] as num);
     final armWidth = 35.0;
     final radius = style['cornerRadius'] as num;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Left arm -->
   <rect x="30" y="20" 
         width="$armWidth" height="$armLength" 
@@ -269,16 +296,20 @@ $content
           fill="${colors['skin']}" 
           stroke="${colors['outline']}" 
           stroke-width="$strokeW"/>
-''', height: armLength + 50,);
+''',
+      height: armLength + 50,
+    );
   }
 
   String generateArmRight() {
-    final armLength = bodySize * (proportions['armLengthRelativeToBody'] as num);
+    final armLength =
+        bodySize * (proportions['armLengthRelativeToBody'] as num);
     final armWidth = 35.0;
     final radius = style['cornerRadius'] as num;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Right arm -->
   <rect x="335" y="20" 
         width="$armWidth" height="$armLength" 
@@ -293,16 +324,20 @@ $content
           fill="${colors['skin']}" 
           stroke="${colors['outline']}" 
           stroke-width="$strokeW"/>
-''', height: armLength + 50,);
+''',
+      height: armLength + 50,
+    );
   }
 
   String generateLegLeft() {
-    final legLength = bodySize * (proportions['legLengthRelativeToBody'] as num);
+    final legLength =
+        bodySize * (proportions['legLengthRelativeToBody'] as num);
     final legWidth = 40.0;
     final radius = style['cornerRadius'] as num;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Left leg -->
   <rect x="140" y="20" 
         width="$legWidth" height="$legLength" 
@@ -317,16 +352,20 @@ $content
            fill="${colors['skin']}" 
            stroke="${colors['outline']}" 
            stroke-width="$strokeW"/>
-''', height: legLength + 60,);
+''',
+      height: legLength + 60,
+    );
   }
 
   String generateLegRight() {
-    final legLength = bodySize * (proportions['legLengthRelativeToBody'] as num);
+    final legLength =
+        bodySize * (proportions['legLengthRelativeToBody'] as num);
     final legWidth = 40.0;
     final radius = style['cornerRadius'] as num;
     final strokeW = style['strokeWidth'] as num;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Right leg -->
   <rect x="220" y="20" 
         width="$legWidth" height="$legLength" 
@@ -341,16 +380,20 @@ $content
            fill="${colors['skin']}" 
            stroke="${colors['outline']}" 
            stroke-width="$strokeW"/>
-''', height: legLength + 60,);
+''',
+      height: legLength + 60,
+    );
   }
 
   String generateAntennas() {
     final cx = baseSize / 2;
-    final antennaLength = headSize * (proportions['antennaLengthRelativeToHead'] as num);
+    final antennaLength =
+        headSize * (proportions['antennaLengthRelativeToHead'] as num);
     final strokeW = style['strokeWidth'] as num;
     final ballSize = 14.0;
 
-    return _wrapSVG('''
+    return _wrapSVG(
+      '''
   <!-- Left antenna -->
   <line x1="${cx - 40}" y1="20" x2="${cx - 60}" y2="${20 - antennaLength}" 
         stroke="${colors['bodyPrimary']}" 
@@ -372,6 +415,8 @@ $content
           fill="${colors['antenna']}" 
           stroke="${colors['outline']}" 
           stroke-width="${strokeW * 0.6}"/>
-''', height: antennaLength + 40,);
+''',
+      height: antennaLength + 40,
+    );
   }
 }

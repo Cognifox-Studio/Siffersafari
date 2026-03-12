@@ -22,10 +22,11 @@ dart run scripts/generate_rive_blueprint.dart
 
 ## 📦 Vad genereras?
 
-### 1. Ville SVG Parts (12 filer)
+### 1. Ville SVG Parts (13 filer)
 **Generator:** `scripts/generate_ville_svg_parts.dart`  
 **Input:** `assets/characters/ville/config/ville_visual_spec.json`  
 **Output:** `assets/characters/ville/svg/*.svg`
+
 
 Genererade filer:
 - `ville_head.svg` – huvudform med blush
@@ -40,20 +41,23 @@ Genererade filer:
 - `ville_leg_left.svg` – vänster ben + fot
 - `ville_leg_right.svg` – höger ben + fot
 - `ville_antennas.svg` – båda antennerna
+- `ville_composite.svg` – sammansatt helfigur (används för preview och export)
 
 **Stil:** Cartoon, mjuka former, stroke width 4, rundade hörn
 
 ---
 
-### 2. Lottie UI Effects (4 filer)
+### 2. Lottie UI Effects (5 filer)
 **Generator:** `scripts/generate_lottie_effects.dart`  
 **Output:** `assets/ui/lottie/*.json`
+
 
 Genererade effekter:
 - `confetti.json` – 20 färgglada partiklar som faller (90 frames, 3s)
 - `stars.json` – 8 blinkande guldstjärnor (120 frames, 4s)
 - `success_pulse.json` – grön puls-ring + inner circle (45 frames, 1.5s)
 - `error_shake.json` – rött X som skakar (30 frames, 1s)
+- `ville_walk.json` – Ville promenerar (används för animation preview)
 
 **Format:** Lottie JSON v5.7.4, redo för direktanvändning i Flutter
 

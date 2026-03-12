@@ -1,6 +1,7 @@
 {
   "name": "Ville",
   "version": 1,
+  "baseFormRef": "../../_shared/config/humanoid_base_form_v1.json",
   "colors": {
     "skin": "#F2D3A0",
     "bodyPrimary": "#4CAF50",

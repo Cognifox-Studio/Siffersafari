@@ -1,9 +1,9 @@
 // ignore_for_file: avoid_print, dangling_library_doc_comments
 
 /// Generates a composite SVG of complete Ville character.
-/// 
+///
 /// Usage: dart run scripts/generate_ville_composite.dart
-/// 
+///
 /// Reads: assets/characters/ville/svg/ville_*.svg (individual parts)
 /// Outputs: assets/characters/ville/svg/ville_composite.svg (complete character)
 
@@ -14,10 +14,10 @@ void main() async {
   print('━' * 50);
 
   final outputFile = File('assets/characters/ville/svg/ville_composite.svg');
-  
+
   // Create complete Ville character
   final compositeSvg = generateCompositeSvg();
-  
+
   await outputFile.writeAsString(compositeSvg);
   print('✅ Generated: ville_composite.svg');
   print('━' * 50);

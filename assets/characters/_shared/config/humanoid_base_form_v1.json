@@ -1,0 +1,180 @@
+{
+  "name": "Humanoid Base Form",
+  "version": 2,
+  "description": "Shared base proportions, neutral T-pose alignment and expanded multi-joint humanoid rig standard for new humanoid characters.",
+  "proportions": {
+    "headToBodyRatio": 0.52,
+    "eyeSizeRelativeToHead": 0.12,
+    "mouthWidthRelativeToHead": 0.2,
+    "armLengthRelativeToBody": 0.72,
+    "legLengthRelativeToBody": 0.55,
+    "shoeWidthRelativeToLeg": 1.7
+  },
+  "styleSettings": {
+    "strokeWidth": 4,
+    "cornerRadius": 14,
+    "useGradients": false,
+    "useTextures": false,
+    "rigFriendly": true
+  },
+  "previewStandard": {
+    "type": "inline_svg_pose_preview",
+    "referenceTemplate": "artifacts/animation_preview/loke_walk_preview/index.html",
+    "defaultBodyClass": "tpose-preview",
+    "requiresSegmentedLimbs": true,
+    "requiresInlineCharacterSvg": true,
+    "requiresExplicitTPoseOverrides": true,
+    "tPoseSelectors": {
+      "armLeftUpper": "#arm-left-upper",
+      "armLeftLower": "#arm-left-lower",
+      "armRightUpper": "#arm-right-upper",
+      "armRightLower": "#arm-right-lower"
+    }
+  },
+  "tPosePreviewAlignment": {
+    "armUpperTranslateY": {
+      "left": 17,
+      "right": 16
+    },
+    "armLowerTranslateY": {
+      "left": -2,
+      "right": -2
+    },
+    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+  },
+  "rigStandard": {
+    "profile": "segmented_humanoid_multi_joint_v2",
+    "inspiration": "Pivot Animator-style humanoid rigs with explicit shoulder, elbow, wrist, pelvis, hip, knee and ankle control points.",
+    "viewsSupported": [
+      "front",
+      "three_quarter",
+      "side",
+      "back"
+    ],
+    "bones": [
+      "root",
+      "pelvis",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "shoulder_left",
+      "upper_arm_left",
+      "lower_arm_left",
+      "wrist_left",
+      "hand_left",
+      "shoulder_right",
+      "upper_arm_right",
+      "lower_arm_right",
+      "wrist_right",
+      "hand_right",
+      "hip_left",
+      "upper_leg_left",
+      "lower_leg_left",
+      "ankle_left",
+      "foot_left",
+      "toe_left",
+      "hip_right",
+      "upper_leg_right",
+      "lower_leg_right",
+      "ankle_right",
+      "foot_right",
+      "toe_right"
+    ],
+    "hierarchy": {
+      "root": ["pelvis"],
+      "pelvis": ["spine", "hip_left", "hip_right"],
+      "spine": ["chest"],
+      "chest": ["neck", "shoulder_left", "shoulder_right"],
+      "neck": ["head"],
+      "shoulder_left": ["upper_arm_left"],
+      "upper_arm_left": ["lower_arm_left"],
+      "lower_arm_left": ["wrist_left"],
+      "wrist_left": ["hand_left"],
+      "shoulder_right": ["upper_arm_right"],
+      "upper_arm_right": ["lower_arm_right"],
+      "lower_arm_right": ["wrist_right"],
+      "wrist_right": ["hand_right"],
+      "hip_left": ["upper_leg_left"],
+      "upper_leg_left": ["lower_leg_left"],
+      "lower_leg_left": ["ankle_left"],
+      "ankle_left": ["foot_left"],
+      "foot_left": ["toe_left"],
+      "hip_right": ["upper_leg_right"],
+      "upper_leg_right": ["lower_leg_right"],
+      "lower_leg_right": ["ankle_right"],
+      "ankle_right": ["foot_right"],
+      "foot_right": ["toe_right"]
+    },
+    "bindingRules": {
+      "allowCompoundArtPerBone": true,
+      "defaultHandBinding": "bind_to_lower_arm_when_no_separate_hand_asset_exists",
+      "defaultFootBinding": "bind_to_shoe_or_foot_asset_when_no_toe_asset_exists",
+      "accessoriesFollow": {
+        "hat": "head",
+        "backpack": "chest"
+      }
+    },
+    "rotationLimitsDeg": {
+      "head": { "min": -20, "max": 20 },
+      "shoulder": { "min": -35, "max": 35 },
+      "elbow": { "min": 0, "max": 55 },
+      "wrist": { "min": -25, "max": 25 },
+      "hip": { "min": -24, "max": 24 },
+      "knee": { "min": 0, "max": 55 },
+      "ankle": { "min": -18, "max": 18 },
+      "toe": { "min": -12, "max": 20 }
+    },
+    "constraints": [
+      "head_follow_chest",
+      "shoulder_follow_chest_soft",
+      "elbow_soft_limit",
+      "wrist_soft_limit",
+      "pelvis_counterbalance",
+      "knee_soft_limit",
+      "ankle_soft_limit",
+      "feet_ground_lock",
+      "toe_roll_optional"
+    ]
+  },
+  "walkCycleStandard": {
+    "phaseModel": "contact_down_pass_up",
+    "stanceSwingRatio": "60_40",
+    "rules": [
+      "opposite_arm_leg_swing",
+      "pelvis_and_shoulders_counter_rotate_subtly",
+      "knee_flex_most_during_early_mid_swing",
+      "elbow_and_wrist_can_overlap_for_wave_or_reach_gestures",
+      "ankle_precedes_foot_roll_and_toe_push_off_when_available",
+      "foot_roll_heel_strike_to_toe_off",
+      "reduced_lateral_shin_slide",
+      "subtle_vertical_bob"
+    ],
+    "ranges": {
+      "hipRotationDeg": {
+        "min": -18,
+        "max": 18
+      },
+      "kneeRotationDeg": {
+        "min": 4,
+        "max": 24
+      },
+      "armUpperRotationDeg": {
+        "min": -12,
+        "max": 12
+      },
+      "armLowerRotationDeg": {
+        "min": -4,
+        "max": 10
+      },
+      "footRotationDeg": {
+        "heelStrike": -6,
+        "toeOff": 9
+      },
+      "bodyBobPx": {
+        "min": -3,
+        "max": 2
+      }
+    }
+  }
+}
