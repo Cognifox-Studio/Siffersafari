@@ -88,7 +88,7 @@ void main() {
 
       expect(find.textContaining('Fråga'), findsOneWidget);
       expect(find.text('Djungelspår'), findsOneWidget);
-      expect(find.textContaining('Ville:'), findsOneWidget);
+      expect(find.textContaining('Maskoten:'), findsOneWidget);
 
       for (var i = 0; i < 10; i++) {
         await tester.ensureVisible(find.text('42'));

@@ -22,10 +22,10 @@ Få fram korrekta genererade filer i `assets/` och `artifacts/` med minsta möjl
    - Rigg/animation spec: kör Rive blueprint-generatorn.
    - Osäker eller större ändring: kör hela asset-pipelinen.
 2. Föredra repo:ts befintliga VS Code tasks framför fria terminalkommandon.
-   - `Assets: Generate Ville SVG Parts`
+   - `Assets: Generate Mascot SVG Parts`
    - `Assets: Generate Lottie Effects`
    - `Assets: Generate Rive Blueprint`
-   - `Assets: Generate Ville Composite SVG`
+   - `Assets: Generate Mascot Composite SVG`
    - `Assets: Generate All (SVG + Lottie + Rive Blueprint)`
 3. Verifiera att förväntade output-filer faktiskt uppdaterades i rätt mappar.
 4. Om nya filer ska användas i appen, kontrollera att `pubspec.yaml` och relevant Flutter-kod refererar rätt asset-path.
@@ -41,10 +41,10 @@ Få fram korrekta genererade filer i `assets/` och `artifacts/` med minsta möjl
 
 ## Repo-specifika kommandon
 - Task: `Assets: Generate All (SVG + Lottie + Rive Blueprint)`
-- Script: `dart run scripts/generate_ville_svg_parts.dart`
+- Script: `dart run scripts/generate_mascot_svg_parts.dart`
 - Script: `dart run scripts/generate_lottie_effects.dart`
 - Script: `dart run scripts/generate_rive_blueprint.dart`
-- Script: `dart run scripts/generate_ville_composite.dart`
+- Script: `dart run scripts/generate_mascot_composite.dart`
 
 ## Förväntad output
 - Uppdaterade filer under `assets/characters/...`, `assets/ui/lottie/...` och/eller `artifacts/...`

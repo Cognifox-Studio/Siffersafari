@@ -66,9 +66,7 @@ flutter:
     - assets/sounds/correct.wav
     - assets/sounds/wrong.wav
     - assets/animations/
-    - assets/characters/loke/svg/
-    - assets/characters/ville/rive/ville_character.riv
-    - assets/characters/ville/svg/ville_composite.svg
+    - assets/characters/
     - assets/ui/lottie/confetti.json
     - assets/ui/lottie/stars.json
     - assets/ui/lottie/success_pulse.json

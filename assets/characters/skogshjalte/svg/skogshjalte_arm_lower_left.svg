@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="84" height="148" viewBox="0 0 84 148" xmlns="http://www.w3.org/2000/svg">
-  <g id="arm_lower_left">
-    <path d="M31 10 C20 22, 15 40, 17 58 L22 102 C24 123, 35 136, 49 136 C63 136, 73 124, 72 106 L68 58 C67 40, 58 21, 45 10 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M23 124 C25 137, 32 144, 43 146" fill="none" stroke="#6A2E31" stroke-width="4" stroke-linecap="round"/>
-    <path d="M34 122 L30 146" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
-    <path d="M44 121 L44 147" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
-    <path d="M54 121 L58 145" fill="none" stroke="#6A2E31" stroke-width="3" stroke-linecap="round"/>
-  </g>
+<svg width="80" height="144" viewBox="0 0 80 144" xmlns="http://www.w3.org/2000/svg">
+
+  <rect x="24" y="8" width="28" height="98" rx="14" fill="#E7A279" stroke="#6A2E31" stroke-width="4"/>
+  <circle cx="38" cy="122" r="16" fill="#E7A279" stroke="#6A2E31" stroke-width="4"/>
+  <rect x="18" y="4" width="40" height="14" rx="7" fill="#2F7A3A" stroke="#6A2E31" stroke-width="3"/>
+
 </svg>

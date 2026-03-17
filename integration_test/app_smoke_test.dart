@@ -38,7 +38,7 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
 
   if ((activeStep?.startsWith('1/') ?? true) &&
       find.text('Vilken årskurs kör du?').evaluate().isNotEmpty) {
-    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    final nextButton = find.text('Nästa');
     if (nextButton.evaluate().isNotEmpty) {
       await it.tap(tester, nextButton);
       await it.settle(tester, const Duration(milliseconds: 500));
@@ -48,7 +48,7 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
 
   if ((activeStep?.startsWith('2/') ?? false) &&
       find.text('Kan barnet läsa?').evaluate().isNotEmpty) {
-    final noButton = find.widgetWithText(ElevatedButton, 'Nej');
+    final noButton = find.text('Nej');
     if (noButton.evaluate().isNotEmpty) {
       await it.tap(tester, noButton);
       await it.settle(tester, const Duration(milliseconds: 500));
@@ -59,14 +59,14 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   if ((activeStep?.startsWith('3/') ?? false) ||
       ((activeStep?.startsWith('2/') ?? false) &&
           find.text('Kan barnet läsa?').evaluate().isEmpty)) {
-    final doneButton = find.widgetWithText(ElevatedButton, 'Starta');
+    final doneButton = find.text('Starta');
     if (doneButton.evaluate().isNotEmpty) {
       await it.tap(tester, doneButton);
       await it.settle(tester, const Duration(milliseconds: 600));
       return true;
     }
 
-    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    final nextButton = find.text('Nästa');
     if (nextButton.evaluate().isNotEmpty) {
       await it.tap(tester, nextButton);
       await it.settle(tester, const Duration(milliseconds: 500));
@@ -74,7 +74,7 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
     }
   }
 
-  final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
+  final skipButton = find.text('Hoppa över');
   if (skipButton.evaluate().isNotEmpty) {
     await it.tap(tester, skipButton);
     await it.settle(tester, const Duration(milliseconds: 700));
@@ -266,22 +266,33 @@ void main() {
             find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
             find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
             find.text('Vad vill du räkna?').evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_subtraction')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_multiplication')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_division')).evaluate().isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_addition'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_subtraction'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_multiplication'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_division'))
+                .evaluate()
+                .isNotEmpty ||
             find.text('Skapa profil').evaluate().isNotEmpty,
         timeout: const Duration(seconds: 35),
       );
 
       // Verify app is running and we can find key UI elements.
       // Either we're in onboarding or we can see operation cards.
-        final onboardingVisible =
-          find.text('Hoppa över').evaluate().isNotEmpty ||
-            find.text('Nu kör vi!').evaluate().isNotEmpty ||
-            find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
-            find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
-            find.text('Vad vill du räkna?').evaluate().isNotEmpty;
+      final onboardingVisible = find.text('Hoppa över').evaluate().isNotEmpty ||
+          find.text('Nu kör vi!').evaluate().isNotEmpty ||
+          find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
+          find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
+          find.text('Vad vill du räkna?').evaluate().isNotEmpty;
 
       final homeVisible = find
               .byKey(const Key('operation_card_addition'))
@@ -323,10 +334,22 @@ void main() {
             find.text('Skapa profil').evaluate().isNotEmpty ||
             find.byIcon(Icons.settings).evaluate().isNotEmpty ||
             find.byTooltip('Föräldraläge').evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_subtraction')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_multiplication')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_division')).evaluate().isNotEmpty,
+            find
+                .byKey(const Key('operation_card_addition'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_subtraction'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_multiplication'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_division'))
+                .evaluate()
+                .isNotEmpty,
         timeout: const Duration(seconds: 35),
       );
 
@@ -476,10 +499,22 @@ void main() {
             find.text('Skapa profil').evaluate().isNotEmpty ||
             find.byIcon(Icons.arrow_drop_down).evaluate().isNotEmpty ||
             find.byKey(const Key('profile_selector')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_addition')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_subtraction')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_multiplication')).evaluate().isNotEmpty ||
-            find.byKey(const Key('operation_card_division')).evaluate().isNotEmpty,
+            find
+                .byKey(const Key('operation_card_addition'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_subtraction'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_multiplication'))
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .byKey(const Key('operation_card_division'))
+                .evaluate()
+                .isNotEmpty,
         timeout: const Duration(seconds: 35),
       );
 

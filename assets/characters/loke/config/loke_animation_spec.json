@@ -50,13 +50,13 @@
       "toe_roll_optional"
     ],
     "bindingOverrides": {
-      "hand_left": "lower_arm_left",
-      "hand_right": "lower_arm_right",
+      "hand_left": "arm_lower_left",
+      "hand_right": "arm_lower_right",
       "foot_left": "shoe_left",
       "foot_right": "shoe_right",
       "toe_left": "shoe_left",
       "toe_right": "shoe_right"
-    ]
+    }
   },
   "animations": {
     "base": [
@@ -89,14 +89,46 @@
       "exit"
     ],
     "transitions": [
-      { "from": "idle", "to": "happy", "trigger": "answer_correct" },
-      { "from": "idle", "to": "sad", "trigger": "answer_wrong" },
-      { "from": "idle", "to": "tap_react", "trigger": "user_tap" },
-      { "from": "any", "to": "exit", "trigger": "screen_change" },
-      { "from": "enter", "to": "idle", "trigger": "animation_done" },
-      { "from": "happy", "to": "idle", "trigger": "animation_done" },
-      { "from": "sad", "to": "idle", "trigger": "animation_done" },
-      { "from": "tap_react", "to": "idle", "trigger": "animation_done" }
+      {
+        "from": "idle",
+        "to": "happy",
+        "trigger": "answer_correct"
+      },
+      {
+        "from": "idle",
+        "to": "sad",
+        "trigger": "answer_wrong"
+      },
+      {
+        "from": "idle",
+        "to": "tap_react",
+        "trigger": "user_tap"
+      },
+      {
+        "from": "any",
+        "to": "exit",
+        "trigger": "screen_change"
+      },
+      {
+        "from": "enter",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "happy",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "sad",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "tap_react",
+        "to": "idle",
+        "trigger": "animation_done"
+      }
     ]
   }
 }

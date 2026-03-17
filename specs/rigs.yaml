@@ -1,0 +1,54 @@
+rigs:
+- id: mascot_basic
+  character: mascot
+  source_animation_spec: assets/characters/mascot/config/mascot_animation_spec.json
+  runtime: rive
+  template_family: humanoid_small
+  slots:
+  - head
+  - body
+  - arm_left
+  - arm_right
+  - leg_left
+  - leg_right
+  - antennas
+- id: loke_humanoid
+  character: loke
+  source_animation_spec: assets/characters/loke/config/loke_animation_spec.json
+  runtime: rive
+  template_family: segmented_humanoid_multi_joint_v2
+  slots:
+  - head
+  - torso
+  - arm_upper_left
+  - arm_lower_left
+  - arm_upper_right
+  - arm_lower_right
+  - leg_upper_left
+  - leg_lower_left
+  - leg_upper_right
+  - leg_lower_right
+  - shoe_left
+  - shoe_right
+  - hat
+  - backpack
+- id: skogshjalte_humanoid
+  character: skogshjalte
+  source_animation_spec: assets/characters/skogshjalte/config/skogshjalte_animation_spec.json
+  runtime: rive
+  template_family: segmented_humanoid_multi_joint_v2
+  slots:
+  - head
+  - torso
+  - arm_upper_left
+  - arm_lower_left
+  - arm_upper_right
+  - arm_lower_right
+  - leg_upper_left
+  - leg_lower_left
+  - leg_upper_right
+  - leg_lower_right
+  - shoe_left
+  - shoe_right
+  - hat
+  - backpack

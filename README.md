@@ -96,7 +96,7 @@ flutter build apk --release
 - Riverpod för state management
 - Hive för lokal persistens
 - audioplayers för ljud
-- Rive för interaktiva karaktärsanimationer (Ville)
+- SVG-först för automatiserade karaktärsassets, med Rive som valfritt extra lager
 - Lottie för UI-effekter (konfetti, stjärnor, pulser)
 - flutter_screenutil för responsiv skalning
 
@@ -104,9 +104,9 @@ flutter build apk --release
 
 All visuell grafik genereras via kod – ingen handritning krävs:
 
-- **SVG-delar:** `dart run scripts/generate_ville_svg_parts.dart` → 12 SVG parts
+- **SVG-delar:** `dart run scripts/generate_mascot_svg_parts.dart` → 12 SVG parts
 - **Lottie UI-effekter:** `dart run scripts/generate_lottie_effects.dart` → 4 JSON animations
-- **Rive Blueprint:** `dart run scripts/generate_rive_blueprint.dart` → rigging guide
+- **Rive Blueprint:** `dart run scripts/generate_rive_blueprint.dart` → valfri rigging guide
 
 Kör alla med ett kommando:
 ```bash
@@ -114,7 +114,7 @@ Kör alla med ett kommando:
 Tasks → Run Task → "Assets: Generate All"
 
 # Eller via terminal
-dart run scripts/generate_ville_svg_parts.dart
+dart run scripts/generate_mascot_svg_parts.dart
 dart run scripts/generate_lottie_effects.dart
 dart run scripts/generate_rive_blueprint.dart
 ```
@@ -127,13 +127,29 @@ dart run scripts/generate_rive_blueprint.dart
 
 Se [docs/AI_ASSET_PIPELINE.md](docs/AI_ASSET_PIPELINE.md) för komplett guide.
 
+For completely automated character creation from a short brief:
+
+```bash
+python tools/create_character.py --name "Mira" --brief "space explorer with teal jacket and gold backpack"
+```
+
+The command creates specs, segmented SVG assets, a composite runtime SVG, optional Rive blueprint files, updates `specs/*.yaml`, and refreshes manifest/codegen so no manual asset registration is required.
+
+For safe regeneration of an existing character from its current config:
+
+```bash
+python tools/refresh_character.py --slug loke
+```
+
+This command preserves the existing animation spec, refreshes the visual spec and SVG outputs, rebuilds blueprint/guide files, and reruns manifest/codegen.
+
 ### Animation Pipeline
 
 Karaktärspipelinen är hybrid:
 
-- Karaktärsrigg/specs under `assets/characters/ville/`
+- Karaktärsrigg/specs under `assets/characters/mascot/`
 - UI-effekter under `assets/ui/lottie/`
-- Rive-widget med triggers i quiz/home/results för `answer_correct`, `answer_wrong`, `user_tap`, `screen_change`
+- Flutter/SVG-baserad mascot-widget för automatiserad feedback i quiz/home/results, med valfri Rive-opt-in senare
 
 Projektet följer en tydlig lagerindelning:
 

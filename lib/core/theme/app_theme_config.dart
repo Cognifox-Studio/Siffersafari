@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
 import '../../domain/enums/app_theme.dart';
 import '../constants/app_constants.dart';
 
-/// Character animation states for flexible Ville animation control
+/// Character animation states for flexible mascot animation control
 enum CharacterAnimationState {
   /// Default idle/resting state
   idle,
@@ -24,14 +23,9 @@ class AppThemeConfig {
     required this.backgroundAsset,
     required this.questHeroAsset,
     required this.characterAsset,
-    required this.characterLottieAsset,
     this.characterRiveAsset,
     this.characterRiveStateMachine,
-    this.preferRiveCharacter = true,
-    this.characterIdleAsset,
-    this.characterHappyAsset,
-    this.characterCelebrateAsset,
-    this.characterErrorAsset,
+    this.preferRiveCharacter = false,
     required this.baseBackgroundColor,
     required this.primaryActionColor,
     required this.secondaryActionColor,
@@ -46,9 +40,6 @@ class AppThemeConfig {
   final String questHeroAsset;
   final String characterAsset;
 
-  /// Legacy: defaults to characterIdleAsset if available, otherwise used directly
-  final String characterLottieAsset;
-
   /// Preferred runtime character asset (Rive). Keep null until a .riv exists.
   final String? characterRiveAsset;
 
@@ -57,13 +48,6 @@ class AppThemeConfig {
 
   /// If true and [characterRiveAsset] is set, UI should prefer Rive for character.
   final bool preferRiveCharacter;
-
-  /// New: separate animation states
-  /// If null, falls back to characterLottieAsset as idle animation
-  final String? characterIdleAsset;
-  final String? characterHappyAsset;
-  final String? characterCelebrateAsset;
-  final String? characterErrorAsset;
 
   final Color baseBackgroundColor;
   final Color primaryActionColor;
@@ -75,21 +59,6 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
-
-  /// Get the animation asset for a given character state
-  /// Falls back to characterLottieAsset if specific state not available
-  String getCharacterAnimation(CharacterAnimationState state) {
-    return switch (state) {
-      CharacterAnimationState.idle =>
-        characterIdleAsset ?? characterLottieAsset,
-      CharacterAnimationState.happy =>
-        characterHappyAsset ?? (characterIdleAsset ?? characterLottieAsset),
-      CharacterAnimationState.celebrate =>
-        characterCelebrateAsset ?? (characterIdleAsset ?? characterLottieAsset),
-      CharacterAnimationState.error =>
-        characterErrorAsset ?? (characterIdleAsset ?? characterLottieAsset),
-    };
-  }
 
   bool get shouldUseRiveCharacter =>
       preferRiveCharacter &&
@@ -104,16 +73,6 @@ class AppThemeConfig {
           backgroundAsset: 'assets/images/themes/jungle/background.png',
           questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
           characterAsset: 'assets/images/themes/jungle/character_v2.png',
-          characterLottieAsset: 'assets/animations/ville_jungle_idle.json',
-          characterRiveAsset:
-              'assets/characters/ville/rive/ville_character.riv',
-          characterRiveStateMachine: 'VilleStateMachine',
-          // New: separate animation states for more dynamic character
-          characterIdleAsset: 'assets/animations/ville_jungle_idle.json',
-          characterHappyAsset: 'assets/animations/ville_jungle_happy.json',
-          characterCelebrateAsset:
-              'assets/animations/ville_jungle_celebrate.json',
-          characterErrorAsset: 'assets/animations/ville_jungle_error.json',
           baseBackgroundColor: AppColors.jungleBackground,
           primaryActionColor: AppColors.junglePrimary,
           secondaryActionColor: AppColors.jungleSecondary,
@@ -129,16 +88,6 @@ class AppThemeConfig {
           backgroundAsset: 'assets/images/themes/space/background.png',
           questHeroAsset: 'assets/images/themes/space/quest_hero.png',
           characterAsset: 'assets/images/themes/space/character.png',
-          characterLottieAsset: 'assets/animations/ville_space_idle.json',
-          characterRiveAsset:
-              'assets/characters/ville/rive/ville_character.riv',
-          characterRiveStateMachine: 'VilleStateMachine',
-          // New: separate animation states (fallback to idle for now)
-          characterIdleAsset: 'assets/animations/ville_space_idle.json',
-          characterHappyAsset: 'assets/animations/ville_space_happy.json',
-          characterCelebrateAsset:
-              'assets/animations/ville_space_celebrate.json',
-          characterErrorAsset: 'assets/animations/ville_space_error.json',
           baseBackgroundColor: AppColors.spaceBackground,
           primaryActionColor: AppColors.spacePrimary,
           secondaryActionColor: AppColors.spaceSecondary,

@@ -192,7 +192,7 @@ class _StoryMapHeader extends StatelessWidget {
               SizedBox(
                 width: 220,
                 child: _HeaderStat(
-                  label: 'Ville nu',
+                  label: 'Maskoten nu',
                   value: story.currentNode?.landmark ?? 'Stigen',
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
@@ -457,7 +457,7 @@ class _StoryMapNodeCard extends StatelessWidget {
 
     final stateLabel = switch (node.state) {
       StoryNodeState.completed => 'Klar',
-      StoryNodeState.current => 'Här är Ville nu',
+      StoryNodeState.current => 'Här är maskoten nu',
       StoryNodeState.upcoming => 'Kommer snart',
     };
 
@@ -667,7 +667,7 @@ class _StoryMapLegend extends StatelessWidget {
           ),
           _LegendItem(
             color: onPrimary,
-            label: 'Villes position',
+            label: 'Maskotens position',
             textColor: onPrimary,
             outlined: true,
           ),

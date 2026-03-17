@@ -83,10 +83,10 @@ Byggartefakter som inte ar kallkod:
 
 ## assets/
 
-- `characters/ville/` (svg, rive, config)
+- `characters/mascot/` (svg, rive, config)
 - `characters/loke/` (svg, rive-guide/spec)
 - `ui/lottie/` (UI-effekter)
-- `animations/` (ovriga Lottie)
+- `animations/` (ovriga animation-JSON/referenser, inte godkand mascot-runtime)
 - `images/` (teman/brand/icon)
 - `sounds/` (wav-effekter/musik)
 
@@ -95,10 +95,17 @@ Byggartefakter som inte ar kallkod:
 Exempel:
 - `flutter_pixel6.ps1`
 - `extract_integration_screenshots.ps1`
-- `generate_ville_svg_parts.dart`
+- `generate_mascot_svg_parts.dart`
 - `generate_lottie_effects.dart`
 - `generate_rive_blueprint.dart`
+- `verify_mascot_rive_runtime.ps1`
 - `generate_android_launcher_icons.dart`
+
+## Aktuell animationsregel
+
+- SVG/spec/blueprint kan genereras i repo:t
+- godkanda UI-effekter genereras som Lottie
+- riktig karaktarsanimation i appen kraver fortfarande manuell `.riv`-export i Rive Editor
 
 ## .github/
 

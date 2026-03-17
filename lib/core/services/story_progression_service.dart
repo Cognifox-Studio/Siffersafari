@@ -152,7 +152,7 @@ class StoryProgressionService {
     });
 
     return StoryProgress(
-      worldTitle: 'Ville i djungeln',
+      worldTitle: 'Maskoten i djungeln',
       worldSubtitle: 'Följ stigen genom djungeln och lås upp nya platser.',
       chapterTitle: _chapterTitleFor(currentStatus.quest.difficulty),
       currentObjectiveTitle: currentStatus.quest.title,

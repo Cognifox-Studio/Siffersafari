@@ -16,10 +16,10 @@ import '../../domain/entities/question.dart';
 import '../../domain/entities/story_progress.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/feedback_dialog.dart';
+import '../widgets/mascot_character.dart';
 import '../widgets/progress_indicator_bar.dart';
 import '../widgets/question_card.dart';
 import '../widgets/themed_background_scaffold.dart';
-import '../widgets/ville_character.dart';
 import 'home_screen.dart';
 import 'results_screen.dart';
 
@@ -36,8 +36,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   String? _momentText;
   Timer? _momentTimer;
   bool _feedbackDialogVisible = false;
-  VilleReaction _villeReaction = VilleReaction.idle;
-  int _villeReactionNonce = 0;
+  MascotReaction _mascotReaction = MascotReaction.idle;
+  int _mascotReactionNonce = 0;
 
   static const int _showStreakFrom = 2;
 
@@ -103,8 +103,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       ref.read(quizProvider.notifier).clearFeedback();
       setState(() {
         _selectedAnswer = null;
-        _villeReaction = VilleReaction.screenChange;
-        _villeReactionNonce++;
+        _mascotReaction = MascotReaction.screenChange;
+        _mascotReactionNonce++;
       });
       context.pushReplacementSmooth(const ResultsScreen());
       return;
@@ -114,8 +114,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     setState(() {
       _selectedAnswer = null;
       _questionStartTime = DateTime.now();
-      _villeReaction = VilleReaction.idle;
-      _villeReactionNonce++;
+      _mascotReaction = MascotReaction.idle;
+      _mascotReactionNonce++;
     });
   }
 
@@ -143,10 +143,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       final nextFeedback = next.feedback;
       if (nextFeedback != null && nextFeedback != previousFeedback) {
         setState(() {
-          _villeReaction = nextFeedback.isCorrect
-              ? VilleReaction.answerCorrect
-              : VilleReaction.answerWrong;
-          _villeReactionNonce++;
+          _mascotReaction = nextFeedback.isCorrect
+              ? MascotReaction.answerCorrect
+              : MascotReaction.answerWrong;
+          _mascotReactionNonce++;
         });
       }
 
@@ -547,9 +547,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             alignment: Alignment.centerRight,
             child: SizedBox(
               height: 72.h,
-              child: VilleCharacter(
-                reaction: _villeReaction,
-                reactionNonce: _villeReactionNonce,
+              child: MascotCharacter(
+                reaction: _mascotReaction,
+                reactionNonce: _mascotReactionNonce,
                 height: 72.h,
               ),
             ),
@@ -663,7 +663,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
           SizedBox(height: AppConstants.microSpacing4.h),
           Text(
-            'Ville: ${currentNode?.landmark ?? 'stigen'}',
+            'Maskoten: ${currentNode?.landmark ?? 'stigen'}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(

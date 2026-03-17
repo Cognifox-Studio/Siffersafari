@@ -524,7 +524,7 @@ class _StoryPath extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                'Ville är vid ${story.currentNode?.landmark ?? 'stigen'}',
+                'Maskoten är vid ${story.currentNode?.landmark ?? 'stigen'}',
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(

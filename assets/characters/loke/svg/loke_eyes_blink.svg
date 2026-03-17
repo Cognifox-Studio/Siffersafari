@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="260" height="140" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg">
-  <g id="eyes_blink">
-    <path d="M84 70 Q102 78 120 70" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
-    <path d="M140 70 Q158 78 176 70" fill="none" stroke="#6A2E31" stroke-width="5" stroke-linecap="round"/>
-  </g>
+<svg width="236" height="112" viewBox="0 0 236 112" xmlns="http://www.w3.org/2000/svg">
+
+  <path d="M 76 58 Q 88 66 100 58" fill="none" stroke="#785B4C" stroke-width="4" stroke-linecap="round"/>
+  <path d="M 136 58 Q 148 66 160 58" fill="none" stroke="#785B4C" stroke-width="4" stroke-linecap="round"/>
+  
+  <rect x="70" y="44" width="36" height="24" rx="9" fill="none" stroke="#866656" stroke-width="4"/>
+  <rect x="130" y="44" width="36" height="24" rx="9" fill="none" stroke="#866656" stroke-width="4"/>
+  <line x1="106" y1="56" x2="130" y2="56" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+  <line x1="60" y1="56" x2="70" y2="54" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+  <line x1="166" y1="54" x2="176" y2="56" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+
+
 </svg>

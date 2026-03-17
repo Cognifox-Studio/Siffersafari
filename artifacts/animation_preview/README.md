@@ -41,13 +41,13 @@ Syfte: samla alla lokala HTML-previews for karaktarer och animationstester pa et
   - Roll: canonical walk-preview for Skogshjalte.
   - Status: aktiv target-preview for gangcykeln.
 - `loke_walk_preview/`
-  - Roll: walk-reference for segmenterad humanoid-standard.
-  - Status: referens for framtida walk-cycles och amplitudjamforelse.
+  - Roll: aktuell walk-preview for nya Loke.
+  - Status: aktiv target-preview for Lokes gangcykel.
 - `skog_loke_forest_log_celebrate_preview/`
   - Roll: scenpreview med flera karaktarer.
   - Status: staging och celebration, inte rigg-source-of-truth.
-- `ville2_walk_preview/`
-  - Roll: historisk Ville-preview.
+- `mascot_walk_preview/`
+  - Roll: historisk mascot-preview.
   - Status: referensmaterial, inte humanoid-standard.
 
 ## Namnregler

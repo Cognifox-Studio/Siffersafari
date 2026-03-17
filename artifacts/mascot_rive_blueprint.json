@@ -1,59 +1,59 @@
 {
   "meta": {
     "version": "1.0",
-    "character": "Ville",
-    "description": "Complete Rive rigging blueprint for Ville",
-    "target_artboard_name": "Ville",
-    "target_state_machine": "VilleStateMachine"
+    "character": "Maskoten",
+    "description": "Complete Rive rigging blueprint for Maskoten",
+    "target_artboard_name": "Mascot",
+    "target_state_machine": "MascotStateMachine"
   },
   "import_assets": {
     "svg_parts": [
       {
-        "file": "assets/characters/ville/svg/ville_head.svg",
+        "file": "assets/characters/mascot/svg/mascot_head.svg",
         "layer_name": "head"
       },
       {
-        "file": "assets/characters/ville/svg/ville_eyes_open.svg",
+        "file": "assets/characters/mascot/svg/mascot_eyes_open.svg",
         "layer_name": "eyes_open"
       },
       {
-        "file": "assets/characters/ville/svg/ville_eyes_closed.svg",
+        "file": "assets/characters/mascot/svg/mascot_eyes_closed.svg",
         "layer_name": "eyes_closed"
       },
       {
-        "file": "assets/characters/ville/svg/ville_mouth_smile.svg",
+        "file": "assets/characters/mascot/svg/mascot_mouth_smile.svg",
         "layer_name": "mouth_smile"
       },
       {
-        "file": "assets/characters/ville/svg/ville_mouth_sad.svg",
+        "file": "assets/characters/mascot/svg/mascot_mouth_sad.svg",
         "layer_name": "mouth_sad"
       },
       {
-        "file": "assets/characters/ville/svg/ville_mouth_neutral.svg",
+        "file": "assets/characters/mascot/svg/mascot_mouth_neutral.svg",
         "layer_name": "mouth_neutral"
       },
       {
-        "file": "assets/characters/ville/svg/ville_body.svg",
+        "file": "assets/characters/mascot/svg/mascot_body.svg",
         "layer_name": "body"
       },
       {
-        "file": "assets/characters/ville/svg/ville_arm_left.svg",
+        "file": "assets/characters/mascot/svg/mascot_arm_left.svg",
         "layer_name": "arm_left"
       },
       {
-        "file": "assets/characters/ville/svg/ville_arm_right.svg",
+        "file": "assets/characters/mascot/svg/mascot_arm_right.svg",
         "layer_name": "arm_right"
       },
       {
-        "file": "assets/characters/ville/svg/ville_leg_left.svg",
+        "file": "assets/characters/mascot/svg/mascot_leg_left.svg",
         "layer_name": "leg_left"
       },
       {
-        "file": "assets/characters/ville/svg/ville_leg_right.svg",
+        "file": "assets/characters/mascot/svg/mascot_leg_right.svg",
         "layer_name": "leg_right"
       },
       {
-        "file": "assets/characters/ville/svg/ville_antennas.svg",
+        "file": "assets/characters/mascot/svg/mascot_antennas.svg",
         "layer_name": "antennas"
       }
     ],
@@ -68,7 +68,7 @@
     ]
   },
   "artboard": {
-    "name": "Ville",
+    "name": "Mascot",
     "width": 400,
     "height": 600,
     "origin": {
@@ -346,7 +346,7 @@
     ]
   },
   "state_machine": {
-    "name": "VilleStateMachine",
+    "name": "MascotStateMachine",
     "initial_state": "idle",
     "inputs": [
       {
@@ -460,12 +460,12 @@
     {
       "step": 1,
       "title": "Import SVG Assets",
-      "instructions": "Import all 12 SVG files from assets/characters/ville/svg/ into Rive. Keep layer names matching file names."
+      "instructions": "Import all 12 SVG files from assets/characters/mascot/svg/ into Rive. Keep layer names matching file names."
     },
     {
       "step": 2,
       "title": "Create Artboard",
-      "instructions": "Create artboard named 'Ville' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas."
+      "instructions": "Create artboard named 'Mascot' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas."
     },
     {
       "step": 3,
@@ -485,12 +485,12 @@
     {
       "step": 6,
       "title": "Build State Machine",
-      "instructions": "Create state machine 'VilleStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions."
+      "instructions": "Create state machine 'MascotStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions."
     },
     {
       "step": 7,
       "title": "Test & Export",
-      "instructions": "Test all triggers in Rive preview. Export as .riv file to assets/characters/ville/rive/ville_character.riv"
+      "instructions": "Test all triggers in Rive preview. Export as .riv file to assets/characters/mascot/rive/mascot_character.riv"
     }
   ]
 }

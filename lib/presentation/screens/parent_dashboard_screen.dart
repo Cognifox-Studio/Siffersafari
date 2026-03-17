@@ -201,7 +201,7 @@ class ParentDashboardScreen extends ConsumerWidget {
 
 // region _DashboardBody Main Widget
 
-class _DashboardBody extends ConsumerWidget {
+class _DashboardBody extends ConsumerStatefulWidget {
   const _DashboardBody({required this.userId});
 
   static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
@@ -209,7 +209,31 @@ class _DashboardBody extends ConsumerWidget {
   final String userId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_DashboardBody> createState() => _DashboardBodyState();
+}
+
+class _DashboardBodyState extends ConsumerState<_DashboardBody> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(parentSettingsProvider.notifier).ensureLoaded(widget.userId);
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _DashboardBody oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.userId == widget.userId) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      ref.read(parentSettingsProvider.notifier).ensureLoaded(widget.userId);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     const sectionSpacing = SizedBox(height: AppConstants.defaultPadding);
 
     void showInfoDialog({required String title, required String message}) {
@@ -259,6 +283,7 @@ class _DashboardBody extends ConsumerWidget {
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final subtleOnPrimary =
         onPrimary.withValues(alpha: AppOpacities.subtleText);
+    final userId = widget.userId;
     final user = ref.watch(userProvider).activeUser!;
     final repo = ref.read(localStorageRepositoryProvider);
     final recentHistory = repo.getQuizHistory(userId, limit: 50);
@@ -276,7 +301,6 @@ class _DashboardBody extends ConsumerWidget {
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);
 
     final settingsNotifier = ref.read(parentSettingsProvider.notifier);
-    settingsNotifier.ensureLoaded(userId);
     final allowedOps =
         ref.watch(parentSettingsProvider)[userId] ?? _defaultAllowedOps();
 
@@ -404,7 +428,7 @@ class _DashboardBody extends ConsumerWidget {
                     value: null,
                     child: Text('Ingen'),
                   ),
-                  ..._gradeItems.map(
+                  ..._DashboardBody._gradeItems.map(
                     (g) => DropdownMenuItem<int?>(
                       value: g,
                       child: Text('Åk $g'),

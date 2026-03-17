@@ -19,9 +19,9 @@ import '../../domain/entities/quiz_session.dart';
 import '../../domain/entities/story_progress.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/operation_type.dart';
+import '../widgets/mascot_character.dart';
 import '../widgets/star_rating.dart';
 import '../widgets/themed_background_scaffold.dart';
-import '../widgets/ville_character.dart';
 import 'home_screen.dart';
 import 'quiz_screen.dart';
 
@@ -222,9 +222,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       children: [
         SizedBox(
           height: 112.h,
-          child: VilleCharacter(
-            reaction:
-                shouldCelebrate ? VilleReaction.celebrate : VilleReaction.idle,
+          child: MascotCharacter(
+            reaction: shouldCelebrate
+                ? MascotReaction.celebrate
+                : MascotReaction.idle,
             reactionNonce: shouldCelebrate ? 1 : 0,
             height: 112.h,
           ),
@@ -853,7 +854,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
           ),
           SizedBox(height: AppConstants.smallPadding.h),
           Text(
-            'Ville tog sig förbi ${questCompletion.completedQuestTitle.toLowerCase()} och nådde $reachedLandmark.',
+            'Maskoten tog sig förbi ${questCompletion.completedQuestTitle.toLowerCase()} och nådde $reachedLandmark.',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,

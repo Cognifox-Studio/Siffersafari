@@ -1,0 +1,250 @@
+{
+  "generated_at": "2026-03-14T19:41:55.122933+00:00",
+  "pipeline_version": 1,
+  "notes": {
+    "rive": "Only blueprint outputs are generated automatically right now. Final .riv files still require manual work in Rive.",
+    "specs": "specs/ is now the stable ID and validation layer above the existing Dart generators."
+  },
+  "inputs": {
+    "character_specs": [
+      {
+        "id": "mascot",
+        "display_name": "Maskoten",
+        "visual_spec": "assets/characters/mascot/config/mascot_visual_spec.json",
+        "animation_spec": "assets/characters/mascot/config/mascot_animation_spec.json"
+      },
+      {
+        "id": "loke",
+        "display_name": "Loke",
+        "visual_spec": "assets/characters/loke/config/loke_visual_spec.json",
+        "animation_spec": "assets/characters/loke/config/loke_animation_spec.json"
+      },
+      {
+        "id": "skogshjalte",
+        "display_name": "Skogshjalte",
+        "visual_spec": "assets/characters/skogshjalte/config/skogshjalte_visual_spec.json",
+        "animation_spec": "assets/characters/skogshjalte/config/skogshjalte_animation_spec.json"
+      }
+    ],
+    "specs_dir_exists": true
+  },
+  "specs": {
+    "characters": [
+      "mascot",
+      "loke",
+      "skogshjalte"
+    ],
+    "ui_effects": [
+      "confetti",
+      "stars",
+      "success_pulse",
+      "error_shake"
+    ],
+    "effects": [],
+    "rigs": [
+      "mascot_basic",
+      "loke_humanoid",
+      "skogshjalte_humanoid"
+    ],
+    "palettes": [
+      "mascot_default",
+      "loke_default",
+      "skogshjalte_default"
+    ]
+  },
+  "outputs": {
+    "characters": [
+      {
+        "id": "mascot",
+        "svg_parts": [
+          "assets/characters/mascot/svg/mascot_antennas.svg",
+          "assets/characters/mascot/svg/mascot_arm_left.svg",
+          "assets/characters/mascot/svg/mascot_arm_right.svg",
+          "assets/characters/mascot/svg/mascot_body.svg",
+          "assets/characters/mascot/svg/mascot_composite.svg",
+          "assets/characters/mascot/svg/mascot_eyes_closed.svg",
+          "assets/characters/mascot/svg/mascot_eyes_open.svg",
+          "assets/characters/mascot/svg/mascot_head.svg",
+          "assets/characters/mascot/svg/mascot_leg_left.svg",
+          "assets/characters/mascot/svg/mascot_leg_right.svg",
+          "assets/characters/mascot/svg/mascot_mouth_neutral.svg",
+          "assets/characters/mascot/svg/mascot_mouth_sad.svg",
+          "assets/characters/mascot/svg/mascot_mouth_smile.svg"
+        ],
+        "composite_svg": "assets/characters/mascot/svg/mascot_composite.svg",
+        "rive_runtime": "assets/characters/mascot/rive/mascot_character.riv",
+        "rive_runtime_exists": true,
+        "rive_blueprint": "artifacts/mascot_rive_blueprint.json",
+        "rive_blueprint_exists": true,
+        "rive_guide": "artifacts/MASCOT_RIVE_GUIDE.md",
+        "rive_guide_exists": true
+      },
+      {
+        "id": "loke",
+        "svg_parts": [
+          "assets/characters/loke/svg/loke_arm_lower_left.svg",
+          "assets/characters/loke/svg/loke_arm_lower_right.svg",
+          "assets/characters/loke/svg/loke_arm_upper_left.svg",
+          "assets/characters/loke/svg/loke_arm_upper_right.svg",
+          "assets/characters/loke/svg/loke_backpack.svg",
+          "assets/characters/loke/svg/loke_composite.svg",
+          "assets/characters/loke/svg/loke_eyes_blink.svg",
+          "assets/characters/loke/svg/loke_eyes_open.svg",
+          "assets/characters/loke/svg/loke_hat.svg",
+          "assets/characters/loke/svg/loke_head.svg",
+          "assets/characters/loke/svg/loke_leg_lower_left.svg",
+          "assets/characters/loke/svg/loke_leg_lower_right.svg",
+          "assets/characters/loke/svg/loke_leg_upper_left.svg",
+          "assets/characters/loke/svg/loke_leg_upper_right.svg",
+          "assets/characters/loke/svg/loke_mouth_happy.svg",
+          "assets/characters/loke/svg/loke_mouth_neutral.svg",
+          "assets/characters/loke/svg/loke_mouth_sad.svg",
+          "assets/characters/loke/svg/loke_shadow.svg",
+          "assets/characters/loke/svg/loke_shoe_left.svg",
+          "assets/characters/loke/svg/loke_shoe_right.svg",
+          "assets/characters/loke/svg/loke_torso.svg"
+        ],
+        "composite_svg": "assets/characters/loke/svg/loke_composite.svg",
+        "rive_runtime": "assets/characters/loke/rive/loke_character.riv",
+        "rive_runtime_exists": false,
+        "rive_blueprint": "artifacts/loke_rive_blueprint.json",
+        "rive_blueprint_exists": true,
+        "rive_guide": "artifacts/LOKE_RIVE_GUIDE.md",
+        "rive_guide_exists": true
+      },
+      {
+        "id": "skogshjalte",
+        "svg_parts": [
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_backpack.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_composite.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_eyes_blink.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_eyes_open.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_hat.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_head.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_mouth_happy.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_mouth_neutral.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_mouth_sad.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_shadow.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_shoe_left.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_shoe_right.svg",
+          "assets/characters/skogshjalte/svg/skogshjalte_torso.svg"
+        ],
+        "composite_svg": "assets/characters/skogshjalte/svg/skogshjalte_composite.svg",
+        "rive_runtime": "assets/characters/skogshjalte/rive/skogshjalte_character.riv",
+        "rive_runtime_exists": false,
+        "rive_blueprint": "artifacts/skogshjalte_rive_blueprint.json",
+        "rive_blueprint_exists": true,
+        "rive_guide": "artifacts/SKOGSHJALTE_RIVE_GUIDE.md",
+        "rive_guide_exists": true
+      }
+    ],
+    "character_svg_parts": [
+      "assets/characters/loke/svg/loke_arm_lower_left.svg",
+      "assets/characters/loke/svg/loke_arm_lower_right.svg",
+      "assets/characters/loke/svg/loke_arm_upper_left.svg",
+      "assets/characters/loke/svg/loke_arm_upper_right.svg",
+      "assets/characters/loke/svg/loke_backpack.svg",
+      "assets/characters/loke/svg/loke_composite.svg",
+      "assets/characters/loke/svg/loke_eyes_blink.svg",
+      "assets/characters/loke/svg/loke_eyes_open.svg",
+      "assets/characters/loke/svg/loke_hat.svg",
+      "assets/characters/loke/svg/loke_head.svg",
+      "assets/characters/loke/svg/loke_leg_lower_left.svg",
+      "assets/characters/loke/svg/loke_leg_lower_right.svg",
+      "assets/characters/loke/svg/loke_leg_upper_left.svg",
+      "assets/characters/loke/svg/loke_leg_upper_right.svg",
+      "assets/characters/loke/svg/loke_mouth_happy.svg",
+      "assets/characters/loke/svg/loke_mouth_neutral.svg",
+      "assets/characters/loke/svg/loke_mouth_sad.svg",
+      "assets/characters/loke/svg/loke_shadow.svg",
+      "assets/characters/loke/svg/loke_shoe_left.svg",
+      "assets/characters/loke/svg/loke_shoe_right.svg",
+      "assets/characters/loke/svg/loke_torso.svg",
+      "assets/characters/mascot/svg/mascot_antennas.svg",
+      "assets/characters/mascot/svg/mascot_arm_left.svg",
+      "assets/characters/mascot/svg/mascot_arm_right.svg",
+      "assets/characters/mascot/svg/mascot_body.svg",
+      "assets/characters/mascot/svg/mascot_composite.svg",
+      "assets/characters/mascot/svg/mascot_eyes_closed.svg",
+      "assets/characters/mascot/svg/mascot_eyes_open.svg",
+      "assets/characters/mascot/svg/mascot_head.svg",
+      "assets/characters/mascot/svg/mascot_leg_left.svg",
+      "assets/characters/mascot/svg/mascot_leg_right.svg",
+      "assets/characters/mascot/svg/mascot_mouth_neutral.svg",
+      "assets/characters/mascot/svg/mascot_mouth_sad.svg",
+      "assets/characters/mascot/svg/mascot_mouth_smile.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_backpack.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_composite.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_eyes_blink.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_eyes_open.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_hat.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_head.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_mouth_happy.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_mouth_neutral.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_mouth_sad.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_shadow.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_shoe_left.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_shoe_right.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_torso.svg"
+    ],
+    "character_composite_svg": [
+      "assets/characters/loke/svg/loke_composite.svg",
+      "assets/characters/mascot/svg/mascot_composite.svg",
+      "assets/characters/skogshjalte/svg/skogshjalte_composite.svg"
+    ],
+    "character_rive_runtime": [
+      "assets/characters/mascot/rive/mascot_character.riv"
+    ],
+    "character_rive_blueprints": [
+      "artifacts/loke_rive_blueprint.json",
+      "artifacts/mascot_rive_blueprint.json",
+      "artifacts/skogshjalte_rive_blueprint.json"
+    ],
+    "character_rive_guides": [
+      "artifacts/LOKE_RIVE_GUIDE.md",
+      "artifacts/MASCOT_RIVE_GUIDE.md",
+      "artifacts/SKOGSHJALTE_RIVE_GUIDE.md"
+    ],
+    "ui_lottie": [
+      "assets/ui/lottie/confetti.json",
+      "assets/ui/lottie/error_shake.json",
+      "assets/ui/lottie/stars.json",
+      "assets/ui/lottie/success_pulse.json"
+    ],
+    "artifacts": [
+      "artifacts/LOKE_RIVE_GUIDE.md",
+      "artifacts/MASCOT_RIVE_GUIDE.md",
+      "artifacts/SKOGSHJALTE_RIVE_GUIDE.md",
+      "artifacts/loke_rive_blueprint.json",
+      "artifacts/mascot_rive_blueprint.json",
+      "artifacts/skogshjalte_rive_blueprint.json"
+    ],
+    "dart_codegen": [
+      "lib/gen/assets.g.dart"
+    ]
+  }
+}

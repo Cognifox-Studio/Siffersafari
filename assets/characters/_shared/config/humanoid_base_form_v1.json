@@ -1,14 +1,14 @@
 {
   "name": "Humanoid Base Form",
-  "version": 2,
-  "description": "Shared base proportions, neutral T-pose alignment and expanded multi-joint humanoid rig standard for new humanoid characters.",
+  "version": 3,
+  "description": "Shared grounded school-age child proportions, relaxed neutral pose alignment and expanded multi-joint humanoid rig standard for new humanoid characters.",
   "proportions": {
-    "headToBodyRatio": 0.52,
-    "eyeSizeRelativeToHead": 0.12,
-    "mouthWidthRelativeToHead": 0.2,
-    "armLengthRelativeToBody": 0.72,
-    "legLengthRelativeToBody": 0.55,
-    "shoeWidthRelativeToLeg": 1.7
+    "headToBodyRatio": 0.24,
+    "eyeSizeRelativeToHead": 0.09,
+    "mouthWidthRelativeToHead": 0.16,
+    "armLengthRelativeToBody": 0.44,
+    "legLengthRelativeToBody": 0.47,
+    "shoeWidthRelativeToLeg": 0.82
   },
   "styleSettings": {
     "strokeWidth": 4,
@@ -33,14 +33,14 @@
   },
   "tPosePreviewAlignment": {
     "armUpperTranslateY": {
-      "left": 17,
-      "right": 16
+      "left": 10,
+      "right": 10
     },
     "armLowerTranslateY": {
-      "left": -2,
-      "right": -2
+      "left": -1,
+      "right": -1
     },
-    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+    "alignmentRule": "relaxed_shoulders_with_wrists_resting_near_mid_thigh"
   },
   "rigStandard": {
     "profile": "segmented_humanoid_multi_joint_v2",
@@ -147,33 +147,34 @@
       "elbow_and_wrist_can_overlap_for_wave_or_reach_gestures",
       "ankle_precedes_foot_roll_and_toe_push_off_when_available",
       "foot_roll_heel_strike_to_toe_off",
+      "feet_track_close_to_hip_line_without_crossing_centerline",
       "reduced_lateral_shin_slide",
       "subtle_vertical_bob"
     ],
     "ranges": {
       "hipRotationDeg": {
-        "min": -18,
-        "max": 18
+        "min": -14,
+        "max": 14
       },
       "kneeRotationDeg": {
-        "min": 4,
-        "max": 24
+        "min": 6,
+        "max": 22
       },
       "armUpperRotationDeg": {
-        "min": -12,
-        "max": 12
+        "min": -10,
+        "max": 10
       },
       "armLowerRotationDeg": {
-        "min": -4,
-        "max": 10
+        "min": -2,
+        "max": 8
       },
       "footRotationDeg": {
         "heelStrike": -6,
         "toeOff": 9
       },
       "bodyBobPx": {
-        "min": -3,
-        "max": 2
+        "min": -2,
+        "max": 1
       }
     }
   }

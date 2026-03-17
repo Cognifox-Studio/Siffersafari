@@ -1,7 +1,17 @@
-# Skogshjalte Rive Asset
+# Skogshjalte Optional Rive Runtime
 
-Expected runtime file:
-- skogshjalte_character.riv
+This folder is intentionally kept lightweight. The default runtime character path is SVG-first and does not require a `.riv` file.
 
-This folder is reserved for the exported Rive runtime asset.
-Use `artifacts/skogshjalte_rive_blueprint.json` and `artifacts/SKOGSHJALTE_RIVE_GUIDE.md` to build the rig and export the final `.riv` file here.
+If a future optional Rive export is added, keep it here as:
+
+`assets/characters/skogshjalte/rive/skogshjalte_character.riv`
+
+Expected artboard:
+- `Skogshjalte`
+
+Expected state machine:
+- `SkogshjalteStateMachine`
+
+Current rule:
+- blueprint and guide are generated automatically
+- final `.riv` is optional and not required for app integration

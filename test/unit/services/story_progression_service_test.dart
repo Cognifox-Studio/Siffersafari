@@ -28,7 +28,7 @@ void main() {
         completedQuestIds: const <String>{},
       );
 
-      expect(story.worldTitle, 'Ville i djungeln');
+      expect(story.worldTitle, 'Maskoten i djungeln');
       expect(story.totalNodes, 20);
       expect(story.currentNodeIndex, 0);
       expect(story.completedNodes, 0);

@@ -1,31 +1,31 @@
-# Ville Rive Rigging Guide
+# Mascot Rive Rigging Guide
 
-Generated: 2026-03-10T12:12:38.862093
+Generated: 2026-03-13T08:39:46.405157
 
 ## Overview
-This guide provides step-by-step instructions for rigging Ville character in Rive Editor.
+This guide provides step-by-step instructions for rigging the mascot character in Rive Editor.
 
 ## Prerequisites
 - Rive Editor (https://rive.app)
-- All SVG parts generated in `assets/characters/ville/svg/`
+- All SVG parts generated in `assets/characters/mascot/svg/`
 
 ## Step 1: Import Assets
 Import these SVG files into Rive (File → Import):
-- assets/characters/ville/svg/ville_head.svg
-- assets/characters/ville/svg/ville_eyes_open.svg
-- assets/characters/ville/svg/ville_eyes_closed.svg
-- assets/characters/ville/svg/ville_mouth_smile.svg
-- assets/characters/ville/svg/ville_mouth_sad.svg
-- assets/characters/ville/svg/ville_mouth_neutral.svg
-- assets/characters/ville/svg/ville_body.svg
-- assets/characters/ville/svg/ville_arm_left.svg
-- assets/characters/ville/svg/ville_arm_right.svg
-- assets/characters/ville/svg/ville_leg_left.svg
-- assets/characters/ville/svg/ville_leg_right.svg
-- assets/characters/ville/svg/ville_antennas.svg
+- assets/characters/mascot/svg/mascot_head.svg
+- assets/characters/mascot/svg/mascot_eyes_open.svg
+- assets/characters/mascot/svg/mascot_eyes_closed.svg
+- assets/characters/mascot/svg/mascot_mouth_smile.svg
+- assets/characters/mascot/svg/mascot_mouth_sad.svg
+- assets/characters/mascot/svg/mascot_mouth_neutral.svg
+- assets/characters/mascot/svg/mascot_body.svg
+- assets/characters/mascot/svg/mascot_arm_left.svg
+- assets/characters/mascot/svg/mascot_arm_right.svg
+- assets/characters/mascot/svg/mascot_leg_left.svg
+- assets/characters/mascot/svg/mascot_leg_right.svg
+- assets/characters/mascot/svg/mascot_antennas.svg
 
 ## Step 2: Create Artboard
-- Name: **Ville**
+- Name: **Mascot**
 - Size: 400×600 px
 - Arrange layers as:
   - body (bottom)
@@ -145,7 +145,7 @@ Keyframes:
 
 
 ## Step 6: Build State Machine
-Name: **VilleStateMachine**
+Name: **MascotStateMachine**
 
 ### Inputs (Triggers)
 - answer_correct
@@ -177,8 +177,8 @@ Name: **VilleStateMachine**
 ## Step 7: Export
 1. Test all triggers in Rive preview
 2. File → Export → .riv
-3. Save as: `assets/characters/ville/rive/ville_character.riv`
-4. Verify artboard name = "Ville" and state machine name = "VilleStateMachine"
+3. Save as: `assets/characters/mascot/rive/mascot_character.riv`
+4. Verify artboard name = "Mascot" and state machine name = "MascotStateMachine"
 
 ## Testing Checklist
 - [ ] Idle animation loops smoothly
@@ -191,6 +191,6 @@ Name: **VilleStateMachine**
 - [ ] No mesh tearing or weird deformations
 
 ## Notes
-- Refer to `ville_rive_blueprint.json` for detailed technical spec
-- Colors and proportions from `ville_visual_spec.json`
+- Refer to `mascot_rive_blueprint.json` for detailed technical spec
+- Colors and proportions from `mascot_visual_spec.json`
 - Animation timing can be adjusted in Rive timeline

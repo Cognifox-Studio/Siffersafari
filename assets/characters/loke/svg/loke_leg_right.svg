@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="160" height="250" viewBox="0 0 160 250" xmlns="http://www.w3.org/2000/svg">
-  <g id="leg_right">
-    <path d="M52 24 L96 24 L102 146 C103 160, 92 172, 78 172 L70 172 C56 172, 45 160, 46 146 Z" fill="#1DBE90" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M48 114 L100 114" fill="none" stroke="#73E9CA" stroke-width="6" stroke-linecap="round"/>
-    <path d="M58 170 L86 170 L90 202 C91 214, 82 224, 70 224 C58 224, 49 214, 50 202 Z" fill="#E7A279" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
-  </g>
-</svg>

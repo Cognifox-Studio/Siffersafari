@@ -1,15 +1,20 @@
-# Rive Rigs – Available Characters
+# Rive Rigs – Reference Files
 
 **Downloaded:** 2026-03-10  
 **Location:** `artifacts/*.riv`
 
-## Active Character
+## Current Runtime Status
 
-✅ **ville_character.riv** (Simple Character Rig)  
+⚠️ **mascot_character.riv** (placeholder/demo export)  
 - **Source:** Simple Character Rig.riv  
 - **Size:** 7 KB  
-- **Status:** Active in app  
-- **Path:** `assets/characters/ville/rive/ville_character.riv`
+- **Status:** Connected in app, but not production-ready  
+- **Path:** `assets/characters/mascot/rive/mascot_character.riv`
+
+Current verified runtime state:
+- artboard reported by app: `Template-NoRig`
+- state machines reported by app: none
+- current app behavior: temporary legacy-animation compatibility path, not final `MascotStateMachine` runtime
 
 ## Alternative Rigs
 
@@ -31,25 +36,22 @@
 - **Use case:** Learning/testing state machines  
 - **Location:** `artifacts/State Machine Character Demo.riv`
 
-## Switch to Different Rig
+## Do Not Switch Rigs By Copying Files
 
-To test another rig:
+Do not treat the community `.riv` files in `artifacts/` as drop-in runtime replacements.
+They are reference files only and are not part of the approved mascot pipeline unless they are manually rebuilt in Rive Editor to match the repo contract.
 
-```bash
-# Example: Switch to Creature Rig
-Copy-Item "artifacts\Creature Rig.riv" `
-  -Destination "assets\characters\ville\rive\ville_character.riv" `
-  -Force
-
-# Then run app
-flutter run
-```
+Approved path:
+1. Start from the generated mascot SVG parts and blueprint.
+2. Build the rig in Rive Editor.
+3. Export to `assets/characters/mascot/rive/mascot_character.riv`.
+4. Verify on emulator/device.
 
 ## Important Notes
 
-⚠️ **Rive files from Rive Community likely have different:**
-- Artboard names (may not be "Ville")
-- State machine names (may not be "VilleStateMachine")
+⚠️ **Reference `.riv` files likely have different:**
+- Artboard names (may not be "Mascot")
+- State machine names (may not be "MascotStateMachine")
 - Input trigger names (may not match our answer_correct, answer_wrong, etc.)
 
 ### To Fix Compatibility
@@ -57,16 +59,16 @@ flutter run
 1. **Open in Rive Editor:**
    ```
    https://rive.app
-   File → Open → assets/characters/ville/rive/ville_character.riv
+   File → Open → assets/characters/mascot/rive/mascot_character.riv
    ```
 
 2. **Check artboard name:**
-   - Should be: "Ville"
-   - If different: Rename artboard to "Ville"
+   - Should be: "Mascot"
+   - If different: Rename artboard to "Mascot"
 
 3. **Check state machine:**
-   - Should be: "VilleStateMachine"
-   - If different: Rename state machine to "VilleStateMachine"
+   - Should be: "MascotStateMachine"
+   - If different: Rename state machine to "MascotStateMachine"
 
 4. **Check trigger inputs:**
    - Required: `answer_correct`, `answer_wrong`, `user_tap`, `screen_change`
@@ -74,36 +76,35 @@ flutter run
 
 5. **Export:**
    ```
-   File → Export → Save as ville_character.riv
+   File → Export → Save as mascot_character.riv
    ```
 
-## Current Integration
+## Current Integration Contract
 
 The app expects:
-- **Artboard:** "Ville"
-- **State Machine:** "VilleStateMachine"
+- **Artboard:** "Mascot"
+- **State Machine:** "MascotStateMachine"
 - **Triggers:**
   - `answer_correct` → fired on correct quiz answer
   - `answer_wrong` → fired on wrong quiz answer
   - `user_tap` → fired when user taps character
   - `screen_change` → fired on navigation
 
-See `lib/presentation/widgets/ville_character.dart` for implementation.
+See `lib/presentation/widgets/mascot_character.dart` for implementation.
 
-## Fallback Behavior
+## Runtime Behavior
 
-If Rive file fails to load or triggers don't exist:
-- App shows SVG composite (`assets/characters/ville/svg/ville_composite.svg`)
-- No errors or crashes
-- Graceful degradation
+If the exported file is production-ready:
+- App should log `using state machine MascotStateMachine`
+
+If the exported file is still a placeholder/demo export with a single animation:
+- App may log `using legacy animation ...`
+
+If the file fails to load or has no usable runtime controller:
+- App falls back to SVG composite (`assets/characters/mascot/svg/mascot_composite.svg`)
 
 ## Testing
 
-```bash
-# Run app to test current rig
-flutter run
-
-# Watch for console messages about Rive loading
-# Tap Ville in home screen to test user_tap trigger
-# Start quiz to test answer_correct/answer_wrong triggers
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/verify_mascot_rive_runtime.ps1 -SyncFirst -RunScreenshotsFlow
 ```

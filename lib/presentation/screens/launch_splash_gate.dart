@@ -37,6 +37,20 @@ class _LaunchSplashGateState extends State<LaunchSplashGate>
 
     _isWidgetTest = _detectWidgetTest();
 
+    if (_isWidgetTest) {
+      _showSplash = false;
+      _controller = AnimationController(vsync: this, duration: Duration.zero);
+      _splashOpacity = const AlwaysStoppedAnimation<double>(0.0);
+      _studioOpacity = const AlwaysStoppedAnimation<double>(0.0);
+      _studioScale = const AlwaysStoppedAnimation<double>(1.0);
+      _studioSlide = const AlwaysStoppedAnimation<Offset>(Offset.zero);
+      _appOpacity = const AlwaysStoppedAnimation<double>(1.0);
+      _appScale = const AlwaysStoppedAnimation<double>(1.0);
+      _appSlide = const AlwaysStoppedAnimation<Offset>(Offset.zero);
+      _appOutroOpacity = const AlwaysStoppedAnimation<double>(1.0);
+      return;
+    }
+
     // Widget tests should not spend 4 seconds in a launch animation.
     // Keep production behavior unchanged.
     final duration =
@@ -140,6 +154,10 @@ class _LaunchSplashGateState extends State<LaunchSplashGate>
 
   @override
   Widget build(BuildContext context) {
+    if (_isWidgetTest) {
+      return widget.child;
+    }
+
     return AnimatedSwitcher(
       duration: _isWidgetTest ? Duration.zero : _switchDuration,
       switchInCurve: Curves.easeInOutCubic,
@@ -186,11 +204,14 @@ class _LaunchSplashGateState extends State<LaunchSplashGate>
           : widget.child,
     );
   }
+
   static bool _detectWidgetTest() {
     // Avoid depending on dart-define flags; tests run with a special binding.
     final bindingType = WidgetsBinding.instance.runtimeType.toString();
     return bindingType.contains('TestWidgets') ||
-        bindingType.contains('AutomatedTestWidgets');
+        bindingType.contains('AutomatedTestWidgets') ||
+        bindingType.contains('LiveTestWidgets') ||
+        bindingType.contains('IntegrationTestWidgets');
   }
 }
 
@@ -312,5 +333,3 @@ class _AppIcon extends StatelessWidget {
     );
   }
 }
-
-

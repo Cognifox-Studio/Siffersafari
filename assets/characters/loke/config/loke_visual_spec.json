@@ -1,35 +1,37 @@
 {
   "name": "Loke",
   "version": 1,
-  "style": "cartoon_safari_child",
-  "inspiration": "Child explorer with safari hat, green overalls, backpack and yellow shoes",
+  "style": "cartoon_jungle_child",
+  "inspiration": "Loke is a brave mischievous kind energetic 10 year old jungle boy with blue shorts, blue shirt, cap, glasses, bright colors and no dark colors. He is a friendly helpful ordinary boy who loves adventure and makes everyone feel safe.",
   "baseFormRef": "../../_shared/config/humanoid_base_form_v1.json",
   "colors": {
-    "skin": "#E7A279",
-    "hair": "#412524",
-    "hat": "#F4E4BB",
-    "hatShadow": "#D8B98C",
-    "hatBand": "#58302A",
-    "shirt": "#F7DC29",
-    "overallsPrimary": "#73E9CA",
-    "overallsSecondary": "#1DBE90",
-    "backpack": "#17A984",
-    "strap": "#0D7E66",
-    "shoe": "#F4C835",
-    "lace": "#D65033",
-    "sole": "#FFFDF9",
-    "outline": "#6A2E31",
-    "blush": "#EF8F79",
-    "shadow": "#0000001A"
+    "skin": "#E7B187",
+    "hair": "#C59166",
+    "hat": "#8ED081",
+    "hatShadow": "#7DB772",
+    "hatBand": "#FF8A5B",
+    "shirt": "#4A7CFF",
+    "overallsPrimary": "#4A7CFF",
+    "overallsSecondary": "#416DE0",
+    "backpack": "#F2C94C",
+    "strap": "#D0AD41",
+    "shoe": "#FFF0B8",
+    "lace": "#FF8A5B",
+    "sole": "#FFFCEF",
+    "outline": "#926F5D",
+    "blush": "#EFA990",
+    "shadow": "#0000001A",
+    "eyes": "#785B4C",
+    "mouth": "#785B4C"
   },
   "proportions": {
-    "headToBodyRatio": 0.52,
-    "eyeSizeRelativeToHead": 0.12,
-    "mouthWidthRelativeToHead": 0.2,
-    "armLengthRelativeToBody": 0.72,
-    "legLengthRelativeToBody": 0.55,
-    "hatWidthRelativeToHead": 1.12,
-    "shoeWidthRelativeToLeg": 1.7
+    "headToBodyRatio": 0.24,
+    "eyeSizeRelativeToHead": 0.09,
+    "mouthWidthRelativeToHead": 0.16,
+    "armLengthRelativeToBody": 0.44,
+    "legLengthRelativeToBody": 0.47,
+    "hatWidthRelativeToHead": 1.0,
+    "shoeWidthRelativeToLeg": 0.82
   },
   "styleSettings": {
     "strokeWidth": 4,
@@ -40,14 +42,14 @@
   },
   "tPosePreviewAlignment": {
     "armUpperTranslateY": {
-      "left": 17,
-      "right": 16
+      "left": 10,
+      "right": 10
     },
     "armLowerTranslateY": {
-      "left": -2,
-      "right": -2
+      "left": -1,
+      "right": -1
     },
-    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+    "alignmentRule": "relaxed_shoulders_with_wrists_resting_near_mid_thigh"
   },
   "parts": {
     "head": "svg/loke_head.svg",

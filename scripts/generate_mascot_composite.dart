@@ -1,15 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
+// ignore_for_file: avoid_print, dangling_library_doc_comments
+
+/// Generates a composite SVG of the complete mascot character.
+///
+/// Usage: dart run scripts/generate_mascot_composite.dart
+///
+/// Reads: assets/characters/mascot/svg/mascot_*.svg (individual parts)
+/// Outputs: assets/characters/mascot/svg/mascot_composite.svg (complete character)
+
+import 'dart:io';
+
+void main() async {
+  print('🎨 Mascot Composite Generator');
+  print('━' * 50);
+
+  final outputFile = File('assets/characters/mascot/svg/mascot_composite.svg');
+
+  // Create complete mascot character
+  final compositeSvg = generateCompositeSvg();
+
+  await outputFile.writeAsString(compositeSvg);
+  print('✅ Generated: mascot_composite.svg');
+  print('━' * 50);
+  print('🎉 Complete mascot character ready!');
+  print('');
+  print('Preview: Open assets/characters/mascot/svg/mascot_composite.svg');
+}
+
+String generateCompositeSvg() {
+  // Full character composition with all parts in correct layers
+  return '''<?xml version="1.0" encoding="UTF-8"?>
 <svg width="400" height="600" viewBox="0 0 400 600" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <style>
-      .ville-part { opacity: 1; }
-    </style>
-  </defs>
-  
   <!-- Background (optional) -->
   
   <!-- Layer 1: Legs (bottom) -->
-  <g id="legs" class="ville-part" transform="translate(0, 250)">
+  <g id="legs" transform="translate(0, 250)">
     <!-- Left leg -->
     <rect x="140" y="20" 
           width="40" height="294" 
@@ -38,7 +62,7 @@
   </g>
   
   <!-- Layer 2: Body -->
-  <g id="body" class="ville-part" transform="translate(0, 150)">
+  <g id="body" transform="translate(0, 150)">
     <rect x="120" y="20" 
           width="160" height="327.27" 
           rx="12" ry="12"
@@ -54,7 +78,7 @@
   </g>
   
   <!-- Layer 3: Arms -->
-  <g id="arms" class="ville-part">
+  <g id="arms">
     <!-- Left arm -->
     <g transform="translate(0, 170)">
       <rect x="30" y="20" 
@@ -87,7 +111,7 @@
   </g>
   
   <!-- Layer 4: Head -->
-  <g id="head" class="ville-part" transform="translate(0, 30)">
+  <g id="head" transform="translate(0, 30)">
     <ellipse cx="200" cy="100" rx="100" ry="90.91" 
              fill="#F2D3A0" 
              stroke="#2E2E2E" 
@@ -102,7 +126,7 @@
   </g>
   
   <!-- Layer 5: Eyes (open by default) -->
-  <g id="eyes" class="ville-part" transform="translate(0, 30)">
+  <g id="eyes" transform="translate(0, 30)">
     <!-- Left eye -->
     <circle cx="165.6" cy="66.67" r="18" 
             fill="white" 
@@ -125,7 +149,7 @@
   </g>
   
   <!-- Layer 6: Mouth (smile by default) -->
-  <g id="mouth" class="ville-part" transform="translate(0, 30)">
+  <g id="mouth" transform="translate(0, 30)">
     <path d="M 130 130 Q 200 155 270 130" 
           stroke="#333333" 
           stroke-width="4" 
@@ -134,7 +158,7 @@
   </g>
   
   <!-- Layer 7: Antennas (top) -->
-  <g id="antennas" class="ville-part" transform="translate(0, 30)">
+  <g id="antennas" transform="translate(0, 30)">
     <!-- Left antenna -->
     <line x1="160" y1="20" x2="140" y2="-100" 
           stroke="#4CAF50" 
@@ -157,4 +181,5 @@
             stroke="#2E2E2E" 
             stroke-width="2.4"/>
   </g>
-</svg>
+</svg>''';
+}

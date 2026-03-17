@@ -20,16 +20,18 @@
     "sole": "#FFFDF9",
     "outline": "#6A2E31",
     "blush": "#EF8F79",
-    "shadow": "#0000001A"
+    "shadow": "#0000001A",
+    "eyes": "#572628",
+    "mouth": "#572628"
   },
   "proportions": {
-    "headToBodyRatio": 0.52,
-    "eyeSizeRelativeToHead": 0.12,
-    "mouthWidthRelativeToHead": 0.2,
-    "armLengthRelativeToBody": 0.72,
-    "legLengthRelativeToBody": 0.55,
-    "hatWidthRelativeToHead": 1.12,
-    "shoeWidthRelativeToLeg": 1.7
+    "headToBodyRatio": 0.24,
+    "eyeSizeRelativeToHead": 0.09,
+    "mouthWidthRelativeToHead": 0.16,
+    "armLengthRelativeToBody": 0.44,
+    "legLengthRelativeToBody": 0.47,
+    "hatWidthRelativeToHead": 1.0,
+    "shoeWidthRelativeToLeg": 0.82
   },
   "styleSettings": {
     "strokeWidth": 4,
@@ -40,14 +42,14 @@
   },
   "tPosePreviewAlignment": {
     "armUpperTranslateY": {
-      "left": 17,
-      "right": 16
+      "left": 10,
+      "right": 10
     },
     "armLowerTranslateY": {
-      "left": -2,
-      "right": -2
+      "left": -1,
+      "right": -1
     },
-    "alignmentRule": "upper_and_lower_arm_bottom_edge_align_to_same_horizontal_baseline"
+    "alignmentRule": "relaxed_shoulders_with_wrists_resting_near_mid_thigh"
   },
   "parts": {
     "head": "svg/skogshjalte_head.svg",

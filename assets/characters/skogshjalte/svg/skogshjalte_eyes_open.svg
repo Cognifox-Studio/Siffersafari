@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg width="260" height="140" viewBox="0 0 260 140" xmlns="http://www.w3.org/2000/svg">
-  <g id="eyes_open">
-    <ellipse cx="102" cy="68" rx="18" ry="22" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4"/>
-    <ellipse cx="158" cy="68" rx="18" ry="22" fill="#FFFDF9" stroke="#6A2E31" stroke-width="4"/>
-    <circle cx="104" cy="73" r="9" fill="#2B1A1A"/>
-    <circle cx="160" cy="73" r="9" fill="#2B1A1A"/>
-    <circle cx="108" cy="68" r="3.5" fill="#FFFDF9"/>
-    <circle cx="164" cy="68" r="3.5" fill="#FFFDF9"/>
-  </g>
+<svg width="236" height="112" viewBox="0 0 236 112" xmlns="http://www.w3.org/2000/svg">
+
+  <ellipse cx="88" cy="54" rx="12" ry="16" fill="white" stroke="#6A2E31" stroke-width="3"/>
+  <ellipse cx="148" cy="54" rx="12" ry="16" fill="white" stroke="#6A2E31" stroke-width="3"/>
+  <circle cx="88" cy="57" r="6" fill="#572628"/>
+  <circle cx="148" cy="57" r="6" fill="#572628"/>
+  <circle cx="91" cy="53" r="2" fill="white"/>
+  <circle cx="151" cy="53" r="2" fill="white"/>
+  
+
 </svg>

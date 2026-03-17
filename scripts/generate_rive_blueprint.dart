@@ -4,22 +4,22 @@
 ///
 /// Usage: dart run scripts/generate_rive_blueprint.dart
 ///
-/// Reads: assets/characters/ville/config/ville_animation_spec.json
-/// Outputs: artifacts/ville_rive_blueprint.json (detailed rigging guide)
+/// Reads: assets/characters/mascot/config/mascot_animation_spec.json
+/// Outputs: artifacts/mascot_rive_blueprint.json (detailed rigging guide)
 library;
 
 import 'dart:convert';
 import 'dart:io';
 
 void main() async {
-  print('🦴 Ville Rive Blueprint Generator');
+  print('🦴 Mascot Rive Blueprint Generator');
   print('━' * 50);
 
   // Load animation spec
   final specFile =
-      File('assets/characters/ville/config/ville_animation_spec.json');
+      File('assets/characters/mascot/config/mascot_animation_spec.json');
   if (!specFile.existsSync()) {
-    print('❌ Error: ville_animation_spec.json not found');
+    print('❌ Error: mascot_animation_spec.json not found');
     exit(1);
   }
 
@@ -27,7 +27,7 @@ void main() async {
 
   // Load visual spec for reference
   final visualSpecFile =
-      File('assets/characters/ville/config/ville_visual_spec.json');
+      File('assets/characters/mascot/config/mascot_visual_spec.json');
   final visualSpec = jsonDecode(await visualSpecFile.readAsString());
 
   final outputDir = Directory('artifacts');
@@ -44,26 +44,26 @@ void main() async {
   final blueprint = generator.generateBlueprint();
 
   // Write JSON blueprint
-  final blueprintFile = File('artifacts/ville_rive_blueprint.json');
+  final blueprintFile = File('artifacts/mascot_rive_blueprint.json');
   await blueprintFile.writeAsString(
     const JsonEncoder.withIndent('  ').convert(blueprint),
   );
-  print('✅ Generated: ville_rive_blueprint.json');
+  print('✅ Generated: mascot_rive_blueprint.json');
 
   // Write human-readable guide
-  final guideFile = File('artifacts/VILLE_RIVE_GUIDE.md');
+  final guideFile = File('artifacts/MASCOT_RIVE_GUIDE.md');
   await guideFile.writeAsString(generator.generateMarkdownGuide());
-  print('✅ Generated: VILLE_RIVE_GUIDE.md');
+  print('✅ Generated: MASCOT_RIVE_GUIDE.md');
 
   print('━' * 50);
   print('🎉 Rive blueprint generated successfully!');
   print('');
   print('📖 Next steps:');
   print('   1. Open Rive Editor (https://rive.app)');
-  print('   2. Import SVG parts from assets/characters/ville/svg/');
-  print('   3. Follow blueprint in artifacts/ville_rive_blueprint.json');
+  print('   2. Import SVG parts from assets/characters/mascot/svg/');
+  print('   3. Follow blueprint in artifacts/mascot_rive_blueprint.json');
   print('   4. Create bones, animations, and state machine as specified');
-  print('   5. Export as assets/characters/ville/rive/ville_character.riv');
+  print('   5. Export as assets/characters/mascot/rive/mascot_character.riv');
 }
 
 class RiveBlueprintGenerator {
@@ -82,8 +82,8 @@ class RiveBlueprintGenerator {
         'character': animationSpec['character'],
         'description':
             "Complete Rive rigging blueprint for ${animationSpec['character']}",
-        'target_artboard_name': 'Ville',
-        'target_state_machine': 'VilleStateMachine',
+        'target_artboard_name': 'Mascot',
+        'target_state_machine': 'MascotStateMachine',
       },
       'import_assets': _generateImportAssets(),
       'artboard': _generateArtboardStructure(),
@@ -98,51 +98,51 @@ class RiveBlueprintGenerator {
     return {
       'svg_parts': [
         {
-          'file': 'assets/characters/ville/svg/ville_head.svg',
+          'file': 'assets/characters/mascot/svg/mascot_head.svg',
           'layer_name': 'head',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_eyes_open.svg',
+          'file': 'assets/characters/mascot/svg/mascot_eyes_open.svg',
           'layer_name': 'eyes_open',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_eyes_closed.svg',
+          'file': 'assets/characters/mascot/svg/mascot_eyes_closed.svg',
           'layer_name': 'eyes_closed',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_mouth_smile.svg',
+          'file': 'assets/characters/mascot/svg/mascot_mouth_smile.svg',
           'layer_name': 'mouth_smile',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_mouth_sad.svg',
+          'file': 'assets/characters/mascot/svg/mascot_mouth_sad.svg',
           'layer_name': 'mouth_sad',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_mouth_neutral.svg',
+          'file': 'assets/characters/mascot/svg/mascot_mouth_neutral.svg',
           'layer_name': 'mouth_neutral',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_body.svg',
+          'file': 'assets/characters/mascot/svg/mascot_body.svg',
           'layer_name': 'body',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_arm_left.svg',
+          'file': 'assets/characters/mascot/svg/mascot_arm_left.svg',
           'layer_name': 'arm_left',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_arm_right.svg',
+          'file': 'assets/characters/mascot/svg/mascot_arm_right.svg',
           'layer_name': 'arm_right',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_leg_left.svg',
+          'file': 'assets/characters/mascot/svg/mascot_leg_left.svg',
           'layer_name': 'leg_left',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_leg_right.svg',
+          'file': 'assets/characters/mascot/svg/mascot_leg_right.svg',
           'layer_name': 'leg_right',
         },
         {
-          'file': 'assets/characters/ville/svg/ville_antennas.svg',
+          'file': 'assets/characters/mascot/svg/mascot_antennas.svg',
           'layer_name': 'antennas',
         },
       ],
@@ -160,7 +160,7 @@ class RiveBlueprintGenerator {
 
   Map<String, dynamic> _generateArtboardStructure() {
     return {
-      'name': 'Ville',
+      'name': 'Mascot',
       'width': 400,
       'height': 600,
       'origin': {'x': 200, 'y': 500},
@@ -224,7 +224,7 @@ class RiveBlueprintGenerator {
     final transitions = states['transitions'] as List<dynamic>;
 
     return {
-      'name': 'VilleStateMachine',
+      'name': 'MascotStateMachine',
       'initial_state': states['initial'],
       'inputs': [
         {'name': 'answer_correct', 'type': 'Trigger'},
@@ -256,13 +256,13 @@ class RiveBlueprintGenerator {
         'step': 1,
         'title': 'Import SVG Assets',
         'instructions':
-            'Import all 12 SVG files from assets/characters/ville/svg/ into Rive. Keep layer names matching file names.',
+            'Import all 12 SVG files from assets/characters/mascot/svg/ into Rive. Keep layer names matching file names.',
       },
       {
         'step': 2,
         'title': 'Create Artboard',
         'instructions':
-            "Create artboard named 'Ville' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas.",
+            "Create artboard named 'Mascot' (400×600px). Arrange layers in hierarchy: body → legs/arms → head → eyes/mouth → antennas.",
       },
       {
         'step': 3,
@@ -286,13 +286,13 @@ class RiveBlueprintGenerator {
         'step': 6,
         'title': 'Build State Machine',
         'instructions':
-            "Create state machine 'VilleStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions.",
+            "Create state machine 'MascotStateMachine'. Add 4 trigger inputs: answer_correct, answer_wrong, user_tap, screen_change. Wire states per blueprint transitions.",
       },
       {
         'step': 7,
         'title': 'Test & Export',
         'instructions':
-            'Test all triggers in Rive preview. Export as .riv file to assets/characters/ville/rive/ville_character.riv',
+            'Test all triggers in Rive preview. Export as .riv file to assets/characters/mascot/rive/mascot_character.riv',
       },
     ];
   }
@@ -388,23 +388,23 @@ class RiveBlueprintGenerator {
   }
 
   String generateMarkdownGuide() {
-    return '''# Ville Rive Rigging Guide
+    return '''# Mascot Rive Rigging Guide
 
 Generated: ${DateTime.now().toIso8601String()}
 
 ## Overview
-This guide provides step-by-step instructions for rigging Ville character in Rive Editor.
+This guide provides step-by-step instructions for rigging the mascot character in Rive Editor.
 
 ## Prerequisites
 - Rive Editor (https://rive.app)
-- All SVG parts generated in `assets/characters/ville/svg/`
+- All SVG parts generated in `assets/characters/mascot/svg/`
 
 ## Step 1: Import Assets
 Import these SVG files into Rive (File → Import):
 ${_generateImportAssets()['svg_parts'].map((a) => '- ${a['file']}').join('\n')}
 
 ## Step 2: Create Artboard
-- Name: **Ville**
+- Name: **Mascot**
 - Size: 400×600 px
 - Arrange layers as:
   - body (bottom)
@@ -439,7 +439,7 @@ ${(a['keyframes'] as List).map((k) => '  - $k').join('\n')}
             ).join('\n')}
 
 ## Step 6: Build State Machine
-Name: **VilleStateMachine**
+Name: **MascotStateMachine**
 
 ### Inputs (Triggers)
 - answer_correct
@@ -456,8 +456,8 @@ ${_generateStateMachine()['transitions'].map((t) => '- ${t['from']} → ${t['to'
 ## Step 7: Export
 1. Test all triggers in Rive preview
 2. File → Export → .riv
-3. Save as: `assets/characters/ville/rive/ville_character.riv`
-4. Verify artboard name = "Ville" and state machine name = "VilleStateMachine"
+3. Save as: `assets/characters/mascot/rive/mascot_character.riv`
+4. Verify artboard name = "Mascot" and state machine name = "MascotStateMachine"
 
 ## Testing Checklist
 - [ ] Idle animation loops smoothly
@@ -470,8 +470,8 @@ ${_generateStateMachine()['transitions'].map((t) => '- ${t['from']} → ${t['to'
 - [ ] No mesh tearing or weird deformations
 
 ## Notes
-- Refer to `ville_rive_blueprint.json` for detailed technical spec
-- Colors and proportions from `ville_visual_spec.json`
+- Refer to `mascot_rive_blueprint.json` for detailed technical spec
+- Colors and proportions from `mascot_visual_spec.json`
 - Animation timing can be adjusted in Rive timeline
 ''';
   }

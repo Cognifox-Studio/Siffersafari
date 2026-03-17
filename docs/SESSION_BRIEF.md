@@ -38,7 +38,7 @@
 1. När nästa Skogshjalte- eller Loke-rörelse tas fram: börja från preview-hubben i stället för direkt i en enskild preview-mapp.
 2. Om en ny preview blir canonical: uppdatera hubben och `CHARACTER_ANIMATIONS.md` i samma ändring.
 
-## 2026-03-10 — Rive + Lottie hybrid för Ville-pipeline
+## 2026-03-10 — Rive + Lottie hybrid för mascot-pipeline
 
 ## 2026-03-11 — Gemensam humanoid-basform
 
@@ -140,22 +140,22 @@
 3. Om Loke ska in i appen: koppla in asset-path och state machine i tema/widget-konfiguration.
 
 ### Mål (denna del)
-✅ Etablera konkret och körbar pipeline: Rive för Ville-karaktär + Lottie för UI-effekter.
+✅ Etablera konkret och körbar pipeline: Rive för maskoten + Lottie för UI-effekter.
 
 ### Gjort
-- Skapat ny assetstruktur för karaktärer under `assets/characters/ville/` med `svg/`, `rive/`, `config/`.
-- Lagt in `ville_visual_spec.json` och `ville_animation_spec.json` som source-of-truth för stil/rigg/states/transitions.
+- Skapat ny assetstruktur för karaktärer under `assets/characters/mascot/` med `svg/`, `rive/`, `config/`.
+- Lagt in `mascot_visual_spec.json` och `mascot_animation_spec.json` som source-of-truth för stil/rigg/states/transitions.
 - Lagt in `assets/ui/lottie/` med dedikerade UI-effektpaths (`confetti`, `stars`, `success_pulse`, `error_shake`).
-- Infört `VilleCharacter`-widget med Rive state machine-triggers (`answer_correct`, `answer_wrong`, `user_tap`, `screen_change`).
+- Infört `MascotCharacter`-widget med Rive state machine-triggers (`answer_correct`, `answer_wrong`, `user_tap`, `screen_change`).
 - Kopplat triggerflöden i appen: Home (enter/screen change), Quiz (correct/wrong/tap/screen change), Results (celebrate).
-- Uppdaterat tema-konfig till `characterRiveAsset: assets/characters/ville/rive/ville_character.riv` och `characterRiveStateMachine: VilleStateMachine`.
+- Uppdaterat tema-konfig till `characterRiveAsset: assets/characters/mascot/rive/mascot_character.riv` och `characterRiveStateMachine: MascotStateMachine`.
 - Uppdaterat docs med ny TODO/guide för animation-pipelinen.
 
 ### Verifiering
 - `flutter analyze`: ✅ grönt.
 
 ### Nästa steg
-1. Ersätt placeholder med riktig exporterad `ville_character.riv` från Rive.
+1. Ersätt placeholder med riktig exporterad `mascot_character.riv` från Rive.
 2. Ersätt placeholder-UI-lotties med riktiga effekter.
 3. Validera triggermappning manuellt i quiz/home/results på enhet.
 
@@ -182,24 +182,26 @@
 1. Validera de nya texterna och resultatsammanfattningen manuellt på fysisk enhet med riktigt barnflöde.
 2. Om ni vill fortsätta på samma spår: prioritera nästa polish på progression/storytydlighet eller tillgänglighet, inte nya system.
 
-## 2026-03-09 — Lottie-only för Ville-animationer
+## 2026-03-09 — Lottie-only för mascot-animationer
+
+Status: historisk, ersatt av senare riktning. Detta avsnitt beskriver ett tidigare spar och ska inte tolkas som gallande arbetsmodell.
 
 ### Mål (denna del)
 ✅ Ta bort parallella mascot-animationsspår och standardisera repo:t på Lottie
 
 ### Gjort
 - Bytt produktkoden från sprite/procedural mascot-animation till ett Lottie-only-widgetlager via `ThemeMascot`.
-- Tagit bort idle-frame-assets, mascot-generator-skript och lokala preview-/experimentmappar för Ville-animationer.
+- Tagit bort idle-frame-assets, mascot-generator-skript och lokala preview-/experimentmappar för mascot-animationer.
 - Synkat README, docs, `.gitignore` och repo-beslut till en tydlig Lottie-riktning.
-- Levererat en första lokal konceptfil `assets/animations/ville2_walk_cycle.json` samt en HTML-preview som laddar exakt samma JSON utanför emulatorn.
+- Levererat en första lokal konceptfil `assets/animations/mascot_walk_cycle.json` samt en HTML-preview som laddar exakt samma JSON utanför emulatorn.
 
 ### Verifiering
 - Berörda Flutter-filer är fria från editorfel.
-- `ville2_walk_cycle.json` renderar i lokal browser-preview och previewkontrollerna svarar.
+- `mascot_walk_cycle.json` renderar i lokal browser-preview och previewkontrollerna svarar.
 
 ### Nästa steg
-1. Avgör om `ville2_walk_cycle.json` ska vidareförädlas till en riktig runtime-animation eller bara fungera som rörelsereferens.
-2. Leverera första riktiga Ville-Lottie för jungle-temat på den redan reserverade asset-pathen.
+1. Avgör om `mascot_walk_cycle.json` ska vidareförädlas till en riktig runtime-animation eller bara fungera som rörelsereferens.
+2. Leverera första riktiga mascot-Lottie för jungle-temat på den redan reserverade asset-pathen.
 3. Leverera motsvarande Lottie per tema tills placeholdern inte längre visas i mascot-ytorna.
 
 ## 2026-03-08 — Releaseförberedelser för v1.3.0
@@ -232,7 +234,7 @@
 - Infört `StoryProgressionService` som mappar befintlig quest-path + current/completed quests till jungle-storystate.
 - Infört provider-lager i `lib/core/providers/story_progress_provider.dart` som bygger UI-färdig storydata från nuvarande användare, quests och parent settings.
 - Bytt Home från ett rent "Nästa äventyr"-kort till en första kompakt jungle/story-sektion via `lib/presentation/widgets/story_progress_card.dart`.
-- Storysektionen visar nu world/chapter, Ville-position i en enkel nodbana, nästa mål och quest-progress utan att ändra spelmekanik eller lagring.
+- Storysektionen visar nu world/chapter, mascot-position i en enkel nodbana, nästa mål och quest-progress utan att ändra spelmekanik eller lagring.
 - Lagt till riktade enhetstester för story-mappningen.
 - Resultatskärmen visar nu en checkpoint-reveal när ett quest faktiskt färdigställs och nästa del av storyn låses upp.
 - Infört transient `QuestCompletionEvent` i user-state så story-reveal triggas på faktisk quest-progress, inte bara på hög poäng.
@@ -240,7 +242,7 @@
 - Home kan nu öppna en separat `Djungelkartan`-skärm med hela expeditionen visualiserad som en större karta.
 - Story-UI:t har förfinats visuellt med badges, legend, rikare paneler och mjukare kartspår för att kännas mer som en sammanhängande djungelvärld.
 - Story-landmarks har nu även beskrivande platsbeats (`landmarkHint`) så Home-kort och karta känns mer som riktiga platser än generiska checkpoints.
-- Home-storykortets hero är nu uppgraderad till en faktisk scen med befintlig Ville-illustration från temat, dekorativa glow-former och platscaption ovanpå quest-bakgrunden.
+- Home-storykortets hero är nu uppgraderad till en faktisk scen med befintlig mascot-illustration från temat, dekorativa glow-former och platscaption ovanpå quest-bakgrunden.
 - Kartans nodkort har nu platsunika motiv (`sceneTag`) med egen chip, ikon, färgton och kort motivtext per checkpoint.
 - Standardkartan för den vanliga story-pathen är nu utbyggd till 20 riktiga uppdrag/checkpoints i stället för 8, och kartans canvas växer dynamiskt för att visa hela expeditionen.
 - 20-stegskartan är nu visuellt uppdelad i tydliga etapper med mellanrum mellan varje 5-block, kapitelmarkörer i själva kartan och etappinfo i header/nodkort.

@@ -2,32 +2,92 @@
   "meta": {
     "version": "1.0",
     "character": "Skogshjalte",
-    "description": "Rive rigging blueprint for Skogshjalte, an original child forest-hero humanoid inspired by the supplied reference pose and silhouette.",
+    "description": "Optional Rive rigging blueprint for Skogshjalte. Generated from brief: Original child forest hero with green tunic silhouette, blond hair and blue cape-inspired accessory",
     "target_artboard_name": "Skogshjalte",
     "target_state_machine": "SkogshjalteStateMachine"
   },
   "import_assets": {
     "svg_parts": [
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_shadow.svg", "layer_name": "shadow" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_backpack.svg", "layer_name": "backpack" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_left.svg", "layer_name": "leg_upper_left" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_left.svg", "layer_name": "leg_lower_left" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_left.svg", "layer_name": "shoe_left" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_left.svg", "layer_name": "arm_upper_left" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_left.svg", "layer_name": "arm_lower_left" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_torso.svg", "layer_name": "torso" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_head.svg", "layer_name": "head" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_open.svg", "layer_name": "eyes_open" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_blink.svg", "layer_name": "eyes_blink" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_neutral.svg", "layer_name": "mouth_neutral" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_happy.svg", "layer_name": "mouth_happy" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_sad.svg", "layer_name": "mouth_sad" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_hat.svg", "layer_name": "hat" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_right.svg", "layer_name": "arm_upper_right" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_right.svg", "layer_name": "arm_lower_right" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_right.svg", "layer_name": "leg_upper_right" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_right.svg", "layer_name": "leg_lower_right" },
-      { "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_right.svg", "layer_name": "shoe_right" }
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shadow.svg",
+        "layer_name": "shadow"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_backpack.svg",
+        "layer_name": "backpack"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_left.svg",
+        "layer_name": "leg_upper_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_left.svg",
+        "layer_name": "leg_lower_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_left.svg",
+        "layer_name": "shoe_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_left.svg",
+        "layer_name": "arm_upper_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_left.svg",
+        "layer_name": "arm_lower_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_torso.svg",
+        "layer_name": "torso"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_head.svg",
+        "layer_name": "head"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_open.svg",
+        "layer_name": "eyes_open"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_blink.svg",
+        "layer_name": "eyes_blink"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_neutral.svg",
+        "layer_name": "mouth_neutral"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_happy.svg",
+        "layer_name": "mouth_happy"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_sad.svg",
+        "layer_name": "mouth_sad"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_hat.svg",
+        "layer_name": "hat"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_right.svg",
+        "layer_name": "arm_upper_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_right.svg",
+        "layer_name": "arm_lower_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_right.svg",
+        "layer_name": "leg_upper_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_right.svg",
+        "layer_name": "leg_lower_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_right.svg",
+        "layer_name": "shoe_right"
+      }
     ],
     "import_order": [
       "shadow",
@@ -50,354 +110,376 @@
       "leg_upper_right",
       "leg_lower_right",
       "shoe_right"
-    ],
-    "depth_guidance": {
-      "preferred_view": "three_quarter_front",
-      "far_side": "left",
-      "near_side": "right",
-      "note": "Import left-side limb segments behind torso and right-side limb segments in front to preserve the 3/4 read in Rive."
-      }
+    ]
   },
   "artboard": {
     "name": "Skogshjalte",
     "width": 400,
     "height": 600,
-    "origin": { "x": 200, "y": 520 }
+    "origin": {
+      "x": 200,
+      "y": 532
+    }
   },
   "bones": {
     "bones": [
-      { "name": "root", "parent": null, "position": { "x": 200, "y": 520 }, "bind_mesh": null },
-      { "name": "pelvis", "parent": "root", "position": { "x": 200, "y": 430 }, "bind_mesh": "torso" },
-      { "name": "spine", "parent": "pelvis", "position": { "x": 200, "y": 360 }, "bind_mesh": "torso" },
-      { "name": "chest", "parent": "spine", "position": { "x": 204, "y": 282 }, "bind_mesh": "torso" },
-      { "name": "neck", "parent": "chest", "position": { "x": 212, "y": 212 }, "bind_mesh": null },
-      { "name": "head", "parent": "neck", "position": { "x": 214, "y": 168 }, "bind_mesh": "head" },
-      { "name": "shoulder_left", "parent": "chest", "position": { "x": 150, "y": 280 }, "bind_mesh": null },
-      { "name": "upper_arm_left", "parent": "shoulder_left", "position": { "x": 142, "y": 302 }, "bind_mesh": "arm_upper_left" },
-      { "name": "lower_arm_left", "parent": "upper_arm_left", "position": { "x": 136, "y": 366 }, "bind_mesh": "arm_lower_left" },
-      { "name": "wrist_left", "parent": "lower_arm_left", "position": { "x": 132, "y": 430 }, "bind_mesh": null },
-      { "name": "shoulder_right", "parent": "chest", "position": { "x": 260, "y": 278 }, "bind_mesh": null },
-      { "name": "upper_arm_right", "parent": "shoulder_right", "position": { "x": 270, "y": 304 }, "bind_mesh": "arm_upper_right" },
-      { "name": "lower_arm_right", "parent": "upper_arm_right", "position": { "x": 278, "y": 368 }, "bind_mesh": "arm_lower_right" },
-      { "name": "wrist_right", "parent": "lower_arm_right", "position": { "x": 282, "y": 432 }, "bind_mesh": null },
-      { "name": "hip_left", "parent": "pelvis", "position": { "x": 178, "y": 432 }, "bind_mesh": null },
-      { "name": "upper_leg_left", "parent": "hip_left", "position": { "x": 170, "y": 448 }, "bind_mesh": "leg_upper_left" },
-      { "name": "lower_leg_left", "parent": "upper_leg_left", "position": { "x": 160, "y": 510 }, "bind_mesh": "leg_lower_left" },
-      { "name": "ankle_left", "parent": "lower_leg_left", "position": { "x": 148, "y": 568 }, "bind_mesh": null },
-      { "name": "foot_left", "parent": "ankle_left", "position": { "x": 142, "y": 584 }, "bind_mesh": "shoe_left" },
-      { "name": "toe_left", "parent": "foot_left", "position": { "x": 170, "y": 590 }, "bind_mesh": "shoe_left" },
-      { "name": "hip_right", "parent": "pelvis", "position": { "x": 228, "y": 430 }, "bind_mesh": null },
-      { "name": "upper_leg_right", "parent": "hip_right", "position": { "x": 236, "y": 446 }, "bind_mesh": "leg_upper_right" },
-      { "name": "lower_leg_right", "parent": "upper_leg_right", "position": { "x": 246, "y": 508 }, "bind_mesh": "leg_lower_right" },
-      { "name": "ankle_right", "parent": "lower_leg_right", "position": { "x": 256, "y": 566 }, "bind_mesh": null },
-      { "name": "foot_right", "parent": "ankle_right", "position": { "x": 262, "y": 582 }, "bind_mesh": "shoe_right" },
-      { "name": "toe_right", "parent": "foot_right", "position": { "x": 290, "y": 588 }, "bind_mesh": "shoe_right" },
-      { "name": "hat", "parent": "head", "position": { "x": 214, "y": 92 }, "bind_mesh": "hat" },
-      { "name": "backpack", "parent": "chest", "position": { "x": 178, "y": 254 }, "bind_mesh": "backpack" }
+      {
+        "name": "root",
+        "parent": null,
+        "position": {
+          "x": 200.0,
+          "y": 532.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "pelvis",
+        "parent": "root",
+        "position": {
+          "x": 200.0,
+          "y": 362.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "spine",
+        "parent": "pelvis",
+        "position": {
+          "x": 200.0,
+          "y": 302.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "chest",
+        "parent": "spine",
+        "position": {
+          "x": 200.0,
+          "y": 238.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "neck",
+        "parent": "chest",
+        "position": {
+          "x": 200.0,
+          "y": 172.0
+        },
+        "bind_mesh": "head"
+      },
+      {
+        "name": "head",
+        "parent": "neck",
+        "position": {
+          "x": 200.0,
+          "y": 126.0
+        },
+        "bind_mesh": "head"
+      },
+      {
+        "name": "shoulder_left",
+        "parent": "chest",
+        "position": {
+          "x": 158.0,
+          "y": 236.0
+        },
+        "bind_mesh": "arm_upper_left"
+      },
+      {
+        "name": "upper_arm_left",
+        "parent": "shoulder_left",
+        "position": {
+          "x": 144.0,
+          "y": 266.0
+        },
+        "bind_mesh": "arm_upper_left"
+      },
+      {
+        "name": "lower_arm_left",
+        "parent": "upper_arm_left",
+        "position": {
+          "x": 134.0,
+          "y": 350.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "wrist_left",
+        "parent": "lower_arm_left",
+        "position": {
+          "x": 128.0,
+          "y": 426.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "hand_left",
+        "parent": "wrist_left",
+        "position": {
+          "x": 126.0,
+          "y": 448.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "shoulder_right",
+        "parent": "chest",
+        "position": {
+          "x": 242.0,
+          "y": 236.0
+        },
+        "bind_mesh": "arm_upper_right"
+      },
+      {
+        "name": "upper_arm_right",
+        "parent": "shoulder_right",
+        "position": {
+          "x": 256.0,
+          "y": 266.0
+        },
+        "bind_mesh": "arm_upper_right"
+      },
+      {
+        "name": "lower_arm_right",
+        "parent": "upper_arm_right",
+        "position": {
+          "x": 266.0,
+          "y": 350.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "wrist_right",
+        "parent": "lower_arm_right",
+        "position": {
+          "x": 272.0,
+          "y": 426.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "hand_right",
+        "parent": "wrist_right",
+        "position": {
+          "x": 274.0,
+          "y": 448.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "hip_left",
+        "parent": "pelvis",
+        "position": {
+          "x": 183.0,
+          "y": 360.0
+        },
+        "bind_mesh": "leg_upper_left"
+      },
+      {
+        "name": "upper_leg_left",
+        "parent": "hip_left",
+        "position": {
+          "x": 180.0,
+          "y": 412.0
+        },
+        "bind_mesh": "leg_upper_left"
+      },
+      {
+        "name": "lower_leg_left",
+        "parent": "upper_leg_left",
+        "position": {
+          "x": 178.0,
+          "y": 498.0
+        },
+        "bind_mesh": "leg_lower_left"
+      },
+      {
+        "name": "ankle_left",
+        "parent": "lower_leg_left",
+        "position": {
+          "x": 176.0,
+          "y": 548.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "foot_left",
+        "parent": "ankle_left",
+        "position": {
+          "x": 156.0,
+          "y": 568.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "toe_left",
+        "parent": "foot_left",
+        "position": {
+          "x": 182.0,
+          "y": 574.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "hip_right",
+        "parent": "pelvis",
+        "position": {
+          "x": 217.0,
+          "y": 360.0
+        },
+        "bind_mesh": "leg_upper_right"
+      },
+      {
+        "name": "upper_leg_right",
+        "parent": "hip_right",
+        "position": {
+          "x": 220.0,
+          "y": 412.0
+        },
+        "bind_mesh": "leg_upper_right"
+      },
+      {
+        "name": "lower_leg_right",
+        "parent": "upper_leg_right",
+        "position": {
+          "x": 222.0,
+          "y": 498.0
+        },
+        "bind_mesh": "leg_lower_right"
+      },
+      {
+        "name": "ankle_right",
+        "parent": "lower_leg_right",
+        "position": {
+          "x": 224.0,
+          "y": 548.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "foot_right",
+        "parent": "ankle_right",
+        "position": {
+          "x": 244.0,
+          "y": 568.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "toe_right",
+        "parent": "foot_right",
+        "position": {
+          "x": 218.0,
+          "y": 574.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "hat",
+        "parent": "head",
+        "position": {
+          "x": 200.0,
+          "y": 70.0
+        },
+        "bind_mesh": "hat"
+      },
+      {
+        "name": "backpack",
+        "parent": "chest",
+        "position": {
+          "x": 166.0,
+          "y": 236.0
+        },
+        "bind_mesh": "backpack"
+      }
     ],
     "constraints": [
-      "head rotation: -15 to +15 degrees",
-      "upper arms rotation: -35 to +35 degrees",
-      "lower arms rotation: -25 to +25 degrees",
-      "upper legs rotation: -22 to +22 degrees",
-      "lower legs rotation: -5 to +35 degrees",
-      "hat follows head at 80 percent",
-      "backpack follows chest at 100 percent",
-      "left-side limb layers stay behind torso",
-      "right-side limb layers stay in front of torso"
+      "head_follow_chest",
+      "shoulder_follow_chest_soft",
+      "hat_follow_head_80",
+      "backpack_follow_torso_100",
+      "elbow_soft_limit",
+      "wrist_soft_limit",
+      "pelvis_counterbalance",
+      "knee_soft_limit",
+      "ankle_soft_limit",
+      "feet_ground_lock",
+      "toe_roll_optional"
     ]
   },
   "animations": [
     {
-      "name": "walk",
-      "duration_seconds": 1.16,
-      "fps": 60,
-      "total_frames": 70,
-      "loop": true,
-      "easing": "cubic-bezier(0.42, 0, 0.28, 1) — use Rive 'Ease In Out' (custom: t1=0.42,0 t2=0.28,1)",
-      "notes": [
-        "Treat these values as a blocking pass for rig setup, not as final approved animation.",
-        "The real production walk should be authored manually in Rive after the segmented SVG parts are rigged.",
-        "Rig uses explicit upper+lower segments on arms and legs plus ankle, toe, pelvis, chest, and neck controls — see rig_requirements.",
-        "Passing pose sample is frame 18 and 53, contact is frame 0 and 35, and loop returns at frame 70.",
-        "Arms and legs remain mirrored with a 35-frame offset between sides.",
-        "Eyelids blink independently every ~4s, not part of walk cycle keyframes."
-      ],
-      "rig_requirements": [
-        "root bone: Y-translate only (bodyBob). Origin at feet center.",
-        "pelvis_group: pivot at 50% x, 66% y of fill box.",
-        "chest_group: pivot at 50% x, 35% y of fill box.",
-        "neck_group: pivot at 50% x, 88% y of fill box.",
-        "arm_upper_left + arm_upper_right: pivot at shoulder top.",
-        "arm_lower_left + arm_lower_right: pivot at elbow top.",
-        "leg_upper_left + leg_upper_right: pivot at hip top.",
-        "leg_lower_left + leg_lower_right: pivot at knee top.",
-        "foot_left + foot_right: pivot at ankle (24% x, 32% y of foot bounds).",
-        "toe_left + toe_right: pivot at 8% x, 56% y of foot-tip bounds.",
-        "head_group: pivot at neck center.",
-        "hat: pivot at brim bottom-center.",
-        "cape/backpack: use top-anchored lagging secondary motion.",
-        "backpack: pivot at strap-top center.",
-        "shadow: scaleX only, no pivot needed."
-      ],
-      "frame_map_percent_to_frame": {
-        "0%": 0,
-        "12.5%": 9,
-        "25%": 18,
-        "50%": 35,
-        "75%": 53,
-        "87.5%": 61,
-        "100_loop": 70
-      },
-      "keyframes": {
-        "root_translateY": [
-          { "frame": 0,  "value_px": 2,  "note": "contact R — grounded down pose" },
-          { "frame": 18, "value_px": -3, "note": "passing R — lift without over-bounce" },
-          { "frame": 35, "value_px": 2,  "note": "contact L — grounded down pose" },
-          { "frame": 53, "value_px": -3, "note": "passing L — lift without over-bounce" },
-          { "frame": 70, "value_px": 2,  "note": "loop = frame 0" }
-        ],
-        "shadow_scaleX": [
-          { "frame": 0,  "scaleX": 1.04, "opacity": 0.20, "note": "contact, shadow wide" },
-          { "frame": 18, "scaleX": 0.95, "opacity": 0.14, "note": "passing, shadow tighter" },
-          { "frame": 35, "scaleX": 1.04, "opacity": 0.20 },
-          { "frame": 53, "scaleX": 0.95, "opacity": 0.14 },
-          { "frame": 70, "scaleX": 1.04, "opacity": 0.20 }
-        ],
-        "pelvis_group": [
-          { "frame": 0,  "translateY_px": 1,  "rotation_deg": 1.0 },
-          { "frame": 18, "translateY_px": -1, "rotation_deg": -0.15 },
-          { "frame": 35, "translateY_px": 1,  "rotation_deg": -1.0 },
-          { "frame": 53, "translateY_px": -1, "rotation_deg": 0.15 },
-          { "frame": 70, "translateY_px": 1,  "rotation_deg": 1.0 }
-        ],
-        "chest_group_rotation_deg": [
-          { "frame": 0,  "value": -0.6 },
-          { "frame": 18, "value": 0.5 },
-          { "frame": 35, "value": 0.6 },
-          { "frame": 53, "value": -0.5 },
-          { "frame": 70, "value": -0.6 }
-        ],
-        "neck_group_rotation_deg": [
-          { "frame": 0,  "value": 0.35 },
-          { "frame": 18, "value": -0.3 },
-          { "frame": 35, "value": -0.35 },
-          { "frame": 53, "value": 0.3 },
-          { "frame": 70, "value": 0.35 }
-        ],
-        "arm_upper_left_rotation_deg": [
-          { "frame": 0,  "value": 16,  "note": "arm forward" },
-          { "frame": 18, "value": 4 },
-          { "frame": 35, "value": -14, "note": "arm back" },
-          { "frame": 53, "value": 1 },
-          { "frame": 70, "value": 16 }
-        ],
-        "arm_lower_left_rotation_deg": [
-          { "frame": 0,  "value": 12,  "note": "forearm hangs forward" },
-          { "frame": 18, "value": 6 },
-          { "frame": 35, "value": -4,  "note": "forearm swings slightly behind upper arm" },
-          { "frame": 53, "value": 4 },
-          { "frame": 70, "value": 12 }
-        ],
-        "arm_upper_right_rotation_deg": [
-          { "frame": 0,  "value": -14, "note": "arm back (mirror of left at frame 35)" },
-          { "frame": 18, "value": 0 },
-          { "frame": 35, "value": 16,  "note": "arm forward" },
-          { "frame": 53, "value": 4 },
-          { "frame": 70, "value": -14 }
-        ],
-        "arm_lower_right_rotation_deg": [
-          { "frame": 0,  "value": -4,  "note": "forearm slightly behind (mirror of left at frame 35)" },
-          { "frame": 18, "value": 4 },
-          { "frame": 35, "value": 14,  "note": "forearm hangs forward" },
-          { "frame": 53, "value": 6 },
-          { "frame": 70, "value": -4 }
-        ],
-        "wrist_left_rotation_deg": [
-          { "frame": 0,  "value": -1 },
-          { "frame": 18, "value": 2 },
-          { "frame": 35, "value": 3 },
-          { "frame": 53, "value": 0 },
-          { "frame": 70, "value": -1 }
-        ],
-        "wrist_right_rotation_deg": [
-          { "frame": 0,  "value": 2 },
-          { "frame": 18, "value": 0 },
-          { "frame": 35, "value": -3 },
-          { "frame": 53, "value": -1 },
-          { "frame": 70, "value": 2 }
-        ],
-        "hip_left_rotation_deg": [
-          { "frame": 0,  "value": 2 },
-          { "frame": 18, "value": 0 },
-          { "frame": 35, "value": -2 },
-          { "frame": 53, "value": -0.5 },
-          { "frame": 70, "value": 2 }
-        ],
-        "hip_right_rotation_deg": [
-          { "frame": 0,  "value": -2 },
-          { "frame": 18, "value": -0.5 },
-          { "frame": 35, "value": 2 },
-          { "frame": 53, "value": 0 },
-          { "frame": 70, "value": -2 }
-        ],
-        "leg_upper_left_rotation_deg": [
-          { "frame": 0,  "value": -16, "note": "leg back, push-off" },
-          { "frame": 18, "value": -1 },
-          { "frame": 35, "value": 18,  "note": "leg forward, heel strike" },
-          { "frame": 53, "value": 2 },
-          { "frame": 70, "value": -16 }
-        ],
-        "leg_lower_left_rotation_and_translate": [
-          { "frame": 0,  "rotation_deg": 17,  "translateX_px": -6, "note": "bent behind, foot back" },
-          { "frame": 18, "rotation_deg": 12,  "translateX_px": -2 },
-          { "frame": 35, "rotation_deg": -6,  "translateX_px": 6,  "note": "extending forward for heel strike" },
-          { "frame": 53, "rotation_deg": 8,   "translateX_px": -1 },
-          { "frame": 70, "rotation_deg": 17,  "translateX_px": -6 }
-        ],
-        "leg_upper_right_rotation_deg": [
-          { "frame": 0,  "value": 18,  "note": "leg forward (mirror of left at frame 35)" },
-          { "frame": 18, "value": 2 },
-          { "frame": 35, "value": -16, "note": "leg back, push-off" },
-          { "frame": 53, "value": -1 },
-          { "frame": 70, "value": 18 }
-        ],
-        "leg_lower_right_rotation_and_translate": [
-          { "frame": 0,  "rotation_deg": -6,  "translateX_px": 6  },
-          { "frame": 18, "rotation_deg": 8,   "translateX_px": -1 },
-          { "frame": 35, "rotation_deg": 17,  "translateX_px": -6, "note": "bent behind" },
-          { "frame": 53, "rotation_deg": 12,  "translateX_px": -2 },
-          { "frame": 70, "rotation_deg": -6,  "translateX_px": 6  }
-        ],
-        "ankle_left_rotation_deg": [
-          { "frame": 0,  "value": 3 },
-          { "frame": 18, "value": 0 },
-          { "frame": 35, "value": -7 },
-          { "frame": 53, "value": -1 },
-          { "frame": 70, "value": 3 }
-        ],
-        "ankle_right_rotation_deg": [
-          { "frame": 0,  "value": -7 },
-          { "frame": 18, "value": -1 },
-          { "frame": 35, "value": 3 },
-          { "frame": 53, "value": 0 },
-          { "frame": 70, "value": -7 }
-        ],
-        "foot_left": [
-          { "frame": 0,  "translateX_px": -14, "rotation_deg": 6,  "note": "toe-off, pointing back-down" },
-          { "frame": 18, "translateX_px": -4,  "rotation_deg": 1 },
-          { "frame": 35, "translateX_px": 13,  "rotation_deg": -11, "note": "heel strike, foot angled up" },
-          { "frame": 53, "translateX_px": 0,   "rotation_deg": -1 },
-          { "frame": 70, "translateX_px": -14, "rotation_deg": 6 }
-        ],
-        "foot_right": [
-          { "frame": 0,  "translateX_px": 13,  "rotation_deg": -11, "note": "heel strike (mirror of left at frame 35)" },
-          { "frame": 18, "translateX_px": 0,   "rotation_deg": -1 },
-          { "frame": 35, "translateX_px": -14, "rotation_deg": 6,  "note": "toe-off" },
-          { "frame": 53, "translateX_px": -4,  "rotation_deg": 1 },
-          { "frame": 70, "translateX_px": 13,  "rotation_deg": -11 }
-        ],
-        "toe_left_rotation_deg": [
-          { "frame": 0,  "value": 0 },
-          { "frame": 18, "value": -3 },
-          { "frame": 35, "value": -7 },
-          { "frame": 53, "value": 1 },
-          { "frame": 70, "value": 0 }
-        ],
-        "toe_right_rotation_deg": [
-          { "frame": 0,  "value": -7 },
-          { "frame": 18, "value": 1 },
-          { "frame": 35, "value": 0 },
-          { "frame": 53, "value": -3 },
-          { "frame": 70, "value": -7 }
-        ],
-        "head_group": [
-          { "frame": 0,  "translateY_px": 0,  "rotation_deg": 0 },
-          { "frame": 18, "translateY_px": -1, "rotation_deg": 0.3 },
-          { "frame": 35, "translateY_px": -2, "rotation_deg": -0.45, "note": "slight nod at opposite contact" },
-          { "frame": 53, "translateY_px": -1, "rotation_deg": -0.15 },
-          { "frame": 70, "translateY_px": 0,  "rotation_deg": 0 }
-        ],
-        "hat": [
-          { "frame": 0,  "rotation_deg": 0,    "translateY_px": 0 },
-          { "frame": 18, "rotation_deg": -0.5, "translateY_px": 0 },
-          { "frame": 35, "rotation_deg": 0.4,  "translateY_px": 0, "note": "lags behind head nod" },
-          { "frame": 53, "rotation_deg": 0.9,  "translateY_px": 0 },
-          { "frame": 70, "rotation_deg": 0,    "translateY_px": 0 }
-        ],
-        "cape": [
-          { "frame": 0,  "rotation_deg": -1,   "translateX_px": -1 },
-          { "frame": 18, "rotation_deg": 2,    "translateX_px": 1 },
-          { "frame": 35, "rotation_deg": 0,    "translateX_px": 2 },
-          { "frame": 53, "rotation_deg": -2.5, "translateX_px": -1 },
-          { "frame": 70, "rotation_deg": -1,   "translateX_px": -1 }
-        ],
-        "backpack": [
-          { "frame": 0,  "translateY_px": 0, "rotation_deg": -1 },
-          { "frame": 35, "translateY_px": 2, "rotation_deg": 1,  "note": "bounces down when body is up" },
-          { "frame": 70, "translateY_px": 0, "rotation_deg": -1 }
-        ]
-      }
-    },
-    {
       "name": "idle",
-      "duration_seconds": 1.4,
+      "duration_seconds": 1.2,
       "notes": [
-        "subtle breathing on chest and torso",
+        "breathing",
         "small head bob",
-        "hat lagging slightly behind head"
+        "occasional blink"
       ]
     },
     {
       "name": "happy",
-      "duration_seconds": 0.9,
+      "duration_seconds": 0.8,
       "notes": [
-        "arms lift slightly",
-        "body bounce",
-        "switch to mouth_happy"
+        "bounce up",
+        "arms lift",
+        "happy mouth"
       ]
     },
     {
       "name": "sad",
-      "duration_seconds": 0.9,
+      "duration_seconds": 0.7,
       "notes": [
-        "head tilts downward",
-        "shoulders drop",
-        "switch to mouth_sad"
+        "head drop",
+        "arms down",
+        "sad mouth"
       ]
     },
     {
       "name": "tap_react",
-      "duration_seconds": 0.25,
-      "notes": [
-        "quick squash and release",
-        "blink during impact"
-      ]
-    },
-    {
-      "name": "enter_screen",
-      "duration_seconds": 0.5,
-      "notes": [
-        "fade and small step-in"
-      ]
-    },
-    {
-      "name": "exit_screen",
       "duration_seconds": 0.45,
       "notes": [
-        "fade and slight lean back"
+        "quick pop",
+        "blink",
+        "return to idle"
+      ]
+    },
+    {
+      "name": "enter",
+      "duration_seconds": 0.55,
+      "notes": [
+        "ease in from side",
+        "settle into idle"
+      ]
+    },
+    {
+      "name": "exit",
+      "duration_seconds": 0.4,
+      "notes": [
+        "fade or slide out cleanly"
       ]
     }
   ],
   "state_machine": {
     "name": "SkogshjalteStateMachine",
     "inputs": [
-      "start_walking",
-      "stop_walking",
-      "answer_correct",
-      "answer_wrong",
-      "user_tap",
-      "screen_change"
+      {
+        "name": "answer_correct",
+        "type": "Trigger"
+      },
+      {
+        "name": "answer_wrong",
+        "type": "Trigger"
+      },
+      {
+        "name": "user_tap",
+        "type": "Trigger"
+      },
+      {
+        "name": "screen_change",
+        "type": "Trigger"
+      }
     ],
     "states": [
       "idle",
@@ -407,6 +489,73 @@
       "tap_react",
       "enter",
       "exit"
+    ],
+    "transitions": [
+      {
+        "from": "idle",
+        "to": "walk",
+        "trigger": "start_walking"
+      },
+      {
+        "from": "walk",
+        "to": "idle",
+        "trigger": "stop_walking"
+      },
+      {
+        "from": "idle",
+        "to": "happy",
+        "trigger": "answer_correct"
+      },
+      {
+        "from": "walk",
+        "to": "happy",
+        "trigger": "answer_correct"
+      },
+      {
+        "from": "idle",
+        "to": "sad",
+        "trigger": "answer_wrong"
+      },
+      {
+        "from": "walk",
+        "to": "sad",
+        "trigger": "answer_wrong"
+      },
+      {
+        "from": "idle",
+        "to": "tap_react",
+        "trigger": "user_tap"
+      },
+      {
+        "from": "walk",
+        "to": "tap_react",
+        "trigger": "user_tap"
+      },
+      {
+        "from": "any",
+        "to": "exit",
+        "trigger": "screen_change"
+      },
+      {
+        "from": "enter",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "happy",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "sad",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "tap_react",
+        "to": "idle",
+        "trigger": "animation_done"
+      }
     ]
   }
 }

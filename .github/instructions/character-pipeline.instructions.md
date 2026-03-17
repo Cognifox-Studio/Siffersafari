@@ -108,7 +108,7 @@ Varje del ska kunna importeras separat i Rive.
 - transitions
 - triggers
 
-Följ befintliga mönster under `assets/characters/ville/config/` när det går.
+Följ befintliga mönster under `assets/characters/mascot/config/` när det går.
 
 ## Standardrigg
 
@@ -173,10 +173,10 @@ Animationerna ska vara enkla, tydliga och barnvänliga. Prioritera läsbar feedb
 - For humanoid-karaktarer: utga fran `assets/characters/_shared/config/humanoid_base_form_v1.json` och lagg in en `baseFormRef` i `<slug>_visual_spec.json`.
 - For humanoid-karaktarer: animation spec ska som standard anvanda det utokade ledschemat med pelvis, shoulder, wrist, hip, ankle och toe dar det ar rimligt, aven om vissa slutassets binds till samma bilddel i forsta iterationen.
 - For humanoid-karaktarer: preview ska folja Loke-standarden (inline SVG + explicit T-pose-overrides), inte enbart statisk composite-bild.
-- Om uppgiften gäller Ville: återanvänd etablerad struktur och namnkonventioner där det är rimligt.
+- Om uppgiften gäller maskoten: återanvänd etablerad struktur och namnkonventioner där det är rimligt.
 - Om användaren vill integrera karaktären i appen: uppdatera även `pubspec.yaml` och relevant tema/widget-konfiguration.
 - Om ingen faktisk `.riv` kan skapas i verktygskedjan: påstå inte att den finns. Skapa i stället komplett Rive-guide + blueprint + importinstruktioner.
-- Om ett genereringsscript behövs för återanvändning eller större assetmängd: följ stilen i `scripts/generate_ville_svg_parts.dart` och `scripts/generate_rive_blueprint.dart`.
+- Om ett genereringsscript behövs för återanvändning eller större assetmängd: följ stilen i `scripts/generate_mascot_svg_parts.dart` och `scripts/generate_rive_blueprint.dart`.
 
 ## Svarskontrakt
 

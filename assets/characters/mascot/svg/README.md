@@ -1,4 +1,4 @@
-# Ville SVG Parts
+# Mascot SVG Parts
 
 This folder contains modular SVG parts for rigging in Rive.
 

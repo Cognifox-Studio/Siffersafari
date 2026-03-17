@@ -10,8 +10,10 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-11)
 - DI: GetIt
 - Persistens: Hive (`user_progress`, `settings`, `quiz_history`)
 - Animation: hybrid
-  - Rive for karaktarer (Ville)
-  - Lottie for UI-effekter och fallback
+   - Rive for karaktarer (maskoten)
+    - Lottie for UI-effekter
+    - SVG composite som saker fallback for maskoten nar Rive inte kan anvandas
+   - slutlig mascot-animation kraver fortfarande manuell export i Rive Editor; blueprint/generatorer producerar inte den slutliga `.riv`-filen automatiskt
 
 ## Startup och bootstrap
 
@@ -127,6 +129,8 @@ CI/workflows:
 
 - Vissa dokument i repo:t innehaller historiska stegplaner. Denna fil beskriver endast nulaget.
 - Vissa terminalmiljoer visar svenska tecken felaktigt (mojibake). Filinnehall i repo:t ar uppdaterat i UTF-8.
+- Nuvarande `assets/characters/mascot/rive/mascot_character.riv` ar verifierad som placeholder/demo-export och saknar produktionsklar `MascotStateMachine`.
+- Runtime har en temporar kompatibilitetsvag for en enkel legacy-animation, men den enda godkanda vagen till riktig karaktarsanimation ar fortfarande manuell export fran Rive Editor.
 
 ## Relaterade dokument
 

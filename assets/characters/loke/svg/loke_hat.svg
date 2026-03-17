@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="320" height="180" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
-  <g id="hat">
-    <ellipse cx="160" cy="112" rx="112" ry="28" fill="#F4E4BB" stroke="#6A2E31" stroke-width="4"/>
-    <path d="M92 102 C92 52, 120 18, 160 18 C200 18, 228 52, 228 102 Z" fill="#F4E4BB" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
-    <path d="M101 90 C116 76, 138 69, 160 69 C182 69, 204 76, 219 90 L219 104 C201 94, 181 89, 160 89 C139 89, 119 94, 101 104 Z" fill="#D8B98C" opacity="0.9"/>
-    <path d="M108 79 C122 69, 140 64, 160 64 C180 64, 198 69, 212 79 L212 93 C198 86, 180 82, 160 82 C140 82, 122 86, 108 93 Z" fill="#58302A" stroke="#6A2E31" stroke-width="4" stroke-linejoin="round"/>
-  </g>
+
+  <path d="M 88 118 Q 112 48 176 44 Q 232 44 252 118 L 88 118 Z" fill="#8ED081" stroke="#926F5D" stroke-width="4"/>
+  <path d="M 124 118 Q 174 138 246 118 Q 210 148 124 134 Z" fill="#7DB772" stroke="#926F5D" stroke-width="3"/>
+  <rect x="118" y="84" width="88" height="14" rx="7" fill="#FF8A5B"/>
+
 </svg>

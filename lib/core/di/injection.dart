@@ -148,12 +148,12 @@ Future<void> _initializeHive({required bool openQuizHistoryBox}) async {
   // Register adapters
   // Register enum adapters first (used inside UserProgress)
   _perf('Hive.registerAdapter(enums + UserProgress)', () {
-    Hive.registerAdapter(AgeGroupAdapter(), override: true);
-    Hive.registerAdapter(OperationTypeAdapter(), override: true);
-    Hive.registerAdapter(DifficultyLevelAdapter(), override: true);
-    Hive.registerAdapter(AppThemeAdapter(), override: true);
-    Hive.registerAdapter(MasteryLevelAdapter(), override: true);
-    Hive.registerAdapter(UserProgressAdapter(), override: true);
+    _registerHiveAdapter(AgeGroupAdapter());
+    _registerHiveAdapter(OperationTypeAdapter());
+    _registerHiveAdapter(DifficultyLevelAdapter());
+    _registerHiveAdapter(AppThemeAdapter());
+    _registerHiveAdapter(MasteryLevelAdapter());
+    _registerHiveAdapter(UserProgressAdapter());
   });
 
   // Open boxes
@@ -173,4 +173,9 @@ Future<void> _initializeHive({required bool openQuizHistoryBox}) async {
   await _perfAsync('Hive.openBox(all required)', () async {
     await Future.wait(openFutures);
   });
+}
+
+void _registerHiveAdapter<T>(TypeAdapter<T> adapter) {
+  if (Hive.isAdapterRegistered(adapter.typeId)) return;
+  Hive.registerAdapter(adapter);
 }
