@@ -48,7 +48,7 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
 
   if ((activeStep?.startsWith('2/') ?? false) &&
       find.text('Kan barnet läsa?').evaluate().isNotEmpty) {
-    final noButton = find.text('Nej');
+    final noButton = find.text('Nej').hitTestable();
     if (noButton.evaluate().isNotEmpty) {
       await it.tap(tester, noButton);
       await it.settle(tester, const Duration(milliseconds: 500));
@@ -84,12 +84,19 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   return false;
 }
 
+Future<void> _drainUiAnimations(WidgetTester tester) async {
+  await it.settle(tester, const Duration(milliseconds: 1200));
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets(
     'Integration (smoke): skapa användare vid behov och starta quiz',
     (tester) async {
+      addTearDown(() async {
+        await _drainUiAnimations(tester);
+      });
       await _launchCleanApp(tester);
 
       Future<void> ensureHomeVisible() async {
@@ -256,6 +263,9 @@ void main() {
   testWidgets(
     'Smoke: app startar och hittar huvudskärm',
     (tester) async {
+      addTearDown(() async {
+        await _drainUiAnimations(tester);
+      });
       await _launchCleanApp(tester);
       await it.waitFor(
         tester,
@@ -324,6 +334,9 @@ void main() {
   testWidgets(
     'Smoke: öppna inställningar och gå tillbaka',
     (tester) async {
+      addTearDown(() async {
+        await _drainUiAnimations(tester);
+      });
       await _launchCleanApp(tester);
       await it.waitFor(
         tester,
@@ -458,6 +471,9 @@ void main() {
   testWidgets(
     'Smoke: hemvyn visar spelkort efter profilskapande',
     (tester) async {
+      addTearDown(() async {
+        await _drainUiAnimations(tester);
+      });
       await _launchCleanApp(tester);
 
       final createProfileButton =
@@ -489,6 +505,9 @@ void main() {
   testWidgets(
     'Smoke: profile switcher kan öppnas',
     (tester) async {
+      addTearDown(() async {
+        await _drainUiAnimations(tester);
+      });
       await _launchCleanApp(tester);
       await it.waitFor(
         tester,

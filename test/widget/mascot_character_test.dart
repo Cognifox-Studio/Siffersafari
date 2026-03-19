@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/presentation/widgets/mascot_character.dart';
 
 void main() {
-  testWidgets('[Widget] MascotCharacter uses SVG fallback in widget tests', (
+  testWidgets('[Widget] MascotCharacter uses the composite SVG runtime path', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(

@@ -6,13 +6,11 @@ import 'mascot_character.dart';
 class ThemeMascot extends StatelessWidget {
   const ThemeMascot.withState({
     super.key,
-    required this.appThemeConfig,
     required this.height,
     this.state = CharacterAnimationState.idle,
     this.fit = BoxFit.contain,
   });
 
-  final AppThemeConfig appThemeConfig;
   final double height;
   final CharacterAnimationState state;
   final BoxFit fit;
@@ -26,11 +24,6 @@ class ThemeMascot extends StatelessWidget {
         fit: fit,
         reaction: _mapReaction(state),
         reactionNonce: state.index,
-        riveAssetPath: appThemeConfig.shouldUseRiveCharacter
-            ? appThemeConfig.characterRiveAsset
-            : null,
-        stateMachineName:
-            appThemeConfig.characterRiveStateMachine ?? 'MascotStateMachine',
       ),
     );
   }

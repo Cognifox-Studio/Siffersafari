@@ -1,6 +1,6 @@
 ﻿# Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-11).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-18).
 
 ## Snabboversikt
 
@@ -9,11 +9,11 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-11)
 - State: Riverpod (`StateNotifierProvider` + `Provider`)
 - DI: GetIt
 - Persistens: Hive (`user_progress`, `settings`, `quiz_history`)
-- Animation: hybrid
-   - Rive for karaktarer (maskoten)
-    - Lottie for UI-effekter
-    - SVG composite som saker fallback for maskoten nar Rive inte kan anvandas
-   - slutlig mascot-animation kraver fortfarande manuell export i Rive Editor; blueprint/generatorer producerar inte den slutliga `.riv`-filen automatiskt
+- Animation:
+  - SVG-first for mascot-runtime i produkt-UI
+  - Flutter-styrda reaktioner ovanpa composite-SVG i `MascotCharacter`
+  - Lottie for godkanda UI-effekter
+  - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spor, men ar inte en aktiv runtime-dependency i appens huvudfloden
 
 ## Startup och bootstrap
 
@@ -129,8 +129,8 @@ CI/workflows:
 
 - Vissa dokument i repo:t innehaller historiska stegplaner. Denna fil beskriver endast nulaget.
 - Vissa terminalmiljoer visar svenska tecken felaktigt (mojibake). Filinnehall i repo:t ar uppdaterat i UTF-8.
-- Nuvarande `assets/characters/mascot/rive/mascot_character.riv` ar verifierad som placeholder/demo-export och saknar produktionsklar `MascotStateMachine`.
-- Runtime har en temporar kompatibilitetsvag for en enkel legacy-animation, men den enda godkanda vagen till riktig karaktarsanimation ar fortfarande manuell export fran Rive Editor.
+- `assets/characters/mascot/rive/mascot_character.riv` ar fortfarande placeholder/demo-material och inte del av nuvarande produkt-runtime.
+- Om Rive aterintroduceras i produkt-UI senare ska det goras som ett explicit nytt integrationssteg, inte som dold fallback.
 
 ## Relaterade dokument
 

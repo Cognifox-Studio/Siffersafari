@@ -3,15 +3,14 @@
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gallande nulage (2026-03-11)
+## Gallande nulage (2026-03-18)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
-- Animation: hybridstrategi
-  - Rive for karaktarer (primart maskoten)
-  - Lottie for UI-effekter, inte for mascot-runtimefallback
-  - Passiv mascot-yta foljer `Rive -> SVG fallback`
-  - Riktig karaktarsanimation i appen kraver fortfarande manuell export från Rive Editor till `assets/characters/mascot/rive/mascot_character.riv`
+- Animation:
+  - SVG-first for mascot-runtime i produkt-UI
+  - Lottie for UI-effekter
+  - `.riv`-filer, blueprint-guider och karaktarsmappar under `assets/characters/*/rive/` ar fortsatt tillatna som framtida enhancement-spor, men de styr inte nuvarande mascot-runtime
 - Responsiv layout styrs av tillganglig bredd (`compact < 600`, `medium >= 600`, `expanded >= 840`).
 - Quizens adaptiva svarighetsmodell ar hybrid (micro + macro + cooldown) och persisteras per raknesatt.
 - Uppdateringsflode i foraldralage anvander GitHub Releases + OTA pa Android, utan avinstallation.
@@ -41,10 +40,14 @@ Princip: senaste datum vinner vid konflikt.
 - Bilddriven karaktarsprocess etablerades (assetkit + spec + Rive-guide).
 - Loke introducerades som forsta verifierade karaktar i detta arbetsflode.
 
+### 2026-03-18
+- Mascot-runtime forenklades till en tydlig SVG-first-modell: `MascotCharacter` och `ThemeMascot.withState` anvander nu alltid composite-SVG + Flutter-animationer i produkt-UI.
+- Oanvand theme/runtime-konfiguration for Rive togs bort for att minska parallella sanningar mellan kod och dokumentation.
+- Optional Rive-material ligger kvar i repo:t som ett separat framtidsspor, inte som aktiv fallback i nuvarande app.
+
 ### 2026-03-13
 - Nuvarande `assets/characters/mascot/rive/mascot_character.riv` verifierades pa emulator som placeholder/demo-export (`Template-NoRig`, inga state machines).
-- Tillfallig kompatibilitetsvag etablerades: om `.riv` saknar state machine spelar `MascotCharacter` forsta legacy-animationen i stallet for att ga direkt till statisk SVG.
-- Detta ersatter inte kravet pa manuell Rive-export; slutligt godkand mascot-animation kraver fortfarande `Mascot` + `MascotStateMachine` i exporterad `.riv`.
+- Detta dokumenteras nu som historisk verifiering av asset-innehall, inte som gallande runtime-arkitektur.
 
 ### 2026-03-11
 - Humanoid-standard faststalld: nya humanoid-karaktarer ska utga fran `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef` i respektive visual spec.

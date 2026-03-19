@@ -23,9 +23,6 @@ class AppThemeConfig {
     required this.backgroundAsset,
     required this.questHeroAsset,
     required this.characterAsset,
-    this.characterRiveAsset,
-    this.characterRiveStateMachine,
-    this.preferRiveCharacter = false,
     required this.baseBackgroundColor,
     required this.primaryActionColor,
     required this.secondaryActionColor,
@@ -40,15 +37,6 @@ class AppThemeConfig {
   final String questHeroAsset;
   final String characterAsset;
 
-  /// Preferred runtime character asset (Rive). Keep null until a .riv exists.
-  final String? characterRiveAsset;
-
-  /// Optional state machine name inside the .riv file.
-  final String? characterRiveStateMachine;
-
-  /// If true and [characterRiveAsset] is set, UI should prefer Rive for character.
-  final bool preferRiveCharacter;
-
   final Color baseBackgroundColor;
   final Color primaryActionColor;
   final Color secondaryActionColor;
@@ -59,11 +47,6 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
-
-  bool get shouldUseRiveCharacter =>
-      preferRiveCharacter &&
-      characterRiveAsset != null &&
-      characterRiveAsset!.isNotEmpty;
 
   static AppThemeConfig forTheme(AppTheme theme) {
     switch (theme) {

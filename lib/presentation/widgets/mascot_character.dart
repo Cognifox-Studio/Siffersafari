@@ -2,7 +2,6 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:rive/rive.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 
 enum MascotReaction {
@@ -22,16 +21,12 @@ class MascotCharacter extends StatefulWidget {
     this.reactionNonce = 0,
     this.height = 96,
     this.fit = BoxFit.contain,
-    this.riveAssetPath,
-    this.stateMachineName = 'MascotStateMachine',
   });
 
   final MascotReaction reaction;
   final int reactionNonce;
   final double height;
   final BoxFit fit;
-  final String? riveAssetPath;
-  final String stateMachineName;
 
   @override
   State<MascotCharacter> createState() => _MascotCharacterState();
@@ -39,221 +34,46 @@ class MascotCharacter extends StatefulWidget {
 
 class _MascotCharacterState extends State<MascotCharacter>
     with SingleTickerProviderStateMixin {
-  Artboard? _artboard;
-  SMITrigger? _answerCorrect;
-  SMITrigger? _answerWrong;
-  SMITrigger? _userTap;
-  SMITrigger? _screenChange;
-  SimpleAnimation? _legacyAnimationController;
-  late final AnimationController _fallbackReactionController;
-
-  bool _loadFailed = false;
-  bool _hasMatchingStateMachine = false;
-  bool _isUsingLegacyAnimation = false;
+  late final AnimationController _reactionController;
   MascotReaction _fallbackReaction = MascotReaction.idle;
-
-  bool get _shouldSkipRiveLoading {
-    return WidgetsBinding.instance.runtimeType.toString().contains('Test');
-  }
+  int _reactionToken = 0;
 
   @override
   void initState() {
     super.initState();
-    _fallbackReactionController = AnimationController(
+    _reactionController = AnimationController(
       vsync: this,
       duration: _fallbackDurationFor(MascotReaction.idle),
     );
-    if (_shouldSkipRiveLoading || widget.riveAssetPath == null) {
-      _loadFailed = true;
-      _primeFallbackReaction();
-      return;
-    }
-    _loadRive();
+    _primeFallbackReaction();
   }
 
   @override
   void dispose() {
-    _fallbackReactionController.dispose();
+    _reactionController.dispose();
     super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant MascotCharacter oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.riveAssetPath != widget.riveAssetPath ||
-        oldWidget.stateMachineName != widget.stateMachineName) {
-      _artboard = null;
-      _hasMatchingStateMachine = false;
-      _isUsingLegacyAnimation = false;
-      _loadFailed = false;
-      if (_shouldSkipRiveLoading || widget.riveAssetPath == null) {
-        _loadFailed = true;
-        _primeFallbackReaction();
-      } else {
-        _loadRive();
-      }
-    }
     if (widget.reactionNonce != oldWidget.reactionNonce ||
         widget.reaction != oldWidget.reaction) {
-      _fireReaction(widget.reaction);
-    }
-  }
-
-  Future<void> _loadRive() async {
-    try {
-      final riveAssetPath = widget.riveAssetPath;
-      if (riveAssetPath == null || riveAssetPath.isEmpty) {
-        if (!mounted) return;
-        _loadFailed = true;
-        _hasMatchingStateMachine = false;
-        _isUsingLegacyAnimation = false;
-        _primeFallbackReaction();
-        setState(() {
-          // Trigger rebuild when runtime asset is unavailable.
-        });
-        return;
-      }
-
-      final data = await RiveFile.asset(riveAssetPath);
-      final artboard = data.mainArtboard;
-      var activeStateMachineName = widget.stateMachineName;
-      debugPrint(
-        'MascotCharacter: artboard=${artboard.name}, '
-        'animations=${artboard.animations.map((a) => a.name).toList()}, '
-        'stateMachines=${artboard.stateMachines.map((m) => m.name).toList()}',
-      );
-      var controller = StateMachineController.fromArtboard(
-        artboard,
-        widget.stateMachineName,
-      );
-
-      if (controller == null &&
-          widget.stateMachineName == 'MascotStateMachine') {
-        controller = StateMachineController.fromArtboard(
-          artboard,
-          'VilleStateMachine',
-        );
-        if (controller != null) {
-          activeStateMachineName = 'VilleStateMachine';
-          debugPrint(
-            'MascotCharacter: using legacy state machine VilleStateMachine',
-          );
-        }
-      }
-
-      if (controller != null) {
-        debugPrint(
-          'MascotCharacter: using state machine $activeStateMachineName',
-        );
-        artboard.addController(controller);
-        _answerCorrect =
-            controller.findInput<bool>('answer_correct') as SMITrigger?;
-        _answerWrong =
-            controller.findInput<bool>('answer_wrong') as SMITrigger?;
-        _userTap = controller.findInput<bool>('user_tap') as SMITrigger?;
-        _screenChange =
-            controller.findInput<bool>('screen_change') as SMITrigger?;
-      } else {
-        final legacyAnimationName = artboard.animations.isNotEmpty
-            ? artboard.animations.first.name
-            : null;
-
-        if (legacyAnimationName != null) {
-          final legacyAnimation = SimpleAnimation(legacyAnimationName);
-          artboard.addController(legacyAnimation);
-          _legacyAnimationController = legacyAnimation;
-          debugPrint(
-            'MascotCharacter: no matching state machine, using legacy animation '
-            '$legacyAnimationName',
-          );
-        } else {
-          // Files without a usable runtime controller are treated as preview-only.
-          debugPrint(
-            'MascotCharacter: no matching state machine or animation, using static SVG fallback',
-          );
-        }
-      }
-
-      final hasMatchingStateMachine = controller != null;
-      final isUsingLegacyAnimation =
-          controller == null && _legacyAnimationController != null;
-
-      if (!mounted) return;
-      _artboard = artboard;
-      _loadFailed = false;
-      _hasMatchingStateMachine = hasMatchingStateMachine;
-      _isUsingLegacyAnimation = isUsingLegacyAnimation;
-      setState(() {
-        // Trigger rebuild after async Rive load completes.
-      });
-
-      if (widget.reaction != MascotReaction.idle) {
-        _fireReaction(widget.reaction);
-      }
-    } catch (_) {
-      debugPrint(
-        'MascotCharacter: failed to load Rive asset ${widget.riveAssetPath}',
-      );
-      if (!mounted) return;
-      _loadFailed = true;
-      _hasMatchingStateMachine = false;
-      _isUsingLegacyAnimation = false;
-      _primeFallbackReaction();
-      setState(() {
-        // Trigger rebuild after async Rive load failure.
-      });
-    }
-  }
-
-  void _fireReaction(MascotReaction reaction) {
-    debugPrint(
-      'MascotCharacter: fire reaction $reaction '
-      '(legacyAnimation=$_isUsingLegacyAnimation, '
-      'hasStateMachine=$_hasMatchingStateMachine)',
-    );
-
-    if (_isUsingLegacyAnimation) {
-      if (reaction != MascotReaction.idle) {
-        _legacyAnimationController?.reset();
-        _legacyAnimationController?.isActive = true;
-      }
-      return;
-    }
-
-    if (_loadFailed ||
-        _artboard == null ||
-        (!_hasMatchingStateMachine && !_isUsingLegacyAnimation)) {
-      _playFallbackReaction(reaction);
-      return;
-    }
-
-    switch (reaction) {
-      case MascotReaction.idle:
-        break;
-      case MascotReaction.enter:
-        _userTap?.fire();
-      case MascotReaction.answerCorrect:
-        _answerCorrect?.fire();
-      case MascotReaction.answerWrong:
-        _answerWrong?.fire();
-      case MascotReaction.celebrate:
-        _answerCorrect?.fire();
-      case MascotReaction.userTap:
-        _userTap?.fire();
-      case MascotReaction.screenChange:
-        _screenChange?.fire();
+      _playFallbackReaction(widget.reaction);
     }
   }
 
   void _primeFallbackReaction() {
     if (widget.reaction == MascotReaction.idle) return;
     _fallbackReaction = widget.reaction;
-    _fallbackReactionController.duration =
-        _fallbackDurationFor(widget.reaction);
-    _fallbackReactionController.forward(from: 0);
+    _reactionController.duration = _fallbackDurationFor(widget.reaction);
+    _reactionController.forward(from: 0);
   }
 
   void _playFallbackReaction(MascotReaction reaction) {
+    _reactionToken++;
+    final activeToken = _reactionToken;
+
     if (reaction == MascotReaction.idle) {
       if (mounted) {
         setState(() {
@@ -262,8 +82,8 @@ class _MascotCharacterState extends State<MascotCharacter>
       } else {
         _fallbackReaction = MascotReaction.idle;
       }
-      _fallbackReactionController.stop();
-      _fallbackReactionController.value = 0;
+      _reactionController.stop();
+      _reactionController.value = 0;
       return;
     }
 
@@ -275,9 +95,10 @@ class _MascotCharacterState extends State<MascotCharacter>
       _fallbackReaction = reaction;
     }
 
-    _fallbackReactionController.duration = _fallbackDurationFor(reaction);
-    _fallbackReactionController.forward(from: 0).whenCompleteOrCancel(() {
+    _reactionController.duration = _fallbackDurationFor(reaction);
+    _reactionController.forward(from: 0).whenCompleteOrCancel(() {
       if (!mounted) return;
+      if (activeToken != _reactionToken) return;
       setState(() {
         _fallbackReaction = MascotReaction.idle;
       });
@@ -304,30 +125,7 @@ class _MascotCharacterState extends State<MascotCharacter>
 
   @override
   Widget build(BuildContext context) {
-    if (_loadFailed ||
-        _artboard == null ||
-        (!_hasMatchingStateMachine && !_isUsingLegacyAnimation)) {
-      return _fallback(context);
-    }
-
-    return SizedBox(
-      height: widget.height,
-      child: GestureDetector(
-        onTap: () {
-          if (_isUsingLegacyAnimation) {
-            _legacyAnimationController?.reset();
-            _legacyAnimationController?.isActive = true;
-            return;
-          }
-
-          _userTap?.fire();
-        },
-        child: Rive(
-          artboard: _artboard!,
-          fit: widget.fit,
-        ),
-      ),
-    );
+    return _fallback(context);
   }
 
   Widget _fallback(BuildContext context) {
@@ -336,14 +134,14 @@ class _MascotCharacterState extends State<MascotCharacter>
       child: GestureDetector(
         onTap: () => _playFallbackReaction(MascotReaction.userTap),
         child: AnimatedBuilder(
-          animation: _fallbackReactionController,
+          animation: _reactionController,
           child: SvgPicture.asset(
             AssetPaths.characterCompositeSvg(CharacterId.mascot),
             fit: widget.fit,
             placeholderBuilder: (context) => _iconFallback(context),
           ),
           builder: (context, child) {
-            final pose = _fallbackPoseFor(_fallbackReactionController.value);
+            final pose = _fallbackPoseFor(_reactionController.value);
             final offset = Offset(
               pose.dx * widget.height * 0.36,
               pose.dy * widget.height * 0.24,

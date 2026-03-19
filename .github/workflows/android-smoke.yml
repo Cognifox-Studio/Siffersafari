@@ -1,0 +1,77 @@
+name: Android Smoke
+
+on:
+  pull_request:
+    paths:
+      - 'lib/**'
+      - 'integration_test/**'
+      - 'android/**'
+      - 'assets/**'
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - '.github/workflows/android-smoke.yml'
+
+concurrency:
+  group: android-smoke-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build generated files (Hive/Riverpod)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Run Android smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            set -o pipefail
+            flutter devices
+            # Keep CI smoke on the most stable Android startup slice.
+            flutter test integration_test/app_smoke_test.dart -d emulator-${EMULATOR_PORT} -r expanded --plain-name "Smoke: app startar och hittar huvudskärm" 2>&1 | tee android-smoke.log
+            test_exit=${PIPESTATUS[0]}
+            if [ "$test_exit" -ne 0 ]; then
+              adb logcat -d > android-smoke-logcat.txt || true
+            fi
+            exit "$test_exit"
+
+      - name: Upload Android smoke logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-smoke-logs
+          path: |
+            android-smoke.log
+            android-smoke-logcat.txt

@@ -63,7 +63,8 @@ class FirstRunSetupScreen extends ConsumerWidget {
                       ),
                       border: Border.all(
                         color: onPrimary.withValues(
-                            alpha: AppOpacities.cardBorder,),
+                          alpha: AppOpacities.cardBorder,
+                        ),
                       ),
                     ),
                     child: Column(
@@ -87,7 +88,6 @@ class FirstRunSetupScreen extends ConsumerWidget {
                           child: SizedBox(
                             height: mascotHeight,
                             child: ThemeMascot.withState(
-                              appThemeConfig: themeCfg,
                               state: CharacterAnimationState.idle,
                               height: mascotHeight,
                               fit: BoxFit.contain,

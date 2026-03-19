@@ -3,15 +3,17 @@
 Goal: keep one clear animation architecture for runtime, and keep previews isolated from the app.
 
 ## Direction
-Current direction is hybrid:
-- Rive for interactive characters in product UI
+Current direction is:
+- SVG-first mascot runtime in product UI
 - Lottie for approved UI effects
 - Preview labs in `artifacts/animation_preview/`
+- optional Rive outputs kept outside the active runtime path until a future explicit integration
 
 Current hard rule for the mascot:
-- the only approved path to a real runtime character animation is a manually exported `.riv` from Rive Editor
-- the generated JSON blueprint and guide are preparation material, not a finished runtime asset
-- the checked-in `assets/characters/mascot/rive/mascot_character.riv` is still a placeholder/demo export until it provides `MascotStateMachine`
+- the current product runtime uses the approved composite SVG
+- simple mascot motion is handled in Flutter by `MascotCharacter`
+- generated JSON blueprints and `.riv` files are optional preparation or enhancement material, not a required runtime dependency
+- the checked-in `assets/characters/mascot/rive/mascot_character.riv` is still placeholder/demo material and is not used by the active runtime path
 
 This means:
 - no preview widgets embedded in product screens
@@ -21,7 +23,7 @@ This means:
 ## Runtime Roles
 - `MascotCharacter` is the triggered runtime widget for home, quiz and results
 - `ThemeMascot.withState` is the passive mascot surface for simple state-based rendering
-- `AppThemeConfig` decides whether runtime should prefer approved Rive assets for the mascot
+- current mascot runtime does not branch on theme-level Rive configuration
 
 ## Preview Roles
 For Loke, Skogshjalte and future humanoids, animation work should move through this chain:
@@ -45,8 +47,8 @@ Use this separation:
 assets/characters/
   mascot/
     config/   source of truth for specs
-    svg/      rig/export input plus static fallback
-    rive/     approved runtime character asset
+    svg/      generated runtime asset plus source material for further animation work
+    rive/     optional future enhancement asset, not required by current runtime
 
 assets/ui/lottie/
   confetti.json
@@ -65,11 +67,11 @@ artifacts/animation_preview/
 4. Register runtime assets in `pubspec.yaml`
 5. Do not treat preview material as runtime fallback
 6. Do not treat blueprint generation as equivalent to a finished character export
+7. Reintroduce runtime Rive only through an explicit product change, not through dormant config flags
 
 ## Widget Usage
 ```dart
 ThemeMascot.withState(
-  appThemeConfig: themeCfg,
   state: CharacterAnimationState.idle,
   height: 120,
 )
@@ -82,13 +84,12 @@ MascotCharacter(
 ```
 
 ## AppThemeConfig Notes
-- `shouldUseRiveCharacter` should enable only approved runtime Rive assets
-- if approved runtime animation is unavailable, fallback should be explicit and safe
-- current safe fallback for the mascot is the approved composite SVG, not theme-specific Lottie state files
-- current temporary compatibility path may play a single legacy animation from a placeholder `.riv`, but that is not the target runtime architecture
+- mascot-runtime no longer depends on dormant Rive flags in `AppThemeConfig`
+- the safe runtime path for the mascot is the approved composite SVG, not theme-specific Lottie state files
+- future Rive support should be added back only when a production-ready asset and a real runtime need both exist
 
 ## Current Cleanup Status
 - product UI no longer embeds `LokeWalkCharacter` as a demo on home
 - preview motion is no longer used as runtime fallback
 - preview material remains available for iteration under `artifacts/animation_preview/`
-- passive mascot surfaces now follow `Rive -> SVG fallback`
+- mascot surfaces now follow one shared SVG-first runtime path

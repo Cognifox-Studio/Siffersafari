@@ -17,9 +17,8 @@ Future<void> settle(
   // Avoid pumpAndSettle() hanging forever by pumping in small steps up to a
   // maximum total duration.
   const step = Duration(milliseconds: 50);
-  final steps = (duration.inMilliseconds / step.inMilliseconds)
-      .ceil()
-      .clamp(1, 400);
+  final steps =
+      (duration.inMilliseconds / step.inMilliseconds).ceil().clamp(1, 400);
   for (var i = 0; i < steps; i++) {
     await tester.pump(step);
     if (!tester.binding.hasScheduledFrame) return;
@@ -83,7 +82,10 @@ Future<bool> tryTap(
     }
     if (!hasMatch) continue;
 
-    final target = candidate.first;
+    final hitTestableCandidate = candidate.hitTestable();
+    final target = hitTestableCandidate.evaluate().isNotEmpty
+        ? hitTestableCandidate.first
+        : candidate.first;
     await tester.ensureVisible(target);
     await settle(tester, const Duration(milliseconds: 200));
 
