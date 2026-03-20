@@ -13,8 +13,18 @@ flutter pub get
 
 python tools/create_character.py --name "Mira" --brief "space explorer with teal jacket and gold backpack"
 python tools/refresh_character.py --slug loke
-dart run scripts/generate_sfx_wav.dart --prompt "bell chime" --output artifacts/bell.wav
-dart run scripts/generate_android_launcher_icons.dart --input assets/images/app_logo.png --output android/app/src/main/res/
+# Regenerate baseline kid-friendly SFX WAVs into `assets/sounds/`.
+dart run scripts/generate_sfx_wav.dart --out assets/sounds
+
+# Generate Android launcher icons (writes into `android/app/src/main/res/`).
+# By default reads `assets/images/app_icon/icon_source.png`.
+dart run scripts/generate_android_launcher_icons.dart
+```
+
+## Python prerequisites
+`tools/create_character.py` and `tools/pipeline.py` require `PyYAML`:
+```bash
+pip install pyyaml
 ```
 
 ## AI-Driven Asset Pipeline
@@ -58,6 +68,10 @@ dart run scripts/generate_rive_blueprint.dart
 python tools/pipeline.py build-all
 # -> artifacts/asset_pipeline_manifest.json
 # -> lib/gen/assets.g.dart
+
+# Validate generated asset content against style contract
+python tools/pipeline.py lint-assets --strict
+# -> validates SVG/Lottie against specs/style_contract.yaml
 ```
 
 ### Output classification
@@ -78,10 +92,16 @@ Important limitation:
 
 1. Create a new character from a short brief, or generate/update candidate assets
 2. Review them in `artifacts/` or in dedicated preview surfaces
-3. Run `python tools/pipeline.py validate --strict` and `python tools/pipeline.py manifest`
+3. Run `python tools/pipeline.py validate --strict`, `python tools/pipeline.py lint-assets --strict` and `python tools/pipeline.py manifest`
 4. Promote only approved runtime files into `assets/`
 5. Verify in app
 6. Commit only the approved runtime artifacts and their source specs/scripts
+
+## Style Contract
+
+- `specs/style_contract.yaml` defines machine-readable style gates for generated assets.
+- `python tools/pipeline.py lint-assets --strict` enforces these rules for SVG and Lottie outputs.
+- Promotion and CI now run this lint step before tests/promote.
 
 ## Runtime Policy For The Mascot
 
@@ -107,6 +127,147 @@ Note:
 ```bash
 rg "assets/images|assets/characters|assets/ui/lottie|assets/sounds" pubspec.yaml
 Get-ChildItem assets -Recurse | Measure-Object -Property Length -Sum
+python tools/pipeline.py validate --strict
+python tools/pipeline.py lint-assets --strict
 flutter analyze
 flutter test
 ```
+
+## Automated Promotion Workflow
+
+Use the **promotion script** for end-to-end automation:
+
+```powershell
+# New character
+.\scripts\promote_assets.ps1 -Workflow NewCharacter -CharacterName "Mira" -CharacterBrief "space explorer"
+
+# Update existing character
+.\scripts\promote_assets.ps1 -Workflow UpdateCharacter -CharacterSlug loke
+
+# Lottie/SFX only
+.\scripts\promote_assets.ps1 -Workflow LottieSFX
+```
+
+The script runs all phases automatically:
+1. **Generate** - SVG/Lottie/Rive in stable order
+2. **Validate** - spec contract checks + manifest update
+3. **Quality Gates** - analyze + targeted tests + full test suite
+4. **Promote** - copy approved assets from `artifacts/` → `assets/`
+5. **Report** - show next manual steps
+
+### Options
+- `-SkipQA` : Skip all QA tests (for preview/debug only)
+- `-DryRun` : Show what would happen without executing
+
+### After Promotion
+```powershell
+# Verify only expected files changed
+.\scripts\verify_git_changes.ps1
+
+# Review and commit
+git add .
+git commit -m "Character/assets: <brief description>"
+git push
+```
+
+---
+
+## Manual Workflow (if not using script)
+
+Use the matching checklist below for reference or when not using the automated script.
+
+### A) New Character
+
+1. Generate candidate character:
+
+```bash
+python tools/create_character.py --name "<Name>" --brief "<brief>"
+python tools/pipeline.py validate --strict
+python tools/pipeline.py manifest
+```
+
+2. Regenerate dependent assets in stable order:
+
+```bash
+dart run scripts/generate_mascot_svg_parts.dart
+dart run scripts/generate_mascot_composite.dart
+dart run scripts/generate_lottie_effects.dart
+dart run scripts/generate_rive_blueprint.dart
+```
+
+3. Validate runtime paths and mascot integration:
+
+```bash
+flutter analyze
+flutter test test/unit/assets/generated_asset_paths_test.dart
+flutter test test/widget/mascot_character_test.dart
+```
+
+4. Run broader regression pass:
+
+```bash
+flutter test
+```
+
+5. Promotion + hygiene:
+- Ensure runtime composite exists at `assets/characters/<slug>/svg/<slug>_composite.svg`.
+- Keep only production assets in `assets/`; keep previews/blueprints/references in `artifacts/`.
+- Confirm only expected files changed before PR.
+
+### B) Update Existing Character
+
+1. Refresh from current config:
+
+```bash
+python tools/refresh_character.py --slug <slug>
+python tools/pipeline.py validate --strict
+python tools/pipeline.py manifest
+```
+
+2. Rebuild mascot outputs:
+
+```bash
+dart run scripts/generate_mascot_svg_parts.dart
+dart run scripts/generate_mascot_composite.dart
+dart run scripts/generate_rive_blueprint.dart
+```
+
+3. Verify gates:
+
+```bash
+flutter analyze
+flutter test test/unit/assets/generated_asset_paths_test.dart
+flutter test test/widget/mascot_character_test.dart
+```
+
+4. If a `.riv` runtime asset is touched, verify manually and run:
+
+```powershell
+scripts/verify_mascot_rive_runtime.ps1
+```
+
+5. Confirm PR contains only intended runtime/spec/script changes.
+
+### C) Only Lottie/SFX
+
+1. Regenerate changed asset class:
+
+```bash
+dart run scripts/generate_lottie_effects.dart
+dart run scripts/generate_sfx_wav.dart --out assets/sounds
+python tools/pipeline.py validate --strict
+python tools/pipeline.py manifest
+```
+
+2. Validate app behavior and no path regressions:
+
+```bash
+flutter analyze
+flutter test test/unit/assets/generated_asset_paths_test.dart
+flutter test
+```
+
+3. Placement and scope:
+- Lottie runtime files in `assets/ui/lottie/`.
+- Approved production sounds in `assets/sounds/`.
+- Any exploratory exports stay in `artifacts/`.

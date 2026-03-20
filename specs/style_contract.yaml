@@ -1,0 +1,22 @@
+svg:
+  max_paths_per_file: 140
+  max_hex_colors_per_file: 24
+  stroke_width_range:
+    - 0.5
+    - 14
+  forbidden_tokens:
+    - "<filter"
+    - "<mask"
+    - "<clipPath"
+    - "<linearGradient"
+    - "<radialGradient"
+    - "<pattern"
+  ignore_files: []
+  files: {}
+
+lottie:
+  max_layers_per_file: 32
+  disallow_expressions: true
+  disallow_effects: true
+  ignore_files: []
+  files: {}

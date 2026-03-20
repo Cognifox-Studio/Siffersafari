@@ -31,20 +31,17 @@ powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action run
 ```
 
 ## VS Code-flode
+Repo:t innehaller delade VS Code-filer under `.vscode/`.
+Viktigt: enligt `.gitignore` ar endast `.vscode/tasks.json` spårad i git (övriga `.vscode/*` ar personliga).
 
-Projektet innehaller redan delade VS Code-filer under `.vscode/`:
-
-- workspace-settings for Dart/Flutter-formattering, hot reload och mindre explorer-brus
-- rekommenderade extensions for Flutter, Dart, Error Lens och Mermaid
-- `launch.json` med fardiga profiler for vanlig debug och `Pixel_6`
 - `tasks.json` med QA-, Pixel_6- och asset-kommandon
 
 Efter att du oppnat repot i VS Code:
 
-1. Installera rekommenderade extensions om VS Code fragar.
-2. Kor `Developer: Reload Window`.
-3. Anvand `Run and Debug` for `Flutter: Debug` eller `Flutter: Debug (Pixel_6)`.
-4. Anvand `Tasks: Run Task` for `QA: Analyze` och testfloden.
+1. Kor `Developer: Reload Window`.
+2. Anvand `Run and Debug` for `Flutter: Debug`.
+3. Anvand `Tasks: Run Task` for `QA: Analyze` och testfloden.
+4. Anvand `Tasks: Run Task` for Pixel_6-kommandon vid behov.
 
 ## Vanliga kommandon
 

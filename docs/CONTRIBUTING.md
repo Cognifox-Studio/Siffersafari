@@ -27,18 +27,16 @@ Det finns fardiga tasks i `.vscode/tasks.json` sa du kan kora QA med ett klick:
 
 ## VS Code debug-flode
 
-Det finns fardiga launch-konfigurationer i `.vscode/launch.json`:
+Repo:t innehaller normalt bara `.vscode/tasks.json` (andra `.vscode/*` ignoreras enligt `.gitignore`).
+Anvand standard `Run and Debug` i VS Code for:
 
 - "Flutter: Debug"
-- "Flutter: Debug (Pixel_6)"
-- "Flutter: Profile (Pixel_6)"
-- "Flutter: Release (Pixel_6)"
 
-Det gor att du ofta kan kora appen direkt fran `Run and Debug` i stallet for att skriva `flutter run` manuellt.
+For Pixel_6: anvand tasks i `tasks.json` (t.ex. `Flutter: Run (Pixel_6 only)` eller `Pixel_6: Sync + QA (valfri testpath)`).
 
 ## Rekommenderade extensions
 
-Workspace rekommenderar dessa tillagg i `.vscode/extensions.json`:
+Som forslag (installera om VS Code fragar):
 
 - Dart
 - Flutter

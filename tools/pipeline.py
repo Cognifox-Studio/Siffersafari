@@ -24,6 +24,7 @@ import json
 import re
 import shutil
 import subprocess
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -55,6 +56,7 @@ SPEC_FILES = {
     "effects": SPECS_DIR / "effects.yaml",
     "rigs": SPECS_DIR / "rigs.yaml",
     "palettes": SPECS_DIR / "palettes.yaml",
+    "style_contract": SPECS_DIR / "style_contract.yaml",
 }
 
 
@@ -135,6 +137,7 @@ def parse_args() -> argparse.Namespace:
             "build-rive",
             "build-composite",
             "validate",
+            "lint-assets",
             "manifest",
             "codegen",
         ),
@@ -296,6 +299,273 @@ def validate_specs(specs: dict[str, dict[str, Any]]) -> dict[str, list[dict[str,
         "rigs": rigs,
         "palettes": palettes,
     }
+
+
+def parse_positive_int(value: Any, fallback: int) -> int:
+    if isinstance(value, int) and value > 0:
+        return value
+    if isinstance(value, str) and value.isdigit() and int(value) > 0:
+        return int(value)
+    return fallback
+
+
+def parse_number(value: str) -> float | None:
+    match = re.search(r"-?\d+(?:\.\d+)?", value)
+    if not match:
+        return None
+    return float(match.group(0))
+
+
+def parse_stroke_width_range(
+    svg_contract: dict[str, Any],
+    fallback: tuple[float, float] = (4.0, 14.0),
+) -> tuple[float, float]:
+    range_value = svg_contract.get("stroke_width_range")
+    if not isinstance(range_value, list) or len(range_value) != 2:
+        return fallback
+
+    min_value = range_value[0]
+    max_value = range_value[1]
+    if not isinstance(min_value, (int, float)) or not isinstance(max_value, (int, float)):
+        return fallback
+    if min_value <= 0 or max_value <= 0 or min_value >= max_value:
+        return fallback
+    return (float(min_value), float(max_value))
+
+
+def parse_string_list(value: Any) -> list[str]:
+    if not isinstance(value, list):
+        return []
+    return [item for item in value if isinstance(item, str) and item]
+
+
+def parse_bool(value: Any, fallback: bool) -> bool:
+    if isinstance(value, bool):
+        return value
+    return fallback
+
+
+def get_contract_file_override(contract: dict[str, Any], relative_path: str) -> dict[str, Any]:
+    files = contract.get("files")
+    if not isinstance(files, dict):
+        return {}
+    override = files.get(relative_path)
+    if not isinstance(override, dict):
+        return {}
+    return override
+
+
+def find_svg_files(validated_specs: dict[str, list[dict[str, Any]]]) -> list[Path]:
+    files: set[Path] = set()
+    for character in validated_specs["characters"]:
+        outputs = character["outputs"]
+        svg_parts_dir = optional_repo_path(outputs.get("svg_parts_dir"))
+        composite_svg = optional_repo_path(outputs.get("composite_svg"))
+
+        if svg_parts_dir is not None and svg_parts_dir.exists():
+            files.update(svg_parts_dir.glob("*.svg"))
+        if composite_svg is not None and composite_svg.exists():
+            files.add(composite_svg)
+
+    return sorted(files)
+
+
+def check_svg_valid_xml(path: Path, errors: list[str]) -> None:
+    try:
+        ET.fromstring(path.read_text(encoding="utf-8"))
+    except ET.ParseError as exc:
+        errors.append(f"{relative_file(path)} invalid XML: {exc}")
+
+
+def lint_svg_files(
+    svg_files: list[Path],
+    svg_contract: dict[str, Any],
+    errors: list[str],
+) -> None:
+    forbidden_tokens = svg_contract.get(
+        "forbidden_tokens",
+        ["<filter", "<mask", "<clippath", "<lineargradient", "<radialgradient", "<pattern"],
+    )
+    forbidden_tokens = [token.lower() for token in forbidden_tokens if isinstance(token, str)]
+    max_paths_per_file = parse_positive_int(svg_contract.get("max_paths_per_file"), 140)
+    max_hex_colors_per_file = parse_positive_int(svg_contract.get("max_hex_colors_per_file"), 14)
+    stroke_min, stroke_max = parse_stroke_width_range(svg_contract)
+    ignored_files = set(parse_string_list(svg_contract.get("ignore_files")))
+
+    stroke_width_attribute = re.compile(r"stroke-width\s*=\s*['\"]([^'\"]+)['\"]", re.IGNORECASE)
+    stroke_width_style = re.compile(r"stroke-width\s*:\s*([^;\"']+)", re.IGNORECASE)
+
+    for svg_file in svg_files:
+        relative_path = relative_file(svg_file)
+        if relative_path in ignored_files:
+            continue
+
+        file_override = get_contract_file_override(svg_contract, relative_path)
+        ignored_checks = set(parse_string_list(file_override.get("ignore_checks")))
+        file_max_paths = parse_positive_int(
+            file_override.get("max_paths_per_file"),
+            max_paths_per_file,
+        )
+        file_max_hex_colors = parse_positive_int(
+            file_override.get("max_hex_colors_per_file"),
+            max_hex_colors_per_file,
+        )
+        file_stroke_min, file_stroke_max = parse_stroke_width_range(
+            file_override,
+            fallback=(stroke_min, stroke_max),
+        )
+        allowed_tokens_for_file = {
+            token.lower()
+            for token in parse_string_list(file_override.get("allow_forbidden_tokens"))
+        }
+
+        content = svg_file.read_text(encoding="utf-8")
+        content_lower = content.lower()
+        if "xml" not in ignored_checks:
+            check_svg_valid_xml(svg_file, errors)
+
+        if "forbidden_tokens" not in ignored_checks:
+            for token in forbidden_tokens:
+                if token in allowed_tokens_for_file:
+                    continue
+                if token and token in content_lower:
+                    errors.append(
+                        f"{relative_path} contains forbidden token '{token}'"
+                    )
+
+        path_count = len(re.findall(r"<path(?:\s|>)", content, flags=re.IGNORECASE))
+        if "max_paths_per_file" not in ignored_checks and path_count > file_max_paths:
+            errors.append(
+                f"{relative_path} has {path_count} paths (max {file_max_paths})"
+            )
+
+        hex_colors = set(re.findall(r"#[0-9a-fA-F]{6}(?:[0-9a-fA-F]{2})?", content))
+        if "max_hex_colors_per_file" not in ignored_checks and len(hex_colors) > file_max_hex_colors:
+            errors.append(
+                f"{relative_path} uses {len(hex_colors)} hex colors (max {file_max_hex_colors})"
+            )
+
+        stroke_values: list[float] = []
+        for match in stroke_width_attribute.findall(content):
+            parsed = parse_number(match)
+            if parsed is not None:
+                stroke_values.append(parsed)
+        for match in stroke_width_style.findall(content):
+            parsed = parse_number(match)
+            if parsed is not None:
+                stroke_values.append(parsed)
+
+        if "stroke_width_range" not in ignored_checks:
+            for value in stroke_values:
+                if value < file_stroke_min or value > file_stroke_max:
+                    errors.append(
+                        f"{relative_path} has stroke-width {value} outside [{file_stroke_min}, {file_stroke_max}]"
+                    )
+
+
+def json_contains_expression(value: Any) -> bool:
+    if isinstance(value, dict):
+        expression = value.get("x")
+        if isinstance(expression, str) and expression.strip():
+            return True
+        return any(json_contains_expression(child) for child in value.values())
+    if isinstance(value, list):
+        return any(json_contains_expression(child) for child in value)
+    return False
+
+
+def json_contains_key(value: Any, key: str) -> bool:
+    if isinstance(value, dict):
+        if key in value:
+            return True
+        return any(json_contains_key(child, key) for child in value.values())
+    if isinstance(value, list):
+        return any(json_contains_key(child, key) for child in value)
+    return False
+
+
+def lint_lottie_files(
+    validated_specs: dict[str, list[dict[str, Any]]],
+    lottie_contract: dict[str, Any],
+    errors: list[str],
+) -> None:
+    max_layers = parse_positive_int(lottie_contract.get("max_layers_per_file"), 32)
+    disallow_expressions = parse_bool(lottie_contract.get("disallow_expressions"), True)
+    disallow_effects = parse_bool(lottie_contract.get("disallow_effects"), True)
+    ignored_files = set(parse_string_list(lottie_contract.get("ignore_files")))
+
+    for effect in validated_specs["ui_effects"]:
+        file_path = effect.get("file")
+        if not isinstance(file_path, str) or not file_path:
+            continue
+        if file_path in ignored_files:
+            continue
+
+        file_override = get_contract_file_override(lottie_contract, file_path)
+        ignored_checks = set(parse_string_list(file_override.get("ignore_checks")))
+        file_max_layers = parse_positive_int(file_override.get("max_layers_per_file"), max_layers)
+        file_disallow_expressions = not parse_bool(
+            file_override.get("allow_expressions"),
+            not disallow_expressions,
+        )
+        file_disallow_effects = not parse_bool(
+            file_override.get("allow_effects"),
+            not disallow_effects,
+        )
+
+        path = optional_repo_path(file_path)
+        if path is None or not path.exists():
+            errors.append(f"Missing Lottie file: {file_path}")
+            continue
+
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            errors.append(f"{file_path} invalid JSON: {exc}")
+            continue
+
+        layers = data.get("layers")
+        if "max_layers_per_file" not in ignored_checks and isinstance(layers, list) and len(layers) > file_max_layers:
+            errors.append(f"{file_path} has {len(layers)} layers (max {file_max_layers})")
+
+        if "expressions" not in ignored_checks and file_disallow_expressions and json_contains_expression(data):
+            errors.append(f"{file_path} contains expressions (unsupported by contract)")
+
+        if "effects" not in ignored_checks and file_disallow_effects and json_contains_key(data, "ef"):
+            errors.append(f"{file_path} contains effects key 'ef' (unsupported by contract)")
+
+
+def lint_assets(
+    specs: dict[str, dict[str, Any]],
+    validated_specs: dict[str, list[dict[str, Any]]],
+    strict: bool,
+) -> None:
+    contract = specs.get("style_contract", {})
+    if not isinstance(contract, dict):
+        raise SystemExit("specs/style_contract.yaml must contain a top-level object")
+
+    svg_contract = contract.get("svg", {}) if isinstance(contract.get("svg"), dict) else {}
+    lottie_contract = (
+        contract.get("lottie", {}) if isinstance(contract.get("lottie"), dict) else {}
+    )
+
+    svg_files = find_svg_files(validated_specs)
+    errors: list[str] = []
+
+    if strict and not svg_files:
+        errors.append("No SVG files were discovered from character outputs")
+
+    lint_svg_files(svg_files, svg_contract, errors)
+    lint_lottie_files(validated_specs, lottie_contract, errors)
+
+    if errors:
+        joined = "\n".join(f"- {error}" for error in errors)
+        raise SystemExit(f"Asset style lint failed:\n{joined}")
+
+    print(
+        "Asset style lint passed: "
+        f"{len(svg_files)} SVG file(s), {len(validated_specs['ui_effects'])} Lottie file(s)."
+    )
 
 
 def run_step(step: Step, dry_run: bool) -> None:
@@ -549,6 +819,10 @@ def main() -> None:
             f"{len(validated_specs['ui_effects'])} UI effect(s), "
             f"{len(validated_specs['rigs'])} rig(s)."
         )
+        return
+
+    if args.command == "lint-assets":
+        lint_assets(specs, validated_specs, strict=args.strict)
         return
 
     if args.command == "manifest":

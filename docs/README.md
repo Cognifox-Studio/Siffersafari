@@ -1,9 +1,9 @@
-﻿
+
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-03-11.
+Senast uppdaterad: 2026-03-20.
 
 ## Diátaxis-typer och index
 

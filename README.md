@@ -107,14 +107,16 @@ All visuell grafik genereras via kod – ingen handritning krävs:
 - **SVG-delar:** `dart run scripts/generate_mascot_svg_parts.dart` → 12 SVG parts
 - **Lottie UI-effekter:** `dart run scripts/generate_lottie_effects.dart` → 4 JSON animations
 - **Rive Blueprint:** `dart run scripts/generate_rive_blueprint.dart` → valfri rigging guide
+- **Mascot Composite SVG:** `dart run scripts/generate_mascot_composite.dart` → komplett karaktär-SVG
 
 Kör alla med ett kommando:
 ```bash
 # Via VS Code Task (rekommenderat)
-Tasks → Run Task → "Assets: Generate All"
+Tasks → Run Task → "Assets: Generate All (SVG + Lottie + Rive Blueprint)"
 
 # Eller via terminal
 dart run scripts/generate_mascot_svg_parts.dart
+dart run scripts/generate_mascot_composite.dart
 dart run scripts/generate_lottie_effects.dart
 dart run scripts/generate_rive_blueprint.dart
 ```

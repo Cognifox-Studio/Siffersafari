@@ -236,11 +236,9 @@ Rekommenderat for detta projekt:
 - Error Lens (`usernamehw.errorlens`)
 - Mermaid-stod for docs (`bierner.markdown-mermaid`, `bpruitt-goddard.mermaid-markdown-syntax-highlighting`)
 
-**Workspace setup som redan finns i repot:**
-- `.vscode/settings.json` aktiverar Dart-formattering, hot reload on save, mindre brus i Explorer/Search och file nesting for genererade filer
-- `.vscode/extensions.json` rekommenderar projektets VS Code-tillagg
-- `.vscode/launch.json` innehaller fardiga Flutter-profiler for vanlig debug och `Pixel_6`
-- `.vscode/tasks.json` innehaller QA-, Pixel_6- och asset-pipeline-tasks
+**Workspace setup (repo:t spårar bara tasks.json):**
+- `.vscode/tasks.json` innehaller QA-, Pixel_6- och asset-pipeline-kommandon
+- `.vscode/*` ignoreras normalt i git (enligt `.gitignore`) och kan därför behova sattas upp lokalt om du vill ha mer avancerade debug-profiler (t.ex. om du sjalv skapar en lokal `.vscode/launch.json`)
 
 **Rekommenderat arbetsflode i VS Code:**
 1. Oppna repo-roten i VS Code.
@@ -248,9 +246,6 @@ Rekommenderat for detta projekt:
 3. Kor `Developer: Reload Window` efter forsta installationen av extensions.
 4. Anvand `Run and Debug` for:
    - `Flutter: Debug`
-   - `Flutter: Debug (Pixel_6)`
-   - `Flutter: Profile (Pixel_6)`
-   - `Flutter: Release (Pixel_6)`
 5. Anvand `Tasks: Run Task` for:
    - `QA: Analyze`
    - `QA: Analyze + Test (valfri path)`

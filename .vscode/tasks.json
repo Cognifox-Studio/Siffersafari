@@ -24,6 +24,12 @@
       "type": "promptString",
       "description": "Existerande karaktarslug att regenerera (t.ex. loke)",
       "default": "loke"
+    },
+    {
+      "id": "updateCharacterSlug",
+      "type": "promptString",
+      "description": "Karaktärslug att uppdatera (t.ex. mascot)",
+      "default": "mascot"
     }
   ],
   "tasks": [
@@ -289,6 +295,90 @@
         "--dart-define=FULL_SMOKE=true"
       ],
       "group": "test",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Assets: Promote New Character (auto workflow)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/promote_assets.ps1",
+        "-Workflow",
+        "NewCharacter",
+        "-CharacterName",
+        "${input:characterName}",
+        "-CharacterBrief",
+        "${input:characterBrief}"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Assets: Promote Update Character (auto workflow)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/promote_assets.ps1",
+        "-Workflow",
+        "UpdateCharacter",
+        "-CharacterSlug",
+        "${input:updateCharacterSlug}"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Assets: Promote Lottie/SFX (auto workflow)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/promote_assets.ps1",
+        "-Workflow",
+        "LottieSFX"
+      ],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Assets: Verify Git Changes (pre-commit check)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "scripts/verify_git_changes.ps1"
+      ],
+      "group": "build",
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
