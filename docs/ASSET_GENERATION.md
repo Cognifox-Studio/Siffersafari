@@ -102,6 +102,14 @@ Important limitation:
 - `specs/style_contract.yaml` defines machine-readable style gates for generated assets.
 - `python tools/pipeline.py lint-assets --strict` enforces these rules for SVG and Lottie outputs.
 - Promotion and CI now run this lint step before tests/promote.
+- `python tools/pipeline.py lint-assets --strict --warn-only` can be used during staged rollout.
+
+### Rollout controls
+
+- `enforcement.default_warn_only` toggles default local behavior for lint command.
+- `pilot.enabled` + `pilot.character_ids`/`pilot.effect_ids` limits checks to a pilot scope.
+- `enforcement.fallback_policy: keep_last_known_good_assets` means failed lint stops promotion before asset copy.
+- CI writes `artifacts/asset_lint_report.json` and publishes it as artifact + step summary.
 
 ## Runtime Policy For The Mascot
 

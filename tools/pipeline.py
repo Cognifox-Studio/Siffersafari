@@ -153,6 +153,17 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Treat missing future-facing files such as specs/ as errors.",
     )
+    parser.add_argument(
+        "--warn-only",
+        action="store_true",
+        help="Report lint violations as warnings without failing.",
+    )
+    parser.add_argument(
+        "--report-path",
+        type=str,
+        default="",
+        help="Optional JSON report path for lint results, relative to repo root.",
+    )
     return parser.parse_args()
 
 
@@ -355,9 +366,15 @@ def get_contract_file_override(contract: dict[str, Any], relative_path: str) -> 
     return override
 
 
-def find_svg_files(validated_specs: dict[str, list[dict[str, Any]]]) -> list[Path]:
+def find_svg_files(
+    validated_specs: dict[str, list[dict[str, Any]]],
+    selected_character_ids: set[str] | None = None,
+) -> list[Path]:
     files: set[Path] = set()
     for character in validated_specs["characters"]:
+        character_id = character.get("id")
+        if selected_character_ids is not None and character_id not in selected_character_ids:
+            continue
         outputs = character["outputs"]
         svg_parts_dir = optional_repo_path(outputs.get("svg_parts_dir"))
         composite_svg = optional_repo_path(outputs.get("composite_svg"))
@@ -488,6 +505,7 @@ def lint_lottie_files(
     validated_specs: dict[str, list[dict[str, Any]]],
     lottie_contract: dict[str, Any],
     errors: list[str],
+    selected_effect_ids: set[str] | None = None,
 ) -> None:
     max_layers = parse_positive_int(lottie_contract.get("max_layers_per_file"), 32)
     disallow_expressions = parse_bool(lottie_contract.get("disallow_expressions"), True)
@@ -495,6 +513,9 @@ def lint_lottie_files(
     ignored_files = set(parse_string_list(lottie_contract.get("ignore_files")))
 
     for effect in validated_specs["ui_effects"]:
+        effect_id = effect.get("id")
+        if selected_effect_ids is not None and effect_id not in selected_effect_ids:
+            continue
         file_path = effect.get("file")
         if not isinstance(file_path, str) or not file_path:
             continue
@@ -539,7 +560,9 @@ def lint_assets(
     specs: dict[str, dict[str, Any]],
     validated_specs: dict[str, list[dict[str, Any]]],
     strict: bool,
-) -> None:
+    warn_only: bool,
+    report_path: str,
+) -> bool:
     contract = specs.get("style_contract", {})
     if not isinstance(contract, dict):
         raise SystemExit("specs/style_contract.yaml must contain a top-level object")
@@ -548,24 +571,66 @@ def lint_assets(
     lottie_contract = (
         contract.get("lottie", {}) if isinstance(contract.get("lottie"), dict) else {}
     )
+    enforcement = contract.get("enforcement", {}) if isinstance(contract.get("enforcement"), dict) else {}
+    pilot = contract.get("pilot", {}) if isinstance(contract.get("pilot"), dict) else {}
 
-    svg_files = find_svg_files(validated_specs)
+    default_warn_only = parse_bool(enforcement.get("default_warn_only"), False)
+    effective_warn_only = warn_only or default_warn_only
+
+    selected_character_ids: set[str] | None = None
+    selected_effect_ids: set[str] | None = None
+    if parse_bool(pilot.get("enabled"), False):
+        character_ids = set(parse_string_list(pilot.get("character_ids")))
+        effect_ids = set(parse_string_list(pilot.get("effect_ids")))
+        selected_character_ids = character_ids if character_ids else None
+        selected_effect_ids = effect_ids if effect_ids else None
+
+    svg_files = find_svg_files(validated_specs, selected_character_ids=selected_character_ids)
     errors: list[str] = []
 
     if strict and not svg_files:
         errors.append("No SVG files were discovered from character outputs")
 
     lint_svg_files(svg_files, svg_contract, errors)
-    lint_lottie_files(validated_specs, lottie_contract, errors)
+    lint_lottie_files(
+        validated_specs,
+        lottie_contract,
+        errors,
+        selected_effect_ids=selected_effect_ids,
+    )
+
+    report_data = {
+        "mode": "warn" if effective_warn_only else "block",
+        "strict": strict,
+        "pilot_enabled": parse_bool(pilot.get("enabled"), False),
+        "selected_character_ids": sorted(selected_character_ids) if selected_character_ids else [],
+        "selected_effect_ids": sorted(selected_effect_ids) if selected_effect_ids else [],
+        "svg_files_checked": len(svg_files),
+        "ui_effects_configured": len(validated_specs["ui_effects"]),
+        "violations": errors,
+        "status": "failed" if errors and not effective_warn_only else ("warning" if errors else "passed"),
+    }
+
+    if report_path:
+        report_file = optional_repo_path(report_path)
+        if report_file is None:
+            raise SystemExit(f"Invalid --report-path: {report_path}")
+        report_file.parent.mkdir(parents=True, exist_ok=True)
+        report_file.write_text(json.dumps(report_data, indent=2), encoding="utf-8")
+        print(f"[write] {relative_file(report_file)}")
 
     if errors:
         joined = "\n".join(f"- {error}" for error in errors)
+        if effective_warn_only:
+            print(f"Asset style lint warning:\n{joined}")
+            return False
         raise SystemExit(f"Asset style lint failed:\n{joined}")
 
     print(
         "Asset style lint passed: "
         f"{len(svg_files)} SVG file(s), {len(validated_specs['ui_effects'])} Lottie file(s)."
     )
+    return True
 
 
 def run_step(step: Step, dry_run: bool) -> None:
@@ -822,7 +887,13 @@ def main() -> None:
         return
 
     if args.command == "lint-assets":
-        lint_assets(specs, validated_specs, strict=args.strict)
+        lint_assets(
+            specs,
+            validated_specs,
+            strict=args.strict,
+            warn_only=args.warn_only,
+            report_path=args.report_path,
+        )
         return
 
     if args.command == "manifest":

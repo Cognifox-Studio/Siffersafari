@@ -45,6 +45,7 @@ param(
     [string]$CharacterBrief,
     [string]$CharacterSlug,
     [switch]$SkipQA,
+    [switch]$LintWarnOnly,
     [switch]$DryRun
 )
 
@@ -133,8 +134,13 @@ function Phase-Validate {
         "python tools/pipeline.py validate --strict" `
         "Strict validation"
 
+    $lintCommand = "python tools/pipeline.py lint-assets --strict --report-path artifacts/asset_lint_report.json"
+    if ($LintWarnOnly) {
+        $lintCommand = "$lintCommand --warn-only"
+    }
+
     Invoke-CheckedCommand `
-        "python tools/pipeline.py lint-assets --strict" `
+        $lintCommand `
         "Asset style lint"
     
     Invoke-CheckedCommand `
@@ -261,6 +267,7 @@ function Phase-Report {
     Write-Host "  2. Verify only expected files changed: git status"
     Write-Host "  3. Stage changes: git add ."
     Write-Host "  4. Commit with meaningful message"
+    Write-Host "  5. Inspect lint report: artifacts/asset_lint_report.json"
     
     if ($Workflow -in 'NewCharacter', 'UpdateCharacter') {
         $slug = if ($Workflow -eq 'NewCharacter') { $CharacterName.ToLower() } else { $CharacterSlug }
@@ -276,6 +283,8 @@ function Phase-Report {
         Write-Host "    - Then run: .\scripts\verify_mascot_rive_runtime.ps1"
     }
     
+    Write-Host ""
+    Write-Host "  Fallback policy: keep_last_known_good_assets (promotion stops before copying on lint failure)"
     Write-Host ""
 }
 

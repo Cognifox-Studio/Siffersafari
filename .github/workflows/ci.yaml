@@ -28,17 +28,37 @@ jobs:
       - run: flutter pub get
       - run: python -m pip install --upgrade pip pyyaml
       - name: Run asset style lint
-        run: python tools/pipeline.py lint-assets --strict 2>&1 | tee asset_lint.log
+        run: python tools/pipeline.py lint-assets --strict --report-path artifacts/asset_lint_report.json 2>&1 | tee asset_lint.log
       - name: Upload asset lint log
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: asset-lint-log
           path: asset_lint.log
+      - name: Upload asset lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: asset-lint-report
+          path: artifacts/asset_lint_report.json
       - name: Add asset lint summary
         if: always()
         run: |
           echo '### Asset style lint' >> $GITHUB_STEP_SUMMARY
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          report = Path('artifacts/asset_lint_report.json')
+          if report.exists():
+              data = json.loads(report.read_text(encoding='utf-8'))
+              with open(Path.home() / '.asset_lint_summary.tmp', 'w', encoding='utf-8') as f:
+                  f.write(f"mode: {data.get('mode')}\n")
+                  f.write(f"status: {data.get('status')}\n")
+                  f.write(f"svg_files_checked: {data.get('svg_files_checked')}\n")
+                  f.write(f"violations: {len(data.get('violations', []))}\n")
+          PY
+          if [ -f "$HOME/.asset_lint_summary.tmp" ]; then cat "$HOME/.asset_lint_summary.tmp" >> $GITHUB_STEP_SUMMARY; fi
           tail -n 40 asset_lint.log >> $GITHUB_STEP_SUMMARY || true
 
   core-smoke:

@@ -1,3 +1,16 @@
+enforcement:
+  default_warn_only: false
+  owners:
+    - asset-pipeline
+  fallback_policy: keep_last_known_good_assets
+
+pilot:
+  enabled: false
+  character_ids:
+    - mascot
+  effect_ids:
+    - confetti
+
 svg:
   max_paths_per_file: 140
   max_hex_colors_per_file: 24
