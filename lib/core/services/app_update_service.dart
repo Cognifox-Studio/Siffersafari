@@ -45,6 +45,12 @@ class AppUpdateService {
       final releaseNotes = '${json['body'] ?? ''}'.trim();
       final publishedAtRaw = '${json['published_at'] ?? ''}'.trim();
       final assets = json['assets'];
+      final apkAsset = _pickPreferredApkAsset(assets);
+      final checksum = await resolveSha256Checksum(
+        client: client,
+        assets: assets,
+        apkFileName: apkAsset?.name,
+      );
 
       if (tagName.isEmpty || releasePageUrl.isEmpty) {
         throw Exception('GitHub Release saknar tagg eller releasesida.');
@@ -53,7 +59,10 @@ class AppUpdateService {
       return AppUpdateInfo(
         tagName: tagName,
         releasePageUrl: releasePageUrl,
-        apkUrl: _pickApkUrl(assets),
+        apkUrl: apkAsset?.url,
+        apkFileName: apkAsset?.name,
+        sha256Checksum: checksum.value,
+        checksumSource: checksum.source,
         releaseNotes: releaseNotes,
         publishedAt: DateTime.tryParse(publishedAtRaw),
       );
@@ -84,28 +93,170 @@ class AppUpdateService {
           apkUrl,
           androidProviderAuthority: _androidProviderAuthority,
           destinationFilename: destinationFilename,
+          sha256checksum: release.sha256Checksum,
         )
         .map(_mapInstallEvent);
   }
 
-  String? _pickApkUrl(dynamic assets) {
+  _ReleaseAssetInfo? _pickPreferredApkAsset(dynamic assets) {
     if (assets is! List) return null;
 
-    String? fallback;
+    _ReleaseAssetInfo? fallback;
     for (final asset in assets) {
-      if (asset is! Map) continue;
-      final name = '${asset['name'] ?? ''}'.trim().toLowerCase();
-      final url = '${asset['browser_download_url'] ?? ''}'.trim();
-      if (url.isEmpty || !url.toLowerCase().endsWith('.apk')) {
+      if (asset is! Map<String, dynamic>) continue;
+      final info = _releaseAssetFromJson(asset);
+      if (info == null || !info.name.toLowerCase().endsWith('.apk')) {
         continue;
       }
-      if (name == 'app-release.apk') {
-        return url;
+      if (info.name.toLowerCase() == 'app-release.apk') {
+        return info;
       }
-      fallback ??= url;
+      fallback ??= info;
     }
 
     return fallback;
+  }
+
+  Future<({String? value, AppUpdateChecksumSource source})>
+      resolveSha256Checksum({
+    required HttpClient client,
+    required dynamic assets,
+    required String? apkFileName,
+  }) async {
+    if (assets is! List) {
+      return (value: null, source: AppUpdateChecksumSource.none);
+    }
+
+    final releaseAssets = assets
+        .whereType<Map<String, dynamic>>()
+        .map(_releaseAssetFromJson)
+        .whereType<_ReleaseAssetInfo>()
+        .toList(growable: false);
+
+    for (final asset in releaseAssets) {
+      final digest = asset.sha256Digest;
+      if (digest == null) continue;
+      if (apkFileName == null || asset.name == apkFileName) {
+        return (value: digest, source: AppUpdateChecksumSource.assetDigest);
+      }
+    }
+
+    final checksumAsset = _pickChecksumSidecarAsset(
+      releaseAssets,
+      apkFileName: apkFileName,
+    );
+
+    if (checksumAsset == null) {
+      return (value: null, source: AppUpdateChecksumSource.none);
+    }
+
+    final checksum = await _fetchChecksumFromUrl(
+      client: client,
+      checksumUrl: checksumAsset.url,
+      apkFileName: apkFileName,
+    );
+
+    if (checksum == null) {
+      return (value: null, source: AppUpdateChecksumSource.none);
+    }
+
+    return (value: checksum, source: AppUpdateChecksumSource.sidecarFile);
+  }
+
+  _ReleaseAssetInfo? _releaseAssetFromJson(Map<String, dynamic> json) {
+    final name = '${json['name'] ?? ''}'.trim();
+    final url = '${json['browser_download_url'] ?? ''}'.trim();
+    final digestRaw = '${json['digest'] ?? ''}'.trim();
+    if (name.isEmpty || url.isEmpty) {
+      return null;
+    }
+
+    return _ReleaseAssetInfo(
+      name: name,
+      url: url,
+      sha256Digest: _normalizeSha256(digestRaw),
+    );
+  }
+
+  _ReleaseAssetInfo? _pickChecksumSidecarAsset(
+    List<_ReleaseAssetInfo> assets, {
+    required String? apkFileName,
+  }) {
+    final preferredNames = <String>{
+      if (apkFileName != null) '$apkFileName.sha256',
+      if (apkFileName != null) '$apkFileName.sha256sum',
+      'app-release.apk.sha256',
+      'app-release.apk.sha256sum',
+      'sha256sums.txt',
+      'sha256sum.txt',
+    }.map((e) => e.toLowerCase()).toSet();
+
+    for (final asset in assets) {
+      if (preferredNames.contains(asset.name.toLowerCase())) {
+        return asset;
+      }
+    }
+
+    for (final asset in assets) {
+      final lower = asset.name.toLowerCase();
+      if (lower.endsWith('.sha256') || lower.endsWith('.sha256sum')) {
+        return asset;
+      }
+      if (lower.contains('sha256') && !lower.endsWith('.apk')) {
+        return asset;
+      }
+    }
+
+    return null;
+  }
+
+  Future<String?> _fetchChecksumFromUrl({
+    required HttpClient client,
+    required String checksumUrl,
+    required String? apkFileName,
+  }) async {
+    final request = await client.getUrl(Uri.parse(checksumUrl));
+    request.headers
+      ..set(HttpHeaders.userAgentHeader, 'Siffersafari-App-Update')
+      ..set(HttpHeaders.acceptHeader, 'text/plain,application/octet-stream');
+
+    final response = await request.close();
+    if (response.statusCode != 200) {
+      return null;
+    }
+
+    final content = await response.transform(utf8.decoder).join();
+    return extractSha256FromText(content, apkFileName: apkFileName);
+  }
+
+  String? extractSha256FromText(String content, {String? apkFileName}) {
+    final lines = const LineSplitter().convert(content);
+    final hashRegex = RegExp(r'\b[a-fA-F0-9]{64}\b');
+
+    String? firstMatch;
+    for (final line in lines) {
+      final match = hashRegex.firstMatch(line);
+      if (match == null) continue;
+      final hash = match.group(0)?.toLowerCase();
+      if (hash == null) continue;
+
+      firstMatch ??= hash;
+      if (apkFileName != null && line.toLowerCase().contains(apkFileName.toLowerCase())) {
+        return hash;
+      }
+    }
+
+    return firstMatch;
+  }
+
+  String? _normalizeSha256(String input) {
+    final raw = input.trim().toLowerCase();
+    if (raw.isEmpty) return null;
+    final noPrefix = raw.startsWith('sha256:') ? raw.substring(7) : raw;
+    if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(noPrefix)) {
+      return null;
+    }
+    return noPrefix;
   }
 
   AppUpdateInstallProgress _mapInstallEvent(OtaEvent event) {
@@ -269,6 +420,9 @@ class AppUpdateInfo {
     required this.tagName,
     required this.releasePageUrl,
     required this.apkUrl,
+    required this.apkFileName,
+    required this.sha256Checksum,
+    required this.checksumSource,
     required this.releaseNotes,
     required this.publishedAt,
   });
@@ -276,8 +430,32 @@ class AppUpdateInfo {
   final String tagName;
   final String releasePageUrl;
   final String? apkUrl;
+  final String? apkFileName;
+  final String? sha256Checksum;
+  final AppUpdateChecksumSource checksumSource;
   final String releaseNotes;
   final DateTime? publishedAt;
+
+  bool get hasChecksum =>
+      sha256Checksum != null && sha256Checksum!.trim().isNotEmpty;
+}
+
+enum AppUpdateChecksumSource {
+  none,
+  assetDigest,
+  sidecarFile,
+}
+
+class _ReleaseAssetInfo {
+  const _ReleaseAssetInfo({
+    required this.name,
+    required this.url,
+    required this.sha256Digest,
+  });
+
+  final String name;
+  final String url;
+  final String? sha256Digest;
 }
 
 enum AppUpdateInstallStage {

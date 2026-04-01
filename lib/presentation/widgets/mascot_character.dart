@@ -50,6 +50,8 @@ class _MascotCharacterState extends State<MascotCharacter>
 
   @override
   void dispose() {
+    _reactionToken++;
+    _reactionController.stop(canceled: true);
     _reactionController.dispose();
     super.dispose();
   }
@@ -82,7 +84,7 @@ class _MascotCharacterState extends State<MascotCharacter>
       } else {
         _fallbackReaction = MascotReaction.idle;
       }
-      _reactionController.stop();
+      _reactionController.stop(canceled: true);
       _reactionController.value = 0;
       return;
     }

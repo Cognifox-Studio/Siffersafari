@@ -208,6 +208,29 @@ ls -lh build/app/outputs/flutter-apk/app-release.apk
 # Target: < 50 MB (helst < 30 MB)
 ```
 
+### OTA-verifiering pa fysisk enhet (release-gate nar OTA andrats)
+
+Krav: Denna checklista ska vara gron innan release bedoms som full go nar OTA-flodet andrats.
+
+1. Enhet: fysisk Android (inte emulator), med tidigare appversion installerad.
+2. Data-seed: skapa minst en profil och verifiera att statistik, PIN och quizhistorik finns.
+3. Oppna Foraldralage > Appuppdatering och tryck pa `Sok uppdatering`.
+4. Bekrafta att ny version hittas och att informationsdialog visas.
+5. Starta nedladdning och verifiera att installationsprompt visas efter nedladdning.
+6. Installera ovanpa befintlig app (ingen avinstallation fore uppdatering).
+7. Efter uppdatering: verifiera dataretention:
+   - profil(er) kvar
+   - foraldra-PIN kvar
+   - statistik/poang kvar
+   - quizhistorik kvar
+8. Verifiera OTA-kortets statusmeddelanden:
+   - ny version tillganglig
+   - senaste version installerad
+   - felmeddelande vid misslyckad release-kontroll
+   - checksum-status visas (aktiv eller saknas metadata)
+
+No-go: om installationsprompt inte visas, eller om dataretention misslyckas.
+
 ---
 
 ## 8. Troubleshooting

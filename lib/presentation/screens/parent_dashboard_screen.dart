@@ -316,9 +316,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         ref.read(missingNumberEnabledProvider(userId).notifier);
 
     final spacedRepetitionEnabled =
-      ref.watch(spacedRepetitionEnabledProvider(userId));
+        ref.watch(spacedRepetitionEnabledProvider(userId));
     final spacedRepetitionNotifier =
-      ref.read(spacedRepetitionEnabledProvider(userId).notifier);
+        ref.read(spacedRepetitionEnabledProvider(userId).notifier);
 
     final overviewCard = _Card(
       child: Column(
@@ -351,7 +351,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             value: '${(user.successRate * 100).toStringAsFixed(0)}%',
           ),
           _StatRow(
-            label: 'Streak',
+            label: 'Sviten',
             value: '${user.currentStreak} (max ${user.longestStreak})',
           ),
           _StatRow(
@@ -570,7 +570,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
               children: [
                 Expanded(
                   child: Text(
-                    'Spaced repetition',
+                    'Repetition över tid',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           color: mutedOnPrimary,
                           fontWeight: FontWeight.w600,
@@ -578,14 +578,14 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                   ),
                 ),
                 infoButton(
-                  title: 'Spaced repetition',
+                  title: 'Repetition över tid',
                   message:
-                      'Nar den ar pa sa schemalaggs repetition av tidigare fragor over tid.\n\nStang av om ni vill kora fria rundor utan repetitionstryck.',
+                      'När den här är på schemaläggs repetition av tidigare frågor över tid.\n\nStäng av om ni vill köra fria rundor utan repetitionstryck.',
                 ),
               ],
             ),
             subtitle: Text(
-              'Planerad repetition over tid',
+              'Planerad repetition över tid',
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: subtleOnPrimary,
                   ),
@@ -597,7 +597,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             onChanged: (value) async {
               await spacedRepetitionNotifier.setEnabled(value);
               if (!mounted) return;
-              ref.read(quizProvider.notifier).hydrateReviewSummaryForUser(userId);
+              ref
+                  .read(quizProvider.notifier)
+                  .hydrateReviewSummaryForUser(userId);
             },
           ),
           const Divider(height: 1),
@@ -1067,7 +1069,7 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Version ${release.tagName} finns på GitHub Releases.'),
+                  Text('Version ${release.tagName} finns på GitHub.'),
                   const SizedBox(height: AppConstants.smallPadding),
                   const Text(
                     'Vill du uppdatera nu? Profiler, statistik, PIN och lokala data ligger kvar när appen installeras ovanpå den befintliga versionen.',
@@ -1156,6 +1158,7 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     final release = _latestRelease;
     final hasRelease = release != null;
     final hasInstalled = _installedVersion != null;
+    final hasChecksum = release?.hasChecksum ?? false;
     final updateAvailable = hasRelease &&
         hasInstalled &&
         _appUpdateService.isUpdateAvailable(
@@ -1205,6 +1208,18 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
                   fontWeight: FontWeight.w600,
                 ),
           ),
+          if (hasRelease) ...[
+            const SizedBox(height: AppConstants.microSpacing6),
+            Text(
+              hasChecksum
+                  ? 'Integritetskontroll: SHA-256 aktiv för den här releasen.'
+                  : 'Integritetskontroll: ingen SHA-256 metadata hittades för den här releasen.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: mutedOnPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          ],
           const SizedBox(height: AppConstants.defaultPadding),
           Wrap(
             spacing: AppConstants.smallPadding,

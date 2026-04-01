@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
@@ -10,7 +11,6 @@ import '../../core/providers/user_provider.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../core/utils/page_transitions.dart';
 import '../../domain/entities/question.dart';
-import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
 import '../widgets/answer_button.dart';
 import '../widgets/progress_indicator_bar.dart';
 import '../widgets/question_card.dart';
@@ -151,6 +151,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           style: TextStyle(color: onPrimary),
         ),
         leading: IconButton(
+          tooltip: 'Stäng quiz',
           icon: Icon(Icons.close, color: onPrimary),
           onPressed: () => Navigator.of(context).pop(),
         ),

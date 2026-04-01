@@ -1,6 +1,7 @@
 ---
-description: "Strukturerad sessionssync: läs SESSION_BRIEF + DECISIONS_LOG och ge ett kompakt lägesuppdatering"
-mode: agent
+name: "fortsätt"
+description: "Fortsätt senaste sessionen: läs SESSION_BRIEF + DECISIONS_LOG och ge en kompakt lägesuppdatering"
+agent: "agent"
 ---
 
 Ge en strukturerad lägesuppdatering baserad på:
@@ -32,3 +33,4 @@ Svara med denna struktur (håll det kort):
 ---
 
 Håll hela svaret under 200 ord. Fråga sedan vad vi ska ta itu med.
+

@@ -8,27 +8,27 @@ class StoryProgressionService {
   static const _landmarks = <_LandmarkData>[
     _LandmarkData(
       'Startlägret',
-      'Ett tryggt basläger vid djungelns kant.',
+      'Maskoten packar verktygen inför uppdraget.',
       'baslager',
     ),
     _LandmarkData(
       'Fruktgläntan',
-      'Mogna sifferfrukter hänger tätt i träden.',
+      'Samla sifferfrukter till bron.',
       'frukt',
     ),
     _LandmarkData(
       'Skuggstigen',
-      'En smal stig där ledtrådarna gömmer sig i skuggan.',
+      'Följ ledtrådarna som visar var plankorna ligger.',
       'skugga',
     ),
     _LandmarkData(
       'Djungelbron',
-      'En gungande bro över de brusande trädkronorna.',
+      'Bron är trasig. Vi måste laga den tillsammans.',
       'bro',
     ),
     _LandmarkData(
       'Kartlägret',
-      'Gamla kartbitar visar vägen vidare inåt.',
+      'En ny kartbit visar vägen till nästa delmål.',
       'karta',
     ),
     _LandmarkData(
@@ -151,12 +151,22 @@ class StoryProgressionService {
       );
     });
 
+    final chapterOne = currentStatus.quest.difficulty == DifficultyLevel.easy;
+    final objectiveBeat = _objectiveBeatFor(
+      index: currentNodeIndex,
+      chapterOne: chapterOne,
+    );
+
     return StoryProgress(
       worldTitle: 'Maskoten i djungeln',
-      worldSubtitle: 'Följ stigen genom djungeln och lås upp nya platser.',
+      worldSubtitle: chapterOne
+          ? 'Kapitel 1: Hjälp maskoten att laga den trasiga bron.'
+          : 'Följ stigen genom djungeln och lås upp nya platser.',
       chapterTitle: _chapterTitleFor(currentStatus.quest.difficulty),
-      currentObjectiveTitle: currentStatus.quest.title,
-      currentObjectiveDescription: currentStatus.quest.description,
+      currentObjectiveTitle:
+          chapterOne ? objectiveBeat.title : currentStatus.quest.title,
+      currentObjectiveDescription:
+          chapterOne ? objectiveBeat.body : currentStatus.quest.description,
       progress: currentStatus.progress.clamp(0.0, 1.0),
       completedNodes: completedNodes,
       totalNodes: effectivePath.length,
@@ -169,7 +179,7 @@ class StoryProgressionService {
   String _chapterTitleFor(DifficultyLevel difficulty) {
     switch (difficulty.name) {
       case 'easy':
-        return 'Kapitel 1: Den första stigen';
+        return 'Kapitel 1: Den trasiga bron';
       case 'medium':
         return 'Kapitel 2: Djupare in i jungeln';
       case 'hard':
@@ -178,6 +188,55 @@ class StoryProgressionService {
 
     return 'Junglexpediton';
   }
+
+  _StoryBeat _objectiveBeatFor({
+    required int index,
+    required bool chapterOne,
+  }) {
+    if (!chapterOne) {
+      return const _StoryBeat(
+        title: 'Nästa uppdrag',
+        body: 'Lös uppdraget för att gå vidare på stigen.',
+      );
+    }
+
+    final beats = <_StoryBeat>[
+      const _StoryBeat(
+        title: 'Uppdrag: Hämta rep',
+        body: 'Lös talen så hittar vi rep till bron.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Samla plankor',
+        body: 'Räkna rätt och samla plankor i gläntan.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Hitta verktyg',
+        body: 'Vi behöver verktyg för att laga bron.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Laga bron',
+        body: 'Några rätt till och bron blir stabil.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Testa bron',
+        body: 'Bra jobbat! Nu testar vi om bron håller.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Vidare mot templet',
+        body: 'Bron håller. Nu går vi mot nästa delmål.',
+      ),
+    ];
+
+    final safeIndex = index.clamp(0, beats.length - 1);
+    return beats[safeIndex];
+  }
+}
+
+class _StoryBeat {
+  const _StoryBeat({required this.title, required this.body});
+
+  final String title;
+  final String body;
 }
 
 class _LandmarkData {

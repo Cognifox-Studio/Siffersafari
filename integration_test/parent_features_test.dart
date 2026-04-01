@@ -1,9 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:siffersafari/core/di/injection.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
 import 'test_utils.dart' as it;
+
+const _kSettleShort = Duration(milliseconds: 250);
+const _kSettleMedium = Duration(milliseconds: 400);
+const _kSettleLong = Duration(milliseconds: 600);
+
+String? _activeOnboardingStep(WidgetTester tester) {
+  final stepPattern = RegExp(r'^\d+/\d+$');
+
+  for (final widget in tester.widgetList<Text>(find.byType(Text))) {
+    final text = widget.data?.trim();
+    if (text != null && stepPattern.hasMatch(text)) {
+      return text;
+    }
+  }
+
+  return null;
+}
+
+bool _isVisible(Finder finder) => finder.hitTestable().evaluate().isNotEmpty;
+
+Future<void> _drainUiAnimations(WidgetTester tester) async {
+  await tester.idle();
+  await it.settle(tester, _kSettleMedium);
+}
+
+Future<void> _cleanupAfterTest(WidgetTester tester) async {
+  // Dispose active controllers/tickers before invariant checks.
+  await tester.idle();
+  await tester.pumpWidget(const SizedBox.shrink());
+  await tester.pump();
+  await _drainUiAnimations(tester);
+}
+
+Future<void> _launchCleanApp(WidgetTester tester) async {
+  await app.main();
+  await it.settle(tester, _kSettleLong);
+
+  if (getIt.isRegistered<LocalStorageRepository>()) {
+    await getIt<LocalStorageRepository>().clearAllData();
+    await tester.pump(const Duration(milliseconds: 120));
+  }
+
+  await app.main();
+  await it.settle(tester, _kSettleLong);
+}
+
+Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
+  final activeStep = _activeOnboardingStep(tester);
+  final gradeTitle = find.text('Vilken årskurs kör du?');
+  final readingTitle = find.text('Kan barnet läsa?');
+  final opsTitle = find.text('Vad vill du räkna först?');
+
+  if (_isVisible(readingTitle)) {
+    final noButton = find.text('Nej').hitTestable();
+    if (noButton.evaluate().isNotEmpty) {
+      await tester.ensureVisible(noButton.first);
+      await tester.tap(noButton.first);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
+  }
+
+  if ((activeStep?.startsWith('1/') ?? true) && _isVisible(gradeTitle)) {
+    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    if (nextButton.evaluate().isNotEmpty) {
+      await it.tap(tester, nextButton);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
+  }
+
+  if (_isVisible(opsTitle) ||
+      activeStep?.startsWith('3/') == true ||
+      ((activeStep?.startsWith('2/') ?? false) && !_isVisible(readingTitle))) {
+    final doneButton = find.widgetWithText(ElevatedButton, 'Starta');
+    if (doneButton.evaluate().isNotEmpty) {
+      await it.tap(tester, doneButton);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
+
+    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
+    if (nextButton.evaluate().isNotEmpty) {
+      await it.tap(tester, nextButton);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
+  }
+
+  final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
+  if (skipButton.evaluate().isNotEmpty) {
+    await it.tap(tester, skipButton);
+    await it.settle(tester, _kSettleMedium);
+    return true;
+  }
+
+  return false;
+}
+
+Future<void> _ensureHomeVisible(WidgetTester tester) async {
+  final deadline = DateTime.now().add(const Duration(seconds: 35));
+  while (DateTime.now().isBefore(deadline)) {
+    await _completeOnboardingStepIfVisible(tester);
+
+    if (find.byTooltip('Föräldraläge').evaluate().isNotEmpty ||
+        find
+            .widgetWithText(ElevatedButton, 'Skapa profil')
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .byKey(const Key('operation_card_addition'))
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .byKey(const Key('operation_card_subtraction'))
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .byKey(const Key('operation_card_multiplication'))
+            .evaluate()
+            .isNotEmpty ||
+        find
+            .byKey(const Key('operation_card_division'))
+            .evaluate()
+            .isNotEmpty) {
+      return;
+    }
+
+    await tester.pump(const Duration(milliseconds: 120));
+  }
+
+  fail(
+    'Could not reach Home. Visible texts: '
+    '${it.visibleTexts(tester).take(120).toList()}',
+  );
+}
 
 /// Integration tests for parent-facing critical features:
 /// - PIN creation happy path
@@ -14,6 +152,9 @@ void main() {
   testWidgets(
     'Integration (Parent): skapa PIN och öppna föräldradashboard',
     (tester) async {
+      addTearDown(() async {
+        await _cleanupAfterTest(tester);
+      });
       await app.main();
       await it.settle(tester, const Duration(milliseconds: 600));
 
@@ -85,6 +226,9 @@ void main() {
   testWidgets(
     'Integration (Profil): skapa ny profil och byt profil',
     (tester) async {
+      addTearDown(() async {
+        await _cleanupAfterTest(tester);
+      });
       await app.main();
       await it.settle(tester, const Duration(milliseconds: 600));
 
@@ -158,5 +302,107 @@ void main() {
       }
     },
     timeout: const Timeout(Duration(minutes: 2)),
+  );
+
+  testWidgets(
+    'Integration (OTA): kontrollera release från föräldradashboard',
+    (tester) async {
+      addTearDown(() async {
+        await _cleanupAfterTest(tester);
+      });
+      await _launchCleanApp(tester);
+      await _ensureHomeVisible(tester);
+
+      final createUserHomeButton =
+          find.widgetWithText(ElevatedButton, 'Skapa profil');
+      if (createUserHomeButton.evaluate().isNotEmpty) {
+        await it.tap(tester, createUserHomeButton, after: _kSettleShort);
+        await it.waitFor(
+          tester,
+          'create-user dialog',
+          () => find.text('Skapa användare').evaluate().isNotEmpty,
+        );
+
+        await tester.enterText(find.byType(TextField).first, 'OTA Test');
+        await it.settle(tester, _kSettleShort);
+        await it.tap(tester, find.text('Skapa'), after: _kSettleMedium);
+        await _ensureHomeVisible(tester);
+      }
+
+      final parentModeEntry = find.byTooltip('Föräldraläge');
+      expect(parentModeEntry, findsOneWidget);
+      await it.tap(tester, parentModeEntry, after: const Duration(seconds: 1));
+
+      await it.waitFor(
+        tester,
+        'parent pin screen visible',
+        () =>
+            find.text('Skapa PIN').evaluate().isNotEmpty ||
+            find.text('Ange PIN').evaluate().isNotEmpty,
+        timeout: const Duration(seconds: 15),
+      );
+
+      expect(find.text('Skapa PIN'), findsWidgets);
+      final pinFields = find.byType(TextField);
+      expect(pinFields, findsNWidgets(2));
+      await tester.enterText(pinFields.at(0), '1234');
+      await tester.pump(const Duration(milliseconds: 120));
+      await tester.enterText(pinFields.at(1), '1234');
+      await tester.pump(const Duration(milliseconds: 120));
+      await it.tap(tester, find.text('Spara PIN'), after: _kSettleMedium);
+
+      if (find.text('Sätt säkerhetsfråga').evaluate().isNotEmpty) {
+        await it.tap(tester, find.text('Hoppa över'), after: _kSettleMedium);
+      }
+
+      await it.waitFor(
+        tester,
+        'parent dashboard visible',
+        () =>
+            find.text('Översikt').evaluate().isNotEmpty ||
+            find.text('Appuppdatering').evaluate().isNotEmpty,
+        timeout: const Duration(seconds: 20),
+      );
+
+      final otaHeading = find.text('Appuppdatering');
+      await tester.ensureVisible(otaHeading);
+      expect(otaHeading, findsOneWidget);
+
+      await it.tap(
+        tester,
+        find.widgetWithText(ElevatedButton, 'Sök uppdatering'),
+        after: _kSettleMedium,
+      );
+
+      await it.waitFor(
+        tester,
+        'ota release check result',
+        () =>
+            find.text('Ny uppdatering hittad').evaluate().isNotEmpty ||
+            find.textContaining('Ny version finns:').evaluate().isNotEmpty ||
+            find
+                .textContaining('Du har redan senaste versionen')
+                .evaluate()
+                .isNotEmpty ||
+            find
+                .textContaining('Kunde inte kontrollera uppdatering')
+                .evaluate()
+                .isNotEmpty,
+        timeout: const Duration(seconds: 30),
+      );
+
+      if (find.text('Ny uppdatering hittad').evaluate().isNotEmpty) {
+        expect(
+          find.textContaining(
+            'Profiler, statistik, PIN och lokala data ligger kvar',
+          ),
+          findsOneWidget,
+        );
+        await it.tap(tester, find.text('Inte nu'), after: _kSettleShort);
+      }
+
+      expect(find.text('Appuppdatering'), findsOneWidget);
+    },
+    timeout: const Timeout(Duration(minutes: 3)),
   );
 }

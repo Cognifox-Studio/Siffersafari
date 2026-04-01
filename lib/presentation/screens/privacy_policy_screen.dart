@@ -90,7 +90,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                     '❌ Ingen analys - vi använder inte Google Analytics, Firebase eller liknande\n'
                     '❌ Ingen reklam - appen innehåller inga annonser\n'
                     '❌ Ingen spårning - vi spårar inte ditt barn mellan appar eller webbplatser\n'
-                    '❌ Ingen datadelning - vi delar data med inga externa företag',
+                    '❌ Ingen datadelning - vi delar inte data med externa företag',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -111,7 +111,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                     '• Lokal kryptering - Föräldra-PIN hashas med BCrypt\n'
                     '• Enhetslagring - Data sparas i krypterad Hive-databas\n'
                     '• Ingen nätverksöverföring - ingen data lämnar enheten\n'
-                    '• Inget konto-system - ingen risk för kontointrång',
+                    '• Inget kontosystem - ingen risk för kontointrång',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -131,9 +131,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 context,
                 title: 'Tredjepartstjänster',
                 content:
-                    'Vi använder följande open source-bibliotek, alla fungerar offline på din enhet:\n\n'
+                    'Vi använder följande bibliotek. Alla fungerar offline på din enhet:\n\n'
                     '• Hive (lokal databas)\n'
-                    '• Riverpod (state management)\n'
+                    '• Riverpod (tillståndshantering)\n'
                     '• Just Audio (ljuduppspelning)\n'
                     '• BCrypt (lösenordshashning)\n\n'
                     'Inget av dessa bibliotek samlar in data.',

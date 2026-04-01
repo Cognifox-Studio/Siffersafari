@@ -1,123 +1,101 @@
 # Copilot-instruktioner (Siffersafari)
 
-## Kommunikation
+## Projektet
 
-- Svara på svenska som standard (byt bara språk om jag ber om det).
-- Håll svar korta och konkreta som standard.
-- När vi löser ett komplext problem: spara en kort notis om vad som fungerade (utan känsliga detaljer). Om du är osäker, fråga innan du sparar.
+Siffersafari är ett Flutter-baserat mattespel för barn. Appen är Android-first och offline-first.
 
----
+Primärt flöde: profilval → quiz → resultat → story map.
 
-## Vad är detta repo?
+Läs först dessa dokument vid behov, och länka hellre dit än att duplicera innehåll:
 
-**Siffersafari** – ett Flutter-baserat mattesspel för barn (Android-first, offline-first).  
-`pubspec.yaml`: `name: siffersafari`, `version: 1.3.0+8`
+- `docs/README.md` för dokumentationsindex
+- `docs/ARCHITECTURE.md` för faktisk arkitektur och startup
+- `docs/PROJECT_STRUCTURE.md` för repo-struktur
+- `docs/SERVICES_API.md` för service- och providerkontrakt
+- `docs/DECISIONS_LOG.md` för stabila beslut
 
-Primära flödet: Barn väljer profil → quiz (multiplikation/addition/subtraktion) → resultat → story map.  
-Föräldraskydd via PIN, adaptiv svårighetsgrad per operationstyp, OTA-uppdatering via GitHub Releases.
+## Bygg och QA
 
----
+Standardkommandon:
 
-## Snabbstart för agenter
-
-### Bygga & köra
 ```sh
-flutter pub get          # hämta beroenden
-flutter analyze          # statisk analys (kör alltid innan commit)
-flutter test             # alla unit/widget-tester
-flutter test <path>      # specifikt test
+flutter pub get
+flutter analyze
+flutter test
+flutter test <path>
 ```
 
-Device-target: Pixel_6-emulator via `scripts/flutter_pixel6.ps1`.  
-Sätt install-mål med `-Action run|install|sync`.
+Använd Pixel_6-flödet för emulatorarbete:
 
-### QA-standard
-1. `flutter analyze` – noll fel/varningar accepteras
-2. `flutter test` – relevant delsvit vid smårändring, full suite vid stora ändringar
-3. Pixel_6-sync + install vid ändringar som berör assets/navigation/render
+- `scripts/flutter_pixel6.ps1 -Action run`
+- `scripts/flutter_pixel6.ps1 -Action install`
+- `scripts/flutter_pixel6.ps1 -Action sync`
 
-→ Se skill **flutter-qa-guard** för exakt arbetsflöde och vanliga fallgropar.
+Arbetsstandard:
 
----
+1. Kör `flutter analyze` före commit.
+2. Kör relevant testsvit för ändringen. Kör full testsvit vid större ändringar.
+3. Kör Pixel_6 sync/install när ändringen påverkar navigation, rendering, assets eller device-specifikt beteende.
 
-## Arkitektur (snabbversion)
+Om repo-skillen matchar, använd den i stället för att improvisera arbetsflödet:
 
-| Lager | Plats | Ansvar |
-|---|---|---|
-| presentation | `lib/presentation/` | Skärmar, dialoger, widgets |
-| core | `lib/core/` | DI (GetIt), providers (Riverpod), tjänster, tema |
-| domain | `lib/domain/` | Flutter-fri domänlogik, entiteter, enums |
-| data | `lib/data/` | LocalStorageRepository (Hive) |
+- `.github/skills/flutter-qa-guard/SKILL.md`
+- `.github/skills/asset-generation-runner/SKILL.md`
+- `.github/skills/release-readiness-check/SKILL.md`
 
-**State:** Riverpod (`StateNotifierProvider` + `Provider`)  
-**DI:** GetIt – registrering i `lib/core/di/injection.dart`  
-**Persistens:** Hive (`user_progress`, `settings`, `quiz_history`)  
-**Animation:** Hybrid – Rive för karaktärer, Lottie för UI-effekter  
-**Layout:** responsiv via tillgänglig bredd (`compact <600`, `medium ≥600`, `expanded ≥840`)
+## Arkitektur
 
-→ Fullständigt diagram: `docs/ARCHITECTURE.md`  
-→ Servicekontrakt: `docs/SERVICES_API.md`  
-→ Filstruktur: `docs/PROJECT_STRUCTURE.md`
+UI-lagret är hybrid under övergång till feature-first struktur:
 
----
+- `lib/app/` för bootstrap och routing
+- `lib/features/` för featureägda skärmar, dialoger och widgets
+- `lib/presentation/` för kvarvarande legacy-UI
+- `lib/core/` för DI, providers, services, tema och utilities
+- `lib/domain/` för Flutter-fri domänlogik
+- `lib/data/` för lokal persistens via Hive
 
-## Viktiga konventioner
+Teknikval som gäller repo-brett:
 
-- **Rive `.riv`-filer exporteras manuellt** från Rive Editor – generators och blueprints (under `artifacts/`) producerar *inte* den slutliga `.riv`-filen automatiskt.
-- **Mascot-animation fallback:** om `.riv` saknar state machine `MascotStateMachine` + artboard `Mascot` → spelar första legacy-animationen. Ersätter inte kravet på korrekt Rive-export.
-- **Nya humanoid-karaktärer** ska referera `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef` i visual spec.
-- **SpacedRepetitionService** är implementerad och testad men *ej inkopplad* i quiz-flödet ännu.
-- **Lottie används inte** som runtime-fallback för mascot – det är ett avslutat spår.
-- **Commit-ordning:** analyze → fix → stage avsedda filer → commit. Lämna tomma/orefererade hjälpfiler ostagade.
+- State: Riverpod
+- DI: GetIt
+- Persistens: Hive
+- Layout: `AdaptiveLayoutInfo` med breakpoints compact `<600`, medium `>=600`, expanded `>=840`
 
----
+Detaljer finns i `docs/ARCHITECTURE.md` och `docs/PROJECT_STRUCTURE.md`.
+
+## Repo-specifika regler
+
+- Mascot-runtime i produkt-UI är SVG-first. Rive-blueprints och `.riv`-material i `artifacts/` är inte en aktiv runtime-dependency i huvudflödet.
+- `.riv`-filer exporteras manuellt från Rive Editor. Script och blueprints genererar inte den slutliga `.riv`-filen automatiskt.
+- Lottie används för UI-effekter, inte som fallback för mascot-runtime.
+- Nya humanoid-karaktärer ska referera `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef`.
+- `SpacedRepetitionService` finns implementerad men är inte fullt inkopplad i hela quiz-flödet. Anta inte att den används överallt.
+- Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till persistent user state vid quiz-slut.
+
+## Områdesspecifika instruktioner
+
+Följ dessa filer när uppgiften berör respektive område:
+
+- `.github/instructions/features.instructions.md` för `lib/features/**`
+- `.github/instructions/presentation.instructions.md` för `lib/presentation/**`
+- `.github/instructions/test.instructions.md` för `test/**`
+- `.github/instructions/character-pipeline.instructions.md` när en bild ska bli en spelklar karaktär
 
 ## Vanliga fallgropar
 
-- Pixel_6-emulatorn kan fastna som offline i adb → lös med cold boot utan snapshot (`emulator.exe -avd Pixel_6 -no-snapshot-load`), inte med adb reconnect.
-- `flutter_screenutil` kräver `ScreenUtil.init()` i widget-testernas `setUp` – saknas det kraschar tester med dimensionsfel.
-- AdaptiveDifficulty uppdateras per session: verifiera att session-state mergas tillbaka till user-profil vid quiz-slutförande, inte bara i runtime.
-- Stale APK på device trots rebuild → kör install-action explicit via `flutter_pixel6.ps1 -Action install`.
+- Pixel_6-emulatorn kan fastna offline i adb. Använd cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
+- Stale APK på device efter rebuild löses ofta med explicit install via `flutter_pixel6.ps1 -Action install`.
+- Historiska dokument och artifacts kan beskriva gamla spår. Behandla `docs/ARCHITECTURE.md` som nulägesfacit före äldre guider.
 
----
+## Sessionskontinuitet
 
-## Kontext-hantering (sessionskontinuitet)
+Använd dessa filer som extern kontext i stället för att förlita dig på chatthistorik:
 
-Använd dessa filer som extern kontext i stället för chat-historik:
+- `docs/SESSION_BRIEF.md` för aktuellt läge och nästa steg
+- `docs/DECISIONS_LOG.md` för beslut som ska leva kvar
 
-| Fil | Syfte |
-|---|---|
-| `docs/SESSION_BRIEF.md` | Aktuellt läge, mål, nästa steg |
-| `docs/DECISIONS_LOG.md` | Stabila beslut med datum – senaste vinner |
+Standardrutin:
 
-**Standardrutin:**
-- **Lätt synk alltid:** läs `docs/SESSION_BRIEF.md` vid start och när användaren säger "fortsätt".
-- **Djup synk vid behov:** läs även `docs/DECISIONS_LOG.md` + gör repo-sök vid komplex uppgift eller vid återbesök av tidigare fel.
-- **Efter delsteg:** uppdatera `SESSION_BRIEF.md` med nytt läge och nästa steg.
-- **Vid nytt beslut:** lägg till en kort punkt i `DECISIONS_LOG.md`.
-- Långa loggar/outputs → sammanfatta i chat, lägg rådata i `artifacts/`.
-
----
-
-## Skills (repo-specifika arbetsflöden)
-
-Dessa skills aktiveras automatiskt vid matchande uppgifter:
-
-| Skill | Triggar |
-|---|---|
-| `game-character-pipeline` | ny karaktär från bild, SVG-lager, rig spec, Rive guide |
-| `animation-preview-lab` | idle/walk/pivot-animation, motion-lab, clean preview, `artifacts/animation_preview/` |
-| `asset-generation-runner` | generera/regenerera assets, SVG-delar, Lottie-effekter, Rive-blueprints |
-| `flutter-qa-guard` | analyze, tester, screenshot-regression, Pixel_6 sync/install |
-| `release-readiness-check` | release check, ship, preflight, APK-verifiering, taggning |
-
-Skills finns under `.github/skills/<name>/SKILL.md`.
-
----
-
-## Bildbaserad karaktärspipeline
-
-- När användaren bifogar en bild och ber om en användbar eller spelklar karaktär, följ `.github/instructions/character-pipeline.instructions.md`.
-- Målet är faktiska repo-filer under `assets/characters/<slug>/` och `artifacts/`, inte bara generell rådgivning.
-- Följ hybridstandarden: Rive för karaktärer, Lottie för UI-effekter.
-- Var tydlig om `.riv` måste exporteras manuellt från Rive Editor.
+1. Läs `docs/SESSION_BRIEF.md` vid start och när användaren säger "fortsätt".
+2. Läs `docs/DECISIONS_LOG.md` vid komplexa uppgifter eller när äldre beslut påverkar arbetet.
+3. Uppdatera dessa filer när uppgiften uttryckligen handlar om sessionslogg eller beslut.

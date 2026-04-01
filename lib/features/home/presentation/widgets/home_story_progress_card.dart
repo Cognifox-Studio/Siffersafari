@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 
@@ -43,8 +42,8 @@ class HomeStoryProgressCard extends StatelessWidget {
     final overallProgress =
         story.totalNodes == 0 ? 0.0 : story.completedNodes / story.totalNodes;
     final actionHint = nextNode == null
-        ? 'Ett sista stopp ar kvar pa den här stigen.'
-        : 'Tryck pa knappen sa hjalper du maskoten vidare till ${nextNode.landmark}.';
+        ? 'Ett sista stopp är kvar på stigen.'
+        : 'Tryck på knappen så hjälper du maskoten vidare till ${nextNode.landmark}.';
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 800),
@@ -102,7 +101,7 @@ class HomeStoryProgressCard extends StatelessWidget {
             ),
             const SizedBox(height: AppConstants.microSpacing4),
             Text(
-              'Börja med knappen Spela nästa stopp när du är redo.',
+              story.currentObjectiveDescription,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: subtleOnPrimary,
                     fontWeight: FontWeight.w600,
@@ -120,7 +119,7 @@ class HomeStoryProgressCard extends StatelessWidget {
                   mutedOnPrimary: mutedOnPrimary,
                 ),
                 _InfoChip(
-                  label: 'Del just nu',
+                  label: 'Kapitel',
                   value: '${(story.currentNodeIndex ~/ 5) + 1}',
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
@@ -130,7 +129,7 @@ class HomeStoryProgressCard extends StatelessWidget {
             const SizedBox(height: AppConstants.defaultPadding),
             _FocusCards(
               currentTitle: currentNode?.landmark ?? 'Starten',
-              currentBody: 'Nu: ${story.currentObjectiveTitle}',
+              currentBody: story.currentObjectiveTitle,
               nextTitle: nextNode?.landmark ?? 'Målet är nära',
               nextBody: nextNode == null
                   ? 'Du är snart framme vid slutet av stigen.'

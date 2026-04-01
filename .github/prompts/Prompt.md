@@ -3,7 +3,7 @@ Analyze my entire workspace (this Flutter project) and produce a detailed cleanu
 Identify:
 - outdated or unused Dart files
 - unused widgets, classes, functions, and constants
-- duplicate logic across lib/, test/, and scripts/a
+- duplicate logic across lib/, test/, and scripts/
 - assets in assets/ that are unused in the codebase
 - files in android/ or artifacts/ that are safe to remove
 - dead code or unreachable branches

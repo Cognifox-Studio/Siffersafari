@@ -85,24 +85,29 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
     }
   }
 
-  final skipButton = find.widgetWithText(TextButton, 'Hoppa över');
+  final skipButton = find.text('Hoppa över');
   if (skipButton.evaluate().isNotEmpty) {
-    await it.tap(tester, skipButton);
-    await it.settle(tester, _kSettleMedium);
-    return true;
+    final tapped = await it.tryTap(
+      tester,
+      skipButton,
+      after: _kSettleMedium,
+    );
+    if (tapped) return true;
   }
 
   return false;
 }
 
 Future<void> _drainUiAnimations(WidgetTester tester) async {
-  await it.settle(tester, _kSettleShort);
+  await tester.idle();
+  await it.settle(tester, _kSettleMedium);
 }
 
 Future<void> _cleanupAfterTest(WidgetTester tester) async {
   // Replace the app tree to dispose active controllers/tickers before invariant checks.
+  await tester.idle();
   await tester.pumpWidget(const SizedBox.shrink());
-  await tester.pump(_kSettleShort);
+  await tester.pump();
   await _drainUiAnimations(tester);
 }
 

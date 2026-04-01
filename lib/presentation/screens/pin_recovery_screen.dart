@@ -197,7 +197,7 @@ class _PinRecoveryScreenState extends ConsumerState<PinRecoveryScreen> {
       body: _securityQuestion == null
           ? Center(
               child: Text(
-                'Ingen recovery-konfiguration',
+                'Ingen återställning är inställd än.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: mutedOnPrimary,
                       fontWeight: FontWeight.w600,
