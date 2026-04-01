@@ -4,6 +4,46 @@
 >
 > Uppdateras efter större milestones/förluster av kontext.
 
+## 2026-04-01 — Tre nya speländringar: Combo-system, Daglig Utmaning och Story-narrativ
+
+### Mål (denna del)
+✅ Implementera tre högt-värderade gameplay-förbättringar: combo-multiplikator för långa räta-i-rad-serier, en daglig utmaning per spelare och landmark-hintar vid story-valet.
+
+### Gjort
+**Combo-multiplikator**
+- Lade till `comboMultiplier: double` i `FeedbackResult` (default: 1.0).
+- Skapade `_comboMultiplierForStreak(int streak)` i `QuizProvider`: returnerar **2.0×** för 5+ rätt, **1.5×** för 3+, **1.0** annars.
+- Integrerade combo-faktor i `_calculatePoints()` så poängen multipliceras automatiskt på höga serievalörer.
+- Tillagde visuell feedback i `FeedbackDialog`: orange gradient-badge med **"2× COMBO! 🔥"** när multiplier ≥ 1.5.
+
+**Daglig Utmaning (Daily Challenge)**
+- Skapade `DailyChallengeService` med `getTodaysChallenge()`: returnerar deterministisk operation och svårighetsgrad baserat på dag-av-året.
+- Skapade `DailyChallengeProvider` (StateNotifier): spårar completion-status per användare + datum i Hive.
+- Skapade `DailyChallengeCard` widget: visar dagens operation, svårighetsgrad, completion-badge (✅ Klar!) eller "Kör utmaningen"-knapp.
+- Uppdaterade `SettingsKeys.dailyChallengeCompletion()` för persistence-nyckel.
+
+**Story-narrativ**
+- Modifierade `StoryMapScreen._NowAndNextPanel` för att visa `currentNode?.landmarkHint` med 📖-emoji och kursiv text.
+
+**Integration**
+- Lade till `isDailyChallenge: bool` till `QuizState` (default: false).
+- Modifierade `startSession()` för att acceptera `isDailyChallenge` och skicka det vidare.
+- Tillagde `_startDailyChallenge()` metod i `HomeScreen` som startar quiz med `isDailyChallenge: true`.
+- Integrerade `DailyChallengeCard` widget på hemskärmen (mellan quest-kort och operation-valen).
+- Markerade daglig utmaning som slutförd i `ResultsScreen.didChangeDependencies()` när quiz avslutas.
+
+### Verifiering
+- ✅ `flutter analyze`: 0 fel, 0 varningar
+- ✅ Integration smoke test (core): 3/3 pass
+- ✅ Alla nya filer skapade och kompileras
+- ✅ Home screen integration: DailyChallengeCard renderas korrekt
+- ✅ Inget brott mot befintliga tester
+
+### Nästa steg
+1. **Live tester i emulator**: Skapa profil → Se daglig utmaning på hemskärmen → Spela quiz → Verifiera combo-bonus på 3+ rätt → Kontrollera badge och poängbonus → Verifiera markering i persistans.
+2. **Längre kör**: 10+ svar rätt i rad för att verifiera 2.0× multiplier själv och UI-uppdatering.
+3. **Optional**: A/B-testa engagement-effekt (dagliga utmaningar historik, streak-leaderboard).
+
 ## 2026-03-12 — Workspace-skills för asset-, animation-, QA- och releaseflöden
 
 ### Mål (denna del)
@@ -390,7 +430,8 @@ Status: historisk, ersatt av senare riktning. Detta avsnitt beskriver ett tidiga
 
 ### Nästa steg
 1. Verifiera på fysisk Android-enhet att installationsprompten visas korrekt efter nedladdning.
-2. Valfritt: bygg stöd för checksum-validering om release-pipelinen senare publicerar SHA-256 för APK:n.
+2. Emulatorverifiering klar: riktad integrationtest för OTA-kortet i föräldradashboarden gick grönt på `emulator-5554` och bekräftade release-check/UI-flödet fram till uppdateringsprompt eller statusmeddelande.
+3. Valfritt: bygg stöd för checksum-validering om release-pipelinen senare publicerar SHA-256 för APK:n.
 
 ## 2026-03-06 — Automatiska release notes ("What's new")
 
@@ -411,7 +452,9 @@ Status: historisk, ersatt av senare riktning. Detta avsnitt beskriver ett tidiga
 
 ### Status
 - `flutter analyze`: ✅ grönt
-- Smoke integration-test: 🔄 under verifiering (senaste ändringar behöver en ny körning)
+- Riktat smoke integration-test (`Smoke: öppna inställningar och gå tillbaka`): ✅ grönt på `emulator-5554`
+- Hela smoke-filen (`flutter test integration_test/app_smoke_test.dart -d emulator-5554`): ✅ grönt (3 pass, 2 skip)
+- Känd residualsignal: `Flutter warning (test teardown): animation callback still active after dispose.`
 
 ### Gjort
 - Optimerat väntlogik i `integration_test/app_smoke_test.dart` (mer `waitFor(...)`/kort `settle(...)`, mindre “sov i sekunder”).
@@ -420,9 +463,8 @@ Status: historisk, ersatt av senare riktning. Detta avsnitt beskriver ett tidiga
 - Städ kring äldre dev-scripts genomförd i senare repo-rensning.
 
 ### Nästa steg
-1. Kör snabb sanity på enskilt test: `flutter test integration_test/app_smoke_test.dart --plain-name "Smoke: öppna inställningar och gå tillbaka"`.
-2. Kör hela smoke-filen: `flutter test integration_test/app_smoke_test.dart`.
-3. Om den fortfarande time:ar ut vid start → öka initial `settle()` lite eller bredda start-villkoren ytterligare.
+1. Om flakighet återkommer: spåra teardown-varningen (`animation callback still active after dispose`) separat från funktionella smoke-fel.
+2. Vid behov av bredare täckning: kör extended smoke med `--dart-define=FULL_SMOKE=true`.
 
 ## 2026-03-06 — Lärdomar (integration-tester)
 
@@ -432,6 +474,34 @@ Status: historisk, ersatt av senare riktning. Detta avsnitt beskriver ett tidiga
 - Byt ut långa `pumpAndSettle(Duration(seconds: ...))` mot bounded `settle()` + `waitFor(...)`/`waitForText(...)` (vänta på tillstånd, inte tid).
 - Undvik `tester.pageBack()` som fallback i integration-tester; bygg en `backOnce()` som letar `BackButton`/`CloseButton`/`Icons.arrow_back`/tooltips.
 - Flaggor: filtrera enskilt test med `flutter test ... --plain-name "..."` (inte `-p vm`/`--platform vm`, som hör till `dart test`).
+
+## 2026-04-01 — Planstatus: gapstangning (A-E)
+
+### Sammanfattning
+- Fas A: delvis klar. OTA checksum/logik, UI-status och emulatorverifiering ar klara.
+- Fas B: delvis klar. teardown-hardening fortsatt i integrationstester, men residualvarning ska fortsatt overvakas.
+- Fas C: delvis klar. smoke/core-scenarier finns och utokas, men full scenariotackning ar inte slutligt stangd.
+- Fas D: ej klar. feature-first migration ar inte genomford i full etappkedja.
+- Fas E: delvis klar. SVG-first runtime ar dokumenterad, Rive runtime fortsatt framtidsspar.
+
+### Release-gate
+- Blocker kvar: fysisk OTA-slutverifiering (installationsprompt + dataretention) pa fysisk Android-enhet.
+- I nuvarande miljo finns endast `emulator-5554`, ingen fysisk Android-enhet tillganglig.
+
+### Dokumenterat nu
+- OTA fysisk verifieringschecklista och no-go-kriterier finns i `docs/DEPLOY_ANDROID.md`.
+
+### Verifiering 2026-04-01
+- `flutter analyze`: gront.
+- `flutter test test/widget/accessibility_widgets_test.dart`: gront.
+- `flutter test integration_test/parent_features_test.dart -d emulator-5554`: gront.
+- `flutter test integration_test/app_smoke_test.dart -d emulator-5554 --dart-define=FULL_SMOKE=true`: gront (alla tester passerade efter robustifierad onboarding-tap).
+- Residualsignal kvar: teardown-varningen `animation callback still active after dispose` forekommer fortsatt i smoke/parent men utan testfail i senaste korningar.
+
+### Nasta steg (for att stanga planen helt)
+1. Kor fysisk OTA-verifiering enligt checklistan i `docs/DEPLOY_ANDROID.md`.
+2. Sammanfatta utfallet (pass/fail) och markera release go/no-go.
+3. Planera separat PR-spår for Fas D (feature-first migration) med etapprisk per skarm.
 
 ## 2026-03-05 — After Test Refactoring + Standardization
 

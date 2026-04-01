@@ -6,11 +6,15 @@ class FeedbackResult {
     required this.isCorrect,
     required this.title,
     required this.message,
+    this.comboMultiplier = 1.0,
   });
 
   final bool isCorrect;
   final String title;
   final String message;
+
+  /// Combo multiplier applied to points for this answer (1.0 = no combo).
+  final double comboMultiplier;
 }
 
 /// Generates contextual feedback messages for quiz answers.
@@ -37,6 +41,7 @@ class FeedbackService {
     int? pointsEarned,
     bool? gotSpeedBonus,
     int? correctStreak,
+    double comboMultiplier = 1.0,
   }) {
     final isCorrect = question.isCorrect(userAnswer);
     final correct = question.correctAnswer;
@@ -67,6 +72,7 @@ class FeedbackService {
           correctStreak: safeCorrectStreak,
         ),
         message: _joinLines([message, ...metaLines]),
+        comboMultiplier: comboMultiplier,
       );
     }
 

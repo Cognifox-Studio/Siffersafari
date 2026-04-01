@@ -1,0 +1,116 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../core/constants/app_constants.dart';
+import '../../core/providers/daily_challenge_provider.dart';
+import '../../core/services/daily_challenge_service.dart';
+import '../../domain/enums/operation_type.dart';
+
+/// Home screen card that shows today's daily challenge and lets the child
+/// start it with a single tap or see that it's already done.
+class DailyChallengeCard extends ConsumerWidget {
+  const DailyChallengeCard({
+    required this.userId,
+    required this.allowedOps,
+    required this.onStart,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+    required this.accentColor,
+    super.key,
+  });
+
+  final String userId;
+  final Set<OperationType> allowedOps;
+  final void Function(DailyChallengeService service) onStart;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+  final Color accentColor;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final service = ref.watch(dailyChallengeServiceProvider);
+    final challenge = service.getTodaysChallenge();
+    final isCompleted = ref.watch(dailyChallengeProvider(userId));
+
+    // Hide card if today's operation isn't allowed for this profile.
+    if (!allowedOps.contains(challenge.operation)) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      decoration: BoxDecoration(
+        color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.55),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Text(
+                '🌟',
+                style: TextStyle(fontSize: 20.sp),
+              ),
+              const SizedBox(width: AppConstants.microSpacing8),
+              Expanded(
+                child: Text(
+                  'Dagens utmaning',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              if (isCompleted)
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppConstants.microSpacing8.w,
+                    vertical: AppConstants.microSpacing4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.correctAnswer.withValues(alpha: 0.85),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.borderRadius),
+                  ),
+                  child: Text(
+                    '✅ Klar!',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.microSpacing6),
+          Text(
+            '${challenge.title} · ${challenge.difficulty.displayName}',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          if (!isCompleted) ...[
+            const SizedBox(height: AppConstants.defaultPadding),
+            OutlinedButton.icon(
+              onPressed: () => onStart(service),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: onPrimary,
+                side: BorderSide(color: accentColor),
+              ),
+              icon: const Icon(Icons.flash_on_rounded),
+              label: const Text('Kör utmaningen'),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

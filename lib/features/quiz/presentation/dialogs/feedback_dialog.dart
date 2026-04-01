@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 
@@ -86,6 +85,9 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
     final title = _mascotTitle(widget.feedback.title);
 
+    final comboMultiplier = widget.feedback.comboMultiplier;
+    final showComboBadge = comboMultiplier >= 1.5;
+
     return Dialog(
       backgroundColor: dialogBackgroundColor,
       shape: dialogShape,
@@ -94,6 +96,38 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            if (showComboBadge) ...[
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.defaultPadding.w,
+                  vertical: AppConstants.microSpacing6.h,
+                ),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFF6F00), Color(0xFFFFA000)],
+                  ),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.borderRadius),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0xFFFF6F00).withValues(alpha: 0.45),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: Text(
+                  '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        letterSpacing: 1.2,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: AppConstants.smallPadding.h),
+            ],
             ExcludeSemantics(
               child: Container(
                 width: (AppConstants.feedbackDialogIconSize + 16).sp,

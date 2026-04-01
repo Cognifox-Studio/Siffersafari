@@ -7,6 +7,7 @@ import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/audio_service_provider.dart';
+import '../../core/providers/daily_challenge_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/quiz_provider.dart';
@@ -155,7 +156,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
 
     if (_applied) return;
 
-    final session = ref.read(quizProvider).session;
+    final quizState = ref.read(quizProvider);
+    final session = quizState.session;
     if (session != null) {
       ref.read(userProvider.notifier).applyQuizResult(session);
 
@@ -165,6 +167,15 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       if (shouldCelebrate) {
         ref.read(audioServiceProvider).playCelebrationSound();
       }
+
+      // Mark the daily challenge as completed for this user.
+      if (quizState.isDailyChallenge) {
+        final userId = ref.read(userProvider).activeUser?.userId ?? '';
+        if (userId.isNotEmpty) {
+          ref.read(dailyChallengeProvider(userId).notifier).markCompleted();
+        }
+      }
+
       _applied = true;
     }
   }
@@ -317,8 +328,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       ),
     );
     final actionPrompt = questCompletion != null && storyProgress != null
-        ? 'Fortsatt direkt pa stigen, snabbtrana pa det kluriga eller ga hem.'
-        : 'Kor en ny runda direkt, snabbtrana pa det kluriga eller ga hem.';
+        ? 'Fortsätt direkt på stigen, snabbträna på det kluriga eller gå hem.'
+        : 'Kör en ny runda direkt, snabbträna på det kluriga eller gå hem.';
 
     final actionColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -357,7 +368,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ),
         const SizedBox(height: AppConstants.largePadding),
         Text(
-          'Vad vill du gora nu?',
+          'Vad vill du göra nu?',
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
                 color: onPrimary,
                 fontWeight: FontWeight.w800,
@@ -851,8 +862,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     final nextTitle =
         questCompletion.nextQuestTitle ?? storyProgress.currentObjectiveTitle;
     final nextBody = questCompletion.nextQuestTitle == null
-        ? 'Du ar snart framme vid slutet av den har stigen.'
-        : 'Nasta mal: $nextTitle';
+        ? 'Du är snart framme vid slutet av den här stigen.'
+        : 'Nästa mål: $nextTitle';
 
     return Container(
       width: double.infinity,
@@ -868,7 +879,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Ny checkpoint i djungeln!',
+            'Nytt delmål i djungeln!',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w800,
@@ -887,7 +898,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
             builder: (context, constraints) {
               final stackCards = constraints.maxWidth < 620;
               final currentCard = _StoryFocusCard(
-                label: 'Du ar har',
+                label: 'Du är här',
                 title: reachedLandmark,
                 body: storyProgress.chapterTitle,
                 icon: Icons.place_rounded,
@@ -895,7 +906,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                 onPrimary: onPrimary,
               );
               final nextCard = _StoryFocusCard(
-                label: 'Nasta stopp',
+                label: 'Nästa stopp',
                 title: nextTitle,
                 body: nextBody,
                 icon: Icons.flag_rounded,
@@ -1037,7 +1048,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     }
 
     if (bonusPoints == 0) {
-      return 'Tips: Snabbträna övar på dina klurigaste!';
+      return 'Tips: Snabbträna på det som känns svårast!';
     }
 
     return 'Redo för en ny runda?';

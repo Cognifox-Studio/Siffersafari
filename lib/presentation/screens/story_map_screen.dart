@@ -78,15 +78,35 @@ class StoryMapScreen extends ConsumerWidget {
                   mutedOnPrimary: mutedOnPrimary,
                   onContinue: () => Navigator.of(context).maybePop(),
                 ),
-                const SizedBox(height: AppConstants.largePadding),
-                _NearbyStopsPanel(
-                  story: story,
-                  currentNode: currentNode,
-                  nextNode: nextNode,
-                  accentColor: scheme.secondary,
-                  onPrimary: onPrimary,
-                  mutedOnPrimary: mutedOnPrimary,
-                  subtleOnPrimary: subtleOnPrimary,
+                const SizedBox(height: AppConstants.defaultPadding),
+                ExpansionTile(
+                  title: Text(
+                    'Se fler stopp',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: onPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  iconColor: scheme.secondary,
+                  collapsedIconColor: scheme.secondary,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: AppConstants.microSpacing6,
+                        right: AppConstants.microSpacing6,
+                        bottom: AppConstants.microSpacing6,
+                      ),
+                      child: _NearbyStopsPanel(
+                        story: story,
+                        currentNode: currentNode,
+                        nextNode: nextNode,
+                        accentColor: scheme.secondary,
+                        onPrimary: onPrimary,
+                        mutedOnPrimary: mutedOnPrimary,
+                        subtleOnPrimary: subtleOnPrimary,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -156,59 +176,55 @@ class _MapHeroCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-            child: SizedBox(
-              height: 150,
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Image.asset(
-                    heroAsset,
-                    fit: BoxFit.cover,
-                    excludeFromSemantics: true,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        backgroundAsset,
-                        fit: BoxFit.cover,
-                        excludeFromSemantics: true,
-                      );
-                    },
-                  ),
-                  DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.10),
-                          Colors.black.withValues(alpha: 0.44),
-                        ],
+          _InteractiveMapCanvas(
+            story: story,
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+            backgroundAsset: backgroundAsset,
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          // Legend row
+          Row(
+            children: [
+              const _MapLegendDot(color: Color(0xFF7AAE3E), label: 'Klar'),
+              const SizedBox(width: AppConstants.smallPadding),
+              const _MapLegendDot(color: Color(0xFFD39A2F), label: 'Här nu'),
+              const SizedBox(width: AppConstants.smallPadding),
+              _MapLegendDot(
+                color: onPrimary.withValues(alpha: 0.35),
+                label: 'Kommande',
+              ),
+              const Spacer(),
+              GestureDetector(
+                onTap: () {},
+                child: Text(
+                  'Tryck på en prick',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: onPrimary.withValues(alpha: 0.55),
+                        fontWeight: FontWeight.w700,
                       ),
+                ),
+              ),
+            ],
+          ),
+          // Keep the bottom badge (chapter label) as a fallback info pill
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppConstants.smallPadding,
+                vertical: AppConstants.microSpacing6,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.28),
+                borderRadius: BorderRadius.circular(999),
+              ),
+              child: Text(
+                'Följ stigen steg för steg',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
-                  ),
-                  Positioned(
-                    left: AppConstants.defaultPadding,
-                    bottom: AppConstants.defaultPadding,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppConstants.smallPadding,
-                        vertical: AppConstants.microSpacing6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.black.withValues(alpha: 0.28),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: Text(
-                        'Följ stigen steg för steg',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                              color: onPrimary,
-                              fontWeight: FontWeight.w800,
-                            ),
-                      ),
-                    ),
-                  ),
-                ],
               ),
             ),
           ),
@@ -234,20 +250,14 @@ class _MapHeroCard extends StatelessWidget {
             runSpacing: AppConstants.smallPadding,
             children: [
               _HeaderChip(
-                label: 'Klara stopp',
+                label: 'Klart',
                 value: '${story.completedNodes}/${story.totalNodes}',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
               _HeaderChip(
-                label: 'Del just nu',
+                label: 'Kapitel',
                 value: '$chapterNumber',
-                onPrimary: onPrimary,
-                mutedOnPrimary: mutedOnPrimary,
-              ),
-              _HeaderChip(
-                label: 'Nästa mattegrej',
-                value: story.currentObjectiveTitle,
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -369,184 +379,50 @@ class _NowAndNextPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final useColumns = constraints.maxWidth < 620;
-        final actionBody = nextNode == null
-            ? 'Gå tillbaka och spela sista stoppet på stigen.'
-            : 'Gå tillbaka och tryck på Spela nästa stopp för att resa mot ${nextNode!.landmark}.';
-        final currentCard = _FocusCard(
-          label: 'Du är här',
-          title: currentNode?.landmark ?? 'Starten',
-          body: 'Nu: ${story.currentObjectiveTitle}',
-          icon: Icons.place_rounded,
-          color: accentColor,
-          onPrimary: onPrimary,
-        );
-        final nextCard = _FocusCard(
-          label: nextNode == null ? 'Målet är nära' : 'Nästa stopp',
-          title: nextNode?.landmark ?? 'Sista stoppet',
-          body: nextNode == null
-              ? 'Du är snart framme vid slutet av stigen.'
-              : 'Sedan: ${nextNode!.title}',
-          icon: nextNode == null ? Icons.emoji_events : Icons.flag_rounded,
-          color: nextNode == null
-              ? const Color(0xFFD39A2F)
-              : accentColor.withValues(alpha: 0.92),
-          onPrimary: onPrimary,
-        );
+    final nextLabel = nextNode?.landmark ?? 'målet';
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Vad händer nu?',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: onPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            const SizedBox(height: AppConstants.microSpacing6),
-            Text(
-              'Titta på de två stora rutorna för att se var du är och vart du ska.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: mutedOnPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            if (useColumns) ...[
-              currentCard,
-              const SizedBox(height: AppConstants.defaultPadding),
-              nextCard,
-            ] else
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: currentCard),
-                  const SizedBox(width: AppConstants.defaultPadding),
-                  Expanded(child: nextCard),
-                ],
-              ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            Container(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
-              decoration: BoxDecoration(
-                color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-                border: Border.all(
-                  color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.touch_app_rounded,
-                    color: accentColor,
-                    size: 20,
-                  ),
-                  const SizedBox(width: AppConstants.smallPadding),
-                  Expanded(
-                    child: Text(
-                      actionBody,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: mutedOnPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            ElevatedButton.icon(
-              onPressed: onContinue,
-              icon: const Icon(Icons.arrow_back_rounded),
-              label: const Text('Tillbaka och spela'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-class _FocusCard extends StatelessWidget {
-  const _FocusCard({
-    required this.label,
-    required this.title,
-    required this.body,
-    required this.icon,
-    required this.color,
-    required this.onPrimary,
-  });
-
-  final String label;
-  final String title;
-  final String body;
-  final IconData icon;
-  final Color color;
-  final Color onPrimary;
-
-  @override
-  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.22),
-            color.withValues(alpha: 0.10),
-          ],
-        ),
+        color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(color: color.withValues(alpha: 0.72), width: 2),
+        border: Border.all(
+          color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+        ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: onPrimary),
+          Text(
+            'Nu kör vi!',
+            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
           ),
-          const SizedBox(width: AppConstants.defaultPadding),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Text(
+            'Du är vid ${currentNode?.landmark ?? 'starten'}. Nästa stopp är $nextLabel.',
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: AppConstants.microSpacing4),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.microSpacing6),
-                Text(
-                  body,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: onPrimary.withValues(alpha: 0.88),
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ],
+          ),
+          if (currentNode?.landmarkHint.isNotEmpty ?? false) ...[
+            const SizedBox(height: AppConstants.microSpacing6),
+            Text(
+              '📖 ${currentNode!.landmarkHint}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: mutedOnPrimary.withValues(alpha: 0.75),
+                    fontStyle: FontStyle.italic,
+                  ),
             ),
+          ],
+          const SizedBox(height: AppConstants.defaultPadding),
+          ElevatedButton.icon(
+            onPressed: onContinue,
+            icon: const Icon(Icons.play_arrow_rounded),
+            label: const Text('Spela nästa stopp'),
           ),
         ],
       ),
@@ -609,7 +485,7 @@ class _NearbyStopsPanel extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.microSpacing6),
           Text(
-            'Läs uppifrån och nedåt. Grönt är klart, gult är du, grått kommer senare.',
+            'Grönt är klart, gult är du och grått kommer senare.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -799,6 +675,371 @@ class _StopCard extends StatelessWidget {
     );
   }
 }
+
+// ─── Interactive map canvas ────────────────────────────────────────────────
+
+class _MapLegendDot extends StatelessWidget {
+  const _MapLegendDot({required this.color, required this.label});
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: Colors.white.withValues(alpha: 0.75),
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+      ],
+    );
+  }
+}
+
+class _InteractiveMapCanvas extends StatefulWidget {
+  const _InteractiveMapCanvas({
+    required this.story,
+    required this.accentColor,
+    required this.onPrimary,
+    required this.backgroundAsset,
+  });
+
+  final StoryProgress story;
+  final Color accentColor;
+  final Color onPrimary;
+  final String backgroundAsset;
+
+  @override
+  State<_InteractiveMapCanvas> createState() => _InteractiveMapCanvasState();
+}
+
+class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
+  StoryNode? _tapped;
+
+  @override
+  Widget build(BuildContext context) {
+    final nodes = widget.story.nodes;
+    if (nodes.isEmpty) return const SizedBox.shrink();
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+      child: SizedBox(
+        height: 320,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final w = constraints.maxWidth;
+            const h = 320.0;
+            final positions = _computePositions(nodes.length, w, h);
+
+            return Stack(
+              fit: StackFit.expand,
+              children: [
+                // Background image
+                Image.asset(
+                  widget.backgroundAsset,
+                  fit: BoxFit.cover,
+                  excludeFromSemantics: true,
+                  errorBuilder: (_, __, ___) => const ColoredBox(
+                    color: Color(0xFF2D5A1B),
+                  ),
+                ),
+                // Dark overlay for readability
+                ColoredBox(
+                  color: Colors.black.withValues(alpha: 0.32),
+                ),
+                // Path + nodes via CustomPaint
+                CustomPaint(
+                  painter: _MapPathPainter(
+                    positions: positions,
+                    nodes: nodes,
+                    accentColor: widget.accentColor,
+                  ),
+                ),
+                // Tap targets & node labels
+                ...List.generate(nodes.length, (i) {
+                  final pos = positions[i];
+                  final node = nodes[i];
+                  final isActive = node.state == StoryNodeState.current;
+                  const r = _MapPathPainter.nodeRadius;
+                  const tapArea = 52.0;
+
+                  return Positioned(
+                    left: pos.dx - tapArea / 2,
+                    top: pos.dy - tapArea / 2,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _tapped = node),
+                      child: SizedBox(
+                        width: tapArea,
+                        height: tapArea,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Glow ring on current
+                            if (isActive)
+                              Container(
+                                width: r * 2 + 12,
+                                height: r * 2 + 12,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: const Color(0xFFD39A2F)
+                                        .withValues(alpha: 0.80),
+                                    width: 3,
+                                  ),
+                                ),
+                              ),
+                            // Node circle drawn via paint – label only here
+                            Positioned(
+                              bottom: 0,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 5,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.55),
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(
+                                  '${node.stepIndex + 1}',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                // Tooltip bubble for tapped node
+                if (_tapped != null)
+                  Positioned(
+                    bottom: 12,
+                    left: 12,
+                    right: 12,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _tapped = null),
+                      child: _MapNodeTooltip(
+                        node: _tapped!,
+                        accentColor: widget.accentColor,
+                        onPrimary: widget.onPrimary,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  /// Produces snake-path positions in a tight S-curve fitting the given bounds.
+  static List<Offset> _computePositions(int count, double w, double h) {
+    if (count == 0) return [];
+    const cols = 5;
+    final rows = (count / cols).ceil();
+    final cellW = w / cols;
+    final cellH = h / rows;
+    final positions = <Offset>[];
+
+    for (var i = 0; i < count; i++) {
+      final row = i ~/ cols;
+      final col = i % cols;
+      // Reverse every other row (snake/zigzag)
+      final effectiveCol = row.isOdd ? (cols - 1 - col) : col;
+      final x = cellW * effectiveCol + cellW / 2;
+      final y = cellH * row + cellH / 2;
+      positions.add(Offset(x, y));
+    }
+    return positions;
+  }
+}
+
+class _MapPathPainter extends CustomPainter {
+  const _MapPathPainter({
+    required this.positions,
+    required this.nodes,
+    required this.accentColor,
+  });
+
+  final List<Offset> positions;
+  final List<StoryNode> nodes;
+  final Color accentColor;
+
+  static const nodeRadius = 14.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (positions.length < 2) return;
+
+    // Draw path lines
+    for (var i = 0; i < positions.length - 1; i++) {
+      final isDone = nodes[i].state == StoryNodeState.completed &&
+          nodes[i + 1].state != StoryNodeState.upcoming;
+      final paint = Paint()
+        ..color = isDone
+            ? const Color(0xFF7AAE3E).withValues(alpha: 0.90)
+            : Colors.white.withValues(alpha: 0.30)
+        ..strokeWidth = 3
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawLine(positions[i], positions[i + 1], paint);
+    }
+
+    // Draw node circles
+    for (var i = 0; i < positions.length; i++) {
+      final node = nodes[i];
+      final pos = positions[i];
+
+      final (fillColor, strokeColor) = switch (node.state) {
+        StoryNodeState.completed => (
+            const Color(0xFF7AAE3E),
+            const Color(0xFF5A8C2E),
+          ),
+        StoryNodeState.current => (
+            const Color(0xFFD39A2F),
+            const Color(0xFFB07A1A),
+          ),
+        StoryNodeState.upcoming => (
+            Colors.white.withValues(alpha: 0.22),
+            Colors.white.withValues(alpha: 0.50),
+          ),
+      };
+
+      final fill = Paint()
+        ..color = fillColor
+        ..style = PaintingStyle.fill;
+      final stroke = Paint()
+        ..color = strokeColor
+        ..strokeWidth = 2.5
+        ..style = PaintingStyle.stroke;
+
+      canvas.drawCircle(pos, nodeRadius, fill);
+      canvas.drawCircle(pos, nodeRadius, stroke);
+
+      // Icon: checkmark for done, dot for current
+      if (node.state == StoryNodeState.completed) {
+        final iconPaint = Paint()
+          ..color = Colors.white
+          ..strokeWidth = 2.5
+          ..strokeCap = StrokeCap.round
+          ..style = PaintingStyle.stroke;
+        final cx = pos.dx;
+        final cy = pos.dy;
+        canvas.drawLine(
+          Offset(cx - 5, cy),
+          Offset(cx - 1.5, cy + 4),
+          iconPaint,
+        );
+        canvas.drawLine(
+          Offset(cx - 1.5, cy + 4),
+          Offset(cx + 5, cy - 4),
+          iconPaint,
+        );
+      } else if (node.state == StoryNodeState.current) {
+        canvas.drawCircle(
+          pos,
+          5,
+          Paint()
+            ..color = Colors.white
+            ..style = PaintingStyle.fill,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_MapPathPainter old) =>
+      old.positions != positions || old.nodes != nodes;
+}
+
+class _MapNodeTooltip extends StatelessWidget {
+  const _MapNodeTooltip({
+    required this.node,
+    required this.accentColor,
+    required this.onPrimary,
+  });
+
+  final StoryNode node;
+  final Color accentColor;
+  final Color onPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = switch (node.state) {
+      StoryNodeState.completed => const Color(0xFF7AAE3E),
+      StoryNodeState.current => const Color(0xFFD39A2F),
+      StoryNodeState.upcoming => Colors.white.withValues(alpha: 0.60),
+    };
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.black.withValues(alpha: 0.82),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(color: color.withValues(alpha: 0.80), width: 1.5),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 10,
+            height: 10,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Stopp ${node.stepIndex + 1} · ${node.landmark}',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
+                Text(
+                  node.landmarkHint,
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.75),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Icon(
+            Icons.close_rounded,
+            color: Colors.white.withValues(alpha: 0.50),
+            size: 16,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─── End interactive map canvas ───────────────────────────────────────────────
 
 class _StatusChip extends StatelessWidget {
   const _StatusChip({

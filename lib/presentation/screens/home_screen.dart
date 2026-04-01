@@ -11,6 +11,7 @@ import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/quiz_provider.dart';
 import '../../core/providers/spaced_repetition_settings_provider.dart';
+import '../../core/services/daily_challenge_service.dart';
 import '../../core/providers/story_progress_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
@@ -23,6 +24,7 @@ import 'package:siffersafari/features/home/presentation/widgets/home_story_progr
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import '../screens/story_map_screen.dart';
 import '../widgets/mascot_character.dart';
+import '../widgets/daily_challenge_card.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'onboarding_screen.dart';
 import 'parent_pin_screen.dart';
@@ -95,6 +97,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _startQuiz({
     required OperationType operationType,
     required DifficultyLevel difficulty,
+    bool isDailyChallenge = false,
   }) {
     final user = ref.read(userProvider).activeUser;
     if (user == null) {
@@ -140,6 +143,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           initialDifficultyStepsByOperation: steps,
           wordProblemsEnabled: wordProblemsEnabled,
           missingNumberEnabled: missingNumberEnabled,
+          isDailyChallenge: isDailyChallenge,
         );
 
     setState(() {
@@ -147,6 +151,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _mascotReactionNonce++;
     });
     context.pushSmooth(const QuizScreen());
+  }
+
+  void _startDailyChallenge(DailyChallenge challenge) {
+    _startQuiz(
+      operationType: challenge.operation,
+      difficulty: challenge.difficulty,
+      isDailyChallenge: true,
+    );
   }
 
   // endregion
@@ -675,6 +687,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         onOpenMap: () => context.pushSmooth(
                           const StoryMapScreen(),
                         ),
+                      ),
+
+                    const SizedBox(height: AppConstants.largePadding),
+
+                    if (user != null)
+                      DailyChallengeCard(
+                        userId: user.userId,
+                        allowedOps: allowedOps,
+                        onPrimary: onPrimary,
+                        mutedOnPrimary: mutedOnPrimary,
+                        accentColor: accentColor,
+                        onStart: (service) {
+                          final challenge = service.getTodaysChallenge();
+                          _startDailyChallenge(challenge);
+                        },
                       ),
 
                     const SizedBox(height: AppConstants.largePadding),

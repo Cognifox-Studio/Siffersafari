@@ -19,9 +19,9 @@ import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
 import '../../domain/services/spaced_repetition_service.dart';
 import '../../shared/settings/quiz_feature_settings.dart';
-import 'adaptive_difficulty_service_provider.dart';
 import '../services/audio_service.dart';
 import '../services/question_generator_service.dart';
+import 'adaptive_difficulty_service_provider.dart';
 import 'audio_service_provider.dart';
 import 'feedback_service_provider.dart';
 import 'local_storage_repository_provider.dart';
@@ -45,6 +45,7 @@ class QuizState {
     this.speedBonusCount = 0,
     this.reviewSchedulesByKey = const {},
     this.dueReviewCount = 0,
+    this.isDailyChallenge = false,
   });
 
   final String? userId;
@@ -60,6 +61,7 @@ class QuizState {
   final int speedBonusCount;
   final Map<String, ReviewSchedule> reviewSchedulesByKey;
   final int dueReviewCount;
+  final bool isDailyChallenge;
 
   QuizState copyWith({
     String? userId,
@@ -75,6 +77,7 @@ class QuizState {
     int? speedBonusCount,
     Map<String, ReviewSchedule>? reviewSchedulesByKey,
     int? dueReviewCount,
+    bool? isDailyChallenge,
   }) {
     return QuizState(
       userId: userId ?? this.userId,
@@ -94,6 +97,7 @@ class QuizState {
       speedBonusCount: speedBonusCount ?? this.speedBonusCount,
       reviewSchedulesByKey: reviewSchedulesByKey ?? this.reviewSchedulesByKey,
       dueReviewCount: dueReviewCount ?? this.dueReviewCount,
+      isDailyChallenge: isDailyChallenge ?? this.isDailyChallenge,
     );
   }
 }
@@ -311,6 +315,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     Map<OperationType, int>? initialDifficultyStepsByOperation,
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
+    bool isDailyChallenge = false,
   }) {
     debugPrint(
       '[QuizNotifier] startSession: userId=$userId, '
@@ -418,6 +423,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
         reviewSchedules,
       ),
       dueReviewCount: dueCount,
+      isDailyChallenge: isDailyChallenge,
     );
   }
 
@@ -530,6 +536,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
         reviewSchedules,
       ),
       dueReviewCount: dueCount,
+      isDailyChallenge: false,
     );
   }
 
@@ -563,15 +570,17 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final updatedTimes = Map<String, Duration>.from(session.responseTimes)
       ..[question.id] = responseTime;
 
+    final gotSpeedBonus = isCorrect && responseTime.inSeconds <= 5;
+    final previousStreak = state.correctStreak;
+    final newStreak = isCorrect ? (state.correctStreak + 1) : 0;
+    final comboMultiplier =
+        _comboMultiplierForStreak(isCorrect ? newStreak : 0);
     final pointsEarned = _calculatePoints(
       isCorrect: isCorrect,
       responseTime: responseTime,
       difficulty: session.difficulty,
+      correctStreak: isCorrect ? newStreak : 0,
     );
-
-    final gotSpeedBonus = isCorrect && responseTime.inSeconds <= 5;
-    final previousStreak = state.correctStreak;
-    final newStreak = isCorrect ? (state.correctStreak + 1) : 0;
     final newBestStreak = newStreak > state.bestCorrectStreak
         ? newStreak
         : state.bestCorrectStreak;
@@ -635,6 +644,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       pointsEarned: pointsEarned,
       gotSpeedBonus: gotSpeedBonus,
       correctStreak: isCorrect ? newStreak : previousStreak,
+      comboMultiplier: comboMultiplier,
     );
 
     final userId = state.userId;
@@ -737,10 +747,17 @@ class QuizNotifier extends StateNotifier<QuizState> {
     state = state.copyWith(feedback: null);
   }
 
+  static double _comboMultiplierForStreak(int streak) {
+    if (streak >= 5) return 2.0;
+    if (streak >= 3) return 1.5;
+    return 1.0;
+  }
+
   int _calculatePoints({
     required bool isCorrect,
     required Duration responseTime,
     required DifficultyLevel difficulty,
+    int correctStreak = 0,
   }) {
     if (!isCorrect) return 0;
 
@@ -749,6 +766,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     if (responseTime.inSeconds <= 5) {
       points += AppConstants.bonusPointsForSpeed;
+    }
+
+    final multiplier = _comboMultiplierForStreak(correctStreak);
+    if (multiplier > 1.0) {
+      points = (points * multiplier).round();
     }
 
     return points;
