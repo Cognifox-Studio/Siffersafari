@@ -210,8 +210,7 @@ void main() {
       );
 
       expect(find.text('Djungelkartan'), findsOneWidget);
-      expect(find.text('Vad händer nu?'), findsOneWidget);
-      expect(find.text('Stigen nära dig'), findsOneWidget);
+      expect(find.text('Nu kör vi!'), findsOneWidget);
     },
   );
 }

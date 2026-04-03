@@ -166,9 +166,14 @@ void main() {
       expect(homeTitle, findsOneWidget);
       expect(onboardingTitle, findsNothing);
       expect(repository.getAllowedOperationNames(userId), contains('addition'));
-      expect(repository.getAllowedOperationNames(userId), contains('division'));
       expect(
-          repository.getSetting('word_problems_enabled_$userId'), isA<bool>());
+        repository.getAllowedOperationNames(userId),
+        contains('division'),
+      );
+      expect(
+        repository.getSetting('word_problems_enabled_$userId'),
+        isA<bool>(),
+      );
 
       await tester.pumpWidget(
         UncontrolledProviderScope(

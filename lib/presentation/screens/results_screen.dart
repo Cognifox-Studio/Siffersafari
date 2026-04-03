@@ -7,16 +7,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_analytics_provider.dart';
-import '../../core/providers/app_theme_provider.dart';
-import '../../core/providers/audio_service_provider.dart';
-import '../../core/providers/daily_challenge_provider.dart';
-import '../../core/providers/missing_number_settings_provider.dart';
-import '../../core/providers/parent_settings_provider.dart';
-import '../../core/providers/quiz_provider.dart';
-import '../../core/providers/story_progress_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/providers/word_problems_settings_provider.dart';
+import '../providers.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';

@@ -194,17 +194,6 @@ class _MapHeroCard extends StatelessWidget {
                 color: onPrimary.withValues(alpha: 0.35),
                 label: 'Kommande',
               ),
-              const Spacer(),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  'Tryck på en prick',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: onPrimary.withValues(alpha: 0.55),
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
             ],
           ),
           // Keep the bottom badge (chapter label) as a fallback info pill

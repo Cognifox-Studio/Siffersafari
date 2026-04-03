@@ -221,9 +221,9 @@ void main() {
         }
       }
 
-      await pumpUntilFound(tester, find.text('Ny checkpoint i djungeln!'));
+      await pumpUntilFound(tester, find.text('Nytt delmål i djungeln!'));
 
-      expect(find.text('Ny checkpoint i djungeln!'), findsOneWidget);
+      expect(find.text('Nytt delmål i djungeln!'), findsOneWidget);
       expect(
         find.textContaining('Nästa mål: Hitta borttappade siffror'),
         findsWidgets,

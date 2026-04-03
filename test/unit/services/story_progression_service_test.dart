@@ -36,10 +36,10 @@ void main() {
       expect(story.nodes.first.landmark, 'Startlägret');
       expect(
         story.nodes.first.landmarkHint,
-        'Ett tryggt basläger vid djungelns kant.',
+        'Maskoten packar verktygen inför uppdraget.',
       );
       expect(story.nodes.first.sceneTag, 'baslager');
-      expect(story.chapterTitle, 'Kapitel 1: Den första stigen');
+      expect(story.chapterTitle, 'Kapitel 1: Den trasiga bron');
     });
 
     test('markerar tidigare noder som completed', () {
