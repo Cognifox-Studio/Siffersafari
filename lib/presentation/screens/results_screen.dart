@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +7,7 @@ import 'package:lottie/lottie.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/providers/app_analytics_provider.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/audio_service_provider.dart';
 import '../../core/providers/daily_challenge_provider.dart';
@@ -168,11 +171,43 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ref.read(audioServiceProvider).playCelebrationSound();
       }
 
+      final userId = ref.read(userProvider).activeUser?.userId;
+      if (userId != null && userId.isNotEmpty) {
+        unawaited(
+          ref.read(appAnalyticsProvider).logEvent(
+            name: 'quiz_completed',
+            userId: userId,
+            properties: {
+              'operation': session.operationType.name,
+              'difficulty': session.difficulty.name,
+              'successRate': session.successRate,
+              'correctAnswers': session.correctAnswers,
+              'wrongAnswers': session.wrongAnswers,
+              'isDailyChallenge': quizState.isDailyChallenge,
+            },
+          ),
+        );
+      }
+
       // Mark the daily challenge as completed for this user.
       if (quizState.isDailyChallenge) {
-        final userId = ref.read(userProvider).activeUser?.userId ?? '';
-        if (userId.isNotEmpty) {
-          ref.read(dailyChallengeProvider(userId).notifier).markCompleted();
+        final completionUserId =
+            ref.read(userProvider).activeUser?.userId ?? '';
+        if (completionUserId.isNotEmpty) {
+          ref
+              .read(dailyChallengeProvider(completionUserId).notifier)
+              .markCompleted();
+          unawaited(
+            ref.read(appAnalyticsProvider).logEvent(
+              name: 'daily_challenge_completed',
+              userId: completionUserId,
+              properties: {
+                'operation': session.operationType.name,
+                'difficulty': session.difficulty.name,
+                'successRate': session.successRate,
+              },
+            ),
+          );
         }
       }
 

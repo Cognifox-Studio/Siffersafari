@@ -31,6 +31,8 @@ class SettingsKeys {
   static String spacedRepetitionEnabled(String userId) =>
       'spaced_repetition_enabled_$userId';
 
+  static const String analyticsEvents = 'analytics_events';
+
   /// Key for tracking daily challenge completion.
   /// [date] should be in 'YYYY-MM-DD' format.
   static String dailyChallengeCompletion(String userId, String date) =>

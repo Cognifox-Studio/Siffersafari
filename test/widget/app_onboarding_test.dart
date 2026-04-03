@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
@@ -48,7 +49,10 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(home: HomeScreen()),
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: HomeScreen()),
+          ),
         ),
       );
 
@@ -62,17 +66,33 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       expect(onboardingTitle, findsOneWidget);
+      expect(find.text('1/1'), findsOneWidget);
+      expect(find.text('Kan barnet läsa?'), findsNothing);
+      expect(find.text('Vad vill du räkna först?'), findsNothing);
 
-      await tester.tap(find.text('Hoppa över'));
+      await tester.tap(find.text('Starta'));
       await pumpUntilFound(tester, find.text(AppConstants.appName));
+      await pumpFor(tester, const Duration(milliseconds: 600));
 
-      // Onboarding should not appear again after skipping
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: HomeScreen()),
+          ),
+        ),
+      );
+      await tester.pump();
+      await pumpFor(tester, const Duration(milliseconds: 600));
+
+      // Onboarding should not appear again after finishing.
       expect(find.text('Nu kör vi!'), findsNothing);
     },
   );
 
   testWidgets(
-    '[Widget] Onboarding – Done button does not return to step 1',
+    '[Widget] Onboarding – start completes setup in one step',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -100,7 +120,10 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(home: HomeScreen()),
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: HomeScreen()),
+          ),
         ),
       );
 
@@ -114,9 +137,10 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       expect(onboardingTitle, findsOneWidget);
-      final hasReadingStep = find.text('1/3').evaluate().isNotEmpty;
-      expect(find.text(hasReadingStep ? '1/3' : '1/2'), findsOneWidget);
+      expect(find.text('1/1'), findsOneWidget);
       expect(find.text('Vilken årskurs kör du?'), findsOneWidget);
+      expect(find.text('Kan barnet läsa?'), findsNothing);
+      expect(find.text('Vad vill du räkna först?'), findsNothing);
 
       final gradeDropdown = find.byWidgetPredicate(
         (w) => w is DropdownButton<int?>,
@@ -126,42 +150,6 @@ void main() {
       await pumpFor(tester, const Duration(milliseconds: 200));
       await tester.tap(find.text('Åk 3').last);
       await pumpFor(tester, const Duration(milliseconds: 200));
-
-      await tester.tap(find.text('Nästa'));
-      await pumpFor(
-        tester,
-        AppConstants.mediumAnimationDuration +
-            const Duration(milliseconds: 200),
-      );
-
-      if (hasReadingStep) {
-        expect(find.text('2/3'), findsOneWidget);
-        expect(find.text('Kan barnet läsa?'), findsOneWidget);
-
-        await tester.tap(find.text('Nej'));
-        await pumpFor(
-          tester,
-          AppConstants.mediumAnimationDuration +
-              const Duration(milliseconds: 200),
-        );
-
-        expect(find.text('3/3'), findsOneWidget);
-      } else {
-        expect(find.text('2/2'), findsOneWidget);
-      }
-
-      expect(find.text('Vad vill du räkna först?'), findsOneWidget);
-
-      // Regression check: addition should be preselected by default.
-      final additionTile = find.widgetWithText(
-        CheckboxListTile,
-        'Plusraketer',
-      );
-      expect(additionTile, findsOneWidget);
-      expect(
-        tester.widget<CheckboxListTile>(additionTile).value,
-        isTrue,
-      );
 
       await tester.tap(find.text('Starta'));
 
@@ -177,11 +165,18 @@ void main() {
 
       expect(homeTitle, findsOneWidget);
       expect(onboardingTitle, findsNothing);
+      expect(repository.getAllowedOperationNames(userId), contains('addition'));
+      expect(repository.getAllowedOperationNames(userId), contains('division'));
+      expect(
+          repository.getSetting('word_problems_enabled_$userId'), isA<bool>());
 
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: container,
-          child: const MaterialApp(home: HomeScreen()),
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: HomeScreen()),
+          ),
         ),
       );
       await pumpFor(tester, const Duration(milliseconds: 800));

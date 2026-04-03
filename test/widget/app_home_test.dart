@@ -135,6 +135,42 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] App home – visar primar spela-nu-knapp for aktiv profil',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'primary-play-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Milo',
+        ageGroup: AgeGroup.middle,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MathGameApp(initFuture: Future.value(null)),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('primary_play_button')),
+      );
+
+      expect(find.byKey(const Key('primary_play_button')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     '[Widget] App home – can open story map',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;

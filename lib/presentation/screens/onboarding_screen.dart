@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/user_provider.dart';
-import '../../core/providers/word_problems_settings_provider.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../domain/enums/operation_type.dart';
 import '../../shared/settings/quiz_feature_settings.dart';
@@ -33,13 +33,8 @@ class OnboardingScreen extends ConsumerStatefulWidget {
 // region _OnboardingScreenState Main Widget
 
 class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
-  final _controller = PageController();
-  int _pageIndex = 0;
-
   int? _gradeLevel;
-  Set<OperationType> _allowedOps = const {OperationType.addition};
-
-  bool _needsReadingSetup = false;
+  bool _isInitializing = true;
 
   @override
   void initState() {
@@ -51,42 +46,16 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final repo = ref.read(localStorageRepositoryProvider);
 
-      final hasStoredReadingSetting =
-          QuizFeatureSettings.hasStoredWordProblemsEnabled(
-        repository: repo,
-        userId: widget.userId,
-      );
-
       final activeUser = ref.read(userProvider).activeUser;
       final user = activeUser?.userId == widget.userId
           ? activeUser
           : repo.getUserProgress(widget.userId);
 
-      ref.read(parentSettingsProvider.notifier).loadAllowedOperations(
-        widget.userId,
-        defaultOperations: const {OperationType.addition},
-      );
-      final allowedOps = ref.read(parentSettingsProvider)[widget.userId] ??
-          const <OperationType>{OperationType.addition};
-
       if (!mounted) return;
       setState(() {
         _gradeLevel = user?.gradeLevel;
-        _allowedOps = allowedOps;
-        _needsReadingSetup = !hasStoredReadingSetting;
+        _isInitializing = false;
       });
-
-      // If grade is already set (often chosen during user creation), start on
-      // the next step to avoid asking the same question twice.
-      if ((user?.gradeLevel != null) && mounted) {
-        setState(() {
-          _pageIndex = 1;
-        });
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (!mounted) return;
-          _controller.jumpToPage(1);
-        });
-      }
     });
   }
 
@@ -95,16 +64,22 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     OnboardingScreen._activeCount = OnboardingScreen._activeCount > 0
         ? OnboardingScreen._activeCount - 1
         : 0;
-    _controller.dispose();
     super.dispose();
+  }
+
+  Set<OperationType> _defaultAllowedOperationsFor(int? gradeLevel) {
+    if (gradeLevel == null) {
+      return const {
+        OperationType.addition,
+        OperationType.subtraction,
+      };
+    }
+
+    return DifficultyConfig.visibleOperationsForGrade(gradeLevel);
   }
 
   Future<void> _finish() async {
     final repo = ref.read(localStorageRepositoryProvider);
-
-    await ref
-        .read(parentSettingsProvider.notifier)
-        .setAllowedOperations(widget.userId, _allowedOps);
 
     final activeUser = ref.read(userProvider).activeUser;
     if (activeUser != null && activeUser.userId == widget.userId) {
@@ -119,10 +94,26 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       }
     }
 
-    // Make sure parent settings cache reflects the saved operations.
-    ref
-        .read(parentSettingsProvider.notifier)
-        .loadAllowedOperations(widget.userId);
+    await ref.read(parentSettingsProvider.notifier).setAllowedOperations(
+          widget.userId,
+          _defaultAllowedOperationsFor(_gradeLevel),
+        );
+
+    final hasStoredReadingSetting =
+        QuizFeatureSettings.hasStoredWordProblemsEnabled(
+      repository: repo,
+      userId: widget.userId,
+    );
+    if (!hasStoredReadingSetting) {
+      await QuizFeatureSettings.saveWordProblemsEnabled(
+        repository: repo,
+        userId: widget.userId,
+        enabled: QuizFeatureSettings.defaultWordProblemsEnabled(
+          repository: repo,
+          userId: widget.userId,
+        ),
+      );
+    }
 
     await repo.setOnboardingDone(widget.userId, true);
 
@@ -130,21 +121,8 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     Navigator.of(context).pop();
   }
 
-  void _next() {
-    if (_pageIndex >= (_pages.length - 1)) {
-      _finish();
-      return;
-    }
-
-    _controller.nextPage(
-      duration: AppConstants.mediumAnimationDuration,
-      curve: Curves.easeOut,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final progress = (_pageIndex + 1) / _pages.length;
     final accentColor = Theme.of(context).colorScheme.secondary;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
@@ -208,7 +186,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           ),
                         ),
                         Text(
-                          '${_pageIndex + 1}/${_pages.length}',
+                          '1/1',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: mutedOnPrimary,
@@ -222,7 +200,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                       borderRadius:
                           BorderRadius.circular(AppConstants.borderRadius),
                       child: LinearProgressIndicator(
-                        value: progress.clamp(0.0, 1.0),
+                        value: 1.0,
                         minHeight: AppConstants.progressBarHeightSmall,
                         backgroundColor: onPrimary.withValues(
                           alpha: AppOpacities.progressTrackLight,
@@ -236,34 +214,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           : AppConstants.largePadding,
                     ),
                     Expanded(
-                      child: PageView(
-                        controller: _controller,
-                        onPageChanged: (index) =>
-                            setState(() => _pageIndex = index),
-                        children: _pages,
+                      child: _OnboardingGradePage(
+                        gradeLevel: _gradeLevel,
+                        onChanged: (value) => setState(() {
+                          _gradeLevel = value;
+                        }),
                       ),
                     ),
                     const SizedBox(height: AppConstants.defaultPadding),
                     ElevatedButton(
-                      onPressed: _next,
+                      onPressed: _isInitializing ? null : _finish,
                       child: Text(
-                        _pageIndex >= (_pages.length - 1) ? 'Starta' : 'Nästa',
+                        'Starta',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: onPrimary,
                                   fontWeight: FontWeight.bold,
                                 ),
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.smallPadding),
-                    TextButton(
-                      onPressed: _finish,
-                      child: Text(
-                        'Hoppa över',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: mutedOnPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
                       ),
                     ),
                   ],
@@ -274,42 +241,6 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         ),
       ),
     );
-  }
-
-  List<Widget> get _pages {
-    final pages = <Widget>[
-      _OnboardingGradePage(
-        gradeLevel: _gradeLevel,
-        onChanged: (value) => setState(() {
-          _gradeLevel = value;
-        }),
-      ),
-    ];
-
-    if (_needsReadingSetup) {
-      pages.add(
-        _OnboardingReadingPage(
-          onAnswer: (canRead) async {
-            await ref
-                .read(wordProblemsEnabledProvider(widget.userId).notifier)
-                .setEnabled(canRead);
-            if (!mounted) return;
-            _next();
-          },
-        ),
-      );
-    }
-
-    pages.add(
-      _OnboardingOpsPage(
-        allowedOps: _allowedOps,
-        onChanged: (updated) => setState(() {
-          _allowedOps = updated;
-        }),
-      ),
-    );
-
-    return pages;
   }
 }
 
@@ -374,7 +305,7 @@ class _OnboardingGradePage extends StatelessWidget {
   final int? gradeLevel;
   final ValueChanged<int?> onChanged;
 
-  static const _gradeItems = <int>[1, 2, 3, 4, 5, 6];
+  static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   @override
   Widget build(BuildContext context) {
@@ -388,7 +319,7 @@ class _OnboardingGradePage extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            'Vi väljer en lagom startnivå tillsammans.',
+            'Vi väljer en lagom start direkt. Det går att ändra senare i Föräldraläge.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -430,147 +361,6 @@ class _OnboardingGradePage extends StatelessWidget {
                 onChanged: onChanged,
               ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-// endregion
-
-// region Page Builder Widgets
-class _OnboardingOpsPage extends StatelessWidget {
-  const _OnboardingOpsPage({
-    required this.allowedOps,
-    required this.onChanged,
-  });
-
-  final Set<OperationType> allowedOps;
-  final ValueChanged<Set<OperationType>> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final accentColor = Theme.of(context).colorScheme.secondary;
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-    const items = <OperationType>[
-      OperationType.addition,
-      OperationType.subtraction,
-      OperationType.multiplication,
-      OperationType.division,
-    ];
-
-    return _OnboardingCard(
-      icon: Icons.grid_view,
-      title: 'Vad vill du räkna först?',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Välj det ni vill börja med. Det går att ändra senare.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
-          ...items.map((op) {
-            final isChecked = allowedOps.contains(op);
-            return Theme(
-              data: Theme.of(context).copyWith(
-                unselectedWidgetColor: mutedOnPrimary,
-              ),
-              child: CheckboxListTile(
-                value: isChecked,
-                onChanged: (value) {
-                  final checked = value ?? false;
-                  final updated = {...allowedOps};
-                  if (checked) {
-                    updated.add(op);
-                  } else {
-                    updated.remove(op);
-                  }
-                  if (updated.isEmpty) {
-                    // Never allow an empty set.
-                    return;
-                  }
-                  onChanged(updated);
-                },
-                activeColor: accentColor,
-                title: Text(
-                  op.displayName,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                controlAffinity: ListTileControlAffinity.leading,
-                dense: true,
-                contentPadding: EdgeInsets.zero,
-              ),
-            );
-          }),
-        ],
-      ),
-    );
-  }
-}
-
-class _OnboardingReadingPage extends StatelessWidget {
-  const _OnboardingReadingPage({
-    required this.onAnswer,
-  });
-
-  final ValueChanged<bool> onAnswer;
-
-  @override
-  Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-    final subtleOnPrimary =
-        onPrimary.withValues(alpha: AppOpacities.subtleText);
-
-    return _OnboardingCard(
-      icon: Icons.menu_book,
-      title: 'Kan barnet läsa?',
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            'Om barnet kan läsa kan spelet ibland visa korta textuppgifter.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: AppConstants.defaultPadding),
-          Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => onAnswer(true),
-                  child: const Text('Ja'),
-                ),
-              ),
-              const SizedBox(width: AppConstants.smallPadding),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => onAnswer(false),
-                  child: const Text('Nej'),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
-          Text(
-            'Det går att ändra senare i Föräldraläge.',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: subtleOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-            textAlign: TextAlign.center,
           ),
         ],
       ),

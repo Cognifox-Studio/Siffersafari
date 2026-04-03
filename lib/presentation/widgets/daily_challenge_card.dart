@@ -5,12 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/providers/daily_challenge_provider.dart';
 import '../../core/services/daily_challenge_service.dart';
+import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/operation_type.dart';
 
 /// Home screen card that shows today's daily challenge and lets the child
 /// start it with a single tap or see that it's already done.
 class DailyChallengeCard extends ConsumerWidget {
   const DailyChallengeCard({
+    required this.user,
     required this.userId,
     required this.allowedOps,
     required this.onStart,
@@ -20,9 +22,10 @@ class DailyChallengeCard extends ConsumerWidget {
     super.key,
   });
 
+  final UserProgress user;
   final String userId;
   final Set<OperationType> allowedOps;
-  final void Function(DailyChallengeService service) onStart;
+  final void Function(DailyChallenge challenge) onStart;
   final Color onPrimary;
   final Color mutedOnPrimary;
   final Color accentColor;
@@ -30,7 +33,10 @@ class DailyChallengeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final service = ref.watch(dailyChallengeServiceProvider);
-    final challenge = service.getTodaysChallenge();
+    final challenge = service.getTodaysChallengeForUser(
+      user: user,
+      allowedOperations: allowedOps,
+    );
     final isCompleted = ref.watch(dailyChallengeProvider(userId));
 
     // Hide card if today's operation isn't allowed for this profile.
@@ -100,7 +106,7 @@ class DailyChallengeCard extends ConsumerWidget {
           if (!isCompleted) ...[
             const SizedBox(height: AppConstants.defaultPadding),
             OutlinedButton.icon(
-              onPressed: () => onStart(service),
+              onPressed: () => onStart(challenge),
               style: OutlinedButton.styleFrom(
                 foregroundColor: onPrimary,
                 side: BorderSide(color: accentColor),

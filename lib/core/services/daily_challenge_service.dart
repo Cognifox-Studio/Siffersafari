@@ -1,3 +1,4 @@
+import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
 
@@ -48,6 +49,40 @@ class DailyChallengeService {
     );
   }
 
+  DailyChallenge getTodaysChallengeForUser({
+    required UserProgress user,
+    required Set<OperationType> allowedOperations,
+  }) {
+    final now = DateTime.now();
+    final day = _dayOfYear(now);
+
+    final candidates = allowedOperations
+        .where((op) => _operations.contains(op))
+        .toList(growable: false);
+    final operations = candidates.isNotEmpty ? candidates : _operations;
+
+    final sortedByNeed = List<OperationType>.from(operations)
+      ..sort((a, b) {
+        final aScore = _learningScoreForOperation(user, a);
+        final bScore = _learningScoreForOperation(user, b);
+        final cmp = aScore.compareTo(bScore);
+        if (cmp != 0) return cmp;
+        return a.index.compareTo(b.index);
+      });
+
+    final poolSize = sortedByNeed.length >= 2 ? 2 : 1;
+    final selectedOperation = sortedByNeed[day % poolSize];
+    final selectedDifficulty =
+        _difficultyForOperation(user, selectedOperation, day: day);
+
+    return DailyChallenge(
+      operation: selectedOperation,
+      difficulty: selectedDifficulty,
+      dateKey: _todayKey(now),
+      title: '${selectedOperation.emoji} ${selectedOperation.displayName}',
+    );
+  }
+
   String todayKey() => _todayKey(DateTime.now());
 
   String _todayKey(DateTime date) =>
@@ -56,5 +91,48 @@ class DailyChallengeService {
   int _dayOfYear(DateTime date) {
     final start = DateTime(date.year);
     return date.difference(start).inDays;
+  }
+
+  double _learningScoreForOperation(UserProgress user, OperationType op) {
+    final keyPrefix = '${op.name}_';
+    final relevant = user.masteryLevels.entries
+        .where((entry) => entry.key.startsWith(keyPrefix))
+        .map((entry) => entry.value)
+        .toList(growable: false);
+
+    final masteryAverage = relevant.isEmpty
+        ? 0.35
+        : relevant.reduce((a, b) => a + b) / relevant.length;
+
+    final step = (user.operationDifficultySteps[op.name] ?? 3).clamp(1, 10);
+    final normalizedStep = (step - 1) / 9;
+
+    // Lower score means the child likely benefits more from this operation.
+    return (masteryAverage * 0.75) + (normalizedStep * 0.25);
+  }
+
+  DifficultyLevel _difficultyForOperation(
+    UserProgress user,
+    OperationType op, {
+    required int day,
+  }) {
+    final keyPrefix = '${op.name}_';
+    final relevant = user.masteryLevels.entries
+        .where((entry) => entry.key.startsWith(keyPrefix))
+        .map((entry) => entry.value)
+        .toList(growable: false);
+    final masteryAverage = relevant.isEmpty
+        ? 0.35
+        : relevant.reduce((a, b) => a + b) / relevant.length;
+
+    final step = (user.operationDifficultySteps[op.name] ?? 3).clamp(1, 10);
+
+    if (step >= 8 && masteryAverage >= 0.8) {
+      return day.isEven ? DifficultyLevel.medium : DifficultyLevel.hard;
+    }
+    if (step >= 4 || masteryAverage >= 0.55) {
+      return DifficultyLevel.medium;
+    }
+    return DifficultyLevel.easy;
   }
 }

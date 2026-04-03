@@ -1,30 +1,34 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
+import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/providers/app_analytics_provider.dart';
 import '../../core/providers/app_theme_provider.dart';
 import '../../core/providers/audio_service_provider.dart';
+import '../../core/providers/daily_challenge_provider.dart';
 import '../../core/providers/local_storage_repository_provider.dart';
 import '../../core/providers/missing_number_settings_provider.dart';
 import '../../core/providers/parent_settings_provider.dart';
 import '../../core/providers/quiz_provider.dart';
 import '../../core/providers/spaced_repetition_settings_provider.dart';
-import '../../core/services/daily_challenge_service.dart';
 import '../../core/providers/story_progress_provider.dart';
 import '../../core/providers/user_provider.dart';
 import '../../core/providers/word_problems_settings_provider.dart';
+import '../../core/services/daily_challenge_service.dart';
 import '../../core/utils/adaptive_layout.dart';
 import '../../core/utils/page_transitions.dart';
 import '../../domain/entities/user_progress.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
-import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
-import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import '../screens/story_map_screen.dart';
-import '../widgets/mascot_character.dart';
 import '../widgets/daily_challenge_card.dart';
+import '../widgets/mascot_character.dart';
 import '../widgets/themed_background_scaffold.dart';
 import 'onboarding_screen.dart';
 import 'parent_pin_screen.dart';
@@ -146,6 +150,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           isDailyChallenge: isDailyChallenge,
         );
 
+    unawaited(
+      ref.read(appAnalyticsProvider).logEvent(
+        name: 'quiz_started',
+        userId: user.userId,
+        properties: {
+          'operation': operationType.name,
+          'difficulty': effectiveDifficulty.name,
+          'isDailyChallenge': isDailyChallenge,
+          'gradeLevel': user.gradeLevel,
+        },
+      ),
+    );
+
     setState(() {
       _mascotReaction = MascotReaction.screenChange;
       _mascotReactionNonce++;
@@ -153,7 +170,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     context.pushSmooth(const QuizScreen());
   }
 
-  void _startDailyChallenge(DailyChallenge challenge) {
+  void _startDailyChallenge(
+    DailyChallenge challenge, {
+    String source = 'daily_card',
+  }) {
+    final user = ref.read(userProvider).activeUser;
+    if (user != null) {
+      unawaited(
+        ref.read(appAnalyticsProvider).logEvent(
+          name: 'daily_challenge_started',
+          userId: user.userId,
+          properties: {
+            'operation': challenge.operation.name,
+            'difficulty': challenge.difficulty.name,
+            'dateKey': challenge.dateKey,
+            'source': source,
+          },
+        ),
+      );
+    }
+
     _startQuiz(
       operationType: challenge.operation,
       difficulty: challenge.difficulty,
@@ -260,10 +296,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       parentAllowedOperations: parentAllowedOps,
       gradeLevel: user?.gradeLevel,
     );
+    final dailyChallenge = user == null
+        ? null
+        : ref.watch(dailyChallengeServiceProvider).getTodaysChallengeForUser(
+              user: user,
+              allowedOperations: allowedOps,
+            );
+    final isDailyChallengeCompleted =
+        user == null ? false : ref.watch(dailyChallengeProvider(user.userId));
     final hasStoryQuest = user != null &&
         storyProgress != null &&
         userState.questStatus != null &&
         allowedOps.contains(userState.questStatus!.quest.operation);
+    final primaryPlayAction = user == null
+        ? null
+        : _buildPrimaryPlayAction(
+            user: user,
+            allowedOps: allowedOps,
+            hasStoryQuest: hasStoryQuest,
+            userState: userState,
+            dailyChallenge: dailyChallenge,
+            isDailyChallengeCompleted: isDailyChallengeCompleted,
+          );
 
     final operationCards = <Widget>[];
     if (allowedOps.contains(OperationType.addition)) {
@@ -356,6 +410,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           IconButton(
                             tooltip: 'Föräldraläge',
                             onPressed: () {
+                              unawaited(
+                                ref.read(appAnalyticsProvider).logEvent(
+                                      name: 'parent_mode_opened',
+                                      userId: user.userId,
+                                    ),
+                              );
                               context.pushSmooth(const ParentPinScreen());
                             },
                             icon: Icon(Icons.lock, color: mutedOnPrimary),
@@ -667,6 +727,130 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
 
+                    if (primaryPlayAction != null) ...[
+                      const SizedBox(height: AppConstants.largePadding),
+                      Container(
+                        key: const Key('primary_play_card'),
+                        constraints: isWideScreen
+                            ? const BoxConstraints(maxWidth: 800)
+                            : null,
+                        width: double.infinity,
+                        padding:
+                            const EdgeInsets.all(AppConstants.defaultPadding),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              themeCfg.primaryActionColor,
+                              themeCfg.secondaryActionColor,
+                            ],
+                          ),
+                          borderRadius:
+                              BorderRadius.circular(AppConstants.borderRadius),
+                          boxShadow: [
+                            BoxShadow(
+                              color: themeCfg.primaryActionColor.withValues(
+                                alpha: AppOpacities.operationCardShadowPrimary,
+                              ),
+                              blurRadius:
+                                  AppConstants.operationCardShadowPrimaryBlur,
+                              spreadRadius:
+                                  AppConstants.operationCardShadowPrimarySpread,
+                              offset: const Offset(
+                                0,
+                                AppConstants.operationCardShadowPrimaryOffsetY,
+                              ),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  primaryPlayAction.icon,
+                                  color: onPrimary,
+                                  size: 26,
+                                ),
+                                const SizedBox(
+                                  width: AppConstants.smallPadding,
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    primaryPlayAction.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          color: onPrimary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppConstants.smallPadding),
+                            Text(
+                              primaryPlayAction.description,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color: onPrimary.withValues(
+                                      alpha: AppOpacities.mutedText,
+                                    ),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                            const SizedBox(height: AppConstants.defaultPadding),
+                            ElevatedButton.icon(
+                              key: const Key('primary_play_button'),
+                              onPressed: primaryPlayAction.onPressed,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: onPrimary,
+                                foregroundColor: themeCfg.primaryActionColor,
+                              ),
+                              icon: Icon(primaryPlayAction.icon),
+                              label: Text(primaryPlayAction.buttonLabel),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+
+                    if (user != null) ...[
+                      const SizedBox(height: AppConstants.largePadding),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Fler val',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: onPrimary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.microSpacing6),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          hasStoryQuest
+                              ? 'Du kan ocksa oppna kartan, spela dagens runda eller valja raknesatt sjalv.'
+                              : 'Vill du valja sjalv? Har finns dagens runda och alla raknesatt.',
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: subtleOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ),
+                    ],
+
+                    const SizedBox(height: AppConstants.defaultPadding),
+
                     if (hasStoryQuest)
                       HomeStoryProgressCard(
                         story: storyProgress,
@@ -693,65 +877,36 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                     if (user != null)
                       DailyChallengeCard(
+                        user: user,
                         userId: user.userId,
                         allowedOps: allowedOps,
                         onPrimary: onPrimary,
                         mutedOnPrimary: mutedOnPrimary,
                         accentColor: accentColor,
-                        onStart: (service) {
-                          final challenge = service.getTodaysChallenge();
+                        onStart: (challenge) {
                           _startDailyChallenge(challenge);
                         },
                       ),
 
-                    const SizedBox(height: AppConstants.largePadding),
-
-                    if (user != null) ...[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          hasStoryQuest
-                              ? 'Eller valj en egen matte-runda'
-                              : 'Valj ditt nasta uppdrag',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: onPrimary,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.microSpacing6),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          hasStoryQuest
-                              ? 'Fortsatt pa stigen ovanfor eller tryck pa en skylt har nedan.'
-                              : 'Tryck pa en skylt sa startar vi direkt.',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: subtleOnPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                        ),
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
-                    ],
+                    if (user != null)
+                      const SizedBox(height: AppConstants.largePadding),
 
                     // Operation selection (responsive grid)
-                    ConstrainedBox(
-                      constraints: isWideScreen
-                          ? const BoxConstraints(maxWidth: 800)
-                          : const BoxConstraints(),
-                      child: GridView.count(
-                        crossAxisCount: gridCrossAxisCount,
-                        childAspectRatio: operationCardAspectRatio,
-                        crossAxisSpacing: AppConstants.defaultPadding,
-                        mainAxisSpacing: AppConstants.defaultPadding,
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        children: operationCards,
+                    if (user != null)
+                      ConstrainedBox(
+                        constraints: isWideScreen
+                            ? const BoxConstraints(maxWidth: 800)
+                            : const BoxConstraints(),
+                        child: GridView.count(
+                          crossAxisCount: gridCrossAxisCount,
+                          childAspectRatio: operationCardAspectRatio,
+                          crossAxisSpacing: AppConstants.defaultPadding,
+                          mainAxisSpacing: AppConstants.defaultPadding,
+                          physics: const NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          children: operationCards,
+                        ),
                       ),
-                    ),
 
                     const SizedBox(height: AppConstants.defaultPadding),
 
@@ -901,6 +1056,96 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
+  _PrimaryPlayAction _buildPrimaryPlayAction({
+    required UserProgress user,
+    required Set<OperationType> allowedOps,
+    required bool hasStoryQuest,
+    required UserState userState,
+    required DailyChallenge? dailyChallenge,
+    required bool isDailyChallengeCompleted,
+  }) {
+    if (hasStoryQuest && userState.questStatus != null) {
+      final quest = userState.questStatus!.quest;
+      return _PrimaryPlayAction(
+        title: 'Fortsatt uppdraget',
+        description: '${quest.title} · ${quest.operation.displayName}',
+        buttonLabel: 'Fortsatt',
+        icon: Icons.explore_rounded,
+        onPressed: () => _startQuiz(
+          operationType: quest.operation,
+          difficulty: quest.difficulty,
+        ),
+      );
+    }
+
+    if (dailyChallenge != null && !isDailyChallengeCompleted) {
+      return _PrimaryPlayAction(
+        title: 'Dagens runda ar redo',
+        description:
+            '${dailyChallenge.title} · ${dailyChallenge.difficulty.displayName}',
+        buttonLabel: 'Spela nu',
+        icon: Icons.flash_on_rounded,
+        onPressed: () => _startDailyChallenge(
+          dailyChallenge,
+          source: 'primary_play',
+        ),
+      );
+    }
+
+    final recommendedOperation = _preferredPrimaryOperation(
+      allowedOps: allowedOps,
+      preferredOperation: dailyChallenge?.operation,
+    );
+
+    return _PrimaryPlayAction(
+      title: 'Spela nu',
+      description: 'Vi startar direkt med ${recommendedOperation.displayName}.',
+      buttonLabel: 'Spela nu',
+      icon: _iconForOperation(recommendedOperation),
+      onPressed: () => _startQuiz(
+        operationType: recommendedOperation,
+        difficulty: DifficultyLevel.easy,
+      ),
+    );
+  }
+
+  OperationType _preferredPrimaryOperation({
+    required Set<OperationType> allowedOps,
+    OperationType? preferredOperation,
+  }) {
+    if (preferredOperation != null && allowedOps.contains(preferredOperation)) {
+      return preferredOperation;
+    }
+
+    const fallbackOrder = <OperationType>[
+      OperationType.addition,
+      OperationType.subtraction,
+      OperationType.multiplication,
+      OperationType.division,
+    ];
+
+    for (final operation in fallbackOrder) {
+      if (allowedOps.contains(operation)) return operation;
+    }
+
+    return OperationType.addition;
+  }
+
+  IconData _iconForOperation(OperationType operation) {
+    switch (operation) {
+      case OperationType.addition:
+        return Icons.add_rounded;
+      case OperationType.subtraction:
+        return Icons.remove_rounded;
+      case OperationType.multiplication:
+        return Icons.close_rounded;
+      case OperationType.division:
+        return Icons.percent_rounded;
+      case OperationType.mixed:
+        return Icons.auto_awesome_rounded;
+    }
+  }
+
   // endregion
 
   // region Medal/Goal Helper Methods
@@ -943,4 +1188,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // endregion
+}
+
+class _PrimaryPlayAction {
+  const _PrimaryPlayAction({
+    required this.title,
+    required this.description,
+    required this.buttonLabel,
+    required this.icon,
+    required this.onPressed,
+  });
+
+  final String title;
+  final String description;
+  final String buttonLabel;
+  final IconData icon;
+  final VoidCallback onPressed;
 }

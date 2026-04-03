@@ -43,6 +43,23 @@ Om repo-skillen matchar, använd den i stället för att improvisera arbetsflöd
 - `.github/skills/asset-generation-runner/SKILL.md`
 - `.github/skills/release-readiness-check/SKILL.md`
 
+## Automation-floden (skills)
+
+Använd skill-floden när uppgiften matchar signalorden nedan.
+
+- QA och verifiering: `.github/skills/flutter-qa-guard/SKILL.md`
+	- Signalord: `verify`, `testa`, `QA`, `regression`, `analyze`
+- Asset-generering: `.github/skills/asset-generation-runner/SKILL.md`
+	- Signalord: `generate assets`, `regenerera assets`, `uppdatera animation assets`, `sync generated files`
+- Karaktärspipeline: `.github/skills/game-character-pipeline/SKILL.md`
+	- Signalord: `spelklar karaktär`, `användbar karaktär`, `character pipeline`, `Gör en användbar karaktär av denna`
+- Animation preview-lab: `.github/skills/animation-preview-lab/SKILL.md`
+	- Signalord: `idle`, `walk`, `pivot`, `wave`, `T-pose`, `motion-lab`, `clean preview`
+- Release readiness: `.github/skills/release-readiness-check/SKILL.md`
+	- Signalord: `release check`, `readiness`, `ship`, `preflight`, `final QA`
+- Dokumentationspass: `.github/skills/documentation/SKILL.md`
+	- Signalord: `dokumentera`, `uppdatera docs`, `documentation audit`, `synka docs med kod`
+
 ## Arkitektur
 
 UI-lagret är hybrid under övergång till feature-first struktur:
