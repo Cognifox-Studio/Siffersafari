@@ -1,6 +1,6 @@
 ﻿# Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-18).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04).
 
 ## Snabboversikt
 
@@ -31,22 +31,27 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-03-18)
 
 ### app/ + features/ + presentation/
 
-UI-lagret ar nu hybrid under overgangen till feature-first struktur:
+UI-lagret ar feature-first:
 - `lib/app/bootstrap/` for startup och routing in i appen
-- `lib/features/` for featureagda skarmar, dialoger och widgets
-- `lib/presentation/` for kvarvarande legacy-UI som inte flyttats an
+- `lib/features/` for alla featureagda skarmar, dialoger och widgets
+- `lib/presentation/screens/` och `lib/presentation/dialogs/` ar tomma (migration klar)
+- `lib/presentation/widgets/` innehaller delade UI-komponenter
 
-Viktiga skarmar:
-- `app/bootstrap/presentation/startup_router_screen.dart`
-- `onboarding_screen.dart`
+Viktiga skarmar (med faktisk sokväg):
+- `app/bootstrap/presentation/screens/startup_splash_gate.dart`
+- `app/bootstrap/presentation/screens/startup_router_screen.dart`
+- `features/onboarding/presentation/screens/onboarding_screen.dart`
+- `features/onboarding/presentation/screens/initial_profile_setup_screen.dart`
 - `features/profiles/presentation/screens/profile_selection_screen.dart`
-- `home_screen.dart`
-- `quiz_screen.dart`
-- `results_screen.dart`
-- `story_map_screen.dart`
-- `parent_pin_screen.dart`
-- `pin_recovery_screen.dart`
-- `parent_dashboard_screen.dart`
+- `features/home/presentation/screens/home_screen.dart`
+- `features/quiz/presentation/screens/quiz_screen.dart`
+- `features/quiz/presentation/screens/results_screen.dart`
+- `features/story/presentation/screens/story_map_screen.dart`
+- `features/settings/presentation/screens/settings_screen.dart`
+- `features/settings/presentation/screens/privacy_policy_screen.dart`
+- `features/parent/presentation/screens/parent_pin_screen.dart`
+- `features/parent/presentation/screens/pin_recovery_screen.dart`
+- `features/parent/presentation/screens/parent_dashboard_screen.dart`
 
 ### core/
 
@@ -57,9 +62,13 @@ Viktiga delar:
 - `core/providers/quiz_provider.dart`
 - `core/providers/user_provider.dart`
 - `core/services/question_generator_service.dart`
+- `core/services/audio_service.dart`
+- `core/services/achievement_service.dart`
 - `core/services/app_update_service.dart`
 - `core/services/quest_progression_service.dart`
 - `core/services/story_progression_service.dart`
+- `core/services/daily_challenge_service.dart`
+- `core/services/app_analytics_service.dart`
 
 ### domain/
 
@@ -80,14 +89,16 @@ Repository-implementation for lokal lagring:
 ## Huvudfloden i produkten
 
 1. Barn valjer/skapar profil
-2. Home visar rekommenderad progression + storystatus
-3. Quiz startas via `QuizNotifier.startSession(...)`
+2. Home visar rekommenderad progression + storystatus + daglig utmaning (`DailyChallengeCard`)
+3. Quiz startas via `QuizNotifier.startSession(...)` (ev. med `isDailyChallenge: true`)
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback
    - poang/streak
-- adaptiv difficulty step per raknesatt
-- spaced repetition-review per fraga nar funktionen ar aktiverad
-- in-progress persistens
+   - combo-multiplikator (1.5× vid 3+ streak, 2.0× vid 5+ streak) via `_comboMultiplierForStreak(...)`
+   - adaptiv difficulty step per raknesatt
+   - spaced repetition-review per fraga nar funktionen ar aktiverad
+   - lokal analytics-event
+   - in-progress persistens
 5. Resultat visas i `ResultsScreen`
 6. `UserNotifier.applyQuizResult(...)` uppdaterar:
    - user stats

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/entities/story_progress.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 import '../config/difficulty_config.dart';
 import '../services/story_progression_service.dart';
 import 'local_storage_repository_provider.dart';

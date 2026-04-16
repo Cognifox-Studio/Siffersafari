@@ -4,21 +4,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
-
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../providers.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../domain/entities/question.dart';
-import '../../domain/entities/quiz_session.dart';
-import '../../domain/entities/story_progress.dart';
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/operation_type.dart';
-import '../widgets/mascot_character.dart';
-import '../widgets/star_rating.dart';
-import '../widgets/themed_background_scaffold.dart';
-import 'home_screen.dart';
-import 'quiz_screen.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_analytics_provider.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
+import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
+import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
+import 'package:siffersafari/core/providers/parent_settings_provider.dart';
+import 'package:siffersafari/core/providers/quiz_provider.dart';
+import 'package:siffersafari/core/providers/story_progress_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/question.dart';
+import 'package:siffersafari/domain/entities/quiz_session.dart';
+import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:siffersafari/presentation/widgets/mascot_character.dart';
+import 'package:siffersafari/presentation/widgets/star_rating.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 // region ResultsScreen Widget
 
@@ -410,79 +419,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ),
         SizedBox(height: AppConstants.defaultPadding.h),
         ElevatedButton(
-          onPressed: () {
-            ref.read(userProvider.notifier).clearLastQuestCompletion();
-            final user = ref.read(userProvider).activeUser;
-            if (user == null) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const HomeScreen(),
-                ),
-                (route) => false,
-              );
-              return;
-            }
-
-            final allowedOps = ref.read(parentSettingsProvider)[user.userId] ??
-                {
-                  OperationType.addition,
-                  OperationType.subtraction,
-                  OperationType.multiplication,
-                  OperationType.division,
-                };
-
-            if (!allowedOps.contains(session.operationType)) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const HomeScreen(),
-                ),
-                (route) => false,
-              );
-              return;
-            }
-
-            final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
-              fallback: user.ageGroup,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final effectiveDifficulty = DifficultyConfig.effectiveDifficulty(
-              fallback: session.difficulty,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final steps = DifficultyConfig.buildDifficultySteps(
-              storedSteps: user.operationDifficultySteps,
-              defaultDifficulty: effectiveDifficulty,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final wordProblemsEnabled = ref.read(
-              wordProblemsEnabledProvider(user.userId),
-            );
-
-            final missingNumberEnabled = ref.read(
-              missingNumberEnabledProvider(user.userId),
-            );
-
-            ref.read(quizProvider.notifier).startSession(
-                  userId: user.userId,
-                  ageGroup: effectiveAgeGroup,
-                  gradeLevel: user.gradeLevel,
-                  operationType: session.operationType,
-                  difficulty: effectiveDifficulty,
-                  initialDifficultyStepsByOperation: steps,
-                  wordProblemsEnabled: wordProblemsEnabled,
-                  missingNumberEnabled: missingNumberEnabled,
-                );
-
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const QuizScreen(),
-              ),
-              (route) => false,
-            );
-          },
+          onPressed: () => _startRoundFromResults(
+            session: session,
+            hardest: hardest,
+            useFocusedMiniPass: false,
+          ),
           child: Text(
             'Spela igen!',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -493,103 +434,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ),
         SizedBox(height: AppConstants.defaultPadding.h),
         OutlinedButton(
-          onPressed: () {
-            ref.read(userProvider.notifier).clearLastQuestCompletion();
-            final user = ref.read(userProvider).activeUser;
-            if (user == null) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const HomeScreen(),
-                ),
-                (route) => false,
-              );
-              return;
-            }
-
-            final allowedOps = ref.read(parentSettingsProvider)[user.userId] ??
-                {
-                  OperationType.addition,
-                  OperationType.subtraction,
-                  OperationType.multiplication,
-                  OperationType.division,
-                };
-
-            if (!allowedOps.contains(session.operationType)) {
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(
-                  builder: (_) => const HomeScreen(),
-                ),
-                (route) => false,
-              );
-              return;
-            }
-
-            final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
-              fallback: user.ageGroup,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final effectiveDifficulty = DifficultyConfig.effectiveDifficulty(
-              fallback: session.difficulty,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final steps = DifficultyConfig.buildDifficultySteps(
-              storedSteps: user.operationDifficultySteps,
-              defaultDifficulty: effectiveDifficulty,
-              gradeLevel: user.gradeLevel,
-            );
-
-            final wordProblemsEnabled = ref.read(
-              wordProblemsEnabledProvider(user.userId),
-            );
-
-            final missingNumberEnabled = ref.read(
-              missingNumberEnabledProvider(user.userId),
-            );
-
-            final count = DifficultyConfig.getQuestionsPerSession(
-              effectiveAgeGroup,
-            );
-
-            final miniQuestions = _buildFocusedMiniPassQuestions(
-              session,
-              hardest,
-              count,
-            );
-
-            if (miniQuestions.isEmpty) {
-              ref.read(quizProvider.notifier).startSession(
-                    userId: user.userId,
-                    ageGroup: effectiveAgeGroup,
-                    gradeLevel: user.gradeLevel,
-                    operationType: session.operationType,
-                    difficulty: effectiveDifficulty,
-                    initialDifficultyStepsByOperation: steps,
-                    wordProblemsEnabled: wordProblemsEnabled,
-                    missingNumberEnabled: missingNumberEnabled,
-                  );
-            } else {
-              ref.read(quizProvider.notifier).startCustomSession(
-                    userId: user.userId,
-                    operationType: session.operationType,
-                    difficulty: effectiveDifficulty,
-                    questions: miniQuestions,
-                    ageGroup: effectiveAgeGroup,
-                    gradeLevel: user.gradeLevel,
-                    initialDifficultyStepsByOperation: steps,
-                    wordProblemsEnabled: wordProblemsEnabled,
-                    missingNumberEnabled: missingNumberEnabled,
-                  );
-            }
-
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const QuizScreen(),
-              ),
-              (route) => false,
-            );
-          },
+          onPressed: () => _startRoundFromResults(
+            session: session,
+            hardest: hardest,
+            useFocusedMiniPass: true,
+          ),
           child: Text(
             'Snabbträna (2 min)',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -600,15 +449,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ),
         SizedBox(height: AppConstants.smallPadding.h),
         TextButton(
-          onPressed: () {
-            ref.read(userProvider.notifier).clearLastQuestCompletion();
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(
-                builder: (_) => const HomeScreen(),
-              ),
-              (route) => false,
-            );
-          },
+          onPressed: _goHomeFromResults,
           child: Text(
             'Hem',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -700,6 +541,120 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
               ),
         ),
       ],
+    );
+  }
+
+  void _goHomeFromResults() {
+    ref.read(userProvider.notifier).clearLastQuestCompletion();
+    context.pushAndRemoveUntilSmooth(
+      const HomeScreen(),
+      (route) => false,
+    );
+  }
+
+  Set<OperationType> _defaultAllowedOperations() {
+    return {
+      OperationType.addition,
+      OperationType.subtraction,
+      OperationType.multiplication,
+      OperationType.division,
+    };
+  }
+
+  void _startRoundFromResults({
+    required QuizSession session,
+    required List<_HardestQuestion> hardest,
+    required bool useFocusedMiniPass,
+  }) {
+    ref.read(userProvider.notifier).clearLastQuestCompletion();
+
+    final user = ref.read(userProvider).activeUser;
+    if (user == null) {
+      _goHomeFromResults();
+      return;
+    }
+
+    final allowedOps = ref.read(parentSettingsProvider)[user.userId] ??
+        _defaultAllowedOperations();
+    if (!allowedOps.contains(session.operationType)) {
+      _goHomeFromResults();
+      return;
+    }
+
+    final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
+      fallback: user.ageGroup,
+      gradeLevel: user.gradeLevel,
+    );
+
+    final effectiveDifficulty = DifficultyConfig.effectiveDifficulty(
+      fallback: session.difficulty,
+      gradeLevel: user.gradeLevel,
+    );
+
+    final steps = DifficultyConfig.buildDifficultySteps(
+      storedSteps: user.operationDifficultySteps,
+      defaultDifficulty: effectiveDifficulty,
+      gradeLevel: user.gradeLevel,
+    );
+
+    final wordProblemsEnabled = ref.read(
+      wordProblemsEnabledProvider(user.userId),
+    );
+    final missingNumberEnabled = ref.read(
+      missingNumberEnabledProvider(user.userId),
+    );
+
+    if (!useFocusedMiniPass) {
+      ref.read(quizProvider.notifier).startSession(
+            userId: user.userId,
+            ageGroup: effectiveAgeGroup,
+            gradeLevel: user.gradeLevel,
+            operationType: session.operationType,
+            difficulty: effectiveDifficulty,
+            initialDifficultyStepsByOperation: steps,
+            wordProblemsEnabled: wordProblemsEnabled,
+            missingNumberEnabled: missingNumberEnabled,
+          );
+    } else {
+      final count = DifficultyConfig.getQuestionsPerSession(
+        effectiveAgeGroup,
+      );
+
+      final miniQuestions = _buildFocusedMiniPassQuestions(
+        session,
+        hardest,
+        count,
+      );
+
+      if (miniQuestions.isEmpty) {
+        ref.read(quizProvider.notifier).startSession(
+              userId: user.userId,
+              ageGroup: effectiveAgeGroup,
+              gradeLevel: user.gradeLevel,
+              operationType: session.operationType,
+              difficulty: effectiveDifficulty,
+              initialDifficultyStepsByOperation: steps,
+              wordProblemsEnabled: wordProblemsEnabled,
+              missingNumberEnabled: missingNumberEnabled,
+            );
+      } else {
+        ref.read(quizProvider.notifier).startCustomSession(
+              userId: user.userId,
+              operationType: session.operationType,
+              difficulty: effectiveDifficulty,
+              questions: miniQuestions,
+              ageGroup: effectiveAgeGroup,
+              gradeLevel: user.gradeLevel,
+              initialDifficultyStepsByOperation: steps,
+              wordProblemsEnabled: wordProblemsEnabled,
+              missingNumberEnabled: missingNumberEnabled,
+            );
+      }
+    }
+
+    context.pushAndRemoveUntilSmooth(
+      const QuizScreen(),
+      (route) => false,
     );
   }
 

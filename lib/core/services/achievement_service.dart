@@ -1,5 +1,5 @@
-import '../../domain/entities/quiz_session.dart';
-import '../../domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/entities/quiz_session.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
 import '../constants/app_constants.dart';
 
 class AchievementReward {

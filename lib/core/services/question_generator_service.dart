@@ -2,10 +2,10 @@ import 'dart:math';
 
 import 'package:uuid/uuid.dart';
 
-import '../../domain/entities/question.dart';
-import '../../domain/enums/age_group.dart';
-import '../../domain/enums/difficulty_level.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/entities/question.dart';
+import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 import '../config/app_features.dart';
 import '../config/difficulty_config.dart';
 

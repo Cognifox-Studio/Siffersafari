@@ -36,6 +36,7 @@ Arbetsstandard:
 1. Kör `flutter analyze` före commit.
 2. Kör relevant testsvit för ändringen. Kör full testsvit vid större ändringar.
 3. Kör Pixel_6 sync/install när ändringen påverkar navigation, rendering, assets eller device-specifikt beteende.
+4. **Alla tester ska passera före commit vid stora ändringar.** Vid fel, fixa grundorsaken och verifiera med `flutter test` innan commit.
 
 Om repo-skillen matchar, använd den i stället för att improvisera arbetsflödet:
 
@@ -62,11 +63,12 @@ Använd skill-floden när uppgiften matchar signalorden nedan.
 
 ## Arkitektur
 
-UI-lagret är hybrid under övergång till feature-first struktur:
+UI-lagret är feature-first. Migrationen från `presentation/screens` och `presentation/dialogs` är klar:
 
 - `lib/app/` för bootstrap och routing
-- `lib/features/` för featureägda skärmar, dialoger och widgets
-- `lib/presentation/` för kvarvarande legacy-UI
+- `lib/features/` för alla featureägda skärmar, dialoger och widgets
+- `lib/presentation/screens/` och `lib/presentation/dialogs/` är tomma
+- `lib/presentation/widgets/` för delade UI-komponenter
 - `lib/core/` för DI, providers, services, tema och utilities
 - `lib/domain/` för Flutter-fri domänlogik
 - `lib/data/` för lokal persistens via Hive
@@ -82,10 +84,23 @@ Detaljer finns i `docs/ARCHITECTURE.md` och `docs/PROJECT_STRUCTURE.md`.
 
 ## Repo-specifika regler
 
-- Mascot-runtime i produkt-UI är SVG-first. Rive-blueprints och `.riv`-material i `artifacts/` är inte en aktiv runtime-dependency i huvudflödet.
-- `.riv`-filer exporteras manuellt från Rive Editor. Script och blueprints genererar inte den slutliga `.riv`-filen automatiskt.
-- Lottie används för UI-effekter, inte som fallback för mascot-runtime.
+### Compliance och juridik
+
+- **COPPA-compliance är obligatorisk** för detta barnspel (target: 6-12 år). Vid features som rör analytics, server-sync, dataexport eller användardata: läs `docs/PRIVACY_POLICY.md` och `/memories/repo/coppa_compliance_2026-03-04.md` först. Appen ska vara offline-first utan krav på konto eller molnsync.
+
+### Asset-runtime
+
+- **Mascot-runtime i produkt-UI är SVG-first.** Rive-blueprints och `.riv`-material i `artifacts/` är **research/future enhancement** – de är inte en aktiv runtime-dependency i huvudflödet och används inte i production UI.
+- `.riv`-filer exporteras manuellt från Rive Editor om de ska användas. Script och blueprints genererar inte den slutliga `.riv`-filen automatiskt.
+- Lottie används för UI-effekter (konfetti, pulser), inte som fallback för mascot-runtime.
+
+### Karaktärer och animation
+
 - Nya humanoid-karaktärer ska referera `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef`.
+- För asset-automation: använd `scripts/promote_assets.ps1` och `.github/skills/asset-generation-runner/SKILL.md` för komplett workflow med validering, QA och promotion.
+
+### State och progression
+
 - `SpacedRepetitionService` finns implementerad men är inte fullt inkopplad i hela quiz-flödet. Anta inte att den används överallt.
 - Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till persistent user state vid quiz-slut.
 
@@ -103,6 +118,7 @@ Följ dessa filer när uppgiften berör respektive område:
 - Pixel_6-emulatorn kan fastna offline i adb. Använd cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
 - Stale APK på device efter rebuild löses ofta med explicit install via `flutter_pixel6.ps1 -Action install`.
 - Historiska dokument och artifacts kan beskriva gamla spår. Behandla `docs/ARCHITECTURE.md` som nulägesfacit före äldre guider.
+- **Rive-förvirring:** Om du hittar `.riv`-filer eller Rive-relaterade artifacts, kom ihåg att de är research/exploration – productkoden använder SVG för mascot-runtime.
 
 ## Sessionskontinuitet
 

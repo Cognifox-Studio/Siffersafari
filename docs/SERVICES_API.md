@@ -1,6 +1,6 @@
 ﻿# Services API (As-Is)
 
-Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-03-11).
+Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-04-04).
 
 ## Oversikt
 
@@ -20,6 +20,35 @@ Ansvar:
 
 Anvands av:
 - `QuizNotifier` (start + nasta fraga)
+
+### DailyChallengeService
+Fil: `lib/core/services/daily_challenge_service.dart`
+
+Ansvar:
+- generera dagens utmaning (operation + svårighetsgrad) deterministiskt baserat på dag-av-året
+- `getTodaysChallenge()`: enkel rotation genom alla operationer, difficulty alternerar easy/medium per dag
+- `getTodaysChallengeForUser(...)`: personaliserad utmaning baserad på användarens mastery och operationDifficultySteps
+  - väljer operation från pool av 2 operationer med lägst `_learningScoreForOperation` (mastery + difficultyStep)
+  - svårighetsgrad anpassas per operation baserat på mastery och step via `_difficultyForOperation`
+- `DailyChallenge` innehåller `operation`, `difficulty`, `dateKey` (YYYY-MM-DD) och `title`
+
+Anvands av:
+- `DailyChallengeNotifier` (via `dailyChallengeProvider`)
+- `HomeScreen` (använder `getTodaysChallengeForUser` för personalisering)
+- `DailyChallengeCard` (presentation/widgets)
+
+### AppAnalyticsService
+Fil: `lib/core/services/app_analytics_service.dart`
+
+Ansvar:
+- logga lokala funnel-events (quiz_start, quiz_completed, daily_start, daily_completed, parent_mode_opened)
+- lagra events lokalt i Hive (max 500 st)
+- ingen molnsynkning – offline-first
+
+Anvands av:
+- `QuizNotifier`
+- `HomeScreen`
+- `ParentDashboardScreen`
 
 ### AudioService
 Fil: `lib/core/services/audio_service.dart`
@@ -92,11 +121,12 @@ Fil: `lib/domain/services/feedback_service.dart`
 
 Ansvar:
 - skapa `FeedbackResult` efter varje svar
-- inkludera poang/snabbbonus/streak och alderanpassad text
+- inkludera poang/snabbbonus/streak, alderanpassad text och `comboMultiplier`
+- `comboMultiplier` sätts av `QuizNotifier._comboMultiplierForStreak(...)`: 1.0 normalt, 1.5× vid 3+ streak, 2.0× vid 5+ streak
 
 Anvands av:
 - `QuizNotifier.submitAnswer(...)`
-- `FeedbackDialog`
+- `FeedbackDialog` (visar orange badge vid multiplier ≥ 1.5)
 
 ### ParentPinService
 Fil: `lib/domain/services/parent_pin_service.dart`
@@ -142,11 +172,57 @@ Ansvar:
 - settings helpers (active user, onboarding, quest state, operation filters)
 - defensiv validering/rensning av korrupt sessiondata
 
+## Providers
+
+Providers är Riverpod-baserade state-hanterare som konsumerar services och repository.
+
+### DailyChallengeNotifier
+Fil: `lib/core/providers/daily_challenge_provider.dart`
+
+Ansvar:
+- spåra completion-status för dagens utmaning per användare
+- hantera consecutive-day streak-räknare
+- persistera streak-data i Hive (`{streak, lastDate}`)
+- `DailyChallengeState` innehåller `isCompleted` och `streakCount`
+
+Beteende:
+- vid `markCompleted()`: räknar upp streak vid consecutiv dag (yesterday → today)
+- bevarar streak vid dubbelmarkering (samma dag)
+- nollställer till streak=1 vid gap > 1 dag
+
+Provider:
+- `dailyChallengeProvider` (family, scopad per userId)
+
+Anvands av:
+- `HomeScreen` (visar streak-badge när streak > 1)
+- `DailyChallengeCard` (visar completion-status)
+- `ResultsScreen` (markerar completed vid quiz-slut)
+
+### QuizNotifier
+Fil: `lib/core/providers/quiz_provider.dart`
+
+Ansvar:
+- hantera quiz-sessions (`startSession`, `submitAnswer`, `nextQuestion`)
+- beräkna combo-multiplikator via `_comboMultiplierForStreak`: 1.0 normalt, 1.5× vid 3+ streak, 2.0× vid 5+ streak
+- in-progress persistens och defensiv validering
+- integration med AdaptiveDifficultyService, FeedbackService, SpacedRepetitionService
+
+### UserNotifier
+Fil: `lib/core/providers/user_provider.dart`
+
+Ansvar:
+- hantera användarprofiler och aktiv användare
+- `applyQuizResult`: uppdatera mastery, achievements, quest/story progression
+- persistera UserProgress i Hive
+
 ## DI och providers
 
 - DI: `lib/core/di/injection.dart`
 - Providers: `lib/core/providers/*.dart`
+- Barrel-export for presentation-lagret: `lib/presentation/providers.dart`
 
 Notera:
 - Providers konsumerar services/repository via Riverpod.
 - DI registrerar singleton/lazy-singleton for globala tjanster.
+- `dailyChallengeProvider` är en family-provider scopad per userId.
+- `appAnalyticsProvider` är en global provider.

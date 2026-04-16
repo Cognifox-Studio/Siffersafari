@@ -1,5 +1,5 @@
 ---
-description: "Konventioner för lib/features/ – feature-ägda skärmar, dialoger och widgets i hybrid feature-first-struktur"
+description: "Konventioner för lib/features/ – feature-ägda skärmar, dialoger och widgets"
 applyTo: "lib/features/**"
 ---
 
@@ -7,9 +7,9 @@ applyTo: "lib/features/**"
 
 ## Syfte
 
-`lib/features/` används för feature-ägd UI i den pågående övergången till feature-first struktur.
+`lib/features/` är strukturens hemvist för all feature-ägd UI. Migrationen från `lib/presentation/` är klar.
 
-Lägg ny feature-specifik UI här i stället för i `lib/presentation/` när koden tydligt hör till en enskild feature.
+Lägg all ny feature-specifik UI här.
 
 ## Struktur
 
@@ -38,8 +38,7 @@ Nuvarande exempel finns i:
 
 ## Beroenden
 
-- Featurekod får använda `core/`, `domain/`, `data/` och etablerade delade widgets/utilities.
-- Featurekod får tillfälligt importera legacy-UI från `lib/presentation/` där hybridstrukturen redan gör det.
+- Featurekod får använda `core/`, `domain/`, `data/` och etablerade delade widgets i `lib/presentation/widgets/`.
 - Undvik direkta beroenden mellan features om det går. Flytta gemensamma abstraktioner till `core/` eller `domain/` i stället för att skapa korskopplingar.
 
 ## UI-mönster

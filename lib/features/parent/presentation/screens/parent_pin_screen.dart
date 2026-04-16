@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/parent_pin_service_provider.dart';
-import '../../core/utils/input_validators.dart';
-import '../../domain/entities/pin_recovery_config.dart';
-import '../../domain/services/parent_pin_service.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/parent_pin_service_provider.dart';
+import 'package:siffersafari/core/utils/input_validators.dart';
+import 'package:siffersafari/domain/entities/pin_recovery_config.dart';
+import 'package:siffersafari/domain/services/parent_pin_service.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 import 'parent_dashboard_screen.dart';
 import 'pin_recovery_screen.dart';
 

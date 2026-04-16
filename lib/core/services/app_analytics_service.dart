@@ -1,5 +1,5 @@
-import '../../core/constants/settings_keys.dart';
-import '../../data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 
 class AppAnalyticsEvent {
   const AppAnalyticsEvent({

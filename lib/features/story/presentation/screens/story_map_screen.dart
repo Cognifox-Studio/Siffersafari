@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_theme_provider.dart';
-import '../../core/providers/story_progress_provider.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../domain/entities/story_progress.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/story_progress_provider.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class StoryMapScreen extends ConsumerWidget {
   const StoryMapScreen({super.key});

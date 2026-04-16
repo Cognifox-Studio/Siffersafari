@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import '../di/injection.dart';
 
 /// Access to repositories via Riverpod so widgets can be tested/overridden

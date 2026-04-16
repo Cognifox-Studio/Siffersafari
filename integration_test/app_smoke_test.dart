@@ -65,6 +65,13 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
       await it.settle(tester, _kSettleMedium);
       return true;
     }
+    // Single-step onboarding (1/1): the only button is "Starta".
+    final startButton = find.widgetWithText(ElevatedButton, 'Starta');
+    if (startButton.evaluate().isNotEmpty) {
+      await it.tap(tester, startButton);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
   }
 
   if (_isVisible(opsTitle) ||
@@ -369,7 +376,11 @@ void main() {
 
       Future<void> ensureParentDashboard() async {
         await maybeCreateProfile();
+        // Drain onboarding (handles both legacy "Hoppa över" and new single-step "Starta").
         await maybeSkipOnboarding();
+        while (await _completeOnboardingStepIfVisible(tester)) {
+          // keep completing onboarding steps until done
+        }
 
         await it.waitFor(
           tester,

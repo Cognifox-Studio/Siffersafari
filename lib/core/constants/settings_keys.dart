@@ -37,4 +37,9 @@ class SettingsKeys {
   /// [date] should be in 'YYYY-MM-DD' format.
   static String dailyChallengeCompletion(String userId, String date) =>
       'daily_challenge_${userId}_$date';
+
+  /// Key for tracking daily challenge streak.
+  /// Stores a map with 'streak' (int) and 'lastDate' (YYYY-MM-DD string).
+  static String dailyChallengeStreak(String userId) =>
+      'daily_challenge_streak_$userId';
 }

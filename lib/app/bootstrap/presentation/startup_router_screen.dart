@@ -6,7 +6,7 @@ import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/initial_profile_setup_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/screens/profile_selection_screen.dart';
-import 'package:siffersafari/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class StartupRouterScreen extends ConsumerStatefulWidget {

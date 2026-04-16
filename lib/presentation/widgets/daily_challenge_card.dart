@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/daily_challenge_provider.dart';
-import '../../core/services/daily_challenge_service.dart';
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
+import 'package:siffersafari/core/services/daily_challenge_service.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
 /// Home screen card that shows today's daily challenge and lets the child
 /// start it with a single tap or see that it's already done.
@@ -37,7 +36,9 @@ class DailyChallengeCard extends ConsumerWidget {
       user: user,
       allowedOperations: allowedOps,
     );
-    final isCompleted = ref.watch(dailyChallengeProvider(userId));
+    final challengeState = ref.watch(dailyChallengeProvider(userId));
+    final isCompleted = challengeState.isCompleted;
+    final streak = challengeState.streakCount;
 
     // Hide card if today's operation isn't allowed for this profile.
     if (!allowedOps.contains(challenge.operation)) {
@@ -93,6 +94,27 @@ class DailyChallengeCard extends ConsumerWidget {
                         ),
                   ),
                 ),
+              if (streak > 1) ...[
+                const SizedBox(width: AppConstants.microSpacing6),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppConstants.microSpacing8.w,
+                    vertical: AppConstants.microSpacing4.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.18),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.borderRadius),
+                  ),
+                  child: Text(
+                    '🔥 $streak dagar',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: onPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                ),
+              ],
             ],
           ),
           const SizedBox(height: AppConstants.microSpacing6),

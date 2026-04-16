@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
 
 class ThemedBackgroundScaffold extends ConsumerWidget {
   const ThemedBackgroundScaffold({

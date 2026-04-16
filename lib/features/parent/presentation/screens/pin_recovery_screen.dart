@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/parent_pin_service_provider.dart';
-import '../../core/utils/input_validators.dart';
-import '../../domain/services/parent_pin_service.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/parent_pin_service_provider.dart';
+import 'package:siffersafari/core/utils/input_validators.dart';
+import 'package:siffersafari/domain/services/parent_pin_service.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 enum _RecoveryStep {
   questionInput,

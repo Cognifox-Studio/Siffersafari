@@ -1,6 +1,6 @@
-import '../../domain/entities/quest.dart';
-import '../../domain/entities/story_progress.dart';
-import '../../domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/entities/quest.dart';
+import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
 
 class StoryProgressionService {
   const StoryProgressionService();

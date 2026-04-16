@@ -3,8 +3,8 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 
-import '../../core/constants/settings_keys.dart';
-import '../../data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 
 /// Service for exporting user data in GDPR-compliant JSON format
 class DataExportService {

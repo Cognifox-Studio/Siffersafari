@@ -1,6 +1,6 @@
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/difficulty_level.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
 /// Immutable data class for a single daily challenge.
 class DailyChallenge {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_theme_provider.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class PrivacyPolicyScreen extends ConsumerWidget {
   const PrivacyPolicyScreen({super.key});

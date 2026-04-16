@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../domain/enums/app_theme.dart';
+import 'package:siffersafari/domain/enums/app_theme.dart';
 import '../constants/app_constants.dart';
 
 /// Character animation states for flexible mascot animation control

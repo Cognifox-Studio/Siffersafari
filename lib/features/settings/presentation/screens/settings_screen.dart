@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_theme_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../domain/enums/app_theme.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/enums/app_theme.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
+
 import 'privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -309,12 +310,7 @@ class SettingsScreen extends ConsumerWidget {
                                 color: mutedOnPrimary,
                               ),
                               onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute<void>(
-                                    builder: (context) =>
-                                        const PrivacyPolicyScreen(),
-                                  ),
-                                );
+                                context.pushSmooth(const PrivacyPolicyScreen());
                               },
                             ),
                             const Divider(height: 1),

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/repositories/local_storage_repository.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'local_storage_repository_provider.dart';
 
 const _baseOperations = <OperationType>[

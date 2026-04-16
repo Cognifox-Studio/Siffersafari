@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/services/data_export_service.dart';
+import 'package:siffersafari/domain/services/data_export_service.dart';
 import 'local_storage_repository_provider.dart';
 
 final dataExportServiceProvider = Provider<DataExportService>((ref) {

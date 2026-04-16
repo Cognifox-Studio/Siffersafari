@@ -1,14 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/domain/entities/quest.dart';
+import 'package:siffersafari/domain/entities/quiz_session.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/constants/settings_keys.dart';
-import '../../data/repositories/local_storage_repository.dart';
-import '../../domain/entities/quest.dart';
-import '../../domain/entities/quiz_session.dart';
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/age_group.dart';
-import '../../domain/enums/operation_type.dart';
 import '../services/achievement_service.dart';
 import '../services/audio_service.dart';
 import '../services/quest_progression_service.dart';
@@ -93,7 +93,6 @@ class QuestCompletionEvent {
 /// - Select the active user and sync audio settings.
 /// - Reconcile quest pointers when grade/age-group changes.
 /// - Apply quiz results, calculate streaks, and unlock achievements.
-/// - Clean up legacy demo users on app startup.
 ///
 /// Use [loadUsers] to refresh from storage; [applyQuizResult] to record session completion.
 class UserNotifier extends StateNotifier<UserState> {
@@ -103,8 +102,6 @@ class UserNotifier extends StateNotifier<UserState> {
     this._audioService,
     this._questProgressionService,
   ) : super(const UserState());
-
-  static const String _legacyDemoUserName = 'Demo Användare';
 
   final LocalStorageRepository _repository;
   final AchievementService _achievementService;
@@ -156,6 +153,28 @@ class UserNotifier extends StateNotifier<UserState> {
     return _repository.getCurrentQuestId(userId);
   }
 
+  QuestStatus _getQuestStatus(UserProgress user) {
+    return _questProgressionService.getCurrentStatus(
+      user: user,
+      currentQuestId: _readCurrentQuestId(user.userId),
+      completedQuestIds: _readCompletedQuestIds(user.userId),
+      allowedOperations: _effectiveAllowedOperationsFor(user),
+    );
+  }
+
+  QuestStatus _getQuestStatusWith({
+    required UserProgress user,
+    required String? currentQuestId,
+    required Set<String> completedQuestIds,
+  }) {
+    return _questProgressionService.getCurrentStatus(
+      user: user,
+      currentQuestId: currentQuestId,
+      completedQuestIds: completedQuestIds,
+      allowedOperations: _effectiveAllowedOperationsFor(user),
+    );
+  }
+
   Future<void> _ensureQuestInitialized(UserProgress user) async {
     final current = _readCurrentQuestId(user.userId);
     if (current != null) return;
@@ -188,12 +207,10 @@ class UserNotifier extends StateNotifier<UserState> {
     final completed = _readCompletedQuestIds(user.userId);
     final current = _readCurrentQuestId(user.userId);
 
-    final allowedOps = _effectiveAllowedOperationsFor(user);
-    final status = _questProgressionService.getCurrentStatus(
+    final status = _getQuestStatusWith(
       user: user,
       currentQuestId: current,
       completedQuestIds: completed,
-      allowedOperations: allowedOps,
     );
 
     if (current != status.quest.id) {
@@ -223,46 +240,11 @@ class UserNotifier extends StateNotifier<UserState> {
     _audioService.setMusicEnabled(user.musicEnabled);
   }
 
-  bool _isLegacyDemoUser(UserProgress user) {
-    final normalized = user.name.trim().toLowerCase();
-    final legacyNormalized = _legacyDemoUserName.toLowerCase();
-    return normalized == legacyNormalized ||
-        normalized.replaceAll(' ', '') == legacyNormalized.replaceAll(' ', '');
-  }
-
-  Future<void> _cleanupLegacyDemoUserIfNeeded() async {
-    final users = _repository.getAllUserProfiles();
-    final demoUsers = users.where(_isLegacyDemoUser).toList();
-    if (demoUsers.isEmpty) return;
-
-    final storedActiveUserId =
-        _repository.getSetting(SettingsKeys.activeUserId);
-    final demoUserIds = demoUsers.map((u) => u.userId).toSet();
-
-    for (final demo in demoUsers) {
-      await _repository.deleteQuizHistoryForUser(demo.userId);
-      await _repository.deleteSetting(SettingsKeys.onboardingDone(demo.userId));
-      await _repository
-          .deleteSetting(SettingsKeys.allowedOperations(demo.userId));
-      await _repository.deleteUserProgress(demo.userId);
-    }
-
-    if (storedActiveUserId is String &&
-        demoUserIds.contains(storedActiveUserId)) {
-      await _repository.deleteSetting(SettingsKeys.activeUserId);
-    }
-  }
-
   Future<void> loadUsers() async {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      await _cleanupLegacyDemoUserIfNeeded();
-
-      final users = _repository
-          .getAllUserProfiles()
-          .where((u) => !_isLegacyDemoUser(u))
-          .toList();
+      final users = _repository.getAllUserProfiles();
 
       final storedActiveUserId = _repository.getActiveUserId();
       final storedActiveUser = storedActiveUserId is String
@@ -280,14 +262,8 @@ class UserNotifier extends StateNotifier<UserState> {
         await _reconcileQuestPointer(activeUser);
       }
 
-      final questStatus = activeUser == null
-          ? null
-          : _questProgressionService.getCurrentStatus(
-              user: activeUser,
-              currentQuestId: _readCurrentQuestId(activeUser.userId),
-              completedQuestIds: _readCompletedQuestIds(activeUser.userId),
-              allowedOperations: _effectiveAllowedOperationsFor(activeUser),
-            );
+      final questStatus =
+          activeUser == null ? null : _getQuestStatus(activeUser);
 
       state = state.copyWith(
         allUsers: users,
@@ -318,13 +294,7 @@ class UserNotifier extends StateNotifier<UserState> {
     _syncAudioSettings(user);
     await _reconcileQuestPointer(user);
 
-    final allowedOps = _effectiveAllowedOperationsFor(user);
-    final questStatus = _questProgressionService.getCurrentStatus(
-      user: user,
-      currentQuestId: _readCurrentQuestId(user.userId),
-      completedQuestIds: _readCompletedQuestIds(user.userId),
-      allowedOperations: allowedOps,
-    );
+    final questStatus = _getQuestStatus(user);
     await _repository.setActiveUserId(userId);
     state = state.copyWith(activeUser: user, questStatus: questStatus);
   }
@@ -427,14 +397,13 @@ class UserNotifier extends StateNotifier<UserState> {
           allowedOperations: _effectiveAllowedOperationsFor(user),
         );
 
-    final allowedOps = _effectiveAllowedOperationsFor(updatedUser);
-
-    final beforeQuestStatus = _questProgressionService.getCurrentStatus(
+    final beforeQuestStatus = _getQuestStatusWith(
       user: updatedUser,
       currentQuestId: currentQuestId,
       completedQuestIds: completedQuestIds,
-      allowedOperations: allowedOps,
     );
+
+    final allowedOps = _effectiveAllowedOperationsFor(updatedUser);
 
     // If current quest is completed, mark it done and advance.
     if (beforeQuestStatus.isCompleted &&
@@ -464,12 +433,7 @@ class UserNotifier extends StateNotifier<UserState> {
     // matches the user's current path.
     await _reconcileQuestPointer(updatedUser);
 
-    final questStatus = _questProgressionService.getCurrentStatus(
-      user: updatedUser,
-      currentQuestId: _readCurrentQuestId(user.userId),
-      completedQuestIds: _readCompletedQuestIds(user.userId),
-      allowedOperations: allowedOps,
-    );
+    final questStatus = _getQuestStatus(updatedUser);
 
     // Save a lightweight quiz history record (for parent/teacher dashboard).
     await _repository.saveQuizSession({

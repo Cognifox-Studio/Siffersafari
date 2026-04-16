@@ -3,26 +3,36 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_analytics_provider.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
+import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
+import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
+import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
+import 'package:siffersafari/core/providers/parent_settings_provider.dart';
+import 'package:siffersafari/core/providers/quiz_provider.dart';
+import 'package:siffersafari/core/providers/spaced_repetition_settings_provider.dart';
+import 'package:siffersafari/core/providers/story_progress_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/services/daily_challenge_service.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
+import 'package:siffersafari/features/onboarding/presentation/screens/onboarding_screen.dart';
+import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
-
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../providers.dart';
-import '../../core/services/daily_challenge_service.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../core/utils/page_transitions.dart';
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/difficulty_level.dart';
-import '../../domain/enums/operation_type.dart';
-import '../screens/story_map_screen.dart';
-import '../widgets/daily_challenge_card.dart';
-import '../widgets/mascot_character.dart';
-import '../widgets/themed_background_scaffold.dart';
-import 'onboarding_screen.dart';
-import 'parent_pin_screen.dart';
-import 'quiz_screen.dart';
-import 'settings_screen.dart';
+import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
+import 'package:siffersafari/features/story/presentation/screens/story_map_screen.dart';
+import 'package:siffersafari/presentation/widgets/daily_challenge_card.dart';
+import 'package:siffersafari/presentation/widgets/mascot_character.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 // region HomeScreen Setup
 
@@ -267,19 +277,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
 
     final parentAllowedOps = user == null
-        ? <OperationType>{
-            OperationType.addition,
-            OperationType.subtraction,
-            OperationType.multiplication,
-            OperationType.division,
-          }
+        ? _defaultAllowedOperations()
         : (ref.watch(parentSettingsProvider)[user.userId] ??
-            {
-              OperationType.addition,
-              OperationType.subtraction,
-              OperationType.multiplication,
-              OperationType.division,
-            });
+            _defaultAllowedOperations());
 
     final allowedOps = DifficultyConfig.effectiveAllowedOperations(
       parentAllowedOperations: parentAllowedOps,
@@ -291,8 +291,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               user: user,
               allowedOperations: allowedOps,
             );
-    final isDailyChallengeCompleted =
-        user == null ? false : ref.watch(dailyChallengeProvider(user.userId));
+    final isDailyChallengeCompleted = user == null
+        ? false
+        : ref.watch(dailyChallengeProvider(user.userId)).isCompleted;
     final hasStoryQuest = user != null &&
         storyProgress != null &&
         userState.questStatus != null &&
@@ -308,43 +309,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             isDailyChallengeCompleted: isDailyChallengeCompleted,
           );
 
-    final operationCards = <Widget>[];
-    if (allowedOps.contains(OperationType.addition)) {
-      operationCards.add(
-        _buildOperationCard(
-          context,
-          OperationType.addition,
-          Icons.add,
-        ),
-      );
-    }
-    if (allowedOps.contains(OperationType.subtraction)) {
-      operationCards.add(
-        _buildOperationCard(
-          context,
-          OperationType.subtraction,
-          Icons.remove,
-        ),
-      );
-    }
-    if (allowedOps.contains(OperationType.multiplication)) {
-      operationCards.add(
-        _buildOperationCard(
-          context,
-          OperationType.multiplication,
-          Icons.close,
-        ),
-      );
-    }
-    if (allowedOps.contains(OperationType.division)) {
-      operationCards.add(
-        _buildOperationCard(
-          context,
-          OperationType.division,
-          Icons.percent,
-        ),
-      );
-    }
+    final operationCards = _buildOperationCards(context, allowedOps);
 
     return ThemedBackgroundScaffold(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -1056,9 +1021,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     if (hasStoryQuest && userState.questStatus != null) {
       final quest = userState.questStatus!.quest;
       return _PrimaryPlayAction(
-        title: 'Fortsatt uppdraget',
+        title: 'Fortsätt uppdraget',
         description: '${quest.title} · ${quest.operation.displayName}',
-        buttonLabel: 'Fortsatt',
+        buttonLabel: 'Fortsätt',
         icon: Icons.explore_rounded,
         onPressed: () => _startQuiz(
           operationType: quest.operation,
@@ -1069,7 +1034,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (dailyChallenge != null && !isDailyChallengeCompleted) {
       return _PrimaryPlayAction(
-        title: 'Dagens runda ar redo',
+        title: 'Dagens runda är redo',
         description:
             '${dailyChallenge.title} · ${dailyChallenge.difficulty.displayName}',
         buttonLabel: 'Spela nu',
@@ -1133,6 +1098,34 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       case OperationType.mixed:
         return Icons.auto_awesome_rounded;
     }
+  }
+
+  Set<OperationType> _defaultAllowedOperations() {
+    return {
+      OperationType.addition,
+      OperationType.subtraction,
+      OperationType.multiplication,
+      OperationType.division,
+    };
+  }
+
+  List<Widget> _buildOperationCards(
+    BuildContext context,
+    Set<OperationType> allowedOps,
+  ) {
+    const configs = <({OperationType operation, IconData icon})>[
+      (operation: OperationType.addition, icon: Icons.add),
+      (operation: OperationType.subtraction, icon: Icons.remove),
+      (operation: OperationType.multiplication, icon: Icons.close),
+      (operation: OperationType.division, icon: Icons.percent),
+    ];
+
+    return configs
+        .where((cfg) => allowedOps.contains(cfg.operation))
+        .map(
+          (cfg) => _buildOperationCard(context, cfg.operation, cfg.icon),
+        )
+        .toList(growable: false);
   }
 
   // endregion

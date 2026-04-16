@@ -1,6 +1,6 @@
-import '../../domain/enums/age_group.dart';
-import '../../domain/enums/difficulty_level.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
 // region DifficultyConfig Class
 

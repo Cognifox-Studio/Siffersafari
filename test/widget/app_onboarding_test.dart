@@ -6,7 +6,7 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
-import 'package:siffersafari/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 
 import '../test_utils.dart';
 

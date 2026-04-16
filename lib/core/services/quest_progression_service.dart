@@ -1,9 +1,9 @@
-import '../../domain/entities/quest.dart';
-import '../../domain/entities/user_progress.dart';
-import '../../domain/enums/age_group.dart';
-import '../../domain/enums/difficulty_level.dart';
-import '../../domain/enums/mastery_level.dart';
-import '../../domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/entities/quest.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/mastery_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
 typedef QuestPath = List<QuestDefinition>;
 

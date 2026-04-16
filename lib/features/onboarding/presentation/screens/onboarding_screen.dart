@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/local_storage_repository_provider.dart';
-import '../../core/providers/parent_settings_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../domain/enums/operation_type.dart';
-import '../../shared/settings/quiz_feature_settings.dart';
-import '../widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
+import 'package:siffersafari/core/providers/parent_settings_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/shared/settings/quiz_feature_settings.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 // region OnboardingScreen Widget
 

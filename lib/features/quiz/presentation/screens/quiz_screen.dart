@@ -3,20 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
 
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/app_theme_provider.dart';
-import '../../core/providers/quiz_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../core/utils/page_transitions.dart';
-import '../../domain/entities/question.dart';
-import '../widgets/answer_button.dart';
-import '../widgets/progress_indicator_bar.dart';
-import '../widgets/question_card.dart';
-import '../widgets/themed_background_scaffold.dart';
-import 'home_screen.dart';
-import 'results_screen.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/quiz_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/question.dart';
+import 'package:siffersafari/presentation/widgets/answer_button.dart';
+import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
+import 'package:siffersafari/presentation/widgets/question_card.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/quiz/presentation/screens/results_screen.dart';
 
 class QuizScreen extends ConsumerStatefulWidget {
   const QuizScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../domain/services/spaced_repetition_service.dart';
+import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
 
 /// Provider for SpacedRepetitionService.
 ///

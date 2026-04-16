@@ -1,24 +1,24 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../core/config/difficulty_config.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/providers/data_export_service_provider.dart';
-import '../../core/providers/local_storage_repository_provider.dart';
-import '../../core/providers/missing_number_settings_provider.dart';
-import '../../core/providers/parent_settings_provider.dart';
-import '../../core/providers/quiz_provider.dart';
-import '../../core/providers/spaced_repetition_settings_provider.dart';
-import '../../core/providers/user_provider.dart';
-import '../../core/providers/word_problems_settings_provider.dart';
-import '../../core/services/app_update_service.dart';
-import '../../core/utils/adaptive_layout.dart';
-import '../../domain/enums/operation_type.dart';
-import '../widgets/themed_background_scaffold.dart';
-import 'parent_pin_screen.dart';
-import 'settings_screen.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/data_export_service_provider.dart';
+import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
+import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
+import 'package:siffersafari/core/providers/parent_settings_provider.dart';
+import 'package:siffersafari/core/providers/quiz_provider.dart';
+import 'package:siffersafari/core/providers/spaced_repetition_settings_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/services/app_update_service.dart';
+import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
+import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 // region ParentDashboardScreen
 
@@ -38,11 +38,7 @@ class ParentDashboardScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Inställningar',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const SettingsScreen(),
-                ),
-              );
+              context.pushSmooth(const SettingsScreen());
             },
             icon: const Icon(Icons.settings),
           ),
@@ -54,11 +50,7 @@ class ParentDashboardScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Byt PIN',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => const ParentPinScreen(forceSetNewPin: true),
-                ),
-              );
+              context.pushSmooth(const ParentPinScreen(forceSetNewPin: true));
             },
             icon: const Icon(Icons.key),
           ),
@@ -915,29 +907,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final operation = parts[0];
     final difficulty = parts[1];
 
-    return '${_pretty(operation)} • ${_pretty(difficulty)}';
-  }
-
-  String _pretty(String raw) {
-    // Convert enum-like values to readable Swedish-ish labels.
-    switch (raw) {
-      case 'addition':
-        return 'Plus';
-      case 'subtraction':
-        return 'Minus';
-      case 'multiplication':
-        return 'Gånger';
-      case 'division':
-        return 'Delat';
-      case 'easy':
-        return 'Lätt';
-      case 'medium':
-        return 'Medel';
-      case 'hard':
-        return 'Svår';
-      default:
-        return raw;
-    }
+    return '${_prettyEnumLabel(operation)} • ${_prettyEnumLabel(difficulty)}';
   }
 
   Set<OperationType> _defaultAllowedOps() {
@@ -1291,6 +1261,28 @@ class _WeakArea {
   final String label;
 }
 
+String _prettyEnumLabel(String raw) {
+  // Convert enum-like values to readable Swedish-ish labels.
+  switch (raw) {
+    case 'addition':
+      return 'Plus';
+    case 'subtraction':
+      return 'Minus';
+    case 'multiplication':
+      return 'Gånger';
+    case 'division':
+      return 'Delat';
+    case 'easy':
+      return 'Lätt';
+    case 'medium':
+      return 'Medel';
+    case 'hard':
+      return 'Svår';
+    default:
+      return raw;
+  }
+}
+
 class _Card extends StatelessWidget {
   const _Card({required this.child});
 
@@ -1369,7 +1361,7 @@ class _HistoryRow extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              '${_pretty(operation)} • ${_pretty(difficulty)}',
+              '${_prettyEnumLabel(operation)} • ${_prettyEnumLabel(difficulty)}',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: mutedOnPrimary,
                     fontWeight: FontWeight.w600,
@@ -1394,28 +1386,6 @@ class _HistoryRow extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _pretty(String raw) {
-    // Convert enum-like values to readable Swedish-ish labels.
-    switch (raw) {
-      case 'addition':
-        return 'Plus';
-      case 'subtraction':
-        return 'Minus';
-      case 'multiplication':
-        return 'Gånger';
-      case 'division':
-        return 'Delat';
-      case 'easy':
-        return 'Lätt';
-      case 'medium':
-        return 'Medel';
-      case 'hard':
-        return 'Svår';
-      default:
-        return raw;
-    }
   }
 }
 
@@ -1442,7 +1412,7 @@ class _HistoryTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            '${_HistoryRow(history: history)._pretty(operation)} • ${_HistoryRow(history: history)._pretty(difficulty)}',
+            '${_prettyEnumLabel(operation)} • ${_prettyEnumLabel(difficulty)}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w700,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/theme/app_theme_config.dart';
+import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'mascot_character.dart';
 
 class ThemeMascot extends StatelessWidget {

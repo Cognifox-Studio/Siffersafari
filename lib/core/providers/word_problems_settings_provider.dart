@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../data/repositories/local_storage_repository.dart';
-import '../../shared/settings/quiz_feature_settings.dart';
+import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/shared/settings/quiz_feature_settings.dart';
 import 'local_storage_repository_provider.dart';
 
 class WordProblemsEnabledNotifier extends StateNotifier<bool> {

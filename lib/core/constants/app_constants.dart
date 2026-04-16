@@ -1,6 +1,6 @@
 import 'dart:ui' show Offset;
 
-import '../../domain/constants/learning_constants.dart';
+import 'package:siffersafari/domain/constants/learning_constants.dart';
 import 'achievement_ids.dart';
 import 'storage_constants.dart';
 import 'ui_constants.dart';

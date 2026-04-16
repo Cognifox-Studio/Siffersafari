@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../core/constants/app_constants.dart';
-import '../../domain/entities/question.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/domain/entities/question.dart';
 
 class QuestionCard extends StatelessWidget {
   const QuestionCard({

@@ -306,28 +306,16 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
   }
 
-  void startSession({
+  void _resetInProgressUnderlag({
     required String userId,
-    required AgeGroup ageGroup,
-    int? gradeLevel,
     required OperationType operationType,
     required DifficultyLevel difficulty,
-    Map<OperationType, int>? initialDifficultyStepsByOperation,
-    bool? wordProblemsEnabled,
-    bool? missingNumberEnabled,
-    bool isDailyChallenge = false,
   }) {
-    debugPrint(
-      '[QuizNotifier] startSession: userId=$userId, '
-      'operation=${operationType.name}, difficulty=${difficulty.name}',
-    );
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
       operationTypeName: operationType.name,
     );
 
-    // Reset in-progress underlag immediately when the child starts playing the
-    // same operation again (even before the first answer).
     unawaited(
       _repository.saveQuizSession({
         'sessionId': inProgressId,
@@ -345,8 +333,102 @@ class QuizNotifier extends StateNotifier<QuizState> {
         'isComplete': false,
       }),
     );
+  }
+
+  ({bool wordProblemsEnabled, bool missingNumberEnabled})
+      _resolveSessionFeatureFlags({
+    required String userId,
+    bool? wordProblemsEnabledOverride,
+    bool? missingNumberEnabledOverride,
+  }) {
+    final wordProblemsEnabled = wordProblemsEnabledOverride ??
+        QuizFeatureSettings.readWordProblemsEnabled(
+          repository: _repository,
+          userId: userId,
+        );
+    final missingNumberEnabled = missingNumberEnabledOverride ??
+        QuizFeatureSettings.readMissingNumberEnabled(
+          repository: _repository,
+          userId: userId,
+        );
+
+    return (
+      wordProblemsEnabled: wordProblemsEnabled,
+      missingNumberEnabled: missingNumberEnabled,
+    );
+  }
+
+  ({Map<String, ReviewSchedule> schedules, int dueCount})
+      _loadInitialReviewState(
+    String userId,
+  ) {
+    final isSpacedRepetitionEnabled = _isSpacedRepetitionEnabled(userId);
+    final reviewSchedules = isSpacedRepetitionEnabled
+        ? _loadReviewSchedules(userId)
+        : const <String, ReviewSchedule>{};
+    final dueCount = isSpacedRepetitionEnabled
+        ? _countDueReviews(reviewSchedules, DateTime.now())
+        : 0;
+
+    return (schedules: reviewSchedules, dueCount: dueCount);
+  }
+
+  void _activateSessionState({
+    required String userId,
+    required QuizSession session,
+    required Map<OperationType, int> steps,
+    required ({
+      Map<String, ReviewSchedule> schedules,
+      int dueCount
+    }) reviewState,
+    required bool isDailyChallenge,
+  }) {
+    state = state.copyWith(
+      userId: userId,
+      session: session,
+      feedback: null,
+      difficultyStepsByOperation: steps,
+      recentResultsByOperation: const {},
+      questionsSinceLastStepChangeByOperation: const {},
+      correctStreak: 0,
+      bestCorrectStreak: 0,
+      speedBonusCount: 0,
+      reviewSchedulesByKey: Map<String, ReviewSchedule>.unmodifiable(
+        reviewState.schedules,
+      ),
+      dueReviewCount: reviewState.dueCount,
+      isDailyChallenge: isDailyChallenge,
+    );
+  }
+
+  void startSession({
+    required String userId,
+    required AgeGroup ageGroup,
+    int? gradeLevel,
+    required OperationType operationType,
+    required DifficultyLevel difficulty,
+    Map<OperationType, int>? initialDifficultyStepsByOperation,
+    bool? wordProblemsEnabled,
+    bool? missingNumberEnabled,
+    bool isDailyChallenge = false,
+  }) {
+    debugPrint(
+      '[QuizNotifier] startSession: userId=$userId, '
+      'operation=${operationType.name}, difficulty=${difficulty.name}',
+    );
+    // Reset in-progress underlag immediately when the child starts playing the
+    // same operation again (even before the first answer).
+    _resetInProgressUnderlag(
+      userId: userId,
+      operationType: operationType,
+      difficulty: difficulty,
+    );
 
     // Also purge any legacy in-progress entries for the same operation.
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: operationType.name,
+    );
     unawaited(
       _repository.purgeInProgressQuizSessions(
         userId: userId,
@@ -366,16 +448,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
           ),
     );
 
-    final effectiveWordProblemsEnabled = wordProblemsEnabled ??
-        QuizFeatureSettings.readWordProblemsEnabled(
-          repository: _repository,
-          userId: userId,
-        );
-    final effectiveMissingNumberEnabled = missingNumberEnabled ??
-        QuizFeatureSettings.readMissingNumberEnabled(
-          repository: _repository,
-          userId: userId,
-        );
+    final featureFlags = _resolveSessionFeatureFlags(
+      userId: userId,
+      wordProblemsEnabledOverride: wordProblemsEnabled,
+      missingNumberEnabledOverride: missingNumberEnabled,
+    );
 
     final firstQuestion = _questionGenerator.generateQuestion(
       ageGroup: ageGroup,
@@ -383,8 +460,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
       difficulty: difficulty,
       difficultyStepsByOperation: steps,
       gradeLevel: gradeLevel,
-      wordProblemsEnabledOverride: effectiveWordProblemsEnabled,
-      missingNumberEnabledOverride: effectiveMissingNumberEnabled,
+      wordProblemsEnabledOverride: featureFlags.wordProblemsEnabled,
+      missingNumberEnabledOverride: featureFlags.missingNumberEnabled,
     );
 
     final session = QuizSession(
@@ -395,34 +472,19 @@ class QuizNotifier extends StateNotifier<QuizState> {
       difficulty: difficulty,
       questions: [firstQuestion],
       targetQuestionCount: count,
-      wordProblemsEnabled: effectiveWordProblemsEnabled,
-      missingNumberEnabled: effectiveMissingNumberEnabled,
+      wordProblemsEnabled: featureFlags.wordProblemsEnabled,
+      missingNumberEnabled: featureFlags.missingNumberEnabled,
       difficultyStepsByOperation: steps,
       startTime: DateTime.now(),
     );
 
-    final isSpacedRepetitionEnabled = _isSpacedRepetitionEnabled(userId);
-    final reviewSchedules = isSpacedRepetitionEnabled
-        ? _loadReviewSchedules(userId)
-        : const <String, ReviewSchedule>{};
-    final dueCount = isSpacedRepetitionEnabled
-        ? _countDueReviews(reviewSchedules, DateTime.now())
-        : 0;
+    final reviewState = _loadInitialReviewState(userId);
 
-    state = state.copyWith(
+    _activateSessionState(
       userId: userId,
       session: session,
-      feedback: null,
-      difficultyStepsByOperation: steps,
-      recentResultsByOperation: const {},
-      questionsSinceLastStepChangeByOperation: const {},
-      correctStreak: 0,
-      bestCorrectStreak: 0,
-      speedBonusCount: 0,
-      reviewSchedulesByKey: Map<String, ReviewSchedule>.unmodifiable(
-        reviewSchedules,
-      ),
-      dueReviewCount: dueCount,
+      steps: steps,
+      reviewState: reviewState,
       isDailyChallenge: isDailyChallenge,
     );
   }
@@ -449,29 +511,16 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return;
     }
 
+    _resetInProgressUnderlag(
+      userId: userId,
+      operationType: operationType,
+      difficulty: difficulty,
+    );
+
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
       operationTypeName: operationType.name,
     );
-
-    unawaited(
-      _repository.saveQuizSession({
-        'sessionId': inProgressId,
-        'userId': userId,
-        'operationType': operationType.name,
-        'difficulty': difficulty.name,
-        'correctAnswers': 0,
-        'totalQuestions': 0,
-        'successRate': 0.0,
-        'points': 0,
-        'bonusPoints': 0,
-        'pointsWithBonus': 0,
-        'startTime': DateTime.now().toIso8601String(),
-        'endTime': DateTime.now().toIso8601String(),
-        'isComplete': false,
-      }),
-    );
-
     unawaited(
       _repository.purgeInProgressQuizSessions(
         userId: userId,
@@ -480,16 +529,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
       ),
     );
 
-    final effectiveWordProblemsEnabled = wordProblemsEnabled ??
-        QuizFeatureSettings.readWordProblemsEnabled(
-          repository: _repository,
-          userId: userId,
-        );
-    final effectiveMissingNumberEnabled = missingNumberEnabled ??
-        QuizFeatureSettings.readMissingNumberEnabled(
-          repository: _repository,
-          userId: userId,
-        );
+    final featureFlags = _resolveSessionFeatureFlags(
+      userId: userId,
+      wordProblemsEnabledOverride: wordProblemsEnabled,
+      missingNumberEnabledOverride: missingNumberEnabled,
+    );
 
     final steps = Map<OperationType, int>.unmodifiable(
       initialDifficultyStepsByOperation ??
@@ -508,34 +552,19 @@ class QuizNotifier extends StateNotifier<QuizState> {
       difficulty: difficulty,
       questions: questions,
       targetQuestionCount: questions.length,
-      wordProblemsEnabled: effectiveWordProblemsEnabled,
-      missingNumberEnabled: effectiveMissingNumberEnabled,
+      wordProblemsEnabled: featureFlags.wordProblemsEnabled,
+      missingNumberEnabled: featureFlags.missingNumberEnabled,
       difficultyStepsByOperation: steps,
       startTime: DateTime.now(),
     );
 
-    final isSpacedRepetitionEnabled = _isSpacedRepetitionEnabled(userId);
-    final reviewSchedules = isSpacedRepetitionEnabled
-        ? _loadReviewSchedules(userId)
-        : const <String, ReviewSchedule>{};
-    final dueCount = isSpacedRepetitionEnabled
-        ? _countDueReviews(reviewSchedules, DateTime.now())
-        : 0;
+    final reviewState = _loadInitialReviewState(userId);
 
-    state = state.copyWith(
+    _activateSessionState(
       userId: userId,
       session: session,
-      feedback: null,
-      difficultyStepsByOperation: steps,
-      recentResultsByOperation: const {},
-      questionsSinceLastStepChangeByOperation: const {},
-      correctStreak: 0,
-      bestCorrectStreak: 0,
-      speedBonusCount: 0,
-      reviewSchedulesByKey: Map<String, ReviewSchedule>.unmodifiable(
-        reviewSchedules,
-      ),
-      dueReviewCount: dueCount,
+      steps: steps,
+      reviewState: reviewState,
       isDailyChallenge: false,
     );
   }

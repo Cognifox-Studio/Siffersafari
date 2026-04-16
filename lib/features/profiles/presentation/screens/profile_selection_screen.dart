@@ -5,7 +5,7 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
-import 'package:siffersafari/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class ProfileSelectionScreen extends ConsumerWidget {
