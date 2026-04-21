@@ -14,7 +14,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.cognifoxstudio.siffersafari"
+    namespace = "se.cognifox.Siffersafari"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -29,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.cognifoxstudio.siffersafari"
+        applicationId = "se.cognifox.Siffersafari"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         // Note: With Flutter 3.41.x, the effective minSdkVersion is currently 24 (Android 7.0).

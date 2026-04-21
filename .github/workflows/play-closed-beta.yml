@@ -1,0 +1,85 @@
+name: Play Closed Beta
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: "Play track (exempel: beta, qa, internal)"
+        required: true
+        default: "beta"
+      run_tests:
+        description: "Kor flutter test test innan build"
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish-closed-beta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.x'
+          channel: stable
+          cache: true
+
+      - name: Validate required secrets
+        run: |
+          if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ] || \
+             [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ] || \
+             [ -z "${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}" ]; then
+            echo "Missing one or more required secrets: KEYSTORE_BASE64, KEYSTORE_PASSWORD, PLAY_SERVICE_ACCOUNT_JSON"
+            exit 1
+          fi
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Build generated files (Hive/Riverpod)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Analyze
+        run: flutter analyze --fatal-infos lib test integration_test
+
+      - name: Run tests
+        if: ${{ inputs.run_tests }}
+        run: flutter test test
+
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      - name: Create key.properties
+        run: |
+          cat > android/key.properties << EOF
+          storePassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyPassword=${{ secrets.KEYSTORE_PASSWORD }}
+          keyAlias=upload-key
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build App Bundle
+        run: flutter build appbundle --release
+
+      - name: Upload to Google Play
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}
+          packageName: se.cognifox.Siffersafari
+          releaseFiles: build/app/outputs/bundle/release/app-release.aab
+          track: ${{ inputs.track }}
+          status: completed

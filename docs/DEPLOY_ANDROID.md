@@ -293,3 +293,33 @@ Använd denne mall för release notes på Play Store och GitHub:
 ---
 
 **Nästa steg:** Läs [ADD_FEATURE.md](ADD_FEATURE.md) för hur man lägger till nya features inom denna pipeline.
+
+---
+
+## 10. GitHub Actions: Closed Beta (Google Play)
+
+For automatisk uppladdning till closed testing finns workflow:
+
+- `.github/workflows/play-closed-beta.yml`
+
+### Secrets som maste finnas i GitHub repo settings
+
+1. `KEYSTORE_BASE64` - base64 av `android/app/upload-keystore.jks`
+2. `KEYSTORE_PASSWORD` - losenord till keystore/key
+3. `PLAY_SERVICE_ACCOUNT_JSON` - hela JSON-innehallet for Play API service account
+
+### Korning
+
+1. Gå till `Actions` i GitHub.
+2. Välj `Play Closed Beta`.
+3. Klicka `Run workflow`.
+4. Ange `track`:
+   - `beta` (vanlig closed beta)
+   - `internal` (snabb intern test)
+   - eller custom closed track-namn
+5. Valfritt: avmarkera `run_tests` om du bara vill verifiera uploadflodet.
+
+### Resultat
+
+Workflow bygger signerad `app-release.aab` och laddar upp till valt Play-track.
+Release blir tillganglig enligt Play Consoles granskning/regler for sparet.

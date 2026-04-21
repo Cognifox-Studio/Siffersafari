@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$AppId = 'com.cognifoxstudio.siffersafari'
+$AppId = 'se.cognifox.Siffersafari'
 $PixelScript = Join-Path $PSScriptRoot 'flutter_pixel6.ps1'
 
 function Invoke-RepoCommand {

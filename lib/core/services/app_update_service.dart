@@ -8,7 +8,7 @@ class AppUpdateService {
   static const String _latestReleaseApiUrl =
       'https://api.github.com/repos/Cognifox-Studio/Siffersafari/releases/latest';
   static const String _androidProviderAuthority =
-      'com.cognifoxstudio.siffersafari.ota_update_provider';
+      'se.cognifox.Siffersafari.ota_update_provider';
 
   Future<String> getInstalledVersion() async {
     final packageInfo = await PackageInfo.fromPlatform();
