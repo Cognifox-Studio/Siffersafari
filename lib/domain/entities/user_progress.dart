@@ -45,7 +45,7 @@ class UserProgress extends Equatable {
   final AgeGroup ageGroup;
 
   /// Simple avatar icon for the child profile (emoji).
-  @HiveField(18)
+  @HiveField(18, defaultValue: '🧒')
   final String avatarEmoji;
 
   /// Selected Swedish grade/year (Åk), 1-9. When set, the app derives
@@ -53,57 +53,57 @@ class UserProgress extends Equatable {
   @HiveField(17)
   final int? gradeLevel;
 
-  @HiveField(3)
+  @HiveField(3, defaultValue: 0)
   final int totalQuizzesTaken;
 
-  @HiveField(4)
+  @HiveField(4, defaultValue: 0)
   final int totalQuestionsAnswered;
 
-  @HiveField(5)
+  @HiveField(5, defaultValue: 0)
   final int totalCorrectAnswers;
 
-  @HiveField(6)
+  @HiveField(6, defaultValue: 0)
   final int currentStreak;
 
-  @HiveField(7)
+  @HiveField(7, defaultValue: 0)
   final int longestStreak;
 
-  @HiveField(8)
+  @HiveField(8, defaultValue: 0)
   final int totalPoints;
 
-  @HiveField(9)
+  @HiveField(9, defaultValue: AppTheme.jungle)
   final AppTheme selectedTheme;
 
-  @HiveField(10)
+  @HiveField(10, defaultValue: true)
   final bool soundEnabled;
 
-  @HiveField(11)
+  @HiveField(11, defaultValue: true)
   final bool musicEnabled;
 
-  @HiveField(12)
+  @HiveField(12, defaultValue: false)
   final bool timerEnabled;
 
   @HiveField(13)
   final DateTime? lastSessionDate;
 
-  @HiveField(14)
+  @HiveField(14, defaultValue: <AppTheme>[AppTheme.jungle])
   final List<AppTheme> unlockedThemes;
 
-  @HiveField(15)
+  @HiveField(15, defaultValue: <String>[])
   final List<String> achievements;
 
-  @HiveField(16)
+  @HiveField(16, defaultValue: <String, double>{})
   final Map<String, double>
       masteryLevels; // Key: "operation_difficulty", Value: success rate
 
   /// Internal adaptive difficulty steps (1..10) per operation.
   /// Key: operation name (e.g. "addition"), Value: step.
-  @HiveField(19)
+  @HiveField(19, defaultValue: <String, int>{})
   final Map<String, int> operationDifficultySteps;
 
   /// Slug of the selected character (e.g. 'mascot', 'loke', 'skogshjalte').
   /// Defaults to 'mascot' for all existing profiles.
-  @HiveField(20)
+  @HiveField(20, defaultValue: 'mascot')
   final String selectedCharacterId;
 
   static const int pointsPerLevel = 200;

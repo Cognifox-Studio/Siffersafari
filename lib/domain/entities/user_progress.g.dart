@@ -20,24 +20,30 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
       userId: fields[0] as String,
       name: fields[1] as String,
       ageGroup: fields[2] as AgeGroup,
-      avatarEmoji: fields[18] as String,
+      avatarEmoji: fields[18] == null ? '🧒' : fields[18] as String,
       gradeLevel: fields[17] as int?,
-      totalQuizzesTaken: fields[3] as int,
-      totalQuestionsAnswered: fields[4] as int,
-      totalCorrectAnswers: fields[5] as int,
-      currentStreak: fields[6] as int,
-      longestStreak: fields[7] as int,
-      totalPoints: fields[8] as int,
-      selectedTheme: fields[9] as AppTheme,
-      soundEnabled: fields[10] as bool,
-      musicEnabled: fields[11] as bool,
-      timerEnabled: fields[12] as bool,
+      totalQuizzesTaken: fields[3] == null ? 0 : fields[3] as int,
+      totalQuestionsAnswered: fields[4] == null ? 0 : fields[4] as int,
+      totalCorrectAnswers: fields[5] == null ? 0 : fields[5] as int,
+      currentStreak: fields[6] == null ? 0 : fields[6] as int,
+      longestStreak: fields[7] == null ? 0 : fields[7] as int,
+      totalPoints: fields[8] == null ? 0 : fields[8] as int,
+      selectedTheme:
+          fields[9] == null ? AppTheme.jungle : fields[9] as AppTheme,
+      soundEnabled: fields[10] == null ? true : fields[10] as bool,
+      musicEnabled: fields[11] == null ? true : fields[11] as bool,
+      timerEnabled: fields[12] == null ? false : fields[12] as bool,
       lastSessionDate: fields[13] as DateTime?,
-      unlockedThemes: (fields[14] as List).cast<AppTheme>(),
-      achievements: (fields[15] as List).cast<String>(),
-      masteryLevels: (fields[16] as Map).cast<String, double>(),
-      operationDifficultySteps: (fields[19] as Map).cast<String, int>(),
-      selectedCharacterId: fields[20] as String? ?? 'mascot',
+      unlockedThemes: fields[14] == null
+          ? [AppTheme.jungle]
+          : (fields[14] as List).cast<AppTheme>(),
+      achievements:
+          fields[15] == null ? [] : (fields[15] as List).cast<String>(),
+      masteryLevels:
+          fields[16] == null ? {} : (fields[16] as Map).cast<String, double>(),
+      operationDifficultySteps:
+          fields[19] == null ? {} : (fields[19] as Map).cast<String, int>(),
+      selectedCharacterId: fields[20] == null ? 'mascot' : fields[20] as String,
     );
   }
 
