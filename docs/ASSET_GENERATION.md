@@ -37,7 +37,7 @@ python tools/create_character.py --name "Mira" --brief "space explorer with teal
 # -> assets/characters/mira/config/*.json
 # -> assets/characters/mira/svg/*.svg
 # -> artifacts/mira_rive_blueprint.json
-# -> artifacts/MIRA_RIVE_GUIDE.md
+# -> artifacts/mira_rive_guide.md
 # -> specs/*.yaml
 # -> artifacts/asset_pipeline_manifest.json
 # -> lib/gen/assets.g.dart
@@ -47,7 +47,7 @@ python tools/refresh_character.py --slug loke
 # -> updates assets/characters/loke/config/loke_visual_spec.json
 # -> updates assets/characters/loke/svg/*.svg
 # -> updates artifacts/loke_rive_blueprint.json
-# -> updates artifacts/LOKE_RIVE_GUIDE.md
+# -> updates artifacts/loke_rive_guide.md
 # -> updates artifacts/asset_pipeline_manifest.json
 # -> updates lib/gen/assets.g.dart
 

@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/initial_profile_setup_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/screens/profile_selection_screen.dart';
-import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
-class StartupRouterScreen extends ConsumerStatefulWidget {
-  const StartupRouterScreen({super.key});
+class StartupFlowGate extends ConsumerStatefulWidget {
+  const StartupFlowGate({super.key});
 
   @override
-  ConsumerState<StartupRouterScreen> createState() =>
-      _StartupRouterScreenState();
+  ConsumerState<StartupFlowGate> createState() => _StartupFlowGateState();
 }
 
-class _StartupRouterScreenState extends ConsumerState<StartupRouterScreen> {
+class _StartupFlowGateState extends ConsumerState<StartupFlowGate> {
   bool _didLoad = false;
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
+
 import '../constants/app_constants.dart';
 
 /// Character animation states for flexible mascot animation control
@@ -47,6 +48,16 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
+
+  Color get panelBackgroundColor => cardColor;
+  Color get panelBorderColor =>
+      colorScheme().onPrimary.withValues(alpha: AppOpacities.hudBorder);
+  Color get panelShadowColor =>
+      Colors.black.withValues(alpha: AppOpacities.shadowAmbient);
+
+  Color get progressCompletedColor => secondaryActionColor;
+  Color get progressCurrentColor => accentColor;
+  Color get progressNextColor => primaryActionColor;
 
   static AppThemeConfig forTheme(AppTheme theme) {
     switch (theme) {
@@ -96,11 +107,49 @@ class AppThemeConfig {
 
   ThemeData themeData() {
     final scheme = colorScheme();
-
-    return ThemeData(
+    final baseTheme = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
+    );
+    final textTheme = baseTheme.textTheme.copyWith(
+      displayLarge: baseTheme.textTheme.displayLarge?.copyWith(
+        fontWeight: FontWeight.w900,
+        letterSpacing: -1.2,
+        height: 0.98,
+      ),
+      headlineLarge: baseTheme.textTheme.headlineLarge?.copyWith(
+        fontWeight: FontWeight.w900,
+        letterSpacing: -0.8,
+        height: 1.0,
+      ),
+      headlineSmall: baseTheme.textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w900,
+        letterSpacing: -0.4,
+        height: 1.05,
+      ),
+      titleLarge: baseTheme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.2,
+      ),
+      titleMedium: baseTheme.textTheme.titleMedium?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+      bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(
+        fontWeight: FontWeight.w600,
+        height: 1.3,
+      ),
+      bodyMedium: baseTheme.textTheme.bodyMedium?.copyWith(
+        fontWeight: FontWeight.w600,
+        height: 1.35,
+      ),
+      labelLarge: baseTheme.textTheme.labelLarge?.copyWith(
+        fontWeight: FontWeight.w800,
+      ),
+    );
+
+    return baseTheme.copyWith(
       scaffoldBackgroundColor: baseBackgroundColor,
+      textTheme: textTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(
@@ -109,12 +158,20 @@ class AppThemeConfig {
           ),
           backgroundColor: primaryActionColor,
           foregroundColor: scheme.onPrimary,
+          elevation: 0,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.largePadding,
+            vertical: AppConstants.defaultPadding,
+          ),
           textStyle: const TextStyle(
             fontSize: AppConstants.buttonFontSize,
             fontWeight: FontWeight.w700,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.borderRadius * 1.5,
+            ),
           ),
         ),
       ),
@@ -125,9 +182,17 @@ class AppThemeConfig {
             AppConstants.minTouchTargetSize,
           ),
           foregroundColor: scheme.onPrimary,
+          backgroundColor:
+              scheme.onPrimary.withValues(alpha: AppOpacities.subtleFill),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.largePadding,
+            vertical: AppConstants.defaultPadding,
+          ),
           side: BorderSide(color: scheme.secondary),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            borderRadius: BorderRadius.circular(
+              AppConstants.borderRadius * 1.5,
+            ),
           ),
           textStyle: const TextStyle(
             fontSize: AppConstants.buttonFontSize,
@@ -139,6 +204,10 @@ class AppThemeConfig {
         style: TextButton.styleFrom(
           minimumSize: const Size.square(AppConstants.minTouchTargetSizeSmall),
           foregroundColor: scheme.secondary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.defaultPadding,
+            vertical: AppConstants.smallPadding,
+          ),
           textStyle: const TextStyle(
             fontWeight: FontWeight.w700,
           ),
@@ -149,11 +218,25 @@ class AppThemeConfig {
         backgroundColor: Colors.transparent,
         foregroundColor: scheme.onPrimary,
         elevation: 0,
+        titleTextStyle: textTheme.titleLarge?.copyWith(
+          color: scheme.onPrimary,
+          fontWeight: FontWeight.w900,
+        ),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius * 2),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: cardColor,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shadowColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.5),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
@@ -193,6 +276,20 @@ class AppThemeConfig {
       dividerTheme: DividerThemeData(
         color: scheme.onPrimary.withValues(alpha: AppOpacities.divider),
         thickness: 1,
+      ),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: accentColor,
+        linearMinHeight: AppConstants.progressBarHeightMedium,
+      ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: cardColor,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: scheme.onPrimary,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.5),
+        ),
+        behavior: SnackBarBehavior.floating,
       ),
     );
   }

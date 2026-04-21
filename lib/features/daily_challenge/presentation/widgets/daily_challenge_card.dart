@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/core/services/daily_challenge_service.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 
 /// Home screen card that shows today's daily challenge and lets the child
 /// start it with a single tap or see that it's already done.
@@ -68,7 +68,7 @@ class DailyChallengeCard extends ConsumerWidget {
               const SizedBox(width: AppConstants.microSpacing8),
               Expanded(
                 child: Text(
-                  'Dagens utmaning',
+                  'Dagens runda',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         color: onPrimary,
                         fontWeight: FontWeight.w900,
@@ -87,7 +87,7 @@ class DailyChallengeCard extends ConsumerWidget {
                         BorderRadius.circular(AppConstants.borderRadius),
                   ),
                   child: Text(
-                    '✅ Klar!',
+                    'Klar',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w900,
@@ -107,7 +107,7 @@ class DailyChallengeCard extends ConsumerWidget {
                         BorderRadius.circular(AppConstants.borderRadius),
                   ),
                   child: Text(
-                    '🔥 $streak dagar',
+                    '🔥 $streak',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: onPrimary,
                           fontWeight: FontWeight.w800,
@@ -119,7 +119,7 @@ class DailyChallengeCard extends ConsumerWidget {
           ),
           const SizedBox(height: AppConstants.microSpacing6),
           Text(
-            '${challenge.title} · ${challenge.difficulty.displayName}',
+            '${challenge.operation.emoji} ${challenge.operation.displayName}',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w700,
@@ -134,7 +134,7 @@ class DailyChallengeCard extends ConsumerWidget {
                 side: BorderSide(color: accentColor),
               ),
               icon: const Icon(Icons.flash_on_rounded),
-              label: const Text('Kör utmaningen'),
+              label: const Text('Spela'),
             ),
           ],
         ],

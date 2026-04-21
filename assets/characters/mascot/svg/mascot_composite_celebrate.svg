@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="580" viewBox="0 0 400 580" xmlns="http://www.w3.org/2000/svg">
+
+  <!-- ANTENNAS (drawn first so they sit behind head) -->
+  <line x1="174" y1="58" x2="150" y2="10" stroke="#388E3C" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="150" cy="8" r="14" fill="#FF6F61" stroke="#1e1e1e" stroke-width="2.5"/>
+  <line x1="226" y1="58" x2="250" y2="10" stroke="#388E3C" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="250" cy="8" r="14" fill="#FF6F61" stroke="#1e1e1e" stroke-width="2.5"/>
+
+  <!-- HEAD (bigger, rounder) -->
+  <ellipse cx="200" cy="133" rx="102" ry="94" fill="#F2D3A0" stroke="#1e1e1e" stroke-width="4"/>
+
+  <!-- Cheek blushes (brighter in joy) -->
+  <ellipse cx="143" cy="155" rx="30" ry="22" fill="#FF8FA0" opacity="0.65"/>
+  <ellipse cx="257" cy="155" rx="30" ry="22" fill="#FF8FA0" opacity="0.65"/>
+
+  <!-- LEFT EYE (happy squint — flattened top) -->
+  <ellipse cx="166" cy="118" rx="22" ry="20" fill="white" stroke="#1e1e1e" stroke-width="2.5"/>
+  <ellipse cx="166" cy="122" rx="11" ry="12" fill="#2a2a2a"/>
+  <circle cx="172" cy="113" r="5.5" fill="white" opacity="0.9"/>
+
+  <!-- RIGHT EYE (happy squint) -->
+  <ellipse cx="234" cy="118" rx="22" ry="20" fill="white" stroke="#1e1e1e" stroke-width="2.5"/>
+  <ellipse cx="234" cy="122" rx="11" ry="12" fill="#2a2a2a"/>
+  <circle cx="240" cy="113" r="5.5" fill="white" opacity="0.9"/>
+
+  <!-- EYEBROWS (raised high in excitement) -->
+  <path d="M 144 78 Q 165 64 184 76" stroke="#3a2820" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+  <path d="M 216 76 Q 235 64 254 78" stroke="#3a2820" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+
+  <!-- MOUTH (open happy smile with teeth) -->
+  <path d="M 160 168 Q 200 210 240 168 Q 200 226 160 168 Z" fill="#cc3333"/>
+  <path d="M 160 168 Q 200 192 240 168" stroke="white" stroke-width="3.5" fill="none" opacity="0.85"/>
+
+  <!-- NECK -->
+  <rect x="184" y="220" width="32" height="24" rx="9" fill="#F2D3A0" stroke="#1e1e1e" stroke-width="3"/>
+
+  <!-- BODY (oval, slightly stretched in excitement) -->
+  <ellipse cx="200" cy="333" rx="90" ry="108" fill="#4CAF50" stroke="#1e1e1e" stroke-width="4"/>
+
+  <!-- Belly inner highlight -->
+  <ellipse cx="200" cy="317" rx="54" ry="70" fill="#66BB6A" opacity="0.48"/>
+
+  <!-- Star on belly -->
+  <polygon points="200,296 206.5,312 223.8,313 210.5,324 214.7,341 200,332 185.3,341 189.5,324 176.2,313 193.5,312" fill="white" opacity="0.72"/>
+
+  <!-- LEFT ARM (raised up and out — joy V-shape) -->
+  <g transform="translate(110,267) rotate(-145)">
+    <rect x="-17" y="0" width="34" height="95" rx="13" fill="#4CAF50" stroke="#1e1e1e" stroke-width="3.5"/>
+    <circle cx="0" cy="103" r="19" fill="#F2D3A0" stroke="#1e1e1e" stroke-width="3.5"/>
+  </g>
+
+  <!-- RIGHT ARM (raised up and out — joy V-shape) -->
+  <g transform="translate(290,267) rotate(145)">
+    <rect x="-17" y="0" width="34" height="95" rx="13" fill="#4CAF50" stroke="#1e1e1e" stroke-width="3.5"/>
+    <circle cx="0" cy="103" r="19" fill="#F2D3A0" stroke="#1e1e1e" stroke-width="3.5"/>
+  </g>
+
+  <!-- LEGS -->
+  <rect x="162" y="428" width="44" height="96" rx="16" fill="#388E3C" stroke="#1e1e1e" stroke-width="3.5"/>
+  <ellipse cx="184" cy="523" rx="28" ry="14" fill="#2E7D32" stroke="#1e1e1e" stroke-width="2.5"/>
+  <rect x="194" y="428" width="44" height="96" rx="16" fill="#388E3C" stroke="#1e1e1e" stroke-width="3.5"/>
+  <ellipse cx="216" cy="523" rx="28" ry="14" fill="#2E7D32" stroke="#1e1e1e" stroke-width="2.5"/>
+
+  <!-- Ground shadow (light ellipse under feet) -->
+  <ellipse cx="200" cy="558" rx="68" ry="13" fill="#1e1e1e" opacity="0.13"/>
+
+</svg>

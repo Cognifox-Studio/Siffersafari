@@ -113,27 +113,28 @@ class LocalStorageRepository {
       final keys = _quizHistoryBox.keys.toList(growable: false);
       debugPrint('[LocalStorage] Quiz history has ${keys.length} sessions');
       for (final key in keys) {
-      final value = _quizHistoryBox.get(key);
-      
-      // Validate before accessing fields
-      final session = _validateQuizSession(value);
-      if (session == null) {
-        // Silently skip/delete corrupted entries
+        final value = _quizHistoryBox.get(key);
+
+        // Validate before accessing fields
+        final session = _validateQuizSession(value);
+        if (session == null) {
+          // Silently skip/delete corrupted entries
+          await _quizHistoryBox.delete(key);
+          continue;
+        }
+
+        if (session['userId'] != userId) continue;
+        if (session['operationType'] != operationTypeName) continue;
+        if (session['isComplete'] != false) continue;
+
+        if (exceptSessionId != null &&
+            session['sessionId'] == exceptSessionId) {
+          continue;
+        }
+
         await _quizHistoryBox.delete(key);
-        continue;
       }
-
-      if (session['userId'] != userId) continue;
-      if (session['operationType'] != operationTypeName) continue;
-      if (session['isComplete'] != false) continue;
-
-      if (exceptSessionId != null && session['sessionId'] == exceptSessionId) {
-        continue;
-      }
-
-      await _quizHistoryBox.delete(key);
-      }
-    debugPrint('[LocalStorage] purgeInProgressQuizSessions completed');
+      debugPrint('[LocalStorage] purgeInProgressQuizSessions completed');
     } catch (e, st) {
       debugPrint('[LocalStorage] purgeInProgressQuizSessions failed: $e');
       debugPrintStack(stackTrace: st);

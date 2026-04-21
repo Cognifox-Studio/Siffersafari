@@ -22,7 +22,7 @@ python tools/pipeline.py build-all
   - `assets/characters/<slug>/config/*.json`
   - `assets/characters/<slug>/svg/*.svg`
   - `artifacts/<slug>_rive_blueprint.json`
-  - `artifacts/<SLUG>_RIVE_GUIDE.md`
+  - `artifacts/<slug>_rive_guide.md`
   - updated `specs/*.yaml`
   - updated `artifacts/asset_pipeline_manifest.json`
   - updated `lib/gen/assets.g.dart`
@@ -36,7 +36,7 @@ This is the main zero-manual-step flow for new SVG-first characters.
   - updated `assets/characters/<slug>/config/<slug>_visual_spec.json`
   - updated `assets/characters/<slug>/svg/*.svg`
   - updated `artifacts/<slug>_rive_blueprint.json`
-  - updated `artifacts/<SLUG>_RIVE_GUIDE.md`
+  - updated `artifacts/<slug>_rive_guide.md`
   - updated `artifacts/asset_pipeline_manifest.json`
   - updated `lib/gen/assets.g.dart`
 
@@ -64,7 +64,7 @@ Generated runtime UI effects:
 - Input: `assets/characters/mascot/config/mascot_animation_spec.json`
 - Output:
   - `artifacts/mascot_rive_blueprint.json`
-  - `artifacts/MASCOT_RIVE_GUIDE.md`
+  - `artifacts/mascot_rive_guide.md`
 
 This is optional blueprint material for later Rive work, not a required runtime step.
 

@@ -11,9 +11,15 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04)
 - Persistens: Hive (`user_progress`, `settings`, `quiz_history`)
 - Animation:
   - SVG-first for mascot-runtime i produkt-UI
-  - Flutter-styrda reaktioner ovanpa composite-SVG i `MascotCharacter`
+   - Flutter-styrda reaktioner ovanpa composite-SVG i `GameCharacter`
   - Lottie for godkanda UI-effekter
   - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spor, men ar inte en aktiv runtime-dependency i appens huvudfloden
+
+## Namngivningsbaseline
+
+- Tekniska filnamn ar engelska och använder `snake_case.dart`.
+- Feature-agd UI ligger i `lib/features/<feature>/presentation/widgets/`.
+- `lib/presentation/widgets/` innehaller bara delad UI och app-shell-komponenter.
 
 ## Startup och bootstrap
 
@@ -24,8 +30,8 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04)
    - `Hive.initFlutter()`
    - `initializeDependencies(openQuizHistoryBox: false)`
    - `quiz_history` oppnas i bakgrunden
-5. `ProviderScope` + `MathGameApp`
-6. `StartupSplashGate` -> `StartupRouterScreen`
+5. `ProviderScope` + `SiffersafariApp`
+6. `StartupSplashGate` -> `StartupFlowGate`
 
 ## Lager och ansvar
 
@@ -36,10 +42,11 @@ UI-lagret ar feature-first:
 - `lib/features/` for alla featureagda skarmar, dialoger och widgets
 - `lib/presentation/screens/` och `lib/presentation/dialogs/` ar tomma (migration klar)
 - `lib/presentation/widgets/` innehaller delade UI-komponenter
+- `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
 
 Viktiga skarmar (med faktisk sokväg):
-- `app/bootstrap/presentation/screens/startup_splash_gate.dart`
-- `app/bootstrap/presentation/screens/startup_router_screen.dart`
+- `app/bootstrap/presentation/startup_splash_gate.dart`
+- `app/bootstrap/presentation/startup_flow_gate.dart`
 - `features/onboarding/presentation/screens/onboarding_screen.dart`
 - `features/onboarding/presentation/screens/initial_profile_setup_screen.dart`
 - `features/profiles/presentation/screens/profile_selection_screen.dart`

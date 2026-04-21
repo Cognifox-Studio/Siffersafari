@@ -398,7 +398,7 @@ $content
   String generateAntennas() {
     final cx = baseSize / 2;
     final antennaRatio =
-      (proportions['antennaLengthRelativeToHead'] as num?) ?? 0.28;
+        (proportions['antennaLengthRelativeToHead'] as num?) ?? 0.28;
     final antennaLength = headSize * antennaRatio;
     final strokeW = style['strokeWidth'] as num;
     final ballSize = 14.0;

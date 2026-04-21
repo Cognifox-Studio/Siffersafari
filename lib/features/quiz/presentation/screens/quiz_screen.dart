@@ -1,22 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
-
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/question.dart';
-import 'package:siffersafari/presentation/widgets/answer_button.dart';
-import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
-import 'package:siffersafari/presentation/widgets/question_card.dart';
-import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/results_screen.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/answer_button.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/question_card.dart';
+import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
+import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class QuizScreen extends ConsumerStatefulWidget {
   const QuizScreen({super.key});
@@ -34,6 +37,26 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   void initState() {
     super.initState();
     _questionStartTime = DateTime.now();
+  }
+
+  void _handleClose() {
+    final quizState = ref.read(quizProvider);
+    final session = quizState.session;
+    final user = ref.read(userProvider).activeUser;
+    if (session != null) {
+      unawaited(
+        ref.read(appAnalyticsProvider).logEvent(
+          name: 'quiz_abandoned',
+          userId: user?.userId,
+          properties: {
+            'question_index': session.currentQuestionIndex,
+            'total_questions': session.totalQuestions,
+            'operation': session.operationType.name,
+          },
+        ),
+      );
+    }
+    Navigator.of(context).pop();
   }
 
   void _handleAnswerSelected(int answer) {
@@ -76,7 +99,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       return;
     }
 
-    ref.read(quizProvider.notifier).goToNextQuestion();
+    ref.read(quizProvider.notifier).advanceToNextQuestion();
     setState(() {
       _selectedAnswer = null;
       _questionStartTime = DateTime.now();
@@ -153,7 +176,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         leading: IconButton(
           tooltip: 'Stäng quiz',
           icon: Icon(Icons.close, color: onPrimary),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _handleClose,
         ),
       ),
       body: LayoutBuilder(
@@ -172,6 +195,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   ? _buildLandscapeLayout(
                       context,
                       question: question,
+                      currentQuestionNumber: session.currentQuestionIndex + 1,
+                      totalQuestions: session.totalQuestions,
+                      operationType: session.operationType,
                       progress: progress,
                       primaryActionColor: primaryActionColor,
                       accentColor: accentColor,
@@ -185,6 +211,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                   : _buildPortraitLayout(
                       context,
                       question: question,
+                      currentQuestionNumber: session.currentQuestionIndex + 1,
+                      totalQuestions: session.totalQuestions,
+                      operationType: session.operationType,
                       progress: progress,
                       primaryActionColor: primaryActionColor,
                       accentColor: accentColor,
@@ -205,6 +234,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget _buildPortraitLayout(
     BuildContext context, {
     required Question question,
+    required int currentQuestionNumber,
+    required int totalQuestions,
+    required OperationType operationType,
     required double progress,
     required Color primaryActionColor,
     required Color accentColor,
@@ -215,7 +247,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
   }) {
-    final questionFlex = layout.isShortHeight ? 6 : 7;
+    final questionFlex = layout.isShortHeight ? 5 : 6;
+    final answersFlex = layout.isShortHeight ? 4 : 5;
     final answersTopPadding = layout.isShortHeight
         ? AppConstants.smallPadding.h
         : AppConstants.defaultPadding.h;
@@ -231,25 +264,40 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
+        SizedBox(height: AppConstants.smallPadding.h),
         Expanded(
           flex: questionFlex,
-          child: QuestionCard(
-            question: question,
-            cardColor: cardColor,
-            shadowColor: primaryActionColor,
-            questionTextColor: lightTextColor,
-            subtitleTextColor: mutedTextColor,
-            borderColor: cardBorderColor,
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 280),
+            switchInCurve: Curves.easeOut,
+            switchOutCurve: Curves.easeIn,
+            child: QuestionCard(
+              key: ValueKey(question.id),
+              question: question,
+              cardColor: cardColor,
+              shadowColor: primaryActionColor,
+              questionTextColor: lightTextColor,
+              subtitleTextColor: mutedTextColor,
+              borderColor: cardBorderColor,
+            ),
           ),
         ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(
-            AppConstants.defaultPadding.w,
-            answersTopPadding,
-            AppConstants.defaultPadding.w,
-            AppConstants.defaultPadding.w,
+        Expanded(
+          flex: answersFlex,
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              AppConstants.defaultPadding.w,
+              answersTopPadding,
+              AppConstants.defaultPadding.w,
+              AppConstants.defaultPadding.w,
+            ),
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: SingleChildScrollView(
+                child: _buildAnswerButtons(context, question),
+              ),
+            ),
           ),
-          child: _buildAnswerButtons(context, question),
         ),
       ],
     );
@@ -258,6 +306,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget _buildLandscapeLayout(
     BuildContext context, {
     required Question question,
+    required int currentQuestionNumber,
+    required int totalQuestions,
+    required OperationType operationType,
     required double progress,
     required Color primaryActionColor,
     required Color accentColor,
@@ -282,6 +333,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
+
         Expanded(
           child: Row(
             children: [
@@ -293,13 +345,19 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                     right: AppConstants.smallPadding.w,
                     bottom: AppConstants.defaultPadding.h,
                   ),
-                  child: QuestionCard(
-                    question: question,
-                    cardColor: cardColor,
-                    shadowColor: primaryActionColor,
-                    questionTextColor: lightTextColor,
-                    subtitleTextColor: mutedTextColor,
-                    borderColor: cardBorderColor,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 280),
+                    switchInCurve: Curves.easeOut,
+                    switchOutCurve: Curves.easeIn,
+                    child: QuestionCard(
+                      key: ValueKey(question.id),
+                      question: question,
+                      cardColor: cardColor,
+                      shadowColor: primaryActionColor,
+                      questionTextColor: lightTextColor,
+                      subtitleTextColor: mutedTextColor,
+                      borderColor: cardBorderColor,
+                    ),
                   ),
                 ),
               ),

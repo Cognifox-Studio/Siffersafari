@@ -3,6 +3,7 @@ import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/domain/entities/level_up_event.dart';
 import 'package:siffersafari/domain/entities/quest.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
@@ -27,6 +28,7 @@ class UserState {
     this.errorMessage,
     this.lastReward,
     this.lastQuestCompletion,
+    this.lastLevelUp,
     this.questStatus,
     this.questNotice,
   });
@@ -37,6 +39,7 @@ class UserState {
   final String? errorMessage;
   final AchievementReward? lastReward;
   final QuestCompletionEvent? lastQuestCompletion;
+  final LevelUpEvent? lastLevelUp;
   final QuestStatus? questStatus;
   final String? questNotice;
 
@@ -49,6 +52,7 @@ class UserState {
     String? errorMessage,
     AchievementReward? lastReward,
     Object? lastQuestCompletion = _unset,
+    Object? lastLevelUp = _unset,
     QuestStatus? questStatus,
     Object? questNotice = _unset,
   }) {
@@ -61,6 +65,9 @@ class UserState {
       lastQuestCompletion: lastQuestCompletion == _unset
           ? this.lastQuestCompletion
           : lastQuestCompletion as QuestCompletionEvent?,
+      lastLevelUp: lastLevelUp == _unset
+          ? this.lastLevelUp
+          : lastLevelUp as LevelUpEvent?,
       questStatus: questStatus ?? this.questStatus,
       questNotice:
           questNotice == _unset ? this.questNotice : questNotice as String?,
@@ -235,6 +242,11 @@ class UserNotifier extends StateNotifier<UserState> {
     state = state.copyWith(lastQuestCompletion: null);
   }
 
+  void clearLastLevelUp() {
+    if (state.lastLevelUp == null) return;
+    state = state.copyWith(lastLevelUp: null);
+  }
+
   void _syncAudioSettings(UserProgress user) {
     _audioService.setSoundEnabled(user.soundEnabled);
     _audioService.setMusicEnabled(user.musicEnabled);
@@ -331,6 +343,15 @@ class UserNotifier extends StateNotifier<UserState> {
     state = state.copyWith(activeUser: user);
   }
 
+  /// Persist the selected character slug (e.g. 'mascot', 'loke', 'skogshjalte')
+  /// for the currently active user.
+  Future<void> setCharacter(String characterSlug) async {
+    final user = state.activeUser;
+    if (user == null) return;
+    final updated = user.copyWith(selectedCharacterId: characterSlug);
+    await saveUser(updated);
+  }
+
   Future<void> applyQuizResult(QuizSession session) async {
     final user = state.activeUser;
     if (user == null) {
@@ -340,6 +361,8 @@ class UserNotifier extends StateNotifier<UserState> {
     QuestCompletionEvent? questCompletion;
 
     final now = DateTime.now();
+
+    final oldLevel = user.level;
 
     final updatedStreak = _calculateStreak(
       currentStreak: user.currentStreak,
@@ -482,6 +505,13 @@ class UserNotifier extends StateNotifier<UserState> {
       activeUser: updatedUser,
       lastReward: reward,
       lastQuestCompletion: resolvedQuestCompletion,
+      lastLevelUp: updatedUser.level > oldLevel
+          ? LevelUpEvent(
+              oldLevel: oldLevel,
+              newLevel: updatedUser.level,
+              newTitle: updatedUser.levelTitle,
+            )
+          : null,
       questStatus: questStatus,
     );
   }

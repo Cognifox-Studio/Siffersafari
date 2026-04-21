@@ -37,13 +37,14 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
       achievements: (fields[15] as List).cast<String>(),
       masteryLevels: (fields[16] as Map).cast<String, double>(),
       operationDifficultySteps: (fields[19] as Map).cast<String, int>(),
+      selectedCharacterId: fields[20] as String? ?? 'mascot',
     );
   }
 
   @override
   void write(BinaryWriter writer, UserProgress obj) {
     writer
-      ..writeByte(20)
+      ..writeByte(21)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -83,7 +84,9 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
       ..writeByte(16)
       ..write(obj.masteryLevels)
       ..writeByte(19)
-      ..write(obj.operationDifficultySteps);
+      ..write(obj.operationDifficultySteps)
+      ..writeByte(20)
+      ..write(obj.selectedCharacterId);
   }
 
   @override

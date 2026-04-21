@@ -5,7 +5,7 @@ import 'package:siffersafari/core/di/injection.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
-import 'test_utils.dart' as it;
+import 'integration_test_utils.dart' as it;
 
 const _kSettleShort = Duration(milliseconds: 250);
 const _kSettleMedium = Duration(milliseconds: 400);
@@ -59,6 +59,13 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
     final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
     if (nextButton.evaluate().isNotEmpty) {
       await it.tap(tester, nextButton);
+      await it.settle(tester, _kSettleMedium);
+      return true;
+    }
+    // Single-step onboarding (1/1): the only button is "Starta".
+    final startButton = find.widgetWithText(ElevatedButton, 'Starta');
+    if (startButton.evaluate().isNotEmpty) {
+      await it.tap(tester, startButton);
       await it.settle(tester, _kSettleMedium);
       return true;
     }

@@ -68,7 +68,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -100,8 +100,8 @@ void main() {
 
       await pumpUntilFound(tester, find.textContaining('Spela igen'));
 
-      await tester.ensureVisible(find.text('Snabbträna (2 min)'));
-      await tester.tap(find.text('Snabbträna (2 min)'));
+      await tester.ensureVisible(find.text('Snabbträna ⚡'));
+      await tester.tap(find.text('Snabbträna ⚡'));
       await pumpUntilFound(tester, find.textContaining('Fråga'));
 
       expect(find.textContaining('Fråga'), findsOneWidget);
@@ -131,7 +131,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -163,8 +163,8 @@ void main() {
 
       await pumpUntilFound(tester, find.textContaining('Spela igen'));
 
-      await tester.ensureVisible(find.text('Snabbträna (2 min)'));
-      await tester.tap(find.text('Snabbträna (2 min)'));
+      await tester.ensureVisible(find.text('Snabbträna ⚡'));
+      await tester.tap(find.text('Snabbträna ⚡'));
       await pumpUntilFound(tester, find.textContaining('Fråga'));
       expect(find.textContaining('Fråga'), findsOneWidget);
     },
@@ -193,7 +193,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -221,9 +221,9 @@ void main() {
         }
       }
 
-      await pumpUntilFound(tester, find.text('Nytt delmål i djungeln!'));
+      await pumpUntilFound(tester, find.text('Nytt stopp!'));
 
-      expect(find.text('Nytt delmål i djungeln!'), findsOneWidget);
+      expect(find.text('Nytt stopp!'), findsOneWidget);
       expect(
         find.textContaining('Nästa mål: Hitta borttappade siffror'),
         findsWidgets,

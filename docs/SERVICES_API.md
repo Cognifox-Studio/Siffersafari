@@ -35,7 +35,7 @@ Ansvar:
 Anvands av:
 - `DailyChallengeNotifier` (via `dailyChallengeProvider`)
 - `HomeScreen` (använder `getTodaysChallengeForUser` för personalisering)
-- `DailyChallengeCard` (presentation/widgets)
+- `DailyChallengeCard` (`features/daily_challenge/presentation/widgets/`)
 
 ### AppAnalyticsService
 Fil: `lib/core/services/app_analytics_service.dart`
@@ -177,7 +177,7 @@ Ansvar:
 Providers är Riverpod-baserade state-hanterare som konsumerar services och repository.
 
 ### DailyChallengeNotifier
-Fil: `lib/core/providers/daily_challenge_provider.dart`
+Fil: `lib/features/daily_challenge/providers/daily_challenge_provider.dart`
 
 Ansvar:
 - spåra completion-status för dagens utmaning per användare
@@ -219,7 +219,6 @@ Ansvar:
 
 - DI: `lib/core/di/injection.dart`
 - Providers: `lib/core/providers/*.dart`
-- Barrel-export for presentation-lagret: `lib/presentation/providers.dart`
 
 Notera:
 - Providers konsumerar services/repository via Riverpod.

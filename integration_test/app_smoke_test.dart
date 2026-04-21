@@ -5,7 +5,7 @@ import 'package:siffersafari/core/di/injection.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
-import 'test_utils.dart' as it;
+import 'integration_test_utils.dart' as it;
 
 const bool _runExtendedSmoke =
     bool.fromEnvironment('FULL_SMOKE', defaultValue: false);

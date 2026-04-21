@@ -6,7 +6,7 @@
 ## Current Runtime Status
 
 ⚠️ **mascot_character.riv** (placeholder/demo export)  
-- **Source:** Simple Character Rig.riv  
+- **Source:** simple_character_rig.riv  
 - **Size:** 7 KB  
 - **Status:** Connected in app, but not production-ready  
 - **Path:** `assets/characters/mascot/rive/mascot_character.riv`
@@ -18,23 +18,23 @@ Current verified runtime state:
 
 ## Alternative Rigs
 
-### 1. Creature Rig.riv
+### 1. creature_rig.riv
 - **Size:** 22 KB  
 - **Description:** More complex creature-style rig  
 - **Use case:** If you want more detailed animations  
-- **Location:** `artifacts/Creature Rig.riv`
+- **Location:** `artifacts/creature_rig.riv`
 
-### 2. Puppet Rig.riv
+### 2. puppet_rig.riv
 - **Size:** 6 KB  
 - **Description:** Puppet-style character rig  
 - **Use case:** Alternative character style  
-- **Location:** `artifacts/Puppet Rig.riv`
+- **Location:** `artifacts/puppet_rig.riv`
 
-### 3. State Machine Character Demo.riv
+### 3. state_machine_character_demo.riv
 - **Size:** 0.4 KB  
 - **Description:** Minimal state machine demo  
 - **Use case:** Learning/testing state machines  
-- **Location:** `artifacts/State Machine Character Demo.riv`
+- **Location:** `artifacts/state_machine_character_demo.riv`
 
 ## Do Not Switch Rigs By Copying Files
 
@@ -90,7 +90,7 @@ The app expects:
   - `user_tap` → fired when user taps character
   - `screen_change` → fired on navigation
 
-See `lib/presentation/widgets/mascot_character.dart` for implementation.
+See `lib/presentation/widgets/game_character.dart` for implementation.
 
 ## Runtime Behavior
 

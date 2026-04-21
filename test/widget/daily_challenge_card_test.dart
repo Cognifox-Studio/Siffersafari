@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
-import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/core/services/daily_challenge_service.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/presentation/widgets/daily_challenge_card.dart';
+import 'package:siffersafari/features/daily_challenge/presentation/widgets/daily_challenge_card.dart';
+import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 
 import '../test_utils.dart';
 
@@ -60,7 +60,7 @@ void main() {
   }
 
   testWidgets(
-    '[Widget] DailyChallengeCard – visar "Kör utmaningen" när ej klar',
+    '[Widget] DailyChallengeCard – visar "Spela" när ej klar',
     (tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -72,14 +72,14 @@ void main() {
       await tester.pumpWidget(buildCard());
       await tester.pump();
 
-      expect(find.text('Kör utmaningen'), findsOneWidget);
-      expect(find.text('Dagens utmaning'), findsOneWidget);
-      expect(find.textContaining('✅'), findsNothing);
+      expect(find.text('Spela'), findsOneWidget);
+      expect(find.text('Dagens runda'), findsOneWidget);
+      expect(find.text('Klar'), findsNothing);
     },
   );
 
   testWidgets(
-    '[Widget] DailyChallengeCard – visar "✅ Klar!" när utmaningen är gjord',
+    '[Widget] DailyChallengeCard – visar "Klar" när utmaningen är gjord',
     (tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -98,8 +98,8 @@ void main() {
       await tester.pumpWidget(buildCard());
       await tester.pump();
 
-      expect(find.textContaining('✅'), findsOneWidget);
-      expect(find.text('Kör utmaningen'), findsNothing);
+      expect(find.text('Klar'), findsOneWidget);
+      expect(find.text('Spela'), findsNothing);
     },
   );
 
@@ -126,7 +126,7 @@ void main() {
       await tester.pumpWidget(buildCard());
       await tester.pump();
 
-      expect(find.textContaining('4 dagar'), findsOneWidget);
+      expect(find.textContaining('🔥 4'), findsOneWidget);
     },
   );
 
@@ -167,7 +167,7 @@ void main() {
       await tester.pumpWidget(buildCard(onStart: () => tapped = true));
       await tester.pump();
 
-      await tester.tap(find.text('Kör utmaningen'));
+      await tester.tap(find.text('Spela'));
       await tester.pump();
 
       expect(tapped, true);

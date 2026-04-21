@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/data_export_service_provider.dart';
 import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
 import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
@@ -213,6 +214,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       ref.read(parentSettingsProvider.notifier).ensureLoaded(widget.userId);
+      ref.read(appAnalyticsProvider).logEvent(name: 'parent_mode_opened');
     });
   }
 
@@ -594,6 +596,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                   .hydrateReviewSummaryForUser(userId);
             },
           ),
+          const Divider(height: 1),
+          _CharacterPickerTile(userId: userId),
           const Divider(height: 1),
           Padding(
             padding: const EdgeInsets.only(top: AppConstants.smallPadding),
@@ -1085,7 +1089,8 @@ class _UpdateSectionCardState extends State<_UpdateSectionCard> {
     });
 
     try {
-      _installSubscription = _appUpdateService.installUpdate(release).listen(
+      _installSubscription =
+          _appUpdateService.startUpdateInstallation(release).listen(
         (event) {
           if (!mounted) return;
           setState(() {
@@ -1917,6 +1922,76 @@ class _BenchmarkOperationCard extends StatelessWidget {
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// endregion
+
+// region _CharacterPickerTile
+
+class _CharacterPickerTile extends ConsumerWidget {
+  const _CharacterPickerTile({required this.userId});
+
+  final String userId;
+
+  static const _characters = [
+    ('mascot', 'Safari-safaristen'),
+    ('loke', 'Loke'),
+    ('skogshjalte', 'Skogshjälten'),
+  ];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
+    final accentColor = Theme.of(context).colorScheme.secondary;
+
+    final user = ref.watch(userProvider).activeUser;
+    if (user == null || user.userId != userId) return const SizedBox.shrink();
+
+    final current = user.selectedCharacterId;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.defaultPadding,
+        vertical: AppConstants.smallPadding,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Karaktär',
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: _characters.map((entry) {
+              final (slug, label) = entry;
+              final selected = slug == current;
+              return ChoiceChip(
+                label: Text(label),
+                selected: selected,
+                selectedColor:
+                    accentColor.withValues(alpha: AppOpacities.highlightStrong),
+                labelStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: selected ? accentColor : mutedOnPrimary,
+                      fontWeight:
+                          selected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                onSelected: (_) async {
+                  await ref.read(userProvider.notifier).setCharacter(slug);
+                },
+              );
+            }).toList(),
           ),
         ],
       ),

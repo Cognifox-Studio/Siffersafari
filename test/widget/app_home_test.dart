@@ -30,7 +30,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -89,7 +89,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -102,7 +102,7 @@ void main() {
   );
 
   testWidgets(
-    '[Widget] App home – visar repetitionstatus för aktiv profil',
+    '[Widget] App home – visar enklare hero för aktiv profil',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -124,13 +124,17 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
-      await pumpUntilFound(tester, find.textContaining('Repetitioner redo:'));
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('primary_play_button')),
+      );
 
-      expect(find.textContaining('Repetitioner redo:'), findsOneWidget);
+      expect(find.textContaining('Repetitioner redo:'), findsNothing);
+      expect(find.text('🎮 Mer spel'), findsOneWidget);
     },
   );
 
@@ -157,7 +161,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -193,7 +197,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -209,8 +213,8 @@ void main() {
         AppConstants.pageTransitionSlow + const Duration(milliseconds: 150),
       );
 
-      expect(find.text('Djungelkartan'), findsOneWidget);
-      expect(find.text('Nu kör vi!'), findsOneWidget);
+      expect(find.text('Djungelkartan'), findsAtLeastNWidgets(1));
+      expect(find.text('Nästa stopp'), findsOneWidget);
     },
   );
 }

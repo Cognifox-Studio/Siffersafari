@@ -43,7 +43,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -94,7 +94,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -149,7 +149,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 
@@ -223,7 +223,7 @@ void main() {
 
       await tester.pumpWidget(
         ProviderScope(
-          child: MathGameApp(initFuture: Future.value(null)),
+          child: SiffersafariApp(initFuture: Future.value(null)),
         ),
       );
 

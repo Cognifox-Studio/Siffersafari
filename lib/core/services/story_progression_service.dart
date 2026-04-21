@@ -108,7 +108,7 @@ class StoryProgressionService {
     ),
   ];
 
-  StoryProgress build({
+  StoryProgress createStoryProgress({
     required List<QuestDefinition> path,
     required QuestStatus currentStatus,
     required Set<String> completedQuestIds,

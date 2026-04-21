@@ -1216,7 +1216,7 @@ def character_entry(slug: str, name: str) -> dict[str, Any]:
             "composite_svg": f"assets/characters/{slug}/svg/{slug}_composite.svg",
             "rive_runtime": f"assets/characters/{slug}/rive/{slug}_character.riv",
             "rive_blueprint": f"artifacts/{slug}_rive_blueprint.json",
-            "rive_guide": f"artifacts/{slug.upper()}_RIVE_GUIDE.md",
+            "rive_guide": f"artifacts/{slug}_rive_guide.md",
         },
     }
 
@@ -1273,7 +1273,7 @@ def main() -> None:
             "animation_spec": f"assets/characters/{slug}/config/{slug}_animation_spec.json",
             "svg_parts": [f"assets/characters/{slug}/svg/{slug}_{part}.svg" for part in SVG_PART_ORDER],
             "rive_blueprint": f"artifacts/{slug}_rive_blueprint.json",
-            "rive_guide": f"artifacts/{slug.upper()}_RIVE_GUIDE.md",
+            "rive_guide": f"artifacts/{slug}_rive_guide.md",
         },
     }
 
@@ -1299,7 +1299,7 @@ def main() -> None:
     write_text(svg_dir / "README.md", svg_readme(slug, args.name))
     write_text(rive_dir / "README.md", rive_readme(slug, args.name, animation_spec))
     write_json(artifacts_dir / f"{slug}_rive_blueprint.json", blueprint)
-    write_text(artifacts_dir / f"{slug.upper()}_RIVE_GUIDE.md", guide)
+    write_text(artifacts_dir / f"{slug}_rive_guide.md", guide)
 
     characters_doc = load_yaml_file(specs_dir / "characters.yaml")
     rigs_doc = load_yaml_file(specs_dir / "rigs.yaml")

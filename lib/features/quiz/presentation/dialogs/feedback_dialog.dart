@@ -71,6 +71,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
     final incorrectAccent = scheme.secondary;
     final mainColor = isCorrect ? correctColor : incorrectAccent;
+    final comboStartColor = widget.continueButtonColor ?? scheme.primary;
+    final comboEndColor = scheme.secondary;
     final buttonBackgroundColor = isCorrect
         ? correctColor
         : (widget.continueButtonColor ?? Theme.of(context).colorScheme.primary);
@@ -103,23 +105,20 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                   vertical: AppConstants.microSpacing6.h,
                 ),
                 decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFFF6F00), Color(0xFFFFA000)],
+                  color: Color.alphaBlend(
+                    comboStartColor.withValues(alpha: 0.18),
+                    dialogBackgroundColor,
                   ),
                   borderRadius:
                       BorderRadius.circular(AppConstants.borderRadius),
-                  boxShadow: [
-                    BoxShadow(
-                      color: const Color(0xFFFF6F00).withValues(alpha: 0.45),
-                      blurRadius: 8,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  border: Border.all(
+                    color: comboEndColor.withValues(alpha: 0.48),
+                  ),
                 ),
                 child: Text(
                   '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Colors.white,
+                        color: onSurface,
                         fontWeight: FontWeight.w900,
                         letterSpacing: 1.2,
                       ),
@@ -205,7 +204,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                       SizedBox(height: AppConstants.defaultPadding.h),
                       ..._buildExtraLines(
                         context,
-                        lines.sublist(2),
+                        lines.sublist(2, 3),
                         defaultColor: widget.messageTextColor ?? mutedOnSurface,
                         accentColor: isCorrect ? correctColor : incorrectAccent,
                       ),

@@ -4,8 +4,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 Future<ProcessResult> _runAssetLint() async {
   final commands = Platform.isWindows
-  ? <String>['python', 'py']
-  : <String>['python3', 'python'];
+      ? <String>['python', 'py']
+      : <String>['python3', 'python'];
 
   ProcessException? lastError;
 
@@ -29,8 +29,8 @@ Future<ProcessResult> _runAssetLint() async {
 
 Future<ProcessResult> _runAssetLintWarnOnlyWithReport() async {
   final commands = Platform.isWindows
-  ? <String>['python', 'py']
-  : <String>['python3', 'python'];
+      ? <String>['python', 'py']
+      : <String>['python3', 'python'];
 
   ProcessException? lastError;
 

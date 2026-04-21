@@ -5,7 +5,7 @@ import 'package:siffersafari/core/di/injection.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/main.dart' as app;
 
-import 'test_utils.dart' as it;
+import 'integration_test_utils.dart' as it;
 
 const _kSettleShort = Duration(milliseconds: 250);
 const _kSettleMedium = Duration(milliseconds: 400);
@@ -56,7 +56,6 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   final activeStep = _activeOnboardingStep(tester);
   final gradeTitle = find.text('Vilken årskurs kör du?');
   final readingTitle = find.text('Kan barnet läsa?');
-  final opsTitle = find.text('Vad vill du räkna först?');
 
   if (_isVisible(readingTitle)) {
     final noButton = find.text('Nej').hitTestable();
@@ -75,21 +74,10 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
       await it.settle(tester, _kSettleMedium);
       return true;
     }
-  }
-
-  if (_isVisible(opsTitle) ||
-      activeStep?.startsWith('3/') == true ||
-      ((activeStep?.startsWith('2/') ?? false) && !_isVisible(readingTitle))) {
-    final doneButton = find.widgetWithText(ElevatedButton, 'Starta');
-    if (doneButton.evaluate().isNotEmpty) {
-      await it.tap(tester, doneButton);
-      await it.settle(tester, _kSettleMedium);
-      return true;
-    }
-
-    final nextButton = find.widgetWithText(ElevatedButton, 'Nästa');
-    if (nextButton.evaluate().isNotEmpty) {
-      await it.tap(tester, nextButton);
+    // Single-step onboarding (1/1): the only button is "Starta".
+    final startButton = find.widgetWithText(ElevatedButton, 'Starta');
+    if (startButton.evaluate().isNotEmpty) {
+      await it.tap(tester, startButton);
       await it.settle(tester, _kSettleMedium);
       return true;
     }

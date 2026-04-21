@@ -96,8 +96,9 @@ LOTTIE_OUTPUTS = tuple(
 )
 
 STEPS = {
-    "svg": Step(
-        name="SVG parts",
+    # mascot-specific — generate SVG body parts for the mascot character
+    "mascot_parts": Step(
+        name="Mascot SVG parts",
         command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_mascot_svg_parts.dart"),
         expected_outputs=SVG_OUTPUTS,
     ),
@@ -111,10 +112,11 @@ STEPS = {
         command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_rive_blueprint.dart"),
         expected_outputs=(
             repo_path("artifacts", "mascot_rive_blueprint.json"),
-            repo_path("artifacts", "MASCOT_RIVE_GUIDE.md"),
+            repo_path("artifacts", "mascot_rive_guide.md"),
         ),
     ),
-    "composite": Step(
+    # mascot-specific — assemble final composite SVG for the mascot character
+    "mascot_composite": Step(
         name="Mascot composite",
         command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_mascot_composite.dart"),
         expected_outputs=(
@@ -870,11 +872,11 @@ def main() -> None:
     validated_specs = validate_specs(specs)
 
     command_to_steps = {
-        "build-all": ("svg", "lottie", "rive", "composite"),
-        "build-svg": ("svg",),
+        "build-all": ("mascot_parts", "lottie", "rive", "mascot_composite"),
+        "build-svg": ("mascot_parts",),
         "build-lottie": ("lottie",),
         "build-rive": ("rive",),
-        "build-composite": ("composite",),
+        "build-composite": ("mascot_composite"),
     }
 
     if args.command == "validate":

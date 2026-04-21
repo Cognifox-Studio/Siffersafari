@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
-import 'package:siffersafari/presentation/widgets/theme_mascot.dart';
+import 'package:siffersafari/presentation/widgets/mascot_reaction_view.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class InitialProfileSetupScreen extends ConsumerWidget {
@@ -87,7 +86,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           alignment: Alignment.center,
                           child: SizedBox(
                             height: mascotHeight,
-                            child: ThemeMascot.withState(
+                            child: MascotReactionView.withState(
                               state: CharacterAnimationState.idle,
                               height: mascotHeight,
                               fit: BoxFit.contain,

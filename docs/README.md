@@ -3,7 +3,13 @@
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-04-04.
+Senast uppdaterad: 2026-04-18.
+
+## Naming-baseline
+
+- Tekniska filnamn ska vara engelska och använda `snake_case`.
+- Feature-ägd UI ska ligga under `lib/features/<feature>/presentation/widgets/`.
+- `lib/presentation/widgets/` är reserverad för verkligt delad UI och app-shell-komponenter.
 
 ## Diátaxis-typer och index
 
@@ -16,6 +22,7 @@ Senast uppdaterad: 2026-04-04.
 - `DEPLOY_ANDROID.md` – Så deployar du till Android
 - `ASSET_GENERATION.md` – Så genererar du assets
 - `AI_ASSET_PIPELINE.md` – Generera AI-baserade assets
+- `NAMING_STRUCTURE_REFACTOR_PLAN.md` – Genomför namn- och strukturstädning stegvis
 - `SETUP_ENVIRONMENT.md` – Sätt upp miljön
 - `CONTRIBUTING.md` – Bidra till projektet
 

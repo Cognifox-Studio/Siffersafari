@@ -204,7 +204,7 @@ void main() {
           responseTime: const Duration(seconds: 3),
           ageGroup: AgeGroup.middle,
         );
-        notifier.goToNextQuestion();
+        notifier.advanceToNextQuestion();
       }
 
       final step = notifier
@@ -243,7 +243,7 @@ void main() {
           responseTime: const Duration(seconds: 3),
           ageGroup: AgeGroup.middle,
         );
-        notifier.goToNextQuestion();
+        notifier.advanceToNextQuestion();
       }
 
       final step = notifier

@@ -36,12 +36,15 @@ Byggartefakter som inte ar kallkod:
 - `data/`
   - `repositories/`: `LocalStorageRepository` (Hive)
 - `app/`
-  - `bootstrap/presentation/screens/`: `startup_splash_gate.dart`, `startup_router_screen.dart`
+  - `bootstrap/presentation/`: `startup_splash_gate.dart`, `startup_flow_gate.dart`
 - `features/`: feature-agda skarmar, dialoger och widgets (feature-first struktur)
+  - `daily_challenge/presentation/widgets/`: `daily_challenge_card.dart`
+  - `daily_challenge/providers/`: `daily_challenge_provider.dart`
   - `home/presentation/screens/`: `home_screen.dart`
   - `home/presentation/widgets/`: `home_story_progress_card.dart`
   - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart`
   - `quiz/presentation/dialogs/`: `feedback_dialog.dart`
+  - `quiz/presentation/widgets/`: `answer_button.dart`, `question_card.dart`
   - `story/presentation/screens/`: `story_map_screen.dart`
   - `parent/presentation/screens/`: `parent_dashboard_screen.dart`, `parent_pin_screen.dart`, `pin_recovery_screen.dart`
   - `profiles/presentation/screens/`: `profile_selection_screen.dart`
@@ -51,13 +54,18 @@ Byggartefakter som inte ar kallkod:
 - `presentation/`
   - `screens/`: tom (alla skarmar ar nu i features/)
   - `dialogs/`: tom (alla dialoger ar nu i features/)
-  - `widgets/`: ateranvandbara UI-komponenter: `answer_button.dart`, `daily_challenge_card.dart`, `mascot_character.dart`, `progress_indicator_bar.dart`, `question_card.dart`, `star_rating.dart`, `theme_mascot.dart`, `themed_background_scaffold.dart`
-  - `providers.dart`: barrel-export av alla providers for presentation-lagret
+  - `widgets/`: ateranvandbara UI-komponenter: `game_character.dart`, `mascot_reaction_view.dart`, `progress_indicator_bar.dart`, `star_rating.dart`, `themed_background_scaffold.dart`
+
+## Namngivningsbaseline
+
+- Tekniska filnamn ar engelska och anvander `snake_case.dart`.
+- Feature-agd UI ligger i featuremappen i stallet for `lib/presentation/widgets/`.
+- `lib/presentation/widgets/` ar reserverad for verkligt delad UI.
 
 ## Viktiga skarmar (med faktisk sökväg)
 
 - `lib/app/bootstrap/presentation/startup_splash_gate.dart`
-- `lib/app/bootstrap/presentation/startup_router_screen.dart`
+- `lib/app/bootstrap/presentation/startup_flow_gate.dart`
 - `lib/features/onboarding/presentation/screens/onboarding_screen.dart`
 - `lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart`
 - `lib/features/profiles/presentation/screens/profile_selection_screen.dart`
@@ -114,7 +122,7 @@ Byggartefakter som inte ar kallkod:
 - `parent_features_test.dart`
 - `parent_pin_security_question_flow_test.dart`
 - `screenshots_test.dart`
-- `test_utils.dart`
+- `integration_test_utils.dart`
 
 ## assets/
 

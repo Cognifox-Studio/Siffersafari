@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import 'package:siffersafari/core/theme/app_theme_config.dart';
-import 'mascot_character.dart';
 
-class ThemeMascot extends StatelessWidget {
-  const ThemeMascot.withState({
+import 'game_character.dart';
+
+class MascotReactionView extends StatelessWidget {
+  const MascotReactionView.withState({
     super.key,
     required this.height,
     this.state = CharacterAnimationState.idle,
@@ -19,7 +19,7 @@ class ThemeMascot extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: height,
-      child: MascotCharacter(
+      child: GameCharacter(
         height: height,
         fit: fit,
         reaction: _mapReaction(state),
@@ -28,16 +28,16 @@ class ThemeMascot extends StatelessWidget {
     );
   }
 
-  MascotReaction _mapReaction(CharacterAnimationState state) {
+  CharacterReaction _mapReaction(CharacterAnimationState state) {
     switch (state) {
       case CharacterAnimationState.idle:
-        return MascotReaction.idle;
+        return CharacterReaction.idle;
       case CharacterAnimationState.happy:
-        return MascotReaction.answerCorrect;
+        return CharacterReaction.answerCorrect;
       case CharacterAnimationState.celebrate:
-        return MascotReaction.celebrate;
+        return CharacterReaction.celebrate;
       case CharacterAnimationState.error:
-        return MascotReaction.answerWrong;
+        return CharacterReaction.answerWrong;
     }
   }
 }

@@ -1,9 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
 import 'package:siffersafari/core/services/daily_challenge_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
-
-import 'local_storage_repository_provider.dart';
 
 /// Provider for the pure daily challenge service (no I/O).
 final dailyChallengeServiceProvider = Provider<DailyChallengeService>(
@@ -15,12 +14,17 @@ class DailyChallengeState {
   const DailyChallengeState({
     this.isCompleted = false,
     this.streakCount = 0,
+    this.streakWasReset = false,
   });
 
   final bool isCompleted;
 
   /// Number of consecutive days the user has completed the daily challenge.
   final int streakCount;
+
+  /// True when the previous streak was broken and reset to 1 by today's run.
+  /// Used by UI to show a gentle "streak startade om"-meddelande.
+  final bool streakWasReset;
 }
 
 /// Notifier that tracks whether today's challenge has been completed
@@ -100,6 +104,8 @@ class DailyChallengeNotifier extends StateNotifier<DailyChallengeState> {
     final completionKey =
         SettingsKeys.dailyChallengeCompletion(_userId, todayKey);
 
+    final previousStreak = state.streakCount;
+
     // Only recalculate streak if not already marked done today.
     final newStreak =
         state.isCompleted ? state.streakCount : _computeNewStreak(todayKey);
@@ -114,7 +120,13 @@ class DailyChallengeNotifier extends StateNotifier<DailyChallengeState> {
       // Storage unavailable – update in-memory state only.
     }
 
-    state = DailyChallengeState(isCompleted: true, streakCount: newStreak);
+    final wasReset = !state.isCompleted && previousStreak > 1 && newStreak == 1;
+
+    state = DailyChallengeState(
+      isCompleted: true,
+      streakCount: newStreak,
+      streakWasReset: wasReset,
+    );
   }
 }
 

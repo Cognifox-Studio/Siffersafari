@@ -1,11 +1,11 @@
 import 'dart:math';
 
-import 'package:uuid/uuid.dart';
-
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:uuid/uuid.dart';
+
 import '../config/app_features.dart';
 import '../config/difficulty_config.dart';
 
@@ -50,7 +50,7 @@ class QuestionGeneratorService {
 
   // region Helper Methods
 
-  int _randomInRange(NumberRange range) {
+  int _randomInRange(DifficultyNumberRange range) {
     return range.min + _random.nextInt(range.max - range.min + 1);
   }
 
@@ -586,7 +586,7 @@ class QuestionGeneratorService {
   // region M4 Generators (Åk 4-6 Special Topics)
 
   Question _generateM4StatisticsQuestion(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
@@ -600,7 +600,8 @@ class QuestionGeneratorService {
         : step <= 6
             ? min(range.max, 1000)
             : min(range.max, 10000);
-    final valueRange = NumberRange(max(1, range.min), max(1, valueCap));
+    final valueRange =
+        DifficultyNumberRange(max(1, range.min), max(1, valueCap));
 
     // M4 full (del 1): enkel visualiserad statistik i tabellformat.
     // Vi introducerar detta från step 6 och uppåt.
@@ -772,7 +773,7 @@ class QuestionGeneratorService {
   }
 
   Question _generateM4StatisticsTableQuestion(
-    NumberRange valueRange,
+    DifficultyNumberRange valueRange,
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
@@ -782,15 +783,15 @@ class QuestionGeneratorService {
     final minVal = max(2, valueRange.min);
     final maxVal = max(minVal + 2, valueRange.max);
 
-    int a = _randomInRange(NumberRange(minVal, maxVal));
-    int b = _randomInRange(NumberRange(minVal, maxVal));
-    int c = _randomInRange(NumberRange(minVal, maxVal));
+    int a = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+    int b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+    int c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
 
     // Avoid degenerate all-equal values to keep interpretation meaningful.
     for (var i = 0; i < 60; i++) {
       if (!(a == b && b == c)) break;
-      b = _randomInRange(NumberRange(minVal, maxVal));
-      c = _randomInRange(NumberRange(minVal, maxVal));
+      b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+      c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
     }
 
     final values = <int>[a, b, c];
@@ -847,7 +848,7 @@ class QuestionGeneratorService {
   }
 
   Question _generateM4BarChartQuestion(
-    NumberRange valueRange,
+    DifficultyNumberRange valueRange,
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
@@ -859,15 +860,15 @@ class QuestionGeneratorService {
     final minVal = max(2, valueRange.min);
     final maxVal = max(minVal + 2, valueRange.max);
 
-    int a = _randomInRange(NumberRange(minVal, maxVal));
-    int b = _randomInRange(NumberRange(minVal, maxVal));
-    int c = _randomInRange(NumberRange(minVal, maxVal));
+    int a = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+    int b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+    int c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
 
     // Undvik degenererad data (alla samma).
     for (var i = 0; i < 60; i++) {
       if (!(a == b && b == c)) break;
-      b = _randomInRange(NumberRange(minVal, maxVal));
-      c = _randomInRange(NumberRange(minVal, maxVal));
+      b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+      c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
     }
 
     final values = <int>[a, b, c];
@@ -1974,7 +1975,7 @@ Vilken typ av korrelation har variablerna?
   // region Arithmetic Generators (Addition)
 
   Question _generateAddition(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2036,7 +2037,7 @@ Vilken typ av korrelation har variablerna?
     }
     // Bias: tiokompisar in Åk 1 when range allows.
     else if (isGrade1 && range.max >= 10 && _random.nextDouble() < 0.35) {
-      operand1 = _randomInRange(const NumberRange(0, 10));
+      operand1 = _randomInRange(const DifficultyNumberRange(0, 10));
       operand2 = 10 - operand1;
     } else {
       // Rejection sampling with a small cap for stability.
@@ -2095,7 +2096,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateAdditionWordProblem(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2120,7 +2121,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateAdditionMissingNumber(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2153,7 +2154,7 @@ Vilken typ av korrelation har variablerna?
   // region Arithmetic Generators (Subtraction)
 
   Question _generateSubtraction(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2203,10 +2204,10 @@ Vilken typ av korrelation har variablerna?
 
       operand1 = _randomSignedValue(maxAbs);
       // Keep operand2 positive/non-zero to avoid "a - -b" at this stage.
-      operand2 = _randomInRange(NumberRange(1, maxAbs));
+      operand2 = _randomInRange(DifficultyNumberRange(1, maxAbs));
     } else if (isGrade1 && range.max >= 10 && _random.nextDouble() < 0.35) {
       operand1 = 10;
-      operand2 = _randomInRange(const NumberRange(0, 10));
+      operand2 = _randomInRange(const DifficultyNumberRange(0, 10));
     }
 
     for (var i = 0; i < 120; i++) {
@@ -2268,7 +2269,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateSubtractionWordProblem(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2293,7 +2294,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateSubtractionMissingNumber(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2409,7 +2410,7 @@ Vilken typ av korrelation har variablerna?
   // region Arithmetic Generators (Multiplication)
 
   Question _generateMultiplication(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2437,10 +2438,12 @@ Vilken typ av korrelation har variablerna?
               ? min(10, safeMax)
               : safeMax;
 
-      final a =
-          _randomInRange(NumberRange(factorMin, max(factorMin, tableMax)));
-      final b =
-          _randomInRange(NumberRange(factorMin, max(factorMin, otherMax)));
+      final a = _randomInRange(
+        DifficultyNumberRange(factorMin, max(factorMin, tableMax)),
+      );
+      final b = _randomInRange(
+        DifficultyNumberRange(factorMin, max(factorMin, otherMax)),
+      );
 
       final swap = _random.nextBool();
       final operand1 = swap ? b : a;
@@ -2476,7 +2479,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateMultiplicationCurriculum(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
@@ -2491,8 +2494,8 @@ Vilken typ av korrelation har variablerna?
 
     final smallMax = min(12, safeMax);
 
-    final a = _randomInRange(NumberRange(safeMin, safeMax));
-    final b = _randomInRange(NumberRange(safeMin, smallMax));
+    final a = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
+    final b = _randomInRange(DifficultyNumberRange(safeMin, smallMax));
 
     // Randomize which one is the smaller factor for variety.
     final swap = _random.nextBool();
@@ -2513,7 +2516,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateMultiplicationWordProblem(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2523,7 +2526,7 @@ Vilken typ av korrelation har variablerna?
     final safeMax = max(safeMin, range.max);
 
     final base = _generateMultiplication(
-      NumberRange(safeMin, safeMax),
+      DifficultyNumberRange(safeMin, safeMax),
       difficulty,
       gradeLevel: gradeLevel,
       difficultyStep: difficultyStep,
@@ -2546,7 +2549,7 @@ Vilken typ av korrelation har variablerna?
   // region Arithmetic Generators (Division)
 
   Question _generateDivision(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2570,9 +2573,11 @@ Vilken typ av korrelation har variablerna?
               ? min(10, safeMax)
               : safeMax;
 
-      final divisor =
-          _randomInRange(NumberRange(divisorMin, max(divisorMin, divisorMax)));
-      final quotient = _randomInRange(NumberRange(1, max(1, quotientMax)));
+      final divisor = _randomInRange(
+        DifficultyNumberRange(divisorMin, max(divisorMin, divisorMax)),
+      );
+      final quotient =
+          _randomInRange(DifficultyNumberRange(1, max(1, quotientMax)));
       final dividend = divisor * quotient;
 
       return Question(
@@ -2587,8 +2592,8 @@ Vilken typ av korrelation har variablerna?
       );
     }
 
-    final divisor = _randomInRange(NumberRange(safeMin, safeMax));
-    final quotient = _randomInRange(NumberRange(safeMin, safeMax));
+    final divisor = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
+    final quotient = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
     final dividend = divisor * quotient;
 
     return Question(
@@ -2604,7 +2609,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateDivisionCurriculum(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
@@ -2617,8 +2622,8 @@ Vilken typ av korrelation har variablerna?
 
     final smallMax = min(12, safeMax);
 
-    final divisor = _randomInRange(NumberRange(safeMin, smallMax));
-    final quotient = _randomInRange(NumberRange(safeMin, safeMax));
+    final divisor = _randomInRange(DifficultyNumberRange(safeMin, smallMax));
+    final quotient = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
     final dividend = divisor * quotient;
 
     return Question(
@@ -2634,7 +2639,7 @@ Vilken typ av korrelation har variablerna?
   }
 
   Question _generateDivisionWordProblem(
-    NumberRange range,
+    DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int? gradeLevel,
     required int difficultyStep,
@@ -2868,6 +2873,74 @@ Vilken typ av korrelation har variablerna?
       difficulty,
       gradeLevel: 1,
       difficultyStep: difficultyStep,
+    );
+  }
+
+  // endregion
+
+  // region SRS Key Reconstruction
+
+  /// Tries to reconstruct a [Question] from a spaced-repetition review key.
+  ///
+  /// Keys have the format `"operationType|operand1 SYMBOL operand2 = ?"`.
+  /// Returns `null` for complex/unparseable keys (word problems, statistics,
+  /// probability, etc.) – those will fall back to random generation.
+  Question? tryGenerateFromSrsKey(
+    String key,
+    DifficultyLevel difficulty,
+  ) {
+    final pipeIndex = key.indexOf('|');
+    if (pipeIndex < 1 || pipeIndex >= key.length - 1) return null;
+
+    final opName = key.substring(0, pipeIndex);
+    final questionText = key.substring(pipeIndex + 1); // e.g. "4 × 7 = ?"
+
+    if (!questionText.endsWith(' = ?')) return null;
+
+    final expression =
+        questionText.substring(0, questionText.length - ' = ?'.length);
+
+    OperationType? opType;
+    for (final op in OperationType.values) {
+      if (op.name == opName && op != OperationType.mixed) {
+        opType = op;
+        break;
+      }
+    }
+    if (opType == null) return null;
+
+    final sep = ' ${opType.symbol} ';
+    final sepIndex = expression.indexOf(sep);
+    if (sepIndex < 0) return null;
+
+    final op1 = int.tryParse(expression.substring(0, sepIndex).trim());
+    final op2 =
+        int.tryParse(expression.substring(sepIndex + sep.length).trim());
+    if (op1 == null || op2 == null) return null;
+
+    final int correct;
+    switch (opType) {
+      case OperationType.addition:
+        correct = op1 + op2;
+      case OperationType.subtraction:
+        correct = op1 - op2;
+      case OperationType.multiplication:
+        correct = op1 * op2;
+      case OperationType.division:
+        if (op2 == 0) return null;
+        correct = op1 ~/ op2;
+      case OperationType.mixed:
+        return null;
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: opType,
+      difficulty: difficulty,
+      operand1: op1,
+      operand2: op2,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
     );
   }
 

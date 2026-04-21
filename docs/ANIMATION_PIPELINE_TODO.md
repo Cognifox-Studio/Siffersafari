@@ -32,15 +32,15 @@ In `assets/characters/mascot/rive/mascot_character.riv`:
 - [x] Remove dormant theme/runtime Rive toggles from the active mascot API
 
 ## Current Runtime Notes
-- `MascotCharacter` is the triggered runtime widget for `home_screen.dart`, `quiz_screen.dart` and `results_screen.dart`
-- `ThemeMascot.withState` now uses the same composite-SVG runtime path as the rest of the product UI
+- `GameCharacter` is the triggered runtime widget for `home_screen.dart`, `quiz_screen.dart` and `results_screen.dart`
+- `MascotReactionView.withState` now uses the same composite-SVG runtime path as the rest of the product UI
 - Preview/test motion belongs in `artifacts/animation_preview/`, not in product UI
 - Optional `.riv` files remain repo artifacts, but are not part of the current runtime contract
 
 ## Lottie Policy
 - Keep Lottie under `assets/ui/lottie/` for approved UI effects such as confetti, stars and feedback pulses
 - Do not use theme-specific mascot Lottie state files as passive mascot runtime fallback
-- Do not use preview walk cycles as runtime fallback for `MascotCharacter`
+- Do not use preview walk cycles as runtime fallback for `GameCharacter`
 
 ## Execution Todo To Reach Testable State
 
@@ -68,7 +68,7 @@ The goal of this checklist is not "more docs". The goal is to reach a state wher
 
 ### Milestone 4: Add focused QA so testing is repeatable
 - [x] Add a focused widget test for `MascotCharacter` composite-SVG runtime behavior
-- [x] Add a focused widget test for `ThemeMascot.withState` on the shared SVG path
+- [x] Add a focused widget test for `MascotReactionView.withState` on the shared SVG path
 - [x] Add a focused test that fails if a generated asset enum points to a missing file
 - [x] Run `QA: Analyze`
 - [x] Run focused Flutter tests for asset and mascot behavior

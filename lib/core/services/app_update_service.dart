@@ -75,7 +75,9 @@ class AppUpdateService {
     return _compareSemver(installedVersion, latestTag) < 0;
   }
 
-  Stream<AppUpdateInstallProgress> installUpdate(AppUpdateInfo release) {
+  Stream<AppUpdateInstallProgress> startUpdateInstallation(
+    AppUpdateInfo release,
+  ) {
     if (!Platform.isAndroid) {
       throw Exception('Automatisk appuppdatering stöds bara på Android.');
     }
@@ -241,7 +243,8 @@ class AppUpdateService {
       if (hash == null) continue;
 
       firstMatch ??= hash;
-      if (apkFileName != null && line.toLowerCase().contains(apkFileName.toLowerCase())) {
+      if (apkFileName != null &&
+          line.toLowerCase().contains(apkFileName.toLowerCase())) {
         return hash;
       }
     }

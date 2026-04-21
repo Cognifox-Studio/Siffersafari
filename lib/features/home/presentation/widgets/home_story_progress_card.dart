@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 
 class HomeStoryProgressCard extends StatelessWidget {
   const HomeStoryProgressCard({
@@ -8,10 +9,11 @@ class HomeStoryProgressCard extends StatelessWidget {
     required this.heroAsset,
     required this.backgroundAsset,
     required this.characterAsset,
+    required this.primaryActionColor,
+    required this.secondaryActionColor,
     required this.accentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
-    required this.subtleOnPrimary,
     required this.faintOnPrimary,
     required this.cacheWidth,
     required this.cacheHeight,
@@ -24,10 +26,11 @@ class HomeStoryProgressCard extends StatelessWidget {
   final String heroAsset;
   final String backgroundAsset;
   final String characterAsset;
+  final Color primaryActionColor;
+  final Color secondaryActionColor;
   final Color accentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
-  final Color subtleOnPrimary;
   final Color faintOnPrimary;
   final int cacheWidth;
   final int cacheHeight;
@@ -41,36 +44,13 @@ class HomeStoryProgressCard extends StatelessWidget {
     final visibleNodes = _selectVisibleNodes();
     final overallProgress =
         story.totalNodes == 0 ? 0.0 : story.completedNodes / story.totalNodes;
-    final actionHint = nextNode == null
-        ? 'Ett sista stopp är kvar på stigen.'
-        : 'Tryck på knappen så hjälper du maskoten vidare till ${nextNode.landmark}.';
 
-    return Container(
+    return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),
-      margin: const EdgeInsets.only(top: AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            onPrimary.withValues(alpha: 0.16),
-            onPrimary.withValues(alpha: 0.10),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: accentColor.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: AppOpacities.shadowAmbient),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      child: PlayfulPanel(
+        hero: true,
+        margin: const EdgeInsets.only(top: AppConstants.defaultPadding),
+        highlightColor: accentColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -91,139 +71,45 @@ class HomeStoryProgressCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                   ),
             ),
-            const SizedBox(height: AppConstants.microSpacing6),
-            Text(
-              'Vad händer nu?',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: onPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-            ),
-            const SizedBox(height: AppConstants.microSpacing4),
-            Text(
-              story.currentObjectiveDescription,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: subtleOnPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
-            ),
             const SizedBox(height: AppConstants.defaultPadding),
             Wrap(
               spacing: AppConstants.smallPadding,
               runSpacing: AppConstants.smallPadding,
               children: [
                 _InfoChip(
-                  label: 'Klara stopp',
+                  label: 'Klart',
                   value: '${story.completedNodes}/${story.totalNodes}',
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
                 ),
-                _InfoChip(
-                  label: 'Kapitel',
-                  value: '${(story.currentNodeIndex ~/ 5) + 1}',
-                  onPrimary: onPrimary,
-                  mutedOnPrimary: mutedOnPrimary,
-                ),
+                if (currentNode != null)
+                  _InfoChip(
+                    label: 'Nu',
+                    value: currentNode.landmark,
+                    onPrimary: onPrimary,
+                    mutedOnPrimary: mutedOnPrimary,
+                  ),
               ],
             ),
             const SizedBox(height: AppConstants.defaultPadding),
-            _FocusCards(
-              currentTitle: currentNode?.landmark ?? 'Starten',
-              currentBody: story.currentObjectiveTitle,
+            _FocusCard(
+              label: 'Nästa stopp',
               nextTitle: nextNode?.landmark ?? 'Målet är nära',
-              nextBody: nextNode == null
-                  ? 'Du är snart framme vid slutet av stigen.'
-                  : 'Sedan: ${nextNode.title}',
-              accentColor: accentColor,
-              onPrimary: onPrimary,
+              nextBody: nextNode == null ? 'Snart klar' : nextNode.title,
+              nextColor: primaryActionColor,
             ),
-            if (currentNode != null) ...[
-              const SizedBox(height: AppConstants.defaultPadding),
-              Container(
-                padding: const EdgeInsets.all(AppConstants.smallPadding),
-                decoration: BoxDecoration(
-                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
-                  border: Border.all(
-                    color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.forest, color: accentColor, size: 18),
-                    const SizedBox(width: AppConstants.smallPadding),
-                    Expanded(
-                      child: Text(
-                        currentNode.landmarkHint,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: mutedOnPrimary,
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
             const SizedBox(height: AppConstants.defaultPadding),
             _StoryPathPreview(
               nodes: visibleNodes,
               currentNodeId: currentNode?.id,
               nextNodeId: nextNode?.id,
-              accentColor: accentColor,
+              completedColor: secondaryActionColor,
+              currentColor: accentColor,
               onPrimary: onPrimary,
               mutedOnPrimary: mutedOnPrimary,
               faintOnPrimary: faintOnPrimary,
             ),
-            if (story.notice != null) ...[
-              const SizedBox(height: AppConstants.defaultPadding),
-              Container(
-                padding: const EdgeInsets.all(AppConstants.smallPadding),
-                decoration: BoxDecoration(
-                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
-                ),
-                child: Text(
-                  story.notice!,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ),
-            ],
             const SizedBox(height: AppConstants.defaultPadding),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Hur långt du har kommit',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: subtleOnPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                ),
-                const SizedBox(width: AppConstants.smallPadding),
-                Text(
-                  '${(overallProgress * 100).round()}%',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppConstants.smallPadding),
             ClipRRect(
               borderRadius: BorderRadius.circular(AppConstants.borderRadius),
               child: LinearProgressIndicator(
@@ -233,37 +119,6 @@ class HomeStoryProgressCard extends StatelessWidget {
                   alpha: AppOpacities.progressTrackLight,
                 ),
                 valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            Container(
-              padding: const EdgeInsets.all(AppConstants.smallPadding),
-              decoration: BoxDecoration(
-                color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-                border: Border.all(
-                  color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    Icons.play_circle_outline_rounded,
-                    color: accentColor,
-                    size: 18,
-                  ),
-                  const SizedBox(width: AppConstants.smallPadding),
-                  Expanded(
-                    child: Text(
-                      actionHint,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: mutedOnPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
-                    ),
-                  ),
-                ],
               ),
             ),
             const SizedBox(height: AppConstants.defaultPadding),
@@ -356,8 +211,8 @@ class _HeroBanner extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.08),
-                      Colors.black.withValues(alpha: 0.42),
+                      Colors.black.withValues(alpha: 0.05),
+                      Colors.black.withValues(alpha: 0.28),
                     ],
                   ),
                 ),
@@ -372,8 +227,11 @@ class _HeroBanner extends StatelessWidget {
                   vertical: AppConstants.microSpacing6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.28),
+                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
                   borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+                  ),
                 ),
                 child: Text(
                   story.chapterTitle,
@@ -394,9 +252,12 @@ class _HeroBanner extends StatelessWidget {
                   vertical: AppConstants.microSpacing6,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.30),
+                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
                   borderRadius:
                       BorderRadius.circular(AppConstants.borderRadius),
+                  border: Border.all(
+                    color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+                  ),
                 ),
                 child: Text(
                   story.currentNode?.landmark ?? 'Djungelstigen',
@@ -483,150 +344,27 @@ class _InfoChip extends StatelessWidget {
   }
 }
 
-class _FocusCards extends StatelessWidget {
-  const _FocusCards({
-    required this.currentTitle,
-    required this.currentBody,
-    required this.nextTitle,
-    required this.nextBody,
-    required this.accentColor,
-    required this.onPrimary,
-  });
-
-  final String currentTitle;
-  final String currentBody;
-  final String nextTitle;
-  final String nextBody;
-  final Color accentColor;
-  final Color onPrimary;
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final stackCards = constraints.maxWidth < 620;
-        final currentCard = _FocusCard(
-          label: 'Du är här',
-          title: currentTitle,
-          body: currentBody,
-          icon: Icons.place_rounded,
-          color: accentColor,
-          onPrimary: onPrimary,
-        );
-        final nextCard = _FocusCard(
-          label: 'Nasta stopp',
-          title: nextTitle,
-          body: nextBody,
-          icon: Icons.flag_rounded,
-          color: const Color(0xFFD39A2F),
-          onPrimary: onPrimary,
-        );
-
-        if (stackCards) {
-          return Column(
-            children: [
-              currentCard,
-              const SizedBox(height: AppConstants.defaultPadding),
-              nextCard,
-            ],
-          );
-        }
-
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(child: currentCard),
-            const SizedBox(width: AppConstants.defaultPadding),
-            Expanded(child: nextCard),
-          ],
-        );
-      },
-    );
-  }
-}
-
 class _FocusCard extends StatelessWidget {
   const _FocusCard({
     required this.label,
-    required this.title,
-    required this.body,
-    required this.icon,
-    required this.color,
-    required this.onPrimary,
+    required this.nextTitle,
+    required this.nextBody,
+    required this.nextColor,
   });
 
   final String label;
-  final String title;
-  final String body;
-  final IconData icon;
-  final Color color;
-  final Color onPrimary;
+  final String nextTitle;
+  final String nextBody;
+  final Color nextColor;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.20),
-            color.withValues(alpha: 0.08),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(color: color.withValues(alpha: 0.72), width: 2),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: onPrimary),
-          ),
-          const SizedBox(width: AppConstants.smallPadding),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.microSpacing4),
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.microSpacing4),
-                Text(
-                  body,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: onPrimary.withValues(alpha: 0.88),
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return PlayfulAccentCard(
+      label: label,
+      title: nextTitle,
+      body: nextBody,
+      icon: Icons.flag_rounded,
+      accentColor: nextColor,
     );
   }
 }
@@ -636,7 +374,8 @@ class _StoryPathPreview extends StatelessWidget {
     required this.nodes,
     required this.currentNodeId,
     required this.nextNodeId,
-    required this.accentColor,
+    required this.completedColor,
+    required this.currentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
     required this.faintOnPrimary,
@@ -645,55 +384,44 @@ class _StoryPathPreview extends StatelessWidget {
   final List<StoryNode> nodes;
   final String? currentNodeId;
   final String? nextNodeId;
-  final Color accentColor;
+  final Color completedColor;
+  final Color currentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
   final Color faintOnPrimary;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
       children: [
-        Text(
-          'Stigen nära dig',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: onPrimary,
-                fontWeight: FontWeight.w800,
+        for (var i = 0; i < nodes.length; i++) ...[
+          Expanded(
+            child: _StoryNodeBadge(
+              node: nodes[i],
+              isCurrent: nodes[i].id == currentNodeId,
+              isNext: nodes[i].id == nextNodeId,
+              completedColor: completedColor,
+              currentColor: currentColor,
+              onPrimary: onPrimary,
+              mutedOnPrimary: mutedOnPrimary,
+              faintOnPrimary: faintOnPrimary,
+            ),
+          ),
+          if (i < nodes.length - 1)
+            Container(
+              width: 20,
+              height: 4,
+              margin: const EdgeInsets.symmetric(
+                horizontal: AppConstants.microSpacing6,
               ),
-        ),
-        const SizedBox(height: AppConstants.smallPadding),
-        Row(
-          children: [
-            for (var i = 0; i < nodes.length; i++) ...[
-              Expanded(
-                child: _StoryNodeBadge(
-                  node: nodes[i],
-                  isCurrent: nodes[i].id == currentNodeId,
-                  isNext: nodes[i].id == nextNodeId,
-                  accentColor: accentColor,
-                  onPrimary: onPrimary,
-                  mutedOnPrimary: mutedOnPrimary,
-                  faintOnPrimary: faintOnPrimary,
-                ),
+              decoration: BoxDecoration(
+                color: nodes[i].state == StoryNodeState.completed
+                    ? completedColor
+                    : faintOnPrimary,
+                borderRadius: BorderRadius.circular(999),
               ),
-              if (i < nodes.length - 1)
-                Container(
-                  width: 20,
-                  height: 4,
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: AppConstants.microSpacing6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: nodes[i].state == StoryNodeState.completed
-                        ? accentColor
-                        : faintOnPrimary,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-            ],
-          ],
-        ),
+            ),
+        ],
       ],
     );
   }
@@ -704,7 +432,8 @@ class _StoryNodeBadge extends StatelessWidget {
     required this.node,
     required this.isCurrent,
     required this.isNext,
-    required this.accentColor,
+    required this.completedColor,
+    required this.currentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
     required this.faintOnPrimary,
@@ -713,7 +442,8 @@ class _StoryNodeBadge extends StatelessWidget {
   final StoryNode node;
   final bool isCurrent;
   final bool isNext;
-  final Color accentColor;
+  final Color completedColor;
+  final Color currentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
   final Color faintOnPrimary;
@@ -721,16 +451,16 @@ class _StoryNodeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final backgroundColor = switch (node.state) {
-      StoryNodeState.completed => accentColor.withValues(
+      StoryNodeState.completed => completedColor.withValues(
           alpha: AppOpacities.accentFillSubtle,
         ),
-      StoryNodeState.current => const Color(0xFFD39A2F).withValues(alpha: 0.18),
+      StoryNodeState.current => currentColor.withValues(alpha: 0.18),
       StoryNodeState.upcoming => Colors.transparent,
     };
 
     final borderColor = switch (node.state) {
-      StoryNodeState.completed => accentColor,
-      StoryNodeState.current => const Color(0xFFD39A2F),
+      StoryNodeState.completed => completedColor,
+      StoryNodeState.current => currentColor,
       StoryNodeState.upcoming => isNext ? faintOnPrimary : mutedOnPrimary,
     };
 
@@ -763,7 +493,7 @@ class _StoryNodeBadge extends StatelessWidget {
           Icon(icon, color: textColor, size: isCurrent ? 22 : 18),
           const SizedBox(height: AppConstants.microSpacing4),
           Text(
-            node.landmark,
+            '${node.stepIndex + 1}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

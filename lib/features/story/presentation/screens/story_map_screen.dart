@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class StoryMapScreen extends ConsumerWidget {
@@ -31,12 +31,20 @@ class StoryMapScreen extends ConsumerWidget {
           title: const Text('Djungelkartan'),
         ),
         body: Center(
-          child: Text(
-            'Ingen karta finns än.',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
+          child: Padding(
+            padding: const EdgeInsets.all(AppConstants.defaultPadding),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 420),
+              child: PlayfulPanel(
+                hero: true,
+                highlightColor: scheme.secondary,
+                child: const PlayfulSectionHeading(
+                  title: 'Ingen karta än',
+                  subtitle: 'Spela först.',
+                  center: true,
                 ),
+              ),
+            ),
           ),
         ),
       );
@@ -44,6 +52,9 @@ class StoryMapScreen extends ConsumerWidget {
 
     final currentNode = story.currentNode;
     final nextNode = _nextNode(story);
+    final completedColor = themeCfg.progressCompletedColor;
+    final currentColor = themeCfg.progressCurrentColor;
+    final nextColor = themeCfg.progressNextColor;
 
     return ThemedBackgroundScaffold(
       appBar: AppBar(
@@ -59,10 +70,16 @@ class StoryMapScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const PlayfulSectionHeading(
+                  title: 'Djungelkartan',
+                ),
+                const SizedBox(height: AppConstants.defaultPadding),
                 _MapHeroCard(
                   story: story,
                   heroAsset: themeCfg.questHeroAsset,
                   backgroundAsset: themeCfg.backgroundAsset,
+                  completedColor: completedColor,
+                  currentColor: currentColor,
                   accentColor: scheme.secondary,
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
@@ -79,34 +96,49 @@ class StoryMapScreen extends ConsumerWidget {
                   onContinue: () => Navigator.of(context).maybePop(),
                 ),
                 const SizedBox(height: AppConstants.defaultPadding),
-                ExpansionTile(
-                  title: Text(
-                    'Se fler stopp',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: onPrimary,
-                          fontWeight: FontWeight.w700,
-                        ),
-                  ),
-                  iconColor: scheme.secondary,
-                  collapsedIconColor: scheme.secondary,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                        left: AppConstants.microSpacing6,
-                        right: AppConstants.microSpacing6,
-                        bottom: AppConstants.microSpacing6,
-                      ),
-                      child: _NearbyStopsPanel(
-                        story: story,
-                        currentNode: currentNode,
-                        nextNode: nextNode,
-                        accentColor: scheme.secondary,
-                        onPrimary: onPrimary,
-                        mutedOnPrimary: mutedOnPrimary,
-                        subtleOnPrimary: subtleOnPrimary,
-                      ),
+                PlayfulPanel(
+                  backgroundColor:
+                      onPrimary.withValues(alpha: AppOpacities.panelFill),
+                  highlightColor: scheme.secondary,
+                  padding: EdgeInsets.zero,
+                  child: Theme(
+                    data: Theme.of(context).copyWith(
+                      dividerColor: Colors.transparent,
                     ),
-                  ],
+                    child: ExpansionTile(
+                      title: Text(
+                        'Fler stopp',
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  color: onPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                      ),
+                      iconColor: scheme.secondary,
+                      collapsedIconColor: scheme.secondary,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: AppConstants.microSpacing6,
+                            right: AppConstants.microSpacing6,
+                            bottom: AppConstants.microSpacing6,
+                          ),
+                          child: _NearbyStopsPanel(
+                            story: story,
+                            currentNode: currentNode,
+                            nextNode: nextNode,
+                            completedColor: completedColor,
+                            currentColor: currentColor,
+                            nextColor: nextColor,
+                            accentColor: scheme.secondary,
+                            onPrimary: onPrimary,
+                            mutedOnPrimary: mutedOnPrimary,
+                            subtleOnPrimary: subtleOnPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -130,6 +162,8 @@ class _MapHeroCard extends StatelessWidget {
     required this.story,
     required this.heroAsset,
     required this.backgroundAsset,
+    required this.completedColor,
+    required this.currentColor,
     required this.accentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
@@ -139,6 +173,8 @@ class _MapHeroCard extends StatelessWidget {
   final StoryProgress story;
   final String heroAsset;
   final String backgroundAsset;
+  final Color completedColor;
+  final Color currentColor;
   final Color accentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
@@ -148,36 +184,18 @@ class _MapHeroCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final overallProgress =
         story.totalNodes == 0 ? 0.0 : story.completedNodes / story.totalNodes;
-    final chapterNumber = (story.currentNodeIndex ~/ 5) + 1;
 
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            onPrimary.withValues(alpha: 0.16),
-            onPrimary.withValues(alpha: 0.10),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: accentColor.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: AppOpacities.shadowAmbient),
-            blurRadius: 18,
-            offset: const Offset(0, 10),
-          ),
-        ],
-      ),
+    return PlayfulPanel(
+      hero: true,
+      highlightColor: accentColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _InteractiveMapCanvas(
             story: story,
+            completedColor: completedColor,
+            currentColor: currentColor,
+            nextColor: accentColor,
             accentColor: accentColor,
             onPrimary: onPrimary,
             backgroundAsset: backgroundAsset,
@@ -186,9 +204,9 @@ class _MapHeroCard extends StatelessWidget {
           // Legend row
           Row(
             children: [
-              const _MapLegendDot(color: Color(0xFF7AAE3E), label: 'Klar'),
+              _MapLegendDot(color: completedColor, label: 'Klar'),
               const SizedBox(width: AppConstants.smallPadding),
-              const _MapLegendDot(color: Color(0xFFD39A2F), label: 'Här nu'),
+              _MapLegendDot(color: currentColor, label: 'Här nu'),
               const SizedBox(width: AppConstants.smallPadding),
               _MapLegendDot(
                 color: onPrimary.withValues(alpha: 0.35),
@@ -196,41 +214,12 @@ class _MapHeroCard extends StatelessWidget {
               ),
             ],
           ),
-          // Keep the bottom badge (chapter label) as a fallback info pill
-          Align(
-            alignment: Alignment.centerLeft,
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppConstants.smallPadding,
-                vertical: AppConstants.microSpacing6,
-              ),
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.28),
-                borderRadius: BorderRadius.circular(999),
-              ),
-              child: Text(
-                'Följ stigen steg för steg',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-              ),
-            ),
-          ),
           const SizedBox(height: AppConstants.defaultPadding),
           Text(
             story.worldTitle,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w800,
-                ),
-          ),
-          const SizedBox(height: AppConstants.microSpacing6),
-          Text(
-            'Du ser bara det viktigaste: var du är och vart du ska nu.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: subtleOnPrimary,
-                  fontWeight: FontWeight.w600,
                 ),
           ),
           const SizedBox(height: AppConstants.defaultPadding),
@@ -244,39 +233,9 @@ class _MapHeroCard extends StatelessWidget {
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
-              _HeaderChip(
-                label: 'Kapitel',
-                value: '$chapterNumber',
-                onPrimary: onPrimary,
-                mutedOnPrimary: mutedOnPrimary,
-              ),
             ],
           ),
           const SizedBox(height: AppConstants.defaultPadding),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Hur långt du har kommit',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                ),
-              ),
-              const SizedBox(width: AppConstants.smallPadding),
-              Text(
-                '${(overallProgress * 100).round()}%',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.w800,
-                    ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
           ClipRRect(
             borderRadius: BorderRadius.circular(AppConstants.borderRadius),
             child: LinearProgressIndicator(
@@ -370,20 +329,13 @@ class _NowAndNextPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final nextLabel = nextNode?.landmark ?? 'målet';
 
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-        ),
-      ),
+    return PlayfulPanel(
+      highlightColor: accentColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Nu kör vi!',
+            'Nästa stopp',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w900,
@@ -391,22 +343,12 @@ class _NowAndNextPanel extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.smallPadding),
           Text(
-            'Du är vid ${currentNode?.landmark ?? 'starten'}. Nästa stopp är $nextLabel.',
+            '${currentNode?.landmark ?? 'Starten'} → $nextLabel',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w700,
                 ),
           ),
-          if (currentNode?.landmarkHint.isNotEmpty ?? false) ...[
-            const SizedBox(height: AppConstants.microSpacing6),
-            Text(
-              '📖 ${currentNode!.landmarkHint}',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: mutedOnPrimary.withValues(alpha: 0.75),
-                    fontStyle: FontStyle.italic,
-                  ),
-            ),
-          ],
           const SizedBox(height: AppConstants.defaultPadding),
           ElevatedButton.icon(
             onPressed: onContinue,
@@ -424,6 +366,9 @@ class _NearbyStopsPanel extends StatelessWidget {
     required this.story,
     required this.currentNode,
     required this.nextNode,
+    required this.completedColor,
+    required this.currentColor,
+    required this.nextColor,
     required this.accentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
@@ -433,6 +378,9 @@ class _NearbyStopsPanel extends StatelessWidget {
   final StoryProgress story;
   final StoryNode? currentNode;
   final StoryNode? nextNode;
+  final Color completedColor;
+  final Color currentColor;
+  final Color nextColor;
   final Color accentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
@@ -446,56 +394,34 @@ class _NearbyStopsPanel extends StatelessWidget {
       windowSize: 5,
     );
 
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            onPrimary.withValues(alpha: 0.15),
-            onPrimary.withValues(alpha: 0.09),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          'Fler stopp',
+          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                color: onPrimary,
+                fontWeight: FontWeight.w800,
+              ),
         ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Stigen nära dig',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: onPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
+        const SizedBox(height: AppConstants.defaultPadding),
+        for (final node in visibleNodes) ...[
+          _StopCard(
+            node: node,
+            isCurrent: currentNode?.id == node.id,
+            isNext: nextNode?.id == node.id,
+            completedColor: completedColor,
+            currentColor: currentColor,
+            nextColor: nextColor,
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            subtleOnPrimary: subtleOnPrimary,
           ),
-          const SizedBox(height: AppConstants.microSpacing6),
-          Text(
-            'Grönt är klart, gult är du och grått kommer senare.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
-          ),
-          const SizedBox(height: AppConstants.defaultPadding),
-          for (final node in visibleNodes) ...[
-            _StopCard(
-              node: node,
-              isCurrent: currentNode?.id == node.id,
-              isNext: nextNode?.id == node.id,
-              accentColor: accentColor,
-              onPrimary: onPrimary,
-              mutedOnPrimary: mutedOnPrimary,
-              subtleOnPrimary: subtleOnPrimary,
-            ),
-            if (node != visibleNodes.last)
-              const SizedBox(height: AppConstants.smallPadding),
-          ],
+          if (node != visibleNodes.last)
+            const SizedBox(height: AppConstants.smallPadding),
         ],
-      ),
+      ],
     );
   }
 
@@ -520,6 +446,9 @@ class _StopCard extends StatelessWidget {
     required this.node,
     required this.isCurrent,
     required this.isNext,
+    required this.completedColor,
+    required this.currentColor,
+    required this.nextColor,
     required this.accentColor,
     required this.onPrimary,
     required this.mutedOnPrimary,
@@ -529,6 +458,9 @@ class _StopCard extends StatelessWidget {
   final StoryNode node;
   final bool isCurrent;
   final bool isNext;
+  final Color completedColor;
+  final Color currentColor;
+  final Color nextColor;
   final Color accentColor;
   final Color onPrimary;
   final Color mutedOnPrimary;
@@ -538,7 +470,9 @@ class _StopCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final visual = _NodeVisual.forSceneTag(
       node.sceneTag,
-      accentColor: accentColor,
+      primaryColor: nextColor,
+      secondaryColor: completedColor,
+      accentColor: currentColor,
     );
 
     final statusLabel = switch (node.state) {
@@ -548,24 +482,16 @@ class _StopCard extends StatelessWidget {
     };
 
     final borderColor = switch (node.state) {
-      StoryNodeState.completed => const Color(0xFF7AAE3E),
-      StoryNodeState.current => const Color(0xFFD39A2F),
-      StoryNodeState.upcoming => mutedOnPrimary.withValues(alpha: 0.55),
+      StoryNodeState.completed => completedColor,
+      StoryNodeState.current => currentColor,
+      StoryNodeState.upcoming =>
+        isNext ? nextColor : mutedOnPrimary.withValues(alpha: 0.55),
     };
 
     final fillColor = switch (node.state) {
-      StoryNodeState.completed =>
-        const Color(0xFF7AAE3E).withValues(alpha: 0.18),
-      StoryNodeState.current => const Color(0xFFD39A2F).withValues(alpha: 0.18),
+      StoryNodeState.completed => completedColor.withValues(alpha: 0.18),
+      StoryNodeState.current => currentColor.withValues(alpha: 0.18),
       StoryNodeState.upcoming => onPrimary.withValues(alpha: 0.08),
-    };
-
-    final body = switch (node.state) {
-      StoryNodeState.completed => 'Du har redan klarat det här stoppet.',
-      StoryNodeState.current => 'Nu spelar du: ${node.title}',
-      StoryNodeState.upcoming => isNext
-          ? 'Sedan kommer: ${node.title}'
-          : 'Detta stopp kommer senare på stigen.',
     };
 
     return Container(
@@ -640,22 +566,12 @@ class _StopCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppConstants.smallPadding),
                 Text(
-                  body,
+                  node.title,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: onPrimary.withValues(alpha: 0.90),
+                        color: subtleOnPrimary,
                         fontWeight: FontWeight.w600,
                       ),
                 ),
-                if (isCurrent || isNext) ...[
-                  const SizedBox(height: AppConstants.microSpacing6),
-                  Text(
-                    node.landmarkHint,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: subtleOnPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ],
               ],
             ),
           ),
@@ -686,7 +602,10 @@ class _MapLegendDot extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.75),
+                color: Theme.of(context)
+                    .colorScheme
+                    .onPrimary
+                    .withValues(alpha: 0.90),
                 fontWeight: FontWeight.w700,
               ),
         ),
@@ -698,12 +617,18 @@ class _MapLegendDot extends StatelessWidget {
 class _InteractiveMapCanvas extends StatefulWidget {
   const _InteractiveMapCanvas({
     required this.story,
+    required this.completedColor,
+    required this.currentColor,
+    required this.nextColor,
     required this.accentColor,
     required this.onPrimary,
     required this.backgroundAsset,
   });
 
   final StoryProgress story;
+  final Color completedColor;
+  final Color currentColor;
+  final Color nextColor;
   final Color accentColor;
   final Color onPrimary;
   final String backgroundAsset;
@@ -738,8 +663,8 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                   widget.backgroundAsset,
                   fit: BoxFit.cover,
                   excludeFromSemantics: true,
-                  errorBuilder: (_, __, ___) => const ColoredBox(
-                    color: Color(0xFF2D5A1B),
+                  errorBuilder: (_, __, ___) => ColoredBox(
+                    color: widget.accentColor.withValues(alpha: 0.35),
                   ),
                 ),
                 // Dark overlay for readability
@@ -751,6 +676,8 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                   painter: _MapPathPainter(
                     positions: positions,
                     nodes: nodes,
+                    completedColor: widget.completedColor,
+                    currentColor: widget.currentColor,
                     accentColor: widget.accentColor,
                   ),
                 ),
@@ -781,8 +708,9 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: const Color(0xFFD39A2F)
-                                        .withValues(alpha: 0.80),
+                                    color: widget.currentColor.withValues(
+                                      alpha: 0.80,
+                                    ),
                                     width: 3,
                                   ),
                                 ),
@@ -825,6 +753,9 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                       onTap: () => setState(() => _tapped = null),
                       child: _MapNodeTooltip(
                         node: _tapped!,
+                        completedColor: widget.completedColor,
+                        currentColor: widget.currentColor,
+                        nextColor: widget.nextColor,
                         accentColor: widget.accentColor,
                         onPrimary: widget.onPrimary,
                       ),
@@ -864,11 +795,15 @@ class _MapPathPainter extends CustomPainter {
   const _MapPathPainter({
     required this.positions,
     required this.nodes,
+    required this.completedColor,
+    required this.currentColor,
     required this.accentColor,
   });
 
   final List<Offset> positions;
   final List<StoryNode> nodes;
+  final Color completedColor;
+  final Color currentColor;
   final Color accentColor;
 
   static const nodeRadius = 14.0;
@@ -883,7 +818,7 @@ class _MapPathPainter extends CustomPainter {
           nodes[i + 1].state != StoryNodeState.upcoming;
       final paint = Paint()
         ..color = isDone
-            ? const Color(0xFF7AAE3E).withValues(alpha: 0.90)
+            ? completedColor.withValues(alpha: 0.90)
             : Colors.white.withValues(alpha: 0.30)
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round
@@ -899,12 +834,12 @@ class _MapPathPainter extends CustomPainter {
 
       final (fillColor, strokeColor) = switch (node.state) {
         StoryNodeState.completed => (
-            const Color(0xFF7AAE3E),
-            const Color(0xFF5A8C2E),
+            completedColor,
+            completedColor.withValues(alpha: 0.75),
           ),
         StoryNodeState.current => (
-            const Color(0xFFD39A2F),
-            const Color(0xFFB07A1A),
+            currentColor,
+            currentColor.withValues(alpha: 0.75),
           ),
         StoryNodeState.upcoming => (
             Colors.white.withValues(alpha: 0.22),
@@ -962,20 +897,26 @@ class _MapPathPainter extends CustomPainter {
 class _MapNodeTooltip extends StatelessWidget {
   const _MapNodeTooltip({
     required this.node,
+    required this.completedColor,
+    required this.currentColor,
+    required this.nextColor,
     required this.accentColor,
     required this.onPrimary,
   });
 
   final StoryNode node;
+  final Color completedColor;
+  final Color currentColor;
+  final Color nextColor;
   final Color accentColor;
   final Color onPrimary;
 
   @override
   Widget build(BuildContext context) {
     final color = switch (node.state) {
-      StoryNodeState.completed => const Color(0xFF7AAE3E),
-      StoryNodeState.current => const Color(0xFFD39A2F),
-      StoryNodeState.upcoming => Colors.white.withValues(alpha: 0.60),
+      StoryNodeState.completed => completedColor,
+      StoryNodeState.current => currentColor,
+      StoryNodeState.upcoming => nextColor.withValues(alpha: 0.90),
     };
 
     return Container(
@@ -1004,14 +945,6 @@ class _MapNodeTooltip extends StatelessWidget {
                     color: Colors.white,
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
-                  ),
-                ),
-                Text(
-                  node.landmarkHint,
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.75),
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
                   ),
                 ),
               ],
@@ -1074,68 +1007,88 @@ class _NodeVisual {
 
   factory _NodeVisual.forSceneTag(
     String sceneTag, {
+    required Color primaryColor,
+    required Color secondaryColor,
     required Color accentColor,
   }) {
     switch (sceneTag) {
       case 'baslager':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.cabin,
-          color: Color(0xFF7A5A34),
+          color: primaryColor.withValues(alpha: 0.88),
         );
       case 'frukt':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.apple,
-          color: Color(0xFF7AAE3E),
+          color: secondaryColor.withValues(alpha: 0.92),
         );
       case 'skugga':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.dark_mode,
-          color: Color(0xFF56607A),
+          color: Color.alphaBlend(
+            accentColor.withValues(alpha: 0.45),
+            primaryColor,
+          ),
         );
       case 'bro':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.linear_scale,
-          color: Color(0xFF8A6C45),
+          color: Color.alphaBlend(
+            primaryColor.withValues(alpha: 0.55),
+            secondaryColor,
+          ),
         );
       case 'karta':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.map,
-          color: Color(0xFF3A8E8A),
+          color: Color.alphaBlend(
+            accentColor.withValues(alpha: 0.60),
+            secondaryColor,
+          ),
         );
       case 'fors':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.water,
-          color: Color(0xFF3A7BC1),
+          color: Color.alphaBlend(
+            accentColor.withValues(alpha: 0.55),
+            primaryColor,
+          ),
         );
       case 'tempel':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.account_balance,
-          color: Color(0xFF8B6F42),
+          color: primaryColor,
         );
       case 'soltempel':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.wb_sunny,
-          color: Color(0xFFD39A2F),
+          color: accentColor,
         );
       case 'skog':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.park,
-          color: Color(0xFF4E8B52),
+          color: secondaryColor,
         );
       case 'trumma':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.music_note,
-          color: Color(0xFF8C5632),
+          color: Color.alphaBlend(
+            primaryColor.withValues(alpha: 0.65),
+            accentColor,
+          ),
         );
       case 'port':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.door_front_door,
-          color: Color(0xFF6D667C),
+          color: Color.alphaBlend(
+            secondaryColor.withValues(alpha: 0.40),
+            primaryColor,
+          ),
         );
       case 'skatt':
-        return const _NodeVisual(
+        return _NodeVisual(
           icon: Icons.workspace_premium,
-          color: Color(0xFFB88C2E),
+          color: accentColor.withValues(alpha: 0.92),
         );
     }
 

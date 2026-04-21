@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/presentation/widgets/answer_button.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/answer_button.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/question_card.dart';
 import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
-import 'package:siffersafari/presentation/widgets/question_card.dart';
 
 void main() {
   Widget wrapForTest(Widget child) {

@@ -172,7 +172,7 @@ def main() -> None:
             "visual_spec": f"assets/characters/{slug}/config/{slug}_visual_spec.json",
             "svg_parts": [f"assets/characters/{slug}/svg/{slug}_{part}.svg" for part in cc.SVG_PART_ORDER],
             "rive_blueprint": f"artifacts/{slug}_rive_blueprint.json",
-            "rive_guide": f"artifacts/{slug.upper()}_RIVE_GUIDE.md",
+            "rive_guide": f"artifacts/{slug}_rive_guide.md",
             "manifest": "artifacts/asset_pipeline_manifest.json",
             "codegen": "lib/gen/assets.g.dart",
         },
@@ -194,7 +194,7 @@ def main() -> None:
     cc.write_text(svg_dir / "README.md", cc.svg_readme(slug, name))
     cc.write_text(rive_dir / "README.md", cc.rive_readme(slug, name, animation_spec))
     cc.write_json(artifacts_dir / f"{slug}_rive_blueprint.json", blueprint)
-    cc.write_text(artifacts_dir / f"{slug.upper()}_RIVE_GUIDE.md", guide)
+    cc.write_text(artifacts_dir / f"{slug}_rive_guide.md", guide)
 
     print(f"Refreshed character '{name}' ({slug}) in {output_root}")
 

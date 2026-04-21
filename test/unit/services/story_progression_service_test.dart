@@ -22,7 +22,7 @@ void main() {
         completedQuestIds: <String>{},
       );
 
-      final story = storyService.build(
+      final story = storyService.createStoryProgress(
         path: questService.questsForUser(user),
         currentStatus: questStatus,
         completedQuestIds: const <String>{},
@@ -55,7 +55,7 @@ void main() {
         completedQuestIds: <String>{'q_plus_easy', 'q_minus_easy'},
       );
 
-      final story = storyService.build(
+      final story = storyService.createStoryProgress(
         path: questService.questsForUser(user),
         currentStatus: questStatus,
         completedQuestIds: const <String>{'q_plus_easy', 'q_minus_easy'},

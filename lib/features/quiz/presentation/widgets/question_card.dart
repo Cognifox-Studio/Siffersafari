@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 
@@ -100,6 +99,10 @@ class QuestionCard extends StatelessWidget {
 
     final isEquationPrompt = question.promptText?.contains('=') ?? false;
     final isWordProblem = question.promptText != null && !isEquationPrompt;
+    final helperLabel =
+        isWordProblem ? 'Läs och räkna' : 'Hur mycket blir det?';
+    final helperIcon =
+        isWordProblem ? Icons.menu_book_rounded : Icons.touch_app_rounded;
 
     return Semantics(
       label: 'Fråga: ${question.displayQuestionText}. Vad blir resultatet?',
@@ -193,6 +196,45 @@ class QuestionCard extends StatelessWidget {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppConstants.defaultPadding.w,
+                            vertical: AppConstants.smallPadding.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: resolvedAccentColor.withValues(alpha: 0.14),
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.borderRadius * 1.2,
+                            ),
+                            border: Border.all(
+                              color:
+                                  resolvedAccentColor.withValues(alpha: 0.26),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                helperIcon,
+                                size: compact ? 18 : 20,
+                                color: questionTextColor ?? scheme.onSurface,
+                              ),
+                              SizedBox(width: AppConstants.smallPadding.w),
+                              Flexible(
+                                child: Text(
+                                  helperLabel,
+                                  textAlign: TextAlign.center,
+                                  style: textTheme.labelLarge?.copyWith(
+                                    color:
+                                        questionTextColor ?? scheme.onSurface,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: AppConstants.defaultPadding.h),
                         Expanded(
                           child: Center(
                             child: ConstrainedBox(

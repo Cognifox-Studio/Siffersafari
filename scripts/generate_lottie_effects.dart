@@ -577,4 +577,3 @@ class LottieEffectGenerator {
     return colors[random.nextInt(colors.length)];
   }
 }
-

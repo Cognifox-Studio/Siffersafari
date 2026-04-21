@@ -51,9 +51,9 @@ void main() async {
   print('✅ Generated: mascot_rive_blueprint.json');
 
   // Write human-readable guide
-  final guideFile = File('artifacts/MASCOT_RIVE_GUIDE.md');
+  final guideFile = File('artifacts/mascot_rive_guide.md');
   await guideFile.writeAsString(generator.generateMarkdownGuide());
-  print('✅ Generated: MASCOT_RIVE_GUIDE.md');
+  print('✅ Generated: mascot_rive_guide.md');
 
   print('━' * 50);
   print('🎉 Rive blueprint generated successfully!');

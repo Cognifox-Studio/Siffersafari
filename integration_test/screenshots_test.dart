@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/answer_button.dart';
 import 'package:siffersafari/main.dart' as app;
-import 'package:siffersafari/presentation/widgets/answer_button.dart';
 
-import 'test_utils.dart' as it;
+import 'integration_test_utils.dart' as it;
 
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();

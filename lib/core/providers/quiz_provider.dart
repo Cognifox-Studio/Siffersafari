@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:siffersafari/core/config/quiz_feature_settings.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/config/app_features.dart';
@@ -18,7 +19,6 @@ import '../../domain/enums/operation_type.dart';
 import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
 import '../../domain/services/spaced_repetition_service.dart';
-import '../../shared/settings/quiz_feature_settings.dart';
 import '../services/audio_service.dart';
 import '../services/question_generator_service.dart';
 import 'adaptive_difficulty_service_provider.dart';
@@ -45,6 +45,7 @@ class QuizState {
     this.speedBonusCount = 0,
     this.reviewSchedulesByKey = const {},
     this.dueReviewCount = 0,
+    this.pendingDueKeys = const [],
     this.isDailyChallenge = false,
   });
 
@@ -61,6 +62,7 @@ class QuizState {
   final int speedBonusCount;
   final Map<String, ReviewSchedule> reviewSchedulesByKey;
   final int dueReviewCount;
+  final List<String> pendingDueKeys;
   final bool isDailyChallenge;
 
   QuizState copyWith({
@@ -77,6 +79,7 @@ class QuizState {
     int? speedBonusCount,
     Map<String, ReviewSchedule>? reviewSchedulesByKey,
     int? dueReviewCount,
+    List<String>? pendingDueKeys,
     bool? isDailyChallenge,
   }) {
     return QuizState(
@@ -97,6 +100,7 @@ class QuizState {
       speedBonusCount: speedBonusCount ?? this.speedBonusCount,
       reviewSchedulesByKey: reviewSchedulesByKey ?? this.reviewSchedulesByKey,
       dueReviewCount: dueReviewCount ?? this.dueReviewCount,
+      pendingDueKeys: pendingDueKeys ?? this.pendingDueKeys,
       isDailyChallenge: isDailyChallenge ?? this.isDailyChallenge,
     );
   }
@@ -382,6 +386,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       int dueCount
     }) reviewState,
     required bool isDailyChallenge,
+    List<String> pendingDueKeys = const [],
   }) {
     state = state.copyWith(
       userId: userId,
@@ -397,8 +402,35 @@ class QuizNotifier extends StateNotifier<QuizState> {
         reviewState.schedules,
       ),
       dueReviewCount: reviewState.dueCount,
+      pendingDueKeys: List<String>.unmodifiable(pendingDueKeys),
       isDailyChallenge: isDailyChallenge,
     );
+  }
+
+  /// Returns due SRS keys filtered to the session’s operation type.
+  /// For [OperationType.mixed] sessions, all due keys are included.
+  /// Capped at [max(1, totalQuestions ~/ 3)] to avoid flooding the session.
+  List<String> _getDueKeysForSession(
+    Map<String, ReviewSchedule> schedules,
+    OperationType sessionOpType,
+    int totalQuestions,
+    DateTime now,
+  ) {
+    final allDue = _spacedRepetitionService.getDueQuestionIds(
+      schedules.values.toList(growable: false),
+      now,
+    );
+    final filtered = allDue.where((key) {
+      final pipeIdx = key.indexOf('|');
+      if (pipeIdx < 1) return false;
+      final opName = key.substring(0, pipeIdx);
+      if (sessionOpType == OperationType.mixed) return true;
+      return opName == sessionOpType.name;
+    }).toList();
+
+    if (filtered.isEmpty) return const [];
+    final cap = (totalQuestions ~/ 3).clamp(1, filtered.length);
+    return filtered.take(cap).toList();
   }
 
   void startSession({
@@ -454,15 +486,30 @@ class QuizNotifier extends StateNotifier<QuizState> {
       missingNumberEnabledOverride: missingNumberEnabled,
     );
 
-    final firstQuestion = _questionGenerator.generateQuestion(
-      ageGroup: ageGroup,
-      operationType: operationType,
-      difficulty: difficulty,
-      difficultyStepsByOperation: steps,
-      gradeLevel: gradeLevel,
-      wordProblemsEnabledOverride: featureFlags.wordProblemsEnabled,
-      missingNumberEnabledOverride: featureFlags.missingNumberEnabled,
+    final reviewState = _loadInitialReviewState(userId);
+
+    // Compute due SRS keys for this session and try to use the first one.
+    final dueKeys = _getDueKeysForSession(
+      reviewState.schedules,
+      operationType,
+      count,
+      DateTime.now(),
     );
+    final firstDueQuestion = dueKeys.isNotEmpty
+        ? _questionGenerator.tryGenerateFromSrsKey(dueKeys.first, difficulty)
+        : null;
+    final firstQuestion = firstDueQuestion ??
+        _questionGenerator.generateQuestion(
+          ageGroup: ageGroup,
+          operationType: operationType,
+          difficulty: difficulty,
+          difficultyStepsByOperation: steps,
+          gradeLevel: gradeLevel,
+          wordProblemsEnabledOverride: featureFlags.wordProblemsEnabled,
+          missingNumberEnabledOverride: featureFlags.missingNumberEnabled,
+        );
+    final remainingDueKeys =
+        dueKeys.isNotEmpty ? dueKeys.sublist(1) : const <String>[];
 
     final session = QuizSession(
       sessionId: _uuid.v4(),
@@ -478,14 +525,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
       startTime: DateTime.now(),
     );
 
-    final reviewState = _loadInitialReviewState(userId);
-
     _activateSessionState(
       userId: userId,
       session: session,
       steps: steps,
       reviewState: reviewState,
       isDailyChallenge: isDailyChallenge,
+      pendingDueKeys: remainingDueKeys,
     );
   }
 
@@ -738,7 +784,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     }
   }
 
-  void goToNextQuestion() {
+  void advanceToNextQuestion() {
     final session = state.session;
     if (session == null) return;
 
@@ -746,16 +792,37 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final isComplete = nextIndex >= session.totalQuestions;
 
     var updatedQuestions = session.questions;
+    var newPendingDueKeys = state.pendingDueKeys;
+
     if (!isComplete && nextIndex >= updatedQuestions.length) {
-      final nextQuestion = _questionGenerator.generateQuestion(
-        ageGroup: session.ageGroup,
-        operationType: session.operationType,
-        difficulty: session.difficulty,
-        difficultyStepsByOperation: state.difficultyStepsByOperation,
-        gradeLevel: session.gradeLevel,
-        wordProblemsEnabledOverride: session.wordProblemsEnabled,
-        missingNumberEnabledOverride: session.missingNumberEnabled,
-      );
+      Question nextQuestion;
+      if (newPendingDueKeys.isNotEmpty) {
+        final candidate = _questionGenerator.tryGenerateFromSrsKey(
+          newPendingDueKeys.first,
+          session.difficulty,
+        );
+        nextQuestion = candidate ??
+            _questionGenerator.generateQuestion(
+              ageGroup: session.ageGroup,
+              operationType: session.operationType,
+              difficulty: session.difficulty,
+              difficultyStepsByOperation: state.difficultyStepsByOperation,
+              gradeLevel: session.gradeLevel,
+              wordProblemsEnabledOverride: session.wordProblemsEnabled,
+              missingNumberEnabledOverride: session.missingNumberEnabled,
+            );
+        newPendingDueKeys = newPendingDueKeys.sublist(1);
+      } else {
+        nextQuestion = _questionGenerator.generateQuestion(
+          ageGroup: session.ageGroup,
+          operationType: session.operationType,
+          difficulty: session.difficulty,
+          difficultyStepsByOperation: state.difficultyStepsByOperation,
+          gradeLevel: session.gradeLevel,
+          wordProblemsEnabledOverride: session.wordProblemsEnabled,
+          missingNumberEnabledOverride: session.missingNumberEnabled,
+        );
+      }
       updatedQuestions = [...updatedQuestions, nextQuestion];
     }
 
@@ -768,6 +835,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     state = state.copyWith(
       session: updatedSession,
       feedback: null,
+      pendingDueKeys: newPendingDueKeys,
     );
   }
 

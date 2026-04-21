@@ -1,6 +1,7 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
 
 class AnswerButton extends StatefulWidget {
@@ -32,38 +33,66 @@ class AnswerButton extends StatefulWidget {
 }
 
 class _AnswerButtonState extends State<AnswerButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
+    with TickerProviderStateMixin {
+  late AnimationController _pressController;
+  late AnimationController _feedbackController;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _feedbackScale;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    _pressController = AnimationController(
       duration: AppConstants.microAnimationDuration,
       vsync: this,
     );
     _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+      CurvedAnimation(parent: _pressController, curve: Curves.easeInOut),
     );
+    _feedbackController = AnimationController(
+      duration: const Duration(milliseconds: 420),
+      vsync: this,
+    );
+    // Correct: scale pop (0.92 → 1.12 → 1.0) via easeOutBack
+    _feedbackScale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.92, end: 1.12), weight: 60),
+      TweenSequenceItem(tween: Tween(begin: 1.12, end: 1.0), weight: 40),
+    ]).animate(
+      CurvedAnimation(
+        parent: _feedbackController,
+        curve: Curves.easeOutBack,
+      ),
+    );
+    // Wrong: horizontal shake (damped sine) — computed inline in builder
+  }
+
+  @override
+  void didUpdateWidget(covariant AnswerButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isCorrect == null && widget.isCorrect != null) {
+      _pressController.stop();
+      _pressController.value = 0;
+      _feedbackController.forward(from: 0);
+    }
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _pressController.dispose();
+    _feedbackController.dispose();
     super.dispose();
   }
 
   void _onTapDown(TapDownDetails details) {
-    _controller.forward();
+    _pressController.forward();
   }
 
   void _onTapUp(TapUpDetails details) {
-    _controller.reverse();
+    _pressController.reverse();
   }
 
   void _onTapCancel() {
-    _controller.reverse();
+    _pressController.reverse();
   }
 
   @override
@@ -71,18 +100,22 @@ class _AnswerButtonState extends State<AnswerButton>
     final scheme = Theme.of(context).colorScheme;
     Color backgroundColor;
     Color textColor;
+    String caption;
 
     if (widget.isCorrect != null) {
       // After answer is submitted
       if (widget.isCorrect!) {
         backgroundColor = AppColors.correctAnswer;
         textColor = scheme.onPrimary;
+        caption = 'Rätt';
       } else if (widget.isSelected) {
         backgroundColor = AppColors.wrongAnswer;
         textColor = scheme.onPrimary;
+        caption = 'Fel';
       } else {
         backgroundColor = widget.disabledBackgroundColor ?? scheme.surface;
         textColor = widget.idleTextColor ?? scheme.onSurface;
+        caption = 'Svar';
       }
     } else {
       // Before answer is submitted
@@ -93,6 +126,7 @@ class _AnswerButtonState extends State<AnswerButton>
       textColor = widget.isSelected
           ? scheme.onPrimary
           : (widget.idleTextColor ?? scheme.onSurface);
+      caption = widget.isSelected ? 'Valt' : 'Tryck';
     }
 
     final isEnabled = widget.isCorrect == null;
@@ -112,8 +146,29 @@ class _AnswerButtonState extends State<AnswerButton>
           : 'Svar ${widget.answer}';
     }
 
-    return ScaleTransition(
-      scale: _scaleAnimation,
+    return AnimatedBuilder(
+      animation: Listenable.merge([_pressController, _feedbackController]),
+      builder: (context, child) {
+        double combinedScale = _scaleAnimation.value;
+        double dx = 0;
+        if (widget.isCorrect != null && _feedbackController.value > 0) {
+          if (widget.isCorrect!) {
+            combinedScale = _feedbackScale.value;
+          } else if (widget.isSelected) {
+            // damped horizontal shake
+            dx = 12 *
+                math.sin(_feedbackController.value * math.pi * 5) *
+                (1 - _feedbackController.value);
+          }
+        }
+        return Transform.translate(
+          offset: Offset(dx, 0),
+          child: Transform.scale(
+            scale: combinedScale,
+            child: child,
+          ),
+        );
+      },
       child: Semantics(
         button: true,
         enabled: isEnabled,
@@ -127,14 +182,25 @@ class _AnswerButtonState extends State<AnswerButton>
               onPressed: isEnabled ? widget.onPressed : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: backgroundColor,
+                foregroundColor: textColor,
                 minimumSize: Size(
                   double.infinity,
                   (widget.minHeight ?? AppConstants.answerButtonHeight).h,
                 ),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.defaultPadding.w,
+                  vertical: AppConstants.defaultPadding.h,
+                ),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                side: BorderSide(
+                  color: Colors.white.withValues(
+                    alpha: widget.isSelected ? 0.28 : 0.14,
+                  ),
+                  width: widget.isSelected ? 2 : 1,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
+                      BorderRadius.circular(AppConstants.borderRadius * 1.6),
                 ),
                 elevation: widget.isSelected
                     ? AppConstants.answerButtonElevationSelected
@@ -147,17 +213,31 @@ class _AnswerButtonState extends State<AnswerButton>
                           alpha: AppOpacities.buttonShadowIdle,
                         ),
               ),
-              child: Text(
-                widget.answer.toString(),
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      color: textColor,
-                      fontWeight: FontWeight.bold,
-                    ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.answer.toString(),
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                          color: textColor,
+                          fontWeight: FontWeight.w900,
+                        ),
+                  ),
+                  SizedBox(height: AppConstants.microSpacing4.h),
+                  Text(
+                    caption,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: textColor.withValues(alpha: 0.88),
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.3,
+                        ),
+                  ),
+                ],
               ),
             ),
           ),
-        ),
-      ),
-    );
+        ),       // ExcludeSemantics
+      ),         // Semantics
+    );           // AnimatedBuilder
   }
 }

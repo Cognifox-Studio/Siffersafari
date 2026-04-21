@@ -32,6 +32,7 @@ class UserProgress extends Equatable {
     this.achievements = const [],
     this.masteryLevels = const {},
     this.operationDifficultySteps = const {},
+    this.selectedCharacterId = 'mascot',
   });
 
   @HiveField(0)
@@ -99,6 +100,11 @@ class UserProgress extends Equatable {
   /// Key: operation name (e.g. "addition"), Value: step.
   @HiveField(19)
   final Map<String, int> operationDifficultySteps;
+
+  /// Slug of the selected character (e.g. 'mascot', 'loke', 'skogshjalte').
+  /// Defaults to 'mascot' for all existing profiles.
+  @HiveField(20)
+  final String selectedCharacterId;
 
   static const int pointsPerLevel = 200;
 
@@ -176,6 +182,7 @@ class UserProgress extends Equatable {
     List<String>? achievements,
     Map<String, double>? masteryLevels,
     Map<String, int>? operationDifficultySteps,
+    String? selectedCharacterId,
   }) {
     return UserProgress(
       userId: userId ?? this.userId,
@@ -200,6 +207,7 @@ class UserProgress extends Equatable {
       masteryLevels: masteryLevels ?? this.masteryLevels,
       operationDifficultySteps:
           operationDifficultySteps ?? this.operationDifficultySteps,
+      selectedCharacterId: selectedCharacterId ?? this.selectedCharacterId,
     );
   }
 
@@ -225,5 +233,6 @@ class UserProgress extends Equatable {
         achievements,
         masteryLevels,
         operationDifficultySteps,
+        selectedCharacterId,
       ];
 }

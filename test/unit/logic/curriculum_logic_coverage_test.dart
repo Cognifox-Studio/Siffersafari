@@ -139,7 +139,7 @@ void main() {
       );
     }
 
-    int maxAbsForM5a(NumberRange range, int step) {
+    int maxAbsForM5a(DifficultyNumberRange range, int step) {
       final safeRangeMax = max(1, range.max);
       if (step <= 3) return min(20, safeRangeMax);
       if (step <= 6) return min(100, safeRangeMax);

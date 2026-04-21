@@ -62,7 +62,7 @@ class DifficultyConfig {
     };
   }
 
-  static GradeBenchmark compareDifficultyStepToGrade({
+  static DifficultyGradeBenchmark compareDifficultyStepToGrade({
     required int gradeLevel,
     required OperationType operation,
     required int difficultyStep,
@@ -75,44 +75,44 @@ class DifficultyConfig {
     final delta = actual - expected;
 
     if (delta <= -(_benchmarkInlineTolerance + 1)) {
-      return GradeBenchmark(
+      return DifficultyGradeBenchmark(
         expectedStep: expected,
         actualStep: actual,
         delta: delta,
-        level: GradeBenchmarkLevel.under,
+        level: DifficultyGradeBenchmarkLevel.under,
       );
     }
 
     if (delta >= (_benchmarkInlineTolerance + 1)) {
-      return GradeBenchmark(
+      return DifficultyGradeBenchmark(
         expectedStep: expected,
         actualStep: actual,
         delta: delta,
-        level: GradeBenchmarkLevel.over,
+        level: DifficultyGradeBenchmarkLevel.over,
       );
     }
 
-    return GradeBenchmark(
+    return DifficultyGradeBenchmark(
       expectedStep: expected,
       actualStep: actual,
       delta: delta,
-      level: GradeBenchmarkLevel.inline,
+      level: DifficultyGradeBenchmarkLevel.inline,
     );
   }
 
-  static String benchmarkLevelLabel(GradeBenchmarkLevel level) {
+  static String benchmarkLevelLabel(DifficultyGradeBenchmarkLevel level) {
     switch (level) {
-      case GradeBenchmarkLevel.under:
+      case DifficultyGradeBenchmarkLevel.under:
         return 'Under';
-      case GradeBenchmarkLevel.inline:
+      case DifficultyGradeBenchmarkLevel.inline:
         return 'I linje';
-      case GradeBenchmarkLevel.over:
+      case DifficultyGradeBenchmarkLevel.over:
         return 'Över';
     }
   }
 
   static String benchmarkRecommendationText({
-    required GradeBenchmarkLevel level,
+    required DifficultyGradeBenchmarkLevel level,
     required OperationType operation,
   }) {
     // Keep this short, actionable, and clearly non-judgmental.
@@ -121,7 +121,7 @@ class DifficultyConfig {
         operation == OperationType.division;
 
     switch (level) {
-      case GradeBenchmarkLevel.under:
+      case DifficultyGradeBenchmarkLevel.under:
         if (!isMulDiv) {
           return operation == OperationType.subtraction
               ? 'Öva 3–5 min: minus med små tal (t.ex. upp till 10–20).'
@@ -130,9 +130,9 @@ class DifficultyConfig {
         return operation == OperationType.division
             ? 'Öva 3–5 min: delat med små tal (t.ex. 10÷2, 12÷3).'
             : 'Öva 3–5 min: gångertabeller (t.ex. 2, 5, 10).';
-      case GradeBenchmarkLevel.inline:
+      case DifficultyGradeBenchmarkLevel.inline:
         return '';
-      case GradeBenchmarkLevel.over:
+      case DifficultyGradeBenchmarkLevel.over:
         return 'Om det känns lätt kan du låta appen höja svårigheten gradvis.';
     }
   }
@@ -144,13 +144,14 @@ class DifficultyConfig {
   /// child is clearly far from the grade expectation and the tap moves
   /// towards that expectation.
   static int parentSuggestedAdjustmentSteps({
-    required GradeBenchmark benchmark,
+    required DifficultyGradeBenchmark benchmark,
     required bool makeHarder,
   }) {
     // If parent moves *against* the indicator, stay cautious.
-    final towardsExpected =
-        (benchmark.level == GradeBenchmarkLevel.under && makeHarder) ||
-            (benchmark.level == GradeBenchmarkLevel.over && !makeHarder);
+    final towardsExpected = (benchmark.level ==
+                DifficultyGradeBenchmarkLevel.under &&
+            makeHarder) ||
+        (benchmark.level == DifficultyGradeBenchmarkLevel.over && !makeHarder);
     if (!towardsExpected) return 1;
 
     final distance = benchmark.delta.abs();
@@ -240,7 +241,7 @@ class DifficultyConfig {
   ///
   /// Note: M5a-start är påbörjad för Åk 7–9 (+/−) med negativa heltal i
   /// generatorn. Bråk/decimaler hanteras fortfarande inte i kärnflödet.
-  static NumberRange curriculumNumberRangeForStep({
+  static DifficultyNumberRange curriculumNumberRangeForStep({
     required int gradeLevel,
     required OperationType operationType,
     required int difficultyStep,
@@ -308,7 +309,7 @@ class DifficultyConfig {
 
       if (stepTable != null) {
         final maxVal = stepTable[step - 1];
-        return NumberRange(0, maxVal);
+        return DifficultyNumberRange(0, maxVal);
       }
     }
 
@@ -371,7 +372,7 @@ class DifficultyConfig {
 
     final safeStart = startMax > cap ? cap : startMax;
     final maxVal = _lerpInt(safeStart, cap, t);
-    return NumberRange(0, maxVal);
+    return DifficultyNumberRange(0, maxVal);
   }
 
   /// Recommends a difficulty step for training based on recent results.
@@ -468,7 +469,7 @@ class DifficultyConfig {
 
   /// Step-based number range that smoothly interpolates between the existing
   /// easy/medium/hard ranges.
-  static NumberRange getNumberRangeForStep(
+  static DifficultyNumberRange getNumberRangeForStep(
     AgeGroup ageGroup,
     OperationType operationType,
     int difficultyStep,
@@ -486,8 +487,8 @@ class DifficultyConfig {
         (step - minDifficultyStep) / (maxDifficultyStep - minDifficultyStep);
 
     // Piecewise lerp: easy->medium for t in [0, 0.5), medium->hard for [0.5, 1].
-    final NumberRange a;
-    final NumberRange b;
+    final DifficultyNumberRange a;
+    final DifficultyNumberRange b;
     final double localT;
     if (t < 0.5) {
       a = rangeEasy;
@@ -502,9 +503,9 @@ class DifficultyConfig {
     final minVal = _lerpInt(a.min, b.min, localT);
     final maxVal = _lerpInt(a.max, b.max, localT);
     if (maxVal >= minVal) {
-      return NumberRange(minVal, maxVal);
+      return DifficultyNumberRange(minVal, maxVal);
     }
-    return NumberRange(maxVal, minVal);
+    return DifficultyNumberRange(maxVal, minVal);
   }
 
   /// When a grade (Åk) is selected, we map it to a coarse age group plus a
@@ -545,7 +546,7 @@ class DifficultyConfig {
   }
 
   /// Get number range for a specific age group, operation, and difficulty
-  static NumberRange getNumberRange(
+  static DifficultyNumberRange getNumberRange(
     AgeGroup ageGroup,
     OperationType operationType,
     DifficultyLevel difficulty,
@@ -561,7 +562,7 @@ class DifficultyConfig {
     }
   }
 
-  static NumberRange _getYoungRange(
+  static DifficultyNumberRange _getYoungRange(
     OperationType operation,
     DifficultyLevel difficulty,
   ) {
@@ -569,54 +570,54 @@ class DifficultyConfig {
       case OperationType.addition:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 20);
+            return const DifficultyNumberRange(0, 20);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 50);
+            return const DifficultyNumberRange(0, 50);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 100);
+            return const DifficultyNumberRange(0, 100);
         }
       case OperationType.subtraction:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 20);
+            return const DifficultyNumberRange(0, 20);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 50);
+            return const DifficultyNumberRange(0, 50);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 100);
+            return const DifficultyNumberRange(0, 100);
         }
       case OperationType.multiplication:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 5);
+            return const DifficultyNumberRange(0, 5);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 10);
+            return const DifficultyNumberRange(0, 10);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
         }
       case OperationType.division:
         // Note: used for quotient + divisor (dividend becomes divisor * quotient)
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 5);
+            return const DifficultyNumberRange(0, 5);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 10);
+            return const DifficultyNumberRange(0, 10);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
         }
       case OperationType.mixed:
         // Keep mixed conservative to avoid huge operands for × and ÷
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 5);
+            return const DifficultyNumberRange(0, 5);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 10);
+            return const DifficultyNumberRange(0, 10);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
         }
     }
   }
 
-  static NumberRange _getMiddleRange(
+  static DifficultyNumberRange _getMiddleRange(
     OperationType operation,
     DifficultyLevel difficulty,
   ) {
@@ -625,45 +626,45 @@ class DifficultyConfig {
       case OperationType.subtraction:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 200);
+            return const DifficultyNumberRange(0, 200);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 1000);
+            return const DifficultyNumberRange(0, 1000);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 2000);
+            return const DifficultyNumberRange(0, 2000);
         }
       case OperationType.multiplication:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 20);
+            return const DifficultyNumberRange(0, 20);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 50);
+            return const DifficultyNumberRange(0, 50);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 100);
+            return const DifficultyNumberRange(0, 100);
         }
       case OperationType.division:
         // Note: used for quotient + divisor (dividend becomes divisor * quotient)
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 20);
+            return const DifficultyNumberRange(0, 20);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 50);
+            return const DifficultyNumberRange(0, 50);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 100);
+            return const DifficultyNumberRange(0, 100);
         }
       case OperationType.mixed:
         // Keep mixed conservative to avoid huge operands for × and ÷
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 12);
+            return const DifficultyNumberRange(0, 12);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 20);
+            return const DifficultyNumberRange(0, 20);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 30);
+            return const DifficultyNumberRange(0, 30);
         }
     }
   }
 
-  static NumberRange _getOlderRange(
+  static DifficultyNumberRange _getOlderRange(
     OperationType operation,
     DifficultyLevel difficulty,
   ) {
@@ -672,40 +673,40 @@ class DifficultyConfig {
       case OperationType.subtraction:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 1000);
+            return const DifficultyNumberRange(0, 1000);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 5000);
+            return const DifficultyNumberRange(0, 5000);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 10000);
+            return const DifficultyNumberRange(0, 10000);
         }
       case OperationType.multiplication:
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 30);
+            return const DifficultyNumberRange(0, 30);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 60);
+            return const DifficultyNumberRange(0, 60);
         }
       case OperationType.division:
         // Note: used for quotient + divisor (dividend becomes divisor * quotient)
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 30);
+            return const DifficultyNumberRange(0, 30);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 60);
+            return const DifficultyNumberRange(0, 60);
         }
       case OperationType.mixed:
         // Keep mixed conservative to avoid huge operands for × and ÷
         switch (difficulty) {
           case DifficultyLevel.easy:
-            return const NumberRange(0, 15);
+            return const DifficultyNumberRange(0, 15);
           case DifficultyLevel.medium:
-            return const NumberRange(0, 30);
+            return const DifficultyNumberRange(0, 30);
           case DifficultyLevel.hard:
-            return const NumberRange(0, 60);
+            return const DifficultyNumberRange(0, 60);
         }
     }
   }
@@ -749,14 +750,14 @@ class DifficultyConfig {
   }
 }
 
-enum GradeBenchmarkLevel {
+enum DifficultyGradeBenchmarkLevel {
   under,
   inline,
   over,
 }
 
-class GradeBenchmark {
-  const GradeBenchmark({
+class DifficultyGradeBenchmark {
+  const DifficultyGradeBenchmark({
     required this.expectedStep,
     required this.actualStep,
     required this.delta,
@@ -766,12 +767,12 @@ class GradeBenchmark {
   final int expectedStep;
   final int actualStep;
   final int delta;
-  final GradeBenchmarkLevel level;
+  final DifficultyGradeBenchmarkLevel level;
 }
 
 /// Represents a range of numbers for question generation
-class NumberRange {
-  const NumberRange(this.min, this.max);
+class DifficultyNumberRange {
+  const DifficultyNumberRange(this.min, this.max);
 
   final int min;
   final int max;

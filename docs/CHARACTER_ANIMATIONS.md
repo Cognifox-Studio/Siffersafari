@@ -21,8 +21,8 @@ This means:
 - no mixing of approved runtime assets and lab material
 
 ## Runtime Roles
-- `MascotCharacter` is the triggered runtime widget for home, quiz and results
-- `ThemeMascot.withState` is the passive mascot surface for simple state-based rendering
+- `GameCharacter` is the triggered runtime widget for home, quiz and results
+- `MascotReactionView.withState` is the passive mascot surface for simple state-based rendering
 - current mascot runtime does not branch on theme-level Rive configuration
 
 ## Preview Roles
@@ -71,13 +71,13 @@ artifacts/animation_preview/
 
 ## Widget Usage
 ```dart
-ThemeMascot.withState(
+MascotReactionView.withState(
   state: CharacterAnimationState.idle,
   height: 120,
 )
 
-MascotCharacter(
-  reaction: MascotReaction.answerCorrect,
+GameCharacter(
+  reaction: CharacterReaction.answerCorrect,
   reactionNonce: nonce,
   height: 120,
 )

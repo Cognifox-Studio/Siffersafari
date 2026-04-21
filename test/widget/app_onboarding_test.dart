@@ -66,7 +66,8 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       expect(onboardingTitle, findsOneWidget);
-      expect(find.text('1/1'), findsOneWidget);
+      expect(find.text('Välj årskurs'), findsOneWidget);
+      expect(find.text('Tryck på en ruta.'), findsOneWidget);
       expect(find.text('Kan barnet läsa?'), findsNothing);
       expect(find.text('Vad vill du räkna först?'), findsNothing);
 
@@ -137,18 +138,13 @@ void main() {
         await tester.pump(const Duration(milliseconds: 50));
       }
       expect(onboardingTitle, findsOneWidget);
-      expect(find.text('1/1'), findsOneWidget);
-      expect(find.text('Vilken årskurs kör du?'), findsOneWidget);
+      expect(find.text('Välj årskurs'), findsOneWidget);
+      expect(find.text('Årskurs'), findsOneWidget);
       expect(find.text('Kan barnet läsa?'), findsNothing);
       expect(find.text('Vad vill du räkna först?'), findsNothing);
 
-      final gradeDropdown = find.byWidgetPredicate(
-        (w) => w is DropdownButton<int?>,
-      );
-      expect(gradeDropdown, findsOneWidget);
-      await tester.tap(gradeDropdown);
-      await pumpFor(tester, const Duration(milliseconds: 200));
-      await tester.tap(find.text('Åk 3').last);
+      expect(find.text('Åk 3'), findsOneWidget);
+      await tester.tap(find.text('Åk 3'));
       await pumpFor(tester, const Duration(milliseconds: 200));
 
       await tester.tap(find.text('Starta'));

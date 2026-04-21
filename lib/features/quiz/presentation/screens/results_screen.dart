@@ -9,7 +9,6 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
-import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
 import 'package:siffersafari/core/providers/parent_settings_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
@@ -18,14 +17,17 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/level_up_event.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
-import 'package:siffersafari/presentation/widgets/mascot_character.dart';
+import 'package:siffersafari/presentation/widgets/game_character.dart';
+import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/star_rating.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -42,8 +44,18 @@ class ResultsScreen extends ConsumerStatefulWidget {
 
 // region _ResultsScreenState Main Widget
 
-class _ResultsScreenState extends ConsumerState<ResultsScreen> {
+class _ResultsScreenState extends ConsumerState<ResultsScreen>
+    with TickerProviderStateMixin {
   bool _applied = false;
+  bool _characterCelebrate = false;
+  Timer? _celebrateTimer;
+
+  late final AnimationController _lottieController;
+  late final AnimationController _entranceController;
+  late final Animation<Offset> _heroSlide;
+  late final Animation<double> _heroOpacity;
+  late final Animation<Offset> _actionsSlide;
+  late final Animation<double> _actionsOpacity;
 
   static const int _slowAnswerThresholdSeconds = 8;
 
@@ -154,6 +166,57 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _lottieController = AnimationController(vsync: this);
+    _entranceController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 600),
+    );
+    _heroSlide = Tween<Offset>(
+      begin: const Offset(0, 0.06),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.65, curve: Curves.easeOutCubic),
+      ),
+    );
+    _heroOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.55, curve: Curves.easeOut),
+      ),
+    );
+    _actionsSlide = Tween<Offset>(
+      begin: const Offset(0, 0.08),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.18, 0.85, curve: Curves.easeOutCubic),
+      ),
+    );
+    _actionsOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.18, 0.7, curve: Curves.easeOut),
+      ),
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _entranceController.forward();
+    });
+  }
+
+  @override
+  void dispose() {
+    _celebrateTimer?.cancel();
+    _lottieController.dispose();
+    _entranceController.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -169,6 +232,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
           (reward?.unlockedIds.isNotEmpty ?? false);
       if (shouldCelebrate) {
         ref.read(audioServiceProvider).playCelebrationSound();
+        // Delay character jump until entrance + stars animation finishes.
+        _celebrateTimer = Timer(const Duration(milliseconds: 900), () {
+          if (mounted) setState(() => _characterCelebrate = true);
+        });
       }
 
       final userId = ref.read(userProvider).activeUser?.userId;
@@ -211,6 +278,22 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         }
       }
 
+      // Surface level-up analytics if the child crossed a level threshold.
+      final levelUp = ref.read(userProvider).lastLevelUp;
+      if (levelUp != null && userId != null && userId.isNotEmpty) {
+        unawaited(
+          ref.read(appAnalyticsProvider).logEvent(
+            name: 'level_up',
+            userId: userId,
+            properties: {
+              'old_level': levelUp.oldLevel,
+              'new_level': levelUp.newLevel,
+              'title': levelUp.newTitle,
+            },
+          ),
+        );
+      }
+
       _applied = true;
     }
   }
@@ -247,7 +330,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     final shouldCelebrate =
         session.successRate >= 0.8 || (reward?.unlockedIds.isNotEmpty ?? false);
     final stars = _calculateStars(session.successRate);
-    final timeText = _formatDuration(session.sessionDuration);
     final hardest = _getHardestQuestions(session);
     final bonusPoints = reward?.bonusPoints ?? 0;
     final totalPoints = session.totalPoints + bonusPoints;
@@ -268,22 +350,19 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       children: [
         SizedBox(
           height: 112.h,
-          child: MascotCharacter(
-            reaction: shouldCelebrate
-                ? MascotReaction.celebrate
-                : MascotReaction.idle,
-            reactionNonce: shouldCelebrate ? 1 : 0,
+          child: GameCharacter(
+            reaction: _characterCelebrate
+                ? CharacterReaction.celebrate
+                : CharacterReaction.idle,
+            reactionNonce: _characterCelebrate ? 1 : 0,
             height: 112.h,
           ),
         ),
         const SizedBox(height: AppConstants.defaultPadding),
-        Text(
-          _getTitle(stars),
-          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                color: onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-          textAlign: TextAlign.center,
+        PlayfulSectionHeading(
+          eyebrow: 'Resultat',
+          title: _getTitle(stars),
+          center: true,
         ),
         const SizedBox(height: AppConstants.largePadding),
         if (shouldCelebrate) ...[
@@ -306,7 +385,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
               child: Lottie.asset(
                 'assets/animations/celebration.json',
                 fit: BoxFit.contain,
-                repeat: false,
+                controller: _lottieController,
+                onLoaded: (composition) {
+                  _lottieController.duration = composition.duration;
+                  _lottieController.forward().whenCompleteOrCancel(() {
+                    if (mounted) _lottieController.forward(from: 0);
+                  });
+                },
               ),
             ),
           ),
@@ -316,72 +401,62 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
       ],
     );
 
-    final statsCard = Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        color: panelColor,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: onPrimary.withValues(
-            alpha: AppOpacities.borderSubtle,
-          ),
-        ),
-      ),
+    final statsCard = PlayfulPanel(
+      hero: true,
+      backgroundColor: panelColor,
+      highlightColor: scheme.secondary,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildStatRow(
-            context,
-            'Rätt!',
-            '${session.correctAnswers} / ${session.totalQuestions}',
+          PlayfulSectionHeading(
+            eyebrow: 'Så gick det',
+            title: '${session.correctAnswers} rätt',
           ),
-          SizedBox(height: AppConstants.defaultPadding.h),
-          _buildStatRow(
-            context,
-            'Din tid',
-            timeText,
-          ),
-          SizedBox(height: AppConstants.defaultPadding.h),
-          _buildStatRow(
-            context,
-            'Dina poäng',
-            totalPoints.toString(),
-          ),
-          if (bonusPoints > 0) ...[
-            SizedBox(height: AppConstants.smallPadding.h),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'Bonus +$bonusPoints!',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: scheme.secondary,
-                      fontWeight: FontWeight.w800,
-                    ),
+          SizedBox(height: AppConstants.largePadding.h),
+          Wrap(
+            spacing: AppConstants.smallPadding,
+            runSpacing: AppConstants.smallPadding,
+            children: [
+              PlayfulStatPill(
+                label: 'Rätt',
+                value: '${session.correctAnswers}',
+                icon: Icons.check_circle_rounded,
+                highlightColor: themeCfg.progressCompletedColor,
               ),
-            ),
-          ],
+              PlayfulStatPill(
+                label: 'Poäng',
+                value: totalPoints.toString(),
+                icon: Icons.star_rounded,
+                highlightColor: themeCfg.primaryActionColor,
+              ),
+            ],
+          ),
         ],
       ),
     );
-    final actionPrompt = questCompletion != null && storyProgress != null
-        ? 'Fortsätt direkt på stigen, snabbträna på det kluriga eller gå hem.'
-        : 'Kör en ny runda direkt, snabbträna på det kluriga eller gå hem.';
+    final showCoachCard = activeUser != null && stars == 0;
+    final showCelebrationCard = didUnlockSomething || stars == 3;
 
     final actionColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (userState.lastLevelUp != null) ...[
+          _LevelUpBanner(event: userState.lastLevelUp!),
+          const SizedBox(height: AppConstants.largePadding),
+        ],
         statsCard,
         if (questCompletion != null && storyProgress != null) ...[
           const SizedBox(height: AppConstants.largePadding),
           _buildStoryCheckpointPanel(
             context,
+            panelColor: panelColor,
             onPrimary: onPrimary,
             mutedOnPrimary: mutedOnPrimary,
-            panelColor: panelColor,
             storyProgress: storyProgress,
             questCompletion: questCompletion,
           ),
         ],
-        if (activeUser != null) ...[
+        if (showCoachCard) ...[
           const SizedBox(height: AppConstants.largePadding),
           _buildProgressSummaryPanel(
             context,
@@ -389,73 +464,62 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
             onPrimary: onPrimary,
             mutedOnPrimary: mutedOnPrimary,
             user: activeUser,
-            session: session,
             quizState: quizState,
           ),
         ],
+        if (showCelebrationCard) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildBadgePanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            badgeTeaser: badgeTeaser,
+          ),
+        ],
         const SizedBox(height: AppConstants.largePadding),
-        _buildBadgePanel(
-          context,
-          panelColor: panelColor,
-          onPrimary: onPrimary,
-          mutedOnPrimary: mutedOnPrimary,
-          badgeTeaser: badgeTeaser,
-        ),
-        const SizedBox(height: AppConstants.largePadding),
-        Text(
-          'Vad vill du göra nu?',
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: onPrimary,
-                fontWeight: FontWeight.w800,
+        PlayfulPanel(
+          hero: true,
+          backgroundColor: panelColor,
+          highlightColor: themeCfg.secondaryActionColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const PlayfulSectionHeading(
+                title: 'Kör mer?',
               ),
-        ),
-        SizedBox(height: AppConstants.smallPadding.h),
-        Text(
-          actionPrompt,
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: mutedOnPrimary,
-                fontWeight: FontWeight.w600,
+              SizedBox(height: AppConstants.defaultPadding.h),
+              ElevatedButton.icon(
+                onPressed: () => _startRoundFromResults(
+                  session: session,
+                  hardest: hardest,
+                  useFocusedMiniPass: false,
+                ),
+                icon: const Icon(Icons.replay_rounded),
+                label: const Text('Spela igen!'),
               ),
-        ),
-        SizedBox(height: AppConstants.defaultPadding.h),
-        ElevatedButton(
-          onPressed: () => _startRoundFromResults(
-            session: session,
-            hardest: hardest,
-            useFocusedMiniPass: false,
-          ),
-          child: Text(
-            'Spela igen!',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: onPrimary,
-                  fontWeight: FontWeight.bold,
+              SizedBox(height: AppConstants.defaultPadding.h),
+              OutlinedButton.icon(
+                onPressed: () => _startRoundFromResults(
+                  session: session,
+                  hardest: hardest,
+                  useFocusedMiniPass: true,
                 ),
-          ),
-        ),
-        SizedBox(height: AppConstants.defaultPadding.h),
-        OutlinedButton(
-          onPressed: () => _startRoundFromResults(
-            session: session,
-            hardest: hardest,
-            useFocusedMiniPass: true,
-          ),
-          child: Text(
-            'Snabbträna (2 min)',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: onPrimary,
-                  fontWeight: FontWeight.bold,
+                icon: const Icon(Icons.bolt_rounded),
+                label: const Text('Snabbträna ⚡'),
+              ),
+              SizedBox(height: AppConstants.smallPadding.h),
+              TextButton(
+                onPressed: _goHomeFromResults,
+                child: Text(
+                  'Hem',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
-          ),
-        ),
-        SizedBox(height: AppConstants.smallPadding.h),
-        TextButton(
-          onPressed: _goHomeFromResults,
-          child: Text(
-            'Hem',
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -487,20 +551,44 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                                 padding: const EdgeInsets.only(
                                   right: AppConstants.defaultPadding,
                                 ),
-                                child: summaryHero,
+                                child: FadeTransition(
+                                  opacity: _heroOpacity,
+                                  child: SlideTransition(
+                                    position: _heroSlide,
+                                    child: summaryHero,
+                                  ),
+                                ),
                               ),
                             ),
                             Expanded(
-                              child: actionColumn,
+                              child: FadeTransition(
+                                opacity: _actionsOpacity,
+                                child: SlideTransition(
+                                  position: _actionsSlide,
+                                  child: actionColumn,
+                                ),
+                              ),
                             ),
                           ],
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            summaryHero,
+                            FadeTransition(
+                              opacity: _heroOpacity,
+                              child: SlideTransition(
+                                position: _heroSlide,
+                                child: summaryHero,
+                              ),
+                            ),
                             const SizedBox(height: AppConstants.largePadding),
-                            actionColumn,
+                            FadeTransition(
+                              opacity: _actionsOpacity,
+                              child: SlideTransition(
+                                position: _actionsSlide,
+                                child: actionColumn,
+                              ),
+                            ),
                           ],
                         ),
                 ),
@@ -516,36 +604,9 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
 
   // region Helper Methods
 
-  Widget _buildStatRow(BuildContext context, String label, String value) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: mutedOnPrimary,
-                ),
-          ),
-        ),
-        SizedBox(width: AppConstants.smallPadding.w),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: onPrimary,
-                fontWeight: FontWeight.bold,
-              ),
-        ),
-      ],
-    );
-  }
-
   void _goHomeFromResults() {
     ref.read(userProvider.notifier).clearLastQuestCompletion();
+    ref.read(userProvider.notifier).clearLastLevelUp();
     context.pushAndRemoveUntilSmooth(
       const HomeScreen(),
       (route) => false,
@@ -567,6 +628,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     required bool useFocusedMiniPass,
   }) {
     ref.read(userProvider.notifier).clearLastQuestCompletion();
+    ref.read(userProvider.notifier).clearLastLevelUp();
 
     final user = ref.read(userProvider).activeUser;
     if (user == null) {
@@ -682,13 +744,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     return 0;
   }
 
-  String _formatDuration(Duration? duration) {
-    if (duration == null) return '--';
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
-    return '${minutes}m ${seconds}s';
-  }
-
   Widget _buildBadgePanel(
     BuildContext context, {
     required Color panelColor,
@@ -698,16 +753,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
   }) {
     final scheme = Theme.of(context).colorScheme;
 
-    return Container(
-      width: double.infinity,
+    return PlayfulPanel(
+      backgroundColor: panelColor,
+      highlightColor: scheme.secondary,
       padding: EdgeInsets.all(AppConstants.largePadding.w),
-      decoration: BoxDecoration(
-        color: panelColor,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -737,14 +786,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                   fontWeight: FontWeight.w600,
                 ),
           ),
-          SizedBox(height: AppConstants.defaultPadding.h),
-          Text(
-            badgeTeaser.teaser,
-            style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: scheme.secondary,
-                  fontWeight: FontWeight.w800,
-                ),
-          ),
         ],
       ),
     );
@@ -756,35 +797,21 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     required Color onPrimary,
     required Color mutedOnPrimary,
     required UserProgress user,
-    required QuizSession session,
     required QuizState quizState,
   }) {
-    final headline = switch (session.successRate) {
-      >= 0.9 => 'Du är verkligen på gång!',
-      >= 0.7 => 'Bra jobbat, du är på rätt spår!',
-      >= 0.5 => 'Bra kämpat, lite till så sitter det!',
-      _ => 'Fortsätt lugnt, det här kommer lossna.',
-    };
-
     final nextLevelText = user.pointsToNextLevel == UserProgress.pointsPerLevel
-        ? 'Du startade en ny nivå den här rundan.'
-        : '${user.pointsToNextLevel} poäng kvar till nivå ${user.level + 1}.';
+        ? 'Ny nivå!'
+        : '${user.pointsToNextLevel} poäng till nivå ${user.level + 1}.';
 
-    return Container(
-      width: double.infinity,
+    return PlayfulPanel(
+      backgroundColor: panelColor,
+      highlightColor: Theme.of(context).colorScheme.secondary,
       padding: EdgeInsets.all(AppConstants.largePadding.w),
-      decoration: BoxDecoration(
-        color: panelColor,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: onPrimary.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Ditt nästa steg',
+            'Bra kämpat',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w800,
@@ -792,24 +819,16 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
           ),
           SizedBox(height: AppConstants.smallPadding.h),
           Text(
-            headline,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          SizedBox(height: AppConstants.defaultPadding.h),
-          Text(
-            'Du klarade ${session.correctAnswers} av ${session.totalQuestions} frågor rätt.',
+            'Spela en gång till så känns det lättare.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: onPrimary,
+                  color: mutedOnPrimary,
                   fontWeight: FontWeight.w700,
                 ),
           ),
           if (quizState.bestCorrectStreak >= 2) ...[
             SizedBox(height: AppConstants.smallPadding.h),
             Text(
-              'Bästa svit den här rundan: ${quizState.bestCorrectStreak}.',
+              '${quizState.bestCorrectStreak} rätt i rad.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: mutedOnPrimary,
                     fontWeight: FontWeight.w600,
@@ -837,6 +856,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
     required StoryProgress storyProgress,
     required QuestCompletionEvent questCompletion,
   }) {
+    final themeCfg = ref.read(appThemeConfigProvider);
     final scheme = Theme.of(context).colorScheme;
     final currentNode = storyProgress.currentNode;
     final reachedLandmark = currentNode?.landmark ?? 'nästa plats';
@@ -846,21 +866,15 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
         ? 'Du är snart framme vid slutet av den här stigen.'
         : 'Nästa mål: $nextTitle';
 
-    return Container(
-      width: double.infinity,
+    return PlayfulPanel(
+      backgroundColor: panelColor,
+      highlightColor: scheme.secondary,
       padding: EdgeInsets.all(AppConstants.largePadding.w),
-      decoration: BoxDecoration(
-        color: panelColor,
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(
-          color: scheme.secondary.withValues(alpha: AppOpacities.borderSubtle),
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nytt delmål i djungeln!',
+            'Nytt stopp!',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w800,
@@ -868,7 +882,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
           ),
           SizedBox(height: AppConstants.smallPadding.h),
           Text(
-            'Maskoten tog sig förbi ${questCompletion.completedQuestTitle.toLowerCase()} och nådde $reachedLandmark.',
+            'Nu: $reachedLandmark',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -891,7 +905,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                 title: nextTitle,
                 body: nextBody,
                 icon: Icons.flag_rounded,
-                color: const Color(0xFFD39A2F),
+                color: themeCfg.progressNextColor,
                 onPrimary: onPrimary,
               );
 
@@ -914,22 +928,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen> {
                 ],
               );
             },
-          ),
-          SizedBox(height: AppConstants.smallPadding.h),
-          Text(
-            'Nästa mål: $nextTitle',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: onPrimary,
-                  fontWeight: FontWeight.w700,
-                ),
-          ),
-          SizedBox(height: AppConstants.smallPadding.h),
-          Text(
-            storyProgress.worldSubtitle,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
           ),
         ],
       ),
@@ -1088,69 +1086,12 @@ class _StoryFocusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(AppConstants.defaultPadding.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            color.withValues(alpha: 0.20),
-            color.withValues(alpha: 0.08),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-        border: Border.all(color: color.withValues(alpha: 0.72), width: 2),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 44.w,
-            height: 44.w,
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.22),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: onPrimary),
-          ),
-          SizedBox(width: AppConstants.smallPadding.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                SizedBox(height: AppConstants.microSpacing4.h),
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
-                SizedBox(height: AppConstants.microSpacing4.h),
-                Text(
-                  body,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: onPrimary.withValues(alpha: 0.88),
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+    return PlayfulAccentCard(
+      label: label,
+      title: title,
+      body: body,
+      icon: icon,
+      accentColor: color,
     );
   }
 }
@@ -1170,3 +1111,60 @@ class _HardestQuestion {
 }
 
 // endregion
+
+class _LevelUpBanner extends StatelessWidget {
+  const _LevelUpBanner({required this.event});
+
+  final LevelUpEvent event;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return PlayfulPanel(
+      hero: true,
+      highlightColor: scheme.primary,
+      child: Row(
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: 0.18),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: scheme.primary.withValues(alpha: 0.32),
+              ),
+            ),
+            child: Icon(
+              Icons.auto_awesome_rounded,
+              color: scheme.onPrimary,
+            ),
+          ),
+          const SizedBox(width: AppConstants.defaultPadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Nivå ${event.newLevel}!',
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: scheme.onPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Du är nu ${event.newTitle}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: scheme.onPrimary.withValues(alpha: 0.92),
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-03-20T20:37:18.296323+00:00",
+  "generated_at": "2026-04-19T11:00:38.381663+00:00",
   "pipeline_version": 1,
   "notes": {
     "rive": "Only blueprint outputs are generated automatically right now. Final .riv files still require manual work in Rive.",
@@ -92,7 +92,7 @@
         "rive_runtime_exists": true,
         "rive_blueprint": "artifacts/mascot_rive_blueprint.json",
         "rive_blueprint_exists": true,
-        "rive_guide": "artifacts/MASCOT_RIVE_GUIDE.md",
+        "rive_guide": "artifacts/mascot_rive_guide.md",
         "rive_guide_exists": true
       },
       {
@@ -125,7 +125,7 @@
         "rive_runtime_exists": false,
         "rive_blueprint": "artifacts/loke_rive_blueprint.json",
         "rive_blueprint_exists": true,
-        "rive_guide": "artifacts/LOKE_RIVE_GUIDE.md",
+        "rive_guide": "artifacts/loke_rive_guide.md",
         "rive_guide_exists": true
       },
       {
@@ -162,7 +162,7 @@
         "rive_runtime_exists": false,
         "rive_blueprint": "artifacts/skogshjalte_rive_blueprint.json",
         "rive_blueprint_exists": true,
-        "rive_guide": "artifacts/SKOGSHJALTE_RIVE_GUIDE.md",
+        "rive_guide": "artifacts/skogshjalte_rive_guide.md",
         "rive_guide_exists": true
       }
     ],
@@ -257,9 +257,9 @@
       "artifacts/skogshjalte_rive_blueprint.json"
     ],
     "character_rive_guides": [
-      "artifacts/LOKE_RIVE_GUIDE.md",
-      "artifacts/MASCOT_RIVE_GUIDE.md",
-      "artifacts/SKOGSHJALTE_RIVE_GUIDE.md"
+      "artifacts/loke_rive_guide.md",
+      "artifacts/mascot_rive_guide.md",
+      "artifacts/skogshjalte_rive_guide.md"
     ],
     "ui_lottie": [
       "assets/ui/lottie/confetti.json",
@@ -268,12 +268,12 @@
       "assets/ui/lottie/success_pulse.json"
     ],
     "artifacts": [
-      "artifacts/LOKE_RIVE_GUIDE.md",
-      "artifacts/MASCOT_RIVE_GUIDE.md",
-      "artifacts/SKOGSHJALTE_RIVE_GUIDE.md",
       "artifacts/loke_rive_blueprint.json",
+      "artifacts/loke_rive_guide.md",
       "artifacts/mascot_rive_blueprint.json",
-      "artifacts/skogshjalte_rive_blueprint.json"
+      "artifacts/mascot_rive_guide.md",
+      "artifacts/skogshjalte_rive_blueprint.json",
+      "artifacts/skogshjalte_rive_guide.md"
     ],
     "dart_codegen": [
       "lib/gen/assets.g.dart"

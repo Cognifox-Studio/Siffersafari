@@ -41,7 +41,7 @@ Princip: senaste datum vinner vid konflikt.
 - Loke introducerades som forsta verifierade karaktar i detta arbetsflode.
 
 ### 2026-03-18
-- Mascot-runtime forenklades till en tydlig SVG-first-modell: `MascotCharacter` och `ThemeMascot.withState` anvander nu alltid composite-SVG + Flutter-animationer i produkt-UI.
+- Mascot-runtime forenklades till en tydlig SVG-first-modell: `GameCharacter` och `MascotReactionView.withState` anvander nu alltid composite-SVG + Flutter-animationer i produkt-UI.
 - Oanvand theme/runtime-konfiguration for Rive togs bort for att minska parallella sanningar mellan kod och dokumentation.
 - Optional Rive-material ligger kvar i repo:t som ett separat framtidsspor, inte som aktiv fallback i nuvarande app.
 

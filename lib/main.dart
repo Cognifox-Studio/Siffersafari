@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:siffersafari/app/bootstrap/presentation/startup_router_screen.dart';
+import 'package:siffersafari/app/bootstrap/presentation/startup_flow_gate.dart';
 import 'package:siffersafari/app/bootstrap/presentation/startup_splash_gate.dart';
 
 import 'core/constants/app_constants.dart';
@@ -67,7 +67,7 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
-      child: MathGameApp(
+      child: SiffersafariApp(
         initFuture: Future.value(initError),
       ),
     ),
@@ -115,8 +115,8 @@ Future<T> _measureAsync<T>(String name, Future<T> Function() fn) async {
   }
 }
 
-class MathGameApp extends ConsumerWidget {
-  const MathGameApp({super.key, required this.initFuture});
+class SiffersafariApp extends ConsumerWidget {
+  const SiffersafariApp({super.key, required this.initFuture});
 
   final Future<String?> initFuture;
 
@@ -149,7 +149,7 @@ class MathGameApp extends ConsumerWidget {
             } else if (initError != null) {
               home = _BootstrapErrorScreen(error: initError);
             } else {
-              home = const StartupSplashGate(child: StartupRouterScreen());
+              home = const StartupSplashGate(child: StartupFlowGate());
             }
 
             return MaterialApp(

@@ -34,14 +34,14 @@ void main() {
         operation: OperationType.addition,
         difficultyStep: expected - 3,
       );
-      expect(under.level, GradeBenchmarkLevel.under);
+      expect(under.level, DifficultyGradeBenchmarkLevel.under);
 
       final inline = DifficultyConfig.compareDifficultyStepToGrade(
         gradeLevel: 4,
         operation: OperationType.addition,
         difficultyStep: expected + 1,
       );
-      expect(inline.level, GradeBenchmarkLevel.inline);
+      expect(inline.level, DifficultyGradeBenchmarkLevel.inline);
 
       // Med tolerans ±2 ska även +2 vara i linje.
       final inline2 = DifficultyConfig.compareDifficultyStepToGrade(
@@ -49,14 +49,14 @@ void main() {
         operation: OperationType.addition,
         difficultyStep: expected + 2,
       );
-      expect(inline2.level, GradeBenchmarkLevel.inline);
+      expect(inline2.level, DifficultyGradeBenchmarkLevel.inline);
 
       final over = DifficultyConfig.compareDifficultyStepToGrade(
         gradeLevel: 4,
         operation: OperationType.addition,
         difficultyStep: expected + 3,
       );
-      expect(over.level, GradeBenchmarkLevel.over);
+      expect(over.level, DifficultyGradeBenchmarkLevel.over);
     });
 
     test('benchmark progression är mjukare år-för-år från Åk 4', () {
@@ -117,7 +117,7 @@ void main() {
 
           expect(
             benchmark.level,
-            GradeBenchmarkLevel.inline,
+            DifficultyGradeBenchmarkLevel.inline,
             reason: 'Åk $grade, $operation, step $expected should be inline',
           );
           expect(benchmark.delta, 0);
@@ -150,7 +150,7 @@ void main() {
 
             expect(
               benchmark.level,
-              GradeBenchmarkLevel.inline,
+              DifficultyGradeBenchmarkLevel.inline,
               reason:
                   'Åk $grade, $operation, expected $expected, offset $offset should be inline',
             );
@@ -163,11 +163,11 @@ void main() {
   group('[Unit] DifficultyConfig – Parent suggested adjustments', () {
     test('returnerar större steg när man rör sig mot indikatorn', () {
       // Under (delta=-6): om föräldern trycker "Svårare" -> större steg.
-      const under = GradeBenchmark(
+      const under = DifficultyGradeBenchmark(
         expectedStep: 6,
         actualStep: 0,
         delta: -6,
-        level: GradeBenchmarkLevel.under,
+        level: DifficultyGradeBenchmarkLevel.under,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(
@@ -178,11 +178,11 @@ void main() {
       );
 
       // Over (delta=+4): om föräldern trycker "Lättare" -> större steg.
-      const over = GradeBenchmark(
+      const over = DifficultyGradeBenchmark(
         expectedStep: 4,
         actualStep: 8,
         delta: 4,
-        level: GradeBenchmarkLevel.over,
+        level: DifficultyGradeBenchmarkLevel.over,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(
@@ -194,11 +194,11 @@ void main() {
     });
 
     test('är försiktig (1 steg) om föräldern går emot indikatorn', () {
-      const under = GradeBenchmark(
+      const under = DifficultyGradeBenchmark(
         expectedStep: 5,
         actualStep: 2,
         delta: -3,
-        level: GradeBenchmarkLevel.under,
+        level: DifficultyGradeBenchmarkLevel.under,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(
@@ -210,11 +210,11 @@ void main() {
     });
 
     test('skalning mot indikatorn: avstånd 0-2 => 1, 3-4 => 2, 5+ => 3', () {
-      const over1 = GradeBenchmark(
+      const over1 = DifficultyGradeBenchmark(
         expectedStep: 5,
         actualStep: 6,
         delta: 1,
-        level: GradeBenchmarkLevel.over,
+        level: DifficultyGradeBenchmarkLevel.over,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(
@@ -224,11 +224,11 @@ void main() {
         1,
       );
 
-      const over3 = GradeBenchmark(
+      const over3 = DifficultyGradeBenchmark(
         expectedStep: 5,
         actualStep: 8,
         delta: 3,
-        level: GradeBenchmarkLevel.over,
+        level: DifficultyGradeBenchmarkLevel.over,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(
@@ -238,11 +238,11 @@ void main() {
         2,
       );
 
-      const under5 = GradeBenchmark(
+      const under5 = DifficultyGradeBenchmark(
         expectedStep: 7,
         actualStep: 2,
         delta: -5,
-        level: GradeBenchmarkLevel.under,
+        level: DifficultyGradeBenchmarkLevel.under,
       );
       expect(
         DifficultyConfig.parentSuggestedAdjustmentSteps(

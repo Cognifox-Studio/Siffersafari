@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
-import 'package:siffersafari/core/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/core/services/daily_challenge_service.dart';
+import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 
 import '../../test_utils.dart';
 
