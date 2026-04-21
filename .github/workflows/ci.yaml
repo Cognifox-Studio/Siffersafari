@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.x'
       - run: flutter pub get
       - run: flutter analyze
 
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.x'
       - run: flutter pub get
       - run: python -m pip install --upgrade pip pyyaml
       - name: Run asset style lint
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.x'
       - run: flutter pub get
       - name: Run core smoke test
         run: flutter test integration_test/app_smoke_test.dart --dart-define=FULL_SMOKE=false 2>&1 | tee core_smoke.log
@@ -91,7 +91,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.41.x'
       - run: flutter pub get
       - name: Run full smoke test
         run: flutter test integration_test/app_smoke_test.dart --dart-define=FULL_SMOKE=true 2>&1 | tee full_smoke.log
