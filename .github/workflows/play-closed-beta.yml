@@ -81,30 +81,11 @@ jobs:
       - name: Build App Bundle
         run: flutter build appbundle --release
 
-      - name: Normalize Play track
-        id: normalize-track
-        shell: bash
-        run: |
-          raw='${{ inputs.track }}'
-          normalized="$(printf '%s' "$raw" | sed -E 's/^[[:space:]]*track[[:space:]]*=[[:space:]]*//I; s/^[[:space:]]+//; s/[[:space:]]+$//' | tr '[:upper:]' '[:lower:]')"
-
-          case "$normalized" in
-            internal|alpha|beta|production)
-              ;;
-            *)
-              echo "Invalid Play track input: '$raw'"
-              echo "Use one of: internal, alpha, beta, production"
-              exit 1
-              ;;
-          esac
-
-          echo "track=$normalized" >> "$GITHUB_OUTPUT"
-
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}
           packageName: se.cognifox.Siffersafari
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
-          tracks: ${{ steps.normalize-track.outputs.track }}
-          status: completed
+          tracks: ${{ inputs.track }}
+          status: draft
