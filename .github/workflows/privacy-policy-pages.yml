@@ -1,0 +1,45 @@
+name: Publish Privacy Policy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - site/**
+      - docs/PRIVACY_POLICY.md
+      - docs/DEPLOY_ANDROID.md
+      - docs/README.md
+      - .github/workflows/privacy-policy-pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: privacy-policy-pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

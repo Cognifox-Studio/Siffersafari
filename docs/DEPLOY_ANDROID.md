@@ -132,9 +132,15 @@ flutter build apk --release
 **Kort checklist:**
 - [ ] Google Play Developer-konto skapat ($25 one-time)
 - [ ] Applikation skapad i Play Console
+- [ ] Publik integritetspolicy-URL finns och kan öppnas utan inloggning
 - [ ] Release-noteringar på svenska/engelska
 - [ ] Screenshots för Play Store (finns i `integration_test/screenshots_test.dart`)
 - [ ] Icon och feature-graphics uppladdade
+
+**Privacy policy URL för detta repo:**
+- Källtext: `docs/PRIVACY_POLICY.md`
+- Publik GitHub Pages-sida: `https://cognifox-studio.github.io/Siffersafari/privacy-policy/`
+- Deploy-workflow: `.github/workflows/privacy-policy-pages.yml`
 
 ---
 

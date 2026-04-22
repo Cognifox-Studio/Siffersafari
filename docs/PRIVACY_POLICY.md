@@ -1,6 +1,6 @@
 # Privacy Policy – Siffersafari
 
-**Last Updated:** March 5, 2026
+**Last Updated:** April 22, 2026
 
 ## Overview
 
@@ -112,8 +112,8 @@ If our data practices change, we will update this policy and notify users in the
 ## Contact Us
 
 For privacy questions or concerns:
-- **Email:** [To be added by developer]
-- **Mailing Address:** [To be added by developer if applicable]
+- **Project page:** https://github.com/Cognifox-Studio/Siffersafari
+- **Security contact:** https://github.com/Cognifox-Studio/Siffersafari/security
 
 For reports of COPPA violations, contact:
 - **Federal Trade Commission:** [CoppaHotline@ftc.gov](mailto:CoppaHotline@ftc.gov)

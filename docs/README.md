@@ -39,7 +39,7 @@ Senast uppdaterad: 2026-04-18.
 - `RIVERPOD_PATTERNS.md` – Provider-mönster och resonemang
 
 ### Övrigt
-- `PRIVACY_POLICY.md` – Policy
+- `PRIVACY_POLICY.md` – Policy (källtext för publik privacy policy-sida)
 - `PARENTS_TEACHERS_GUIDE.md` – Guide för föräldrar/lärare
 - `SESSION_BRIEF.md` – Historisk logg
 

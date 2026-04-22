@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Siffersafari Privacy Policy</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f2e8;
+        --surface: rgba(255, 255, 255, 0.92);
+        --text: #1f2a24;
+        --muted: #55635a;
+        --accent: #2f7d57;
+        --line: #d6dfd8;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        background:
+          radial-gradient(circle at top left, rgba(96, 146, 113, 0.18), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(223, 186, 93, 0.18), transparent 28%),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.65;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 32px 20px 56px;
+      }
+
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        padding: 28px;
+        box-shadow: 0 18px 48px rgba(31, 42, 36, 0.08);
+        backdrop-filter: blur(6px);
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.2;
+        margin-top: 0;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 3.25rem);
+        margin-bottom: 8px;
+      }
+
+      h2 {
+        margin-top: 32px;
+        font-size: clamp(1.35rem, 2vw, 1.8rem);
+      }
+
+      p,
+      li,
+      td,
+      th {
+        font-size: 1rem;
+      }
+
+      .eyebrow,
+      .updated {
+        color: var(--muted);
+      }
+
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.78rem;
+        margin-bottom: 10px;
+      }
+
+      .updated {
+        margin-bottom: 24px;
+      }
+
+      a {
+        color: var(--accent);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0 8px;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 12px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+
+      th {
+        font-weight: 700;
+      }
+
+      ul,
+      ol {
+        padding-left: 22px;
+      }
+
+      .summary {
+        margin-top: 32px;
+        padding: 18px 20px;
+        border-radius: 18px;
+        background: rgba(47, 125, 87, 0.08);
+        border: 1px solid rgba(47, 125, 87, 0.18);
+      }
+
+      @media (max-width: 640px) {
+        main {
+          padding: 18px 14px 36px;
+        }
+
+        .card {
+          padding: 20px;
+          border-radius: 18px;
+        }
+
+        th,
+        td {
+          padding: 10px 8px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <div class="eyebrow">Siffersafari</div>
+        <h1>Privacy Policy</h1>
+        <p class="updated"><strong>Last updated:</strong> April 22, 2026</p>
+
+        <h2>Overview</h2>
+        <p>
+          Siffersafari is a mathematics game app designed for children ages 6-12.
+          This Privacy Policy explains how we handle data when you use the app.
+        </p>
+        <p>
+          <strong>Important:</strong> We do not collect, use, or disclose personal
+          information from children or their parents. All gameplay data is stored
+          locally on your device.
+        </p>
+
+        <h2>Data We Collect</h2>
+        <p>We collect no personal information such as:</p>
+        <ul>
+          <li>Child name, email address, postal address, or phone number</li>
+          <li>Parent contact details</li>
+          <li>Photos, videos, or audio recordings</li>
+          <li>Location data</li>
+          <li>Persistent device identifiers used for tracking</li>
+        </ul>
+
+        <h2>Data Stored Locally on Your Device</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Data type</th>
+              <th>Purpose</th>
+              <th>Stored where</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Child profile name</td>
+              <td>Identify the user in the app</td>
+              <td>Local device storage via Hive</td>
+            </tr>
+            <tr>
+              <td>Quiz scores and results</td>
+              <td>Track learning progress</td>
+              <td>Local device storage via Hive</td>
+            </tr>
+            <tr>
+              <td>Progress and unlocked content</td>
+              <td>Preserve learning progression</td>
+              <td>Local device storage via Hive</td>
+            </tr>
+            <tr>
+              <td>Parent PIN (hashed)</td>
+              <td>Control access to parent mode</td>
+              <td>Local device storage via Hive, protected with BCrypt hashing</td>
+            </tr>
+            <tr>
+              <td>Session history</td>
+              <td>Show cumulative statistics</td>
+              <td>Local device storage via Hive</td>
+            </tr>
+          </tbody>
+        </table>
+        <p><strong>All data remains on your device.</strong> We do not sync data to our servers.</p>
+
+        <h2>Data Not Collected</h2>
+        <ul>
+          <li>No server uploads of child or parent data</li>
+          <li>No analytics platforms such as Google Analytics, Firebase, or Mixpanel</li>
+          <li>No advertising, ad networks, or behavioral advertising</li>
+          <li>No tracking across apps or websites</li>
+          <li>No third-party data sharing</li>
+        </ul>
+
+        <h2>How You Control Your Data</h2>
+        <h3>Delete a Child Profile</h3>
+        <ol>
+          <li>Open the Siffersafari app</li>
+          <li>Go to Settings</li>
+          <li>Select the child profile</li>
+          <li>Choose Delete Profile</li>
+          <li>Confirm deletion</li>
+        </ol>
+        <p>Profile data, quiz history, and progress are permanently deleted from the device.</p>
+
+        <h3>Clear All Data</h3>
+        <ol>
+          <li>Open the Siffersafari app</li>
+          <li>Go to Settings and then Advanced</li>
+          <li>Choose Clear All Data</li>
+          <li>Confirm deletion</li>
+        </ol>
+        <p>All profiles, scores, and settings are erased. This action cannot be undone.</p>
+
+        <h2>Data Security</h2>
+        <ul>
+          <li>Parent PINs are hashed using BCrypt and are not stored in plain text</li>
+          <li>Gameplay data is stored locally on the device</li>
+          <li>No network transmission is used for profile or progress data</li>
+          <li>No account system is required to use the app</li>
+        </ul>
+
+        <h2>Children's Privacy (COPPA)</h2>
+        <p>
+          Siffersafari is designed for children under 13. We comply with the
+          Children's Online Privacy Protection Act (COPPA) by collecting no
+          personal information, storing data locally only, providing easy deletion,
+          and avoiding tracking or profiling across devices or apps.
+        </p>
+
+        <h2>Third-Party Services</h2>
+        <p>The app uses offline open-source libraries on the device only:</p>
+        <ul>
+          <li>Hive for local database storage</li>
+          <li>Riverpod for state management</li>
+          <li>bcrypt for PIN hashing</li>
+        </ul>
+        <p>None of these libraries are used to upload user data or track users.</p>
+
+        <h2>Data Retention</h2>
+        <ul>
+          <li>Child profile data is kept until you delete the profile</li>
+          <li>Parent PIN data is kept until you delete the profile</li>
+          <li>Temporary files are cleared during normal app updates</li>
+        </ul>
+        <p>Because the app has no centralized database, deletion is local and immediate.</p>
+
+        <h2>Your Rights</h2>
+        <ul>
+          <li>Know what data the app stores locally</li>
+          <li>Delete your child's profile and associated data at any time</li>
+          <li>Ask questions about our privacy practices</li>
+        </ul>
+
+        <h2>Changes to This Policy</h2>
+        <p>
+          If our data practices change, we will update this policy and provide the
+          new version with the app and its store listing.
+        </p>
+
+        <h2>Contact Us</h2>
+        <p>For privacy questions or concerns, use one of these public contact channels:</p>
+        <ul>
+          <li><a href="https://github.com/Cognifox-Studio/Siffersafari">Project page</a></li>
+          <li><a href="https://github.com/Cognifox-Studio/Siffersafari/security">Security contact</a></li>
+        </ul>
+
+        <h2>COPPA Reporting</h2>
+        <p>
+          For reports of COPPA violations, contact the Federal Trade Commission at
+          <a href="mailto:CoppaHotline@ftc.gov">CoppaHotline@ftc.gov</a>.
+        </p>
+
+        <div class="summary">
+          <strong>Summary:</strong> Siffersafari is an offline-first children's math app.
+          We do not collect personal information, do not use analytics or ads, and keep
+          gameplay data on the user's device.
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
