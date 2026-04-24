@@ -64,3 +64,5 @@ Princip: senaste datum vinner vid konflikt.
 - `docs/PROJECT_STRUCTURE.md` (faktisk filstruktur)
 - `docs/SERVICES_API.md` (aktuella servicekontrakt)
 - `docs/SESSION_BRIEF.md` (detaljerad sessionshistorik)
+### 2026-04-25
+- Permanent borttagning av Lottie och Rive. Dessa tekniker utforskades och integrerades initialt (bl.a. med confetti UI-effekter och `mascot_character.riv` placeholdern), men produkten gick helt mot native Flutter och SVG. Alla Lottie (.json) och Rive (.riv) beroenden samt deras bygg/preview-skript är numera raderade ur assets och pubspec för att minska teknisk skuld och hålla asset-pipelinen enhetlig (enbart SVG).
