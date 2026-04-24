@@ -1,0 +1,62 @@
+name: "Android Release Build"
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # Triggerar automatiskt på tags som tex v1.3.2
+
+jobs:
+  build-and-release:
+    name: Build & Release Siffersafari APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Nödvändigt för att kunna ladda upp GitHub Release
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Install Dependencies
+        run: flutter pub get
+
+      - name: Verify Code (Analyze)
+        run: flutter analyze
+
+      - name: Run Tests
+        run: flutter test
+
+      - name: Setup Keystore for Signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          echo $KEYSTORE_BASE64 | base64 --decode > android/app/upload-keystore.jks
+          cat <<EOF > android/key.properties
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEYSTORE_PASSWORD
+          keyAlias=upload-key
+          storeFile=upload-keystore.jks
+          EOF
+
+      - name: Build Android APK
+        run: flutter build apk --release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: build/app/outputs/flutter-apk/app-release.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
