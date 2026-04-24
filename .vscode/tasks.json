@@ -320,25 +320,6 @@
         "clear": true
       }
     },
-    {
-      "label": "Assets: Promote Lottie/SFX (auto workflow)",
-      "type": "shell",
-      "command": "powershell",
-      "args": [
-        "-ExecutionPolicy",
-        "Bypass",
-        "-File",
-        "scripts/promote_assets.ps1",
-        "-Workflow",
-        "LottieSFX"
-      ],
-      "group": "build",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "clear": true
-      }
     },
     {
       "label": "Assets: Verify Git Changes (pre-commit check)",

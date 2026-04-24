@@ -7,13 +7,6 @@ enum CharacterId {
   skogshjalte,
 }
 
-enum UiEffectId {
-  confetti,
-  stars,
-  successPulse,
-  errorShake,
-}
-
 final class AssetPaths {
   const AssetPaths._();
 
@@ -28,31 +21,4 @@ final class AssetPaths {
     }
   }
 
-  static String? characterRive(CharacterId id) {
-    switch (id) {
-    case CharacterId.mascot:
-      return 'assets/characters/mascot/rive/mascot_character.riv';
-    case CharacterId.loke:
-      return null;
-    case CharacterId.skogshjalte:
-      return null;
-    }
-  }
-
-  static bool characterHasRive(CharacterId id) {
-    return characterRive(id) != null;
-  }
-
-  static String uiEffect(UiEffectId id) {
-    switch (id) {
-    case UiEffectId.confetti:
-      return 'assets/ui/lottie/confetti.json';
-    case UiEffectId.stars:
-      return 'assets/ui/lottie/stars.json';
-    case UiEffectId.successPulse:
-      return 'assets/ui/lottie/success_pulse.json';
-    case UiEffectId.errorShake:
-      return 'assets/ui/lottie/error_shake.json';
-    }
-  }
 }

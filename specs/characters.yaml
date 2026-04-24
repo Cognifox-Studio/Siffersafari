@@ -8,9 +8,6 @@ characters:
   outputs:
     svg_parts_dir: assets/characters/mascot/svg
     composite_svg: assets/characters/mascot/svg/mascot_composite.svg
-    rive_runtime: assets/characters/mascot/rive/mascot_character.riv
-    rive_blueprint: artifacts/mascot_rive_blueprint.json
-    rive_guide: artifacts/mascot_rive_guide.md
 - id: loke
   display_name: Loke
   visual_spec: assets/characters/loke/config/loke_visual_spec.json
@@ -20,9 +17,6 @@ characters:
   outputs:
     svg_parts_dir: assets/characters/loke/svg
     composite_svg: assets/characters/loke/svg/loke_composite.svg
-    rive_runtime: assets/characters/loke/rive/loke_character.riv
-    rive_blueprint: artifacts/loke_rive_blueprint.json
-    rive_guide: artifacts/loke_rive_guide.md
 - id: skogshjalte
   display_name: Skogshjalte
   visual_spec: assets/characters/skogshjalte/config/skogshjalte_visual_spec.json
@@ -32,6 +26,3 @@ characters:
   outputs:
     svg_parts_dir: assets/characters/skogshjalte/svg
     composite_svg: assets/characters/skogshjalte/svg/skogshjalte_composite.svg
-    rive_runtime: assets/characters/skogshjalte/rive/skogshjalte_character.riv
-    rive_blueprint: artifacts/skogshjalte_rive_blueprint.json
-    rive_guide: artifacts/skogshjalte_rive_guide.md

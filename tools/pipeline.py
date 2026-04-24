@@ -52,7 +52,6 @@ def repo_path(*parts: str) -> Path:
 
 SPEC_FILES = {
     "characters": SPECS_DIR / "characters.yaml",
-    "ui_effects": SPECS_DIR / "ui_effects.yaml",
     "effects": SPECS_DIR / "effects.yaml",
     "rigs": SPECS_DIR / "rigs.yaml",
     "palettes": SPECS_DIR / "palettes.yaml",
@@ -241,13 +240,11 @@ def validate_unique_ids(items: list[dict[str, Any]], label: str) -> None:
 
 def validate_specs(specs: dict[str, dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
     characters = expect_list(specs, "characters", "characters")
-    ui_effects = expect_list(specs, "ui_effects", "ui_effects")
     effects = expect_list(specs, "effects", "effects")
     rigs = expect_list(specs, "rigs", "rigs")
     palettes = expect_list(specs, "palettes", "palettes")
 
     validate_unique_ids(characters, "characters")
-    validate_unique_ids(ui_effects, "ui_effects")
     validate_unique_ids(effects, "effects")
     validate_unique_ids(rigs, "rigs")
     validate_unique_ids(palettes, "palettes")
@@ -268,7 +265,7 @@ def validate_specs(specs: dict[str, dict[str, Any]]) -> dict[str, list[dict[str,
         outputs = character.get("outputs")
         if not isinstance(outputs, dict):
             raise SystemExit(f"Character '{character['id']}' is missing 'outputs'")
-        for field_name in ("svg_parts_dir", "composite_svg", "rive_runtime", "rive_blueprint"):
+        for field_name in ("svg_parts_dir", "composite_svg"):
             target = outputs.get(field_name)
             if not isinstance(target, str) or not target:
                 raise SystemExit(
@@ -285,14 +282,8 @@ def validate_specs(specs: dict[str, dict[str, Any]]) -> dict[str, list[dict[str,
                 f"Character '{character['id']}' references unknown palette '{character.get('palette')}'"
             )
 
-    for ui_effect in ui_effects:
-        effect_file = ui_effect.get("file")
-        if not isinstance(effect_file, str) or not effect_file:
-            raise SystemExit(f"UI effect '{ui_effect['id']}' is missing 'file'")
-
     return {
         "characters": characters,
-        "ui_effects": ui_effects,
         "effects": effects,
         "rigs": rigs,
         "palettes": palettes,
@@ -488,61 +479,6 @@ def json_contains_key(value: Any, key: str) -> bool:
     return False
 
 
-def lint_lottie_files(
-    validated_specs: dict[str, list[dict[str, Any]]],
-    lottie_contract: dict[str, Any],
-    errors: list[str],
-    selected_effect_ids: set[str] | None = None,
-) -> None:
-    max_layers = parse_positive_int(lottie_contract.get("max_layers_per_file"), 32)
-    disallow_expressions = parse_bool(lottie_contract.get("disallow_expressions"), True)
-    disallow_effects = parse_bool(lottie_contract.get("disallow_effects"), True)
-    ignored_files = set(parse_string_list(lottie_contract.get("ignore_files")))
-
-    for effect in validated_specs["ui_effects"]:
-        effect_id = effect.get("id")
-        if selected_effect_ids is not None and effect_id not in selected_effect_ids:
-            continue
-        file_path = effect.get("file")
-        if not isinstance(file_path, str) or not file_path:
-            continue
-        if file_path in ignored_files:
-            continue
-
-        file_override = get_contract_file_override(lottie_contract, file_path)
-        ignored_checks = set(parse_string_list(file_override.get("ignore_checks")))
-        file_max_layers = parse_positive_int(file_override.get("max_layers_per_file"), max_layers)
-        file_disallow_expressions = not parse_bool(
-            file_override.get("allow_expressions"),
-            not disallow_expressions,
-        )
-        file_disallow_effects = not parse_bool(
-            file_override.get("allow_effects"),
-            not disallow_effects,
-        )
-
-        path = optional_repo_path(file_path)
-        if path is None or not path.exists():
-            errors.append(f"Missing Lottie file: {file_path}")
-            continue
-
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
-            errors.append(f"{file_path} invalid JSON: {exc}")
-            continue
-
-        layers = data.get("layers")
-        if "max_layers_per_file" not in ignored_checks and isinstance(layers, list) and len(layers) > file_max_layers:
-            errors.append(f"{file_path} has {len(layers)} layers (max {file_max_layers})")
-
-        if "expressions" not in ignored_checks and file_disallow_expressions and json_contains_expression(data):
-            errors.append(f"{file_path} contains expressions (unsupported by contract)")
-
-        if "effects" not in ignored_checks and file_disallow_effects and json_contains_key(data, "ef"):
-            errors.append(f"{file_path} contains effects key 'ef' (unsupported by contract)")
-
-
 def lint_assets(
     specs: dict[str, dict[str, Any]],
     validated_specs: dict[str, list[dict[str, Any]]],
@@ -579,63 +515,6 @@ def lint_assets(
         errors.append("No SVG files were discovered from character outputs")
 
     lint_svg_files(svg_files, svg_contract, errors)
-    lint_lottie_files(
-        validated_specs,
-        lottie_contract,
-        errors,
-        selected_effect_ids=selected_effect_ids,
-    )
-
-    report_data = {
-        "mode": "warn" if effective_warn_only else "block",
-        "strict": strict,
-        "pilot_enabled": parse_bool(pilot.get("enabled"), False),
-        "selected_character_ids": sorted(selected_character_ids) if selected_character_ids else [],
-        "selected_effect_ids": sorted(selected_effect_ids) if selected_effect_ids else [],
-        "svg_files_checked": len(svg_files),
-        "ui_effects_configured": len(validated_specs["ui_effects"]),
-        "violations": errors,
-        "status": "failed" if errors and not effective_warn_only else ("warning" if errors else "passed"),
-    }
-
-    if report_path:
-        report_file = optional_repo_path(report_path)
-        if report_file is None:
-            raise SystemExit(f"Invalid --report-path: {report_path}")
-        report_file.parent.mkdir(parents=True, exist_ok=True)
-        report_file.write_text(json.dumps(report_data, indent=2), encoding="utf-8")
-        print(f"[write] {relative_file(report_file)}")
-
-    if errors:
-        joined = "\n".join(f"- {error}" for error in errors)
-        if effective_warn_only:
-            print(f"Asset style lint warning:\n{joined}")
-            return False
-        raise SystemExit(f"Asset style lint failed:\n{joined}")
-
-    print(
-        "Asset style lint passed: "
-        f"{len(svg_files)} SVG file(s), {len(validated_specs['ui_effects'])} Lottie file(s)."
-    )
-    return True
-
-
-def run_step(step: Step, dry_run: bool) -> None:
-    command_text = " ".join(step.command)
-    print(f"[run] {step.name}: {command_text}")
-    if dry_run:
-        return
-
-    result = subprocess.run(step.command, cwd=ROOT, check=False)
-    if result.returncode != 0:
-        raise SystemExit(f"Step failed: {step.name}")
-
-    missing_outputs = [path for path in step.expected_outputs if not path.exists()]
-    if missing_outputs:
-        joined = "\n".join(f"- {path.relative_to(ROOT)}" for path in missing_outputs)
-        raise SystemExit(
-            f"Step completed but expected outputs are missing for {step.name}:\n{joined}"
-        )
 
 
 def run_steps(step_keys: Iterable[str], dry_run: bool) -> None:
@@ -824,8 +703,7 @@ def build_manifest(validated_specs: dict[str, list[dict[str, Any]]], dry_run: bo
         },
         "specs": {
             "characters": [item["id"] for item in validated_specs["characters"]],
-            "ui_effects": [item["id"] for item in validated_specs["ui_effects"]],
-            "effects": [item["id"] for item in validated_specs["effects"]],
+                "effects": [item["id"] for item in validated_specs["effects"]],
             "rigs": [item["id"] for item in validated_specs["rigs"]],
             "palettes": [item["id"] for item in validated_specs["palettes"]],
         },

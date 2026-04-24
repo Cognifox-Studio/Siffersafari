@@ -1,3 +1,8 @@
+<!--
+typ: explanation
+syfte: Historik, varför vi gjort vissa arkitekturval
+uppdaterad: 2026-04-25
+-->
 ﻿# Beslut och antaganden (Siffersafari)
 
 Syfte: samla stabila beslut utanfor chatten.
@@ -9,7 +14,6 @@ Princip: senaste datum vinner vid konflikt.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
 - Animation:
   - SVG-first for mascot-runtime i produkt-UI
-  - Lottie for UI-effekter
   - `.riv`-filer, blueprint-guider och karaktarsmappar under `assets/characters/*/rive/` ar fortsatt tillatna som framtida enhancement-spor, men de styr inte nuvarande mascot-runtime
 - Responsiv layout styrs av tillganglig bredd (`compact < 600`, `medium >= 600`, `expanded >= 840`).
 - Quizens adaptiva svarighetsmodell ar hybrid (micro + macro + cooldown) och persisteras per raknesatt.
@@ -46,7 +50,6 @@ Princip: senaste datum vinner vid konflikt.
 - Optional Rive-material ligger kvar i repo:t som ett separat framtidsspor, inte som aktiv fallback i nuvarande app.
 
 ### 2026-03-13
-- Nuvarande `assets/characters/mascot/rive/mascot_character.riv` verifierades pa emulator som placeholder/demo-export (`Template-NoRig`, inga state machines).
 - Detta dokumenteras nu som historisk verifiering av asset-innehall, inte som gallande runtime-arkitektur.
 
 ### 2026-03-11
@@ -65,4 +68,3 @@ Princip: senaste datum vinner vid konflikt.
 - `docs/SERVICES_API.md` (aktuella servicekontrakt)
 - `docs/SESSION_BRIEF.md` (detaljerad sessionshistorik)
 ### 2026-04-25
-- Permanent borttagning av Lottie och Rive. Dessa tekniker utforskades och integrerades initialt (bl.a. med confetti UI-effekter och `mascot_character.riv` placeholdern), men produkten gick helt mot native Flutter och SVG. Alla Lottie (.json) och Rive (.riv) beroenden samt deras bygg/preview-skript är numera raderade ur assets och pubspec för att minska teknisk skuld och hålla asset-pipelinen enhetlig (enbart SVG).

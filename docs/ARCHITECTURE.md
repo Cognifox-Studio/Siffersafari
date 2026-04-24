@@ -1,3 +1,8 @@
+<!--
+typ: reference
+syfte: Samlad arkitektur, fakta
+uppdaterad: 2026-04-25
+-->
 ﻿# Arkitektur (As-Is)
 
 Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04).
@@ -12,7 +17,6 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04)
 - Animation:
   - SVG-first for mascot-runtime i produkt-UI
    - Flutter-styrda reaktioner ovanpa composite-SVG i `GameCharacter`
-  - Lottie for godkanda UI-effekter
   - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spor, men ar inte en aktiv runtime-dependency i appens huvudfloden
 
 ## Namngivningsbaseline
@@ -150,8 +154,6 @@ CI/workflows:
 
 - Vissa dokument i repo:t innehaller historiska stegplaner. Denna fil beskriver endast nulaget.
 - Vissa terminalmiljoer visar svenska tecken felaktigt (mojibake). Filinnehall i repo:t ar uppdaterat i UTF-8.
-- `assets/characters/mascot/rive/mascot_character.riv` ar fortfarande placeholder/demo-material och inte del av nuvarande produkt-runtime.
-- Om Rive aterintroduceras i produkt-UI senare ska det goras som ett explicit nytt integrationssteg, inte som dold fallback.
 
 ## Relaterade dokument
 

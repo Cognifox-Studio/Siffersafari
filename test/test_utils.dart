@@ -29,6 +29,7 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
   final Map<String, UserProgress> _users = {};
   final Map<String, dynamic> _settings = {};
   final Map<String, Map<String, dynamic>> _quizHistory = {};
+  Map<String, Map<String, dynamic>> get quizHistory => _quizHistory;
 
   @override
   Future<void> saveUserProgress(UserProgress progress) async {
@@ -131,7 +132,7 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
 /// Returns the same hardcoded question every time, so widget tests
 /// can complete quiz flows quickly without randomness.
 class FakeQuestionGeneratorService extends QuestionGeneratorService {
-  static const Question _question = Question(
+  static const Question question = Question(
     id: 'q1',
     operationType: OperationType.multiplication,
     difficulty: DifficultyLevel.easy,
@@ -152,7 +153,7 @@ class FakeQuestionGeneratorService extends QuestionGeneratorService {
     int? difficultyStep,
     int? gradeLevel,
   }) {
-    return const [_question];
+    return const [question];
   }
 
   @override
@@ -168,7 +169,7 @@ class FakeQuestionGeneratorService extends QuestionGeneratorService {
     bool? missingNumberEnabledOverride,
     double? missingNumberChanceOverride,
   }) {
-    return _question;
+    return question;
   }
 }
 

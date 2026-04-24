@@ -8,14 +8,21 @@
 
 ## Nuläge (2026-04-18)
 
-**Version:** 1.3.1+9 → bygger mot v1.3.2  
-**Tester:** 188/188 ✅ (unit, inkl. 18 nya SRS-tester)  
+**Version:** 1.3.3+11 → bygger mot v1.3.4
+bygger mot v1.3.2  
+**Tester:** 190/190 ✅ (unit, inkl. 18 nya SRS-tester)  
 **flutter analyze:** 0 fel ✅  
 **Integration smoke:** 3/3 passed (FULL_SMOKE=false) ✅  
 **Release APK:** app-release.apk (73.1 MB) uppladdad till GitHub Release v1.3.1 ✅  
 **Git:** tagged v1.3.1 @ ce75334, pushed to origin ✅
 
 ### Senaste leveranser
+
+**2026-04-18 — Teknisk sanering och Mocks-centralisering**
+- **Borttagning av Lottie/Rive**: Omfattande rensning av gamla Lottie- och Rive-beroenden från pubspec.yaml, testfiler och 	ools/pipeline.py. Endast procedurgenererade SVG-karaktärer är nu kvar som primär asset-runtime.
+- **Centraliserade Mocks**: Flyttade utspridda fakes/mocks (_MockAudioService, _InMemoryLocalStorageRepository etc.) till gemensamma 	est/test_utils.dart för att undvika kodduplicering och underlätta framtida tester.
+- **Pipeline-patch**: Skriptet 	ools/pipeline.py är lagat efter SVG-saneringen och bygger konsekvent om ssets.g.dart utan krascher, alla filsystemscheck-tester passerar grönt utan krav på .riv-filer.
+
 
 **2026-04-18 — v1.3.2 ROI-plan (5 faser)**
 
@@ -46,10 +53,9 @@
 
 ## Nästa steg
 
-### Kvar för v1.3.2-release
-- **Bumpa pubspec** till `version: 1.3.2+10`
-- **Manuell emulatorverifiering**: nivåuppgångsbanner, streak-reset-meddelande, SRS-rad i resultatskärm (kräver `Pixel_6 sync/install`)
-- **Tagga v1.3.2** och ladda upp ny APK till GitHub Release
+### Kvar för v1.3.4-release
+- **Tagga v1.3.3** och skapa GitHub Release.
+- **Ladda upp APK**
 
 ### SRS-begränsning att notera
 - `tryGenerateFromSrsKey` hanterar endast enkla aritmetikfrågor (t.ex. `4 × 7 = ?`)

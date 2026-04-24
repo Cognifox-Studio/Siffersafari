@@ -1,31 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
+import '../../test_utils.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
-import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/services/parent_pin_service.dart';
-
-class _InMemorySettingsRepository extends LocalStorageRepository {
-  final Map<String, dynamic> _settings = {};
-
-  @override
-  Future<void> saveSetting(String key, dynamic value) async {
-    _settings[key] = value;
-  }
-
-  @override
-  dynamic getSetting(String key, {dynamic defaultValue}) {
-    return _settings.containsKey(key) ? _settings[key] : defaultValue;
-  }
-
-  @override
-  Future<void> deleteSetting(String key) async {
-    _settings.remove(key);
-  }
-}
 
 void main() {
   group('[Unit] ParentPinService – PIN authentication', () {
     test('verifyPin returns false when no PIN is set', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       final isCorrect = await service.verifyPin('1234');
@@ -34,7 +15,7 @@ void main() {
 
     test('setPin + verifyPin accepts correct PIN and resets attempts',
         () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setPin('1234');
@@ -49,7 +30,7 @@ void main() {
     });
 
     test('wrong PIN triggers lockout after 5 attempts', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setPin('1234');
@@ -83,7 +64,7 @@ void main() {
     });
 
     test('expired lockout is cleared on next verification', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setPin('1234');
@@ -108,7 +89,7 @@ void main() {
 
   group('[Unit] ParentPinService – Security question recovery', () {
     test('setupPinRecovery stores security question + hashed answer', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setupPinRecovery(
@@ -129,7 +110,7 @@ void main() {
     });
 
     test('verifySecurityAnswer is case-insensitive', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setupPinRecovery(
@@ -145,7 +126,7 @@ void main() {
     });
 
     test('clearRecoveryConfig removes config', () async {
-      final storage = _InMemorySettingsRepository();
+      final storage = InMemoryLocalStorageRepository();
       final service = ParentPinService(storage);
 
       await service.setupPinRecovery(

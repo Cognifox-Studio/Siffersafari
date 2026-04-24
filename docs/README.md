@@ -1,3 +1,8 @@
+<!--
+typ: reference
+syfte: Sammanställning och index för all dokumentation
+uppdaterad: 2026-04-25
+-->
 
 # Dokumentationshub (Diátaxis-index)
 

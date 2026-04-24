@@ -1,3 +1,8 @@
+<!--
+typ: reference
+syfte: Faktisk mapp- och filstruktur
+uppdaterad: 2026-04-25
+-->
 ﻿# Project Structure (As-Is)
 
 Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-04-04).
@@ -126,9 +131,8 @@ Byggartefakter som inte ar kallkod:
 
 ## assets/
 
-- `characters/mascot/` (svg, rive, config)
-- `characters/loke/` (svg, rive-guide/spec)
-- `ui/lottie/` (UI-effekter)
+- `characters/mascot/` (svg, config)
+- `characters/loke/` (svg, spec)
 - `animations/` (ovriga animation-JSON/referenser, inte godkand mascot-runtime)
 - `images/` (teman/brand/icon)
 - `sounds/` (wav-effekter/musik)
@@ -139,15 +143,11 @@ Exempel:
 - `flutter_pixel6.ps1`
 - `extract_integration_screenshots.ps1`
 - `generate_mascot_svg_parts.dart`
-- `generate_lottie_effects.dart`
-- `generate_rive_blueprint.dart`
-- `verify_mascot_rive_runtime.ps1`
 - `generate_android_launcher_icons.dart`
 
 ## Aktuell animationsregel
 
 - SVG/spec/blueprint kan genereras i repo:t
-- godkanda UI-effekter genereras som Lottie
 - riktig karaktarsanimation i appen kraver fortfarande manuell `.riv`-export i Rive Editor
 
 ## .github/
