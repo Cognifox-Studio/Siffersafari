@@ -42,6 +42,5 @@ void main() {
             'lint-assets failed:\nSTDOUT:\n${result.stdout}\nSTDERR:\n${result.stderr}',
       );
     });
-
   });
 }

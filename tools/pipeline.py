@@ -744,7 +744,6 @@ def main() -> None:
         print(
             "Validation completed: "
             f"{len(validated_specs['characters'])} character(s), "
-            f"{len(validated_specs['ui_effects'])} UI effect(s), "
             f"{len(validated_specs['rigs'])} rig(s)."
         )
         return

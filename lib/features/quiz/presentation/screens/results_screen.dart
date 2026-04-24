@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';

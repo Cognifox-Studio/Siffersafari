@@ -54,8 +54,8 @@ bygger mot v1.3.2
 ## Nästa steg
 
 ### Kvar för v1.3.4-release
-- **Tagga v1.3.3** och skapa GitHub Release.
-- **Ladda upp APK**
+- **Pusha Git tag (ex: 1.3.4)** för att avfyra den automatiserade Android APK-pipelinen.
+- Pipelinen .github/workflows/release.yml skapar ny release och laddar automatiskt upp APK.
 
 ### SRS-begränsning att notera
 - `tryGenerateFromSrsKey` hanterar endast enkla aritmetikfrågor (t.ex. `4 × 7 = ?`)
