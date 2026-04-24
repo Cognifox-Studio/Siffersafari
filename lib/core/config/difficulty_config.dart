@@ -330,7 +330,7 @@ class DifficultyConfig {
         cap = switch (grade) {
           1 => 5,
           2 => 10,
-          3 => 12,
+          3 => 10,
           // M3 (Åk 4–6): skala upp så vi kan få tvåsiffriga/triangulära steg.
           4 => 99,
           5 => 199,
@@ -343,7 +343,7 @@ class DifficultyConfig {
         cap = switch (grade) {
           1 => 5,
           2 => 10,
-          3 => 12,
+          3 => 10,
           // M3 (Åk 4–6): större tal, men fortfarande hanterbart i quiz-format.
           4 => 20,
           5 => 50,
@@ -355,7 +355,7 @@ class DifficultyConfig {
         cap = switch (grade) {
           1 => 5,
           2 => 10,
-          3 => 12,
+          3 => 10,
           4 => 20,
           5 => 30,
           _ => 60,

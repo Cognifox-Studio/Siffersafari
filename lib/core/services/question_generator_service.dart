@@ -2483,7 +2483,7 @@ Vilken typ av korrelation har variablerna?
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
-    // Åk 4–6: börja med tabeller (<=12) mot större tal och skala sedan upp.
+    // Åk 4–6: börja med tabeller (<=10) mot större tal och skala sedan upp.
     // Steg 1–10: minst en faktor i tabell-området för att hålla progressionen
     // förutsägbar i quiz-formatet.
     DifficultyConfig.clampDifficultyStep(difficultyStep);
@@ -2492,7 +2492,7 @@ Vilken typ av korrelation har variablerna?
     final safeMin = max(1, range.min);
     final safeMax = max(safeMin, range.max);
 
-    final smallMax = min(12, safeMax);
+    final smallMax = min(10, safeMax);
 
     final a = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
     final b = _randomInRange(DifficultyNumberRange(safeMin, smallMax));
@@ -2614,13 +2614,13 @@ Vilken typ av korrelation har variablerna?
     required int difficultyStep,
   }) {
     // Åk 4–6 (quiz-format): håll divisionen i heltal (utan rest) men skala upp.
-    // Steg 1–10: divisor hålls i tabell-området (<=12) för trygg progression.
+    // Steg 1–10: divisor hålls i tabell-området (<=10) för trygg progression.
     DifficultyConfig.clampDifficultyStep(difficultyStep);
 
     final safeMin = max(1, range.min);
     final safeMax = max(safeMin, range.max);
 
-    final smallMax = min(12, safeMax);
+    final smallMax = min(10, safeMax);
 
     final divisor = _randomInRange(DifficultyNumberRange(safeMin, smallMax));
     final quotient = _randomInRange(DifficultyNumberRange(safeMin, safeMax));
