@@ -19,7 +19,7 @@ bygger mot v1.3.2
 ### Senaste leveranser
 
 **2026-04-18 — Teknisk sanering och Mocks-centralisering**
-- **Borttagning av Lottie/Rive**: Omfattande rensning av gamla Lottie- och Rive-beroenden från pubspec.yaml, testfiler och 	ools/pipeline.py. Endast procedurgenererade SVG-karaktärer är nu kvar som primär asset-runtime.
+- **Borttagning av Lottie/Rive**: Omfattande rensning av gamla Lottie- och Rive-beroenden från pubspec.yaml, testfiler och `tools/pipeline.py`. Endast procedurgenererade SVG-karaktärer är nu kvar som primär asset-runtime.
 - **Centraliserade Mocks**: Flyttade utspridda fakes/mocks (_MockAudioService, _InMemoryLocalStorageRepository etc.) till gemensamma 	est/test_utils.dart för att undvika kodduplicering och underlätta framtida tester.
 - **Pipeline-patch**: Skriptet 	ools/pipeline.py är lagat efter SVG-saneringen och bygger konsekvent om ssets.g.dart utan krascher, alla filsystemscheck-tester passerar grönt utan krav på .riv-filer.
 

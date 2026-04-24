@@ -11,11 +11,18 @@ Denna guide visar hur du **bygger, testar och releaser** APK:er för Android.
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 ```
 
-**För release (signed APK):**
-```bash
-flutter build apk --release
-# Output: build/app/outputs/flutter-apk/app-release.apk
-```
+## 0. Automatisk Release via GitHub Actions (Rekommenderas)
+Vi har nu en fullt konfigurerad CI/CD pipeline för Siffersafari. Du behöver oftast **inte bygga releaser lokalt**. 
+Gör så här för att släppa en ny version:
+
+1. Sätt ny version i `pubspec.yaml` (t.ex. `version: 1.3.4+12`).
+2. Spara, committa och pusha ändringarna till main.
+3. Kör kommandot för att skapa och pusha en ny tagg:
+   ```bash
+   git tag v1.3.4
+   git push origin v1.3.4
+   ```
+4. Pipelinen (`.github/workflows/release.yml`) sätter automatiskt upp Keystore (via GitHub Secrets), analyserar koden, kör alla tester, bygger Android release apk (`app-release.apk`) och laddar upp detta till *GitHub Releases*.
 
 ---
 

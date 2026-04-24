@@ -37,7 +37,7 @@ Total uppskattad insats: ~4 h. Alla faser är oberoende och kan köras i valfri 
 
 3. **Visa overlay i `ResultsScreen`** — [results_screen.dart](../lib/features/quiz/presentation/screens/results_screen.dart)
    - I `didChangeDependencies` efter `applyQuizResult`: läs `userState.lastLevelUp`
-   - Om ej null: visa overlay med `celebration.json` Lottie + "Nivå N! Du är nu {title}"
+   - Om ej null: visa overlay med SVG/Flutter-animerad konfetti + "Nivå N! Du är nu {title}"
    - Återanvänd `playCelebrationSound()`
 
 4. **Analytics-event** — logga `level_up` med `{old_level, new_level, title}`

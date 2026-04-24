@@ -147,8 +147,7 @@ Exempel:
 
 ## Aktuell animationsregel
 
-- SVG/spec/blueprint kan genereras i repo:t
-- riktig karaktarsanimation i appen kraver fortfarande manuell `.riv`-export i Rive Editor
+- Karaktärer och animationer hanteras enbart via genererade SVG-layers, inga `Lottie` eller `Rive` assets tillåts.
 
 ## .github/
 

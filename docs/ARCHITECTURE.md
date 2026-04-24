@@ -5,7 +5,7 @@ uppdaterad: 2026-04-25
 -->
 ﻿# Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-04).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-25).
 
 ## Snabboversikt
 
