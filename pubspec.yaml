@@ -20,8 +20,6 @@ dependencies:
   path_provider: ^2.1.0
   
   # Animations & Graphics
-  lottie: ^3.3.0
-  rive: ^0.13.20
   flutter_svg: ^2.0.10+1
   
   # Audio

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pivot GIF Preview</title>
+  <style>
+    :root {
+      --bg-top: #f3efe2;
+      --bg-bottom: #cfe1d8;
+      --panel: rgba(255, 251, 244, 0.82);
+      --ink: #31261f;
+      --accent: #3d7a57;
+      --border: rgba(49, 38, 31, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255, 255, 255, 0.5), transparent 24%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-bottom));
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .frame {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: minmax(280px, 360px) minmax(320px, 1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .panel,
+    .preview-card {
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: var(--panel);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 22px 50px rgba(43, 47, 38, 0.12);
+    }
+
+    .panel {
+      padding: 20px 22px;
+    }
+
+    .panel h1 {
+      margin: 0 0 10px;
+      font-size: 1.8rem;
+    }
+
+    .panel p,
+    .panel li {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .panel ul {
+      margin: 14px 0 0;
+      padding-left: 18px;
+    }
+
+    .badge {
+      display: inline-block;
+      margin-bottom: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(61, 122, 87, 0.12);
+      color: var(--accent);
+      font-size: 0.85rem;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .preview-card {
+      padding: 18px;
+    }
+
+    .preview-surface {
+      display: grid;
+      place-items: center;
+      min-height: 560px;
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.05)),
+        #dedede;
+    }
+
+    .preview-surface img {
+      width: min(100%, 720px);
+      height: auto;
+      image-rendering: auto;
+      display: block;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .meta-card {
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.58);
+      border: 1px solid rgba(49, 38, 31, 0.08);
+    }
+
+    .meta-card strong,
+    .meta-card span {
+      display: block;
+    }
+
+    .meta-card strong {
+      margin-bottom: 4px;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      color: rgba(49, 38, 31, 0.68);
+      letter-spacing: 0.04em;
+    }
+
+    .meta-card span {
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 860px) {
+      .frame {
+        grid-template-columns: 1fr;
+      }
+
+      .preview-surface {
+        min-height: 360px;
+      }
+
+      .meta {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="frame">
+      <aside class="panel">
+        <span class="badge">Pivot Animator</span>
+        <h1>GIF-referens</h1>
+        <p>Den här previewn visar original-GIF:en som importerats från Pivot Animator. Den används som rörelsereferens när vi översätter animationen till vår humanoid-preview och senare till rigg/spec.</p>
+        <ul>
+          <li>GIF: importerad till <code>artifacts/reference/pivot_animator/gif_reference.gif</code></li>
+          <li>PIV: importerad till <code>artifacts/reference/pivot_animator/gif_reference.piv</code></li>
+          <li>Nästa steg: mappa huvudposer och timing till Skogshjältens rigg</li>
+        </ul>
+      </aside>
+
+      <section class="preview-card" aria-label="Pivot GIF preview">
+        <div class="preview-surface">
+          <img src="../../reference/pivot_animator/gif_reference.gif" alt="Pivot Animator GIF-referens" />
+        </div>
+        <div class="meta">
+          <div class="meta-card">
+            <strong>Källa</strong>
+            <span>Pivot Animator GIF</span>
+          </div>
+          <div class="meta-card">
+            <strong>Syfte</strong>
+            <span>Rörelsereferens för ny preview</span>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,561 @@
+{
+  "meta": {
+    "version": "1.0",
+    "character": "Skogshjalte",
+    "description": "Optional Rive rigging blueprint for Skogshjalte. Generated from brief: Original child forest hero with green tunic silhouette, blond hair and blue cape-inspired accessory",
+    "target_artboard_name": "Skogshjalte",
+    "target_state_machine": "SkogshjalteStateMachine"
+  },
+  "import_assets": {
+    "svg_parts": [
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shadow.svg",
+        "layer_name": "shadow"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_backpack.svg",
+        "layer_name": "backpack"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_left.svg",
+        "layer_name": "leg_upper_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_left.svg",
+        "layer_name": "leg_lower_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_left.svg",
+        "layer_name": "shoe_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_left.svg",
+        "layer_name": "arm_upper_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_left.svg",
+        "layer_name": "arm_lower_left"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_torso.svg",
+        "layer_name": "torso"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_head.svg",
+        "layer_name": "head"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_open.svg",
+        "layer_name": "eyes_open"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_eyes_blink.svg",
+        "layer_name": "eyes_blink"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_neutral.svg",
+        "layer_name": "mouth_neutral"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_happy.svg",
+        "layer_name": "mouth_happy"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_mouth_sad.svg",
+        "layer_name": "mouth_sad"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_hat.svg",
+        "layer_name": "hat"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_upper_right.svg",
+        "layer_name": "arm_upper_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_arm_lower_right.svg",
+        "layer_name": "arm_lower_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_upper_right.svg",
+        "layer_name": "leg_upper_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_leg_lower_right.svg",
+        "layer_name": "leg_lower_right"
+      },
+      {
+        "file": "assets/characters/skogshjalte/svg/skogshjalte_shoe_right.svg",
+        "layer_name": "shoe_right"
+      }
+    ],
+    "import_order": [
+      "shadow",
+      "backpack",
+      "leg_upper_left",
+      "leg_lower_left",
+      "shoe_left",
+      "arm_upper_left",
+      "arm_lower_left",
+      "torso",
+      "head",
+      "eyes_open",
+      "eyes_blink",
+      "mouth_neutral",
+      "mouth_happy",
+      "mouth_sad",
+      "hat",
+      "arm_upper_right",
+      "arm_lower_right",
+      "leg_upper_right",
+      "leg_lower_right",
+      "shoe_right"
+    ]
+  },
+  "artboard": {
+    "name": "Skogshjalte",
+    "width": 400,
+    "height": 600,
+    "origin": {
+      "x": 200,
+      "y": 532
+    }
+  },
+  "bones": {
+    "bones": [
+      {
+        "name": "root",
+        "parent": null,
+        "position": {
+          "x": 200.0,
+          "y": 532.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "pelvis",
+        "parent": "root",
+        "position": {
+          "x": 200.0,
+          "y": 362.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "spine",
+        "parent": "pelvis",
+        "position": {
+          "x": 200.0,
+          "y": 302.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "chest",
+        "parent": "spine",
+        "position": {
+          "x": 200.0,
+          "y": 238.0
+        },
+        "bind_mesh": "torso"
+      },
+      {
+        "name": "neck",
+        "parent": "chest",
+        "position": {
+          "x": 200.0,
+          "y": 172.0
+        },
+        "bind_mesh": "head"
+      },
+      {
+        "name": "head",
+        "parent": "neck",
+        "position": {
+          "x": 200.0,
+          "y": 126.0
+        },
+        "bind_mesh": "head"
+      },
+      {
+        "name": "shoulder_left",
+        "parent": "chest",
+        "position": {
+          "x": 158.0,
+          "y": 236.0
+        },
+        "bind_mesh": "arm_upper_left"
+      },
+      {
+        "name": "upper_arm_left",
+        "parent": "shoulder_left",
+        "position": {
+          "x": 144.0,
+          "y": 266.0
+        },
+        "bind_mesh": "arm_upper_left"
+      },
+      {
+        "name": "lower_arm_left",
+        "parent": "upper_arm_left",
+        "position": {
+          "x": 134.0,
+          "y": 350.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "wrist_left",
+        "parent": "lower_arm_left",
+        "position": {
+          "x": 128.0,
+          "y": 426.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "hand_left",
+        "parent": "wrist_left",
+        "position": {
+          "x": 126.0,
+          "y": 448.0
+        },
+        "bind_mesh": "arm_lower_left"
+      },
+      {
+        "name": "shoulder_right",
+        "parent": "chest",
+        "position": {
+          "x": 242.0,
+          "y": 236.0
+        },
+        "bind_mesh": "arm_upper_right"
+      },
+      {
+        "name": "upper_arm_right",
+        "parent": "shoulder_right",
+        "position": {
+          "x": 256.0,
+          "y": 266.0
+        },
+        "bind_mesh": "arm_upper_right"
+      },
+      {
+        "name": "lower_arm_right",
+        "parent": "upper_arm_right",
+        "position": {
+          "x": 266.0,
+          "y": 350.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "wrist_right",
+        "parent": "lower_arm_right",
+        "position": {
+          "x": 272.0,
+          "y": 426.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "hand_right",
+        "parent": "wrist_right",
+        "position": {
+          "x": 274.0,
+          "y": 448.0
+        },
+        "bind_mesh": "arm_lower_right"
+      },
+      {
+        "name": "hip_left",
+        "parent": "pelvis",
+        "position": {
+          "x": 183.0,
+          "y": 360.0
+        },
+        "bind_mesh": "leg_upper_left"
+      },
+      {
+        "name": "upper_leg_left",
+        "parent": "hip_left",
+        "position": {
+          "x": 180.0,
+          "y": 412.0
+        },
+        "bind_mesh": "leg_upper_left"
+      },
+      {
+        "name": "lower_leg_left",
+        "parent": "upper_leg_left",
+        "position": {
+          "x": 178.0,
+          "y": 498.0
+        },
+        "bind_mesh": "leg_lower_left"
+      },
+      {
+        "name": "ankle_left",
+        "parent": "lower_leg_left",
+        "position": {
+          "x": 176.0,
+          "y": 548.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "foot_left",
+        "parent": "ankle_left",
+        "position": {
+          "x": 156.0,
+          "y": 568.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "toe_left",
+        "parent": "foot_left",
+        "position": {
+          "x": 182.0,
+          "y": 574.0
+        },
+        "bind_mesh": "shoe_left"
+      },
+      {
+        "name": "hip_right",
+        "parent": "pelvis",
+        "position": {
+          "x": 217.0,
+          "y": 360.0
+        },
+        "bind_mesh": "leg_upper_right"
+      },
+      {
+        "name": "upper_leg_right",
+        "parent": "hip_right",
+        "position": {
+          "x": 220.0,
+          "y": 412.0
+        },
+        "bind_mesh": "leg_upper_right"
+      },
+      {
+        "name": "lower_leg_right",
+        "parent": "upper_leg_right",
+        "position": {
+          "x": 222.0,
+          "y": 498.0
+        },
+        "bind_mesh": "leg_lower_right"
+      },
+      {
+        "name": "ankle_right",
+        "parent": "lower_leg_right",
+        "position": {
+          "x": 224.0,
+          "y": 548.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "foot_right",
+        "parent": "ankle_right",
+        "position": {
+          "x": 244.0,
+          "y": 568.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "toe_right",
+        "parent": "foot_right",
+        "position": {
+          "x": 218.0,
+          "y": 574.0
+        },
+        "bind_mesh": "shoe_right"
+      },
+      {
+        "name": "hat",
+        "parent": "head",
+        "position": {
+          "x": 200.0,
+          "y": 70.0
+        },
+        "bind_mesh": "hat"
+      },
+      {
+        "name": "backpack",
+        "parent": "chest",
+        "position": {
+          "x": 166.0,
+          "y": 236.0
+        },
+        "bind_mesh": "backpack"
+      }
+    ],
+    "constraints": [
+      "head_follow_chest",
+      "shoulder_follow_chest_soft",
+      "hat_follow_head_80",
+      "backpack_follow_torso_100",
+      "elbow_soft_limit",
+      "wrist_soft_limit",
+      "pelvis_counterbalance",
+      "knee_soft_limit",
+      "ankle_soft_limit",
+      "feet_ground_lock",
+      "toe_roll_optional"
+    ]
+  },
+  "animations": [
+    {
+      "name": "idle",
+      "duration_seconds": 1.2,
+      "notes": [
+        "breathing",
+        "small head bob",
+        "occasional blink"
+      ]
+    },
+    {
+      "name": "happy",
+      "duration_seconds": 0.8,
+      "notes": [
+        "bounce up",
+        "arms lift",
+        "happy mouth"
+      ]
+    },
+    {
+      "name": "sad",
+      "duration_seconds": 0.7,
+      "notes": [
+        "head drop",
+        "arms down",
+        "sad mouth"
+      ]
+    },
+    {
+      "name": "tap_react",
+      "duration_seconds": 0.45,
+      "notes": [
+        "quick pop",
+        "blink",
+        "return to idle"
+      ]
+    },
+    {
+      "name": "enter",
+      "duration_seconds": 0.55,
+      "notes": [
+        "ease in from side",
+        "settle into idle"
+      ]
+    },
+    {
+      "name": "exit",
+      "duration_seconds": 0.4,
+      "notes": [
+        "fade or slide out cleanly"
+      ]
+    }
+  ],
+  "state_machine": {
+    "name": "SkogshjalteStateMachine",
+    "inputs": [
+      {
+        "name": "answer_correct",
+        "type": "Trigger"
+      },
+      {
+        "name": "answer_wrong",
+        "type": "Trigger"
+      },
+      {
+        "name": "user_tap",
+        "type": "Trigger"
+      },
+      {
+        "name": "screen_change",
+        "type": "Trigger"
+      }
+    ],
+    "states": [
+      "idle",
+      "walk",
+      "happy",
+      "sad",
+      "tap_react",
+      "enter",
+      "exit"
+    ],
+    "transitions": [
+      {
+        "from": "idle",
+        "to": "walk",
+        "trigger": "start_walking"
+      },
+      {
+        "from": "walk",
+        "to": "idle",
+        "trigger": "stop_walking"
+      },
+      {
+        "from": "idle",
+        "to": "happy",
+        "trigger": "answer_correct"
+      },
+      {
+        "from": "walk",
+        "to": "happy",
+        "trigger": "answer_correct"
+      },
+      {
+        "from": "idle",
+        "to": "sad",
+        "trigger": "answer_wrong"
+      },
+      {
+        "from": "walk",
+        "to": "sad",
+        "trigger": "answer_wrong"
+      },
+      {
+        "from": "idle",
+        "to": "tap_react",
+        "trigger": "user_tap"
+      },
+      {
+        "from": "walk",
+        "to": "tap_react",
+        "trigger": "user_tap"
+      },
+      {
+        "from": "any",
+        "to": "exit",
+        "trigger": "screen_change"
+      },
+      {
+        "from": "enter",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "happy",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "sad",
+        "to": "idle",
+        "trigger": "animation_done"
+      },
+      {
+        "from": "tap_react",
+        "to": "idle",
+        "trigger": "animation_done"
+      }
+    ]
+  }
+}

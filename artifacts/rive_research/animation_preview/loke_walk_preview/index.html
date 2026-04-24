@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loke Walk Preview</title>
+  <style>
+    :root {
+      --sky-top: #eef8d7;
+      --sky-bottom: #87d7bc;
+      --leaf-dark: #3f8f57;
+      --leaf-mid: #69bb72;
+      --leaf-light: #a8e18d;
+      --path-top: #f2d38d;
+      --path-bottom: #d5b06a;
+      --card: rgba(255, 252, 245, 0.84);
+      --ink: #4f3c2e;
+      --line: rgba(79, 60, 46, 0.14);
+      --accent: #4a7cff;
+      --accent-soft: rgba(74, 124, 255, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Georgia, "Times New Roman", serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 18% 14%, rgba(255, 255, 255, 0.6), transparent 24%),
+        radial-gradient(circle at 82% 12%, rgba(255, 245, 196, 0.64), transparent 18%),
+        linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+      overflow: hidden;
+    }
+
+    .scene {
+      position: relative;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .hud {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 2;
+      max-width: 390px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 18px 42px rgba(49, 39, 25, 0.14);
+    }
+
+    .hud h1 {
+      margin: 0 0 6px;
+      font-size: 1.35rem;
+    }
+
+    .hud p {
+      margin: 0;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .hud-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hud button {
+      border: 1px solid rgba(79, 60, 46, 0.18);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.74);
+      color: var(--ink);
+      padding: 7px 11px;
+      font: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: transform 120ms ease, border-color 120ms ease, background 120ms ease;
+    }
+
+    .hud button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(79, 60, 46, 0.3);
+    }
+
+    .hud button.is-active {
+      background: var(--accent-soft);
+      border-color: rgba(74, 124, 255, 0.4);
+      color: var(--accent);
+    }
+
+    .hud-status {
+      margin-top: 10px;
+      font-size: 0.82rem;
+      color: rgba(79, 60, 46, 0.78);
+    }
+
+    .stage {
+      position: relative;
+      width: min(92vw, 780px);
+      aspect-ratio: 19 / 12;
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0) 36%),
+        linear-gradient(180deg, rgba(255, 252, 245, 0.24), rgba(255, 244, 195, 0.1));
+      box-shadow: 0 22px 60px rgba(45, 40, 22, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.34);
+    }
+
+    .sun {
+      position: absolute;
+      top: 26px;
+      right: 42px;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, #fffbe4, #ffe07d 68%, #f1bc44 100%);
+      box-shadow: 0 0 54px rgba(255, 216, 98, 0.56);
+    }
+
+    .leaf-cluster,
+    .leaf-cluster::before,
+    .leaf-cluster::after {
+      position: absolute;
+      border-radius: 50%;
+      content: "";
+    }
+
+    .leaf-cluster {
+      background: var(--leaf-light);
+      opacity: 0.88;
+    }
+
+    .leaf-cluster::before { background: var(--leaf-mid); }
+    .leaf-cluster::after { background: var(--leaf-dark); }
+
+    .leaf-cluster.a {
+      top: 50px;
+      left: -36px;
+      width: 160px;
+      height: 100px;
+    }
+
+    .leaf-cluster.a::before {
+      width: 104px;
+      height: 82px;
+      top: 34px;
+      left: 76px;
+    }
+
+    .leaf-cluster.a::after {
+      width: 118px;
+      height: 86px;
+      top: -18px;
+      left: 62px;
+    }
+
+    .leaf-cluster.b {
+      top: 80px;
+      right: -42px;
+      width: 180px;
+      height: 110px;
+    }
+
+    .leaf-cluster.b::before {
+      width: 120px;
+      height: 88px;
+      top: 40px;
+      left: -22px;
+    }
+
+    .leaf-cluster.b::after {
+      width: 132px;
+      height: 92px;
+      top: -14px;
+      left: 16px;
+    }
+
+    .hill {
+      position: absolute;
+      bottom: 112px;
+      border-radius: 50%;
+      background: #78c66e;
+      opacity: 0.96;
+    }
+
+    .hill.a {
+      left: -42px;
+      width: 320px;
+      height: 122px;
+    }
+
+    .hill.b {
+      right: -38px;
+      width: 350px;
+      height: 134px;
+      background: #68b95e;
+    }
+
+    .path {
+      position: absolute;
+      left: -10%;
+      bottom: 0;
+      width: 120%;
+      height: 150px;
+      background:
+        linear-gradient(180deg, var(--path-top), var(--path-bottom)),
+        linear-gradient(90deg, transparent 0 12%, rgba(255, 255, 255, 0.08) 12% 14%, transparent 14% 100%);
+      border-top-left-radius: 52% 42px;
+      border-top-right-radius: 52% 42px;
+    }
+
+    .path::before {
+      content: "";
+      position: absolute;
+      inset: 42px -25% 58px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent 0 48px,
+        rgba(126, 96, 43, 0.48) 48px 62px,
+        transparent 62px 118px
+      );
+      animation: pathMove 1.16s linear infinite;
+      opacity: 0.36;
+    }
+
+    .character-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: -20px;
+      width: 370px;
+      height: 540px;
+      transform: translateX(-50%);
+      display: grid;
+      place-items: end center;
+    }
+
+    svg { overflow: visible; }
+
+    #upper-body,
+    #backpack,
+    #arm-left-upper,
+    #arm-left-lower,
+    #arm-right-upper,
+    #arm-right-lower,
+    #leg-left-upper,
+    #leg-left-lower,
+    #leg-right-upper,
+    #leg-right-lower,
+    #shoe-left,
+    #shoe-right,
+    #head-group,
+    #shadow {
+      transform-box: fill-box;
+    }
+
+    #character {
+      transform-origin: 50% 86%;
+      animation: bodyBob 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+    }
+
+    #shadow {
+      transform-origin: center;
+      animation: shadowPulse 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+    }
+
+    #upper-body {
+      transform-origin: 50% 26%;
+      animation: upperBodySway 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+    }
+
+    #backpack {
+      transform-origin: center top;
+      animation: backpackLag 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+    }
+
+    #arm-left-upper,
+    #arm-left-lower,
+    #arm-right-upper,
+    #arm-right-lower,
+    #leg-left-upper,
+    #leg-left-lower,
+    #leg-right-upper,
+    #leg-right-lower {
+      transform-origin: center top;
+    }
+
+    #arm-left-upper { animation: armUpperLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #arm-left-lower { animation: armLowerLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #arm-right-upper { animation: armUpperRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #arm-right-lower { animation: armLowerRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #leg-left-upper { animation: legUpperLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #leg-left-lower { animation: legLowerLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #leg-right-upper { animation: legUpperRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #leg-right-lower { animation: legLowerRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+
+    #shoe-left,
+    #shoe-right {
+      transform-origin: 24% 32%;
+    }
+
+    #shoe-left { animation: footLeft 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+    #shoe-right { animation: footRight 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite; }
+
+    #head-group {
+      transform-origin: center 74%;
+      animation: headBob 1.16s cubic-bezier(0.42, 0, 0.28, 1) infinite;
+    }
+
+    #eyes-open { animation: blinkOpen 4s linear infinite; }
+    #eyes-blink {
+      opacity: 0;
+      animation: blinkClosed 4s linear infinite;
+    }
+
+    .still-preview .path::before,
+    .still-preview #character,
+    .still-preview #shadow,
+    .still-preview #upper-body,
+    .still-preview #backpack,
+    .still-preview #arm-left-upper,
+    .still-preview #arm-left-lower,
+    .still-preview #arm-right-upper,
+    .still-preview #arm-right-lower,
+    .still-preview #leg-left-upper,
+    .still-preview #leg-left-lower,
+    .still-preview #leg-right-upper,
+    .still-preview #leg-right-lower,
+    .still-preview #shoe-left,
+    .still-preview #shoe-right,
+    .still-preview #head-group,
+    .still-preview #eyes-open,
+    .still-preview #eyes-blink {
+      animation: none !important;
+    }
+
+    .still-preview #eyes-open { opacity: 1; }
+    .still-preview #eyes-blink { opacity: 0; }
+
+    @keyframes pathMove {
+      from { transform: translateX(0); }
+      to { transform: translateX(-118px); }
+    }
+
+    @keyframes bodyBob {
+      0%, 100% { transform: translateY(0); }
+      25% { transform: translateY(-4px); }
+      50% { transform: translateY(1px); }
+      75% { transform: translateY(-5px); }
+    }
+
+    @keyframes shadowPulse {
+      0%, 100% { transform: scaleX(1.04) scaleY(0.98); opacity: 0.19; }
+      25% { transform: scaleX(0.95) scaleY(0.9); opacity: 0.13; }
+      50% { transform: scaleX(1.06) scaleY(1); opacity: 0.21; }
+      75% { transform: scaleX(0.93) scaleY(0.88); opacity: 0.12; }
+    }
+
+    @keyframes upperBodySway {
+      0%, 100% { transform: rotate(0.8deg) translateY(0); }
+      25% { transform: rotate(-1.2deg) translateY(-2px); }
+      50% { transform: rotate(0.5deg) translateY(0); }
+      75% { transform: rotate(-1deg) translateY(-2px); }
+    }
+
+    @keyframes backpackLag {
+      0%, 100% { transform: translateX(0) rotate(2deg); }
+      25% { transform: translateX(-2px) rotate(-3deg); }
+      50% { transform: translateX(1px) rotate(1deg); }
+      75% { transform: translateX(-1px) rotate(-2deg); }
+    }
+
+    @keyframes armUpperLeft {
+      0%, 100% { transform: rotate(18deg); }
+      25% { transform: rotate(4deg); }
+      50% { transform: rotate(-14deg); }
+      75% { transform: rotate(2deg); }
+    }
+
+    @keyframes armLowerLeft {
+      0%, 100% { transform: rotate(16deg); }
+      25% { transform: rotate(6deg); }
+      50% { transform: rotate(-8deg); }
+      75% { transform: rotate(4deg); }
+    }
+
+    @keyframes armUpperRight {
+      0%, 100% { transform: rotate(-14deg); }
+      25% { transform: rotate(2deg); }
+      50% { transform: rotate(18deg); }
+      75% { transform: rotate(6deg); }
+    }
+
+    @keyframes armLowerRight {
+      0%, 100% { transform: rotate(-8deg); }
+      25% { transform: rotate(4deg); }
+      50% { transform: rotate(16deg); }
+      75% { transform: rotate(8deg); }
+    }
+
+    @keyframes legUpperLeft {
+      0%, 100% { transform: rotate(-18deg) translateY(0); }
+      25% { transform: rotate(0deg) translateY(2px); }
+      50% { transform: rotate(22deg) translateY(6px); }
+      75% { transform: rotate(6deg) translateY(2px); }
+    }
+
+    @keyframes legLowerLeft {
+      0%, 100% { transform: rotate(18deg) translateX(-6px); }
+      25% { transform: rotate(8deg) translateX(-2px); }
+      50% { transform: rotate(-8deg) translateX(7px); }
+      75% { transform: rotate(10deg) translateX(-1px); }
+    }
+
+    @keyframes legUpperRight {
+      0%, 100% { transform: rotate(22deg) translateY(6px); }
+      25% { transform: rotate(6deg) translateY(2px); }
+      50% { transform: rotate(-18deg) translateY(0); }
+      75% { transform: rotate(0deg) translateY(2px); }
+    }
+
+    @keyframes legLowerRight {
+      0%, 100% { transform: rotate(-8deg) translateX(7px); }
+      25% { transform: rotate(10deg) translateX(-1px); }
+      50% { transform: rotate(18deg) translateX(-6px); }
+      75% { transform: rotate(8deg) translateX(-2px); }
+    }
+
+    @keyframes footLeft {
+      0%, 100% { transform: translateX(-14px) rotate(9deg); }
+      25% { transform: translateX(-4px) rotate(0deg); }
+      50% { transform: translateX(12px) rotate(-10deg); }
+      75% { transform: translateX(1px) rotate(-2deg); }
+    }
+
+    @keyframes footRight {
+      0%, 100% { transform: translateX(12px) rotate(-10deg); }
+      25% { transform: translateX(1px) rotate(-2deg); }
+      50% { transform: translateX(-14px) rotate(9deg); }
+      75% { transform: translateX(-4px) rotate(0deg); }
+    }
+
+    @keyframes headBob {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      25% { transform: translateY(-1px) rotate(0.35deg); }
+      50% { transform: translateY(-3px) rotate(-0.55deg); }
+      75% { transform: translateY(-2px) rotate(-0.15deg); }
+    }
+
+    @keyframes blinkOpen {
+      0%, 88%, 100% { opacity: 1; }
+      90%, 94% { opacity: 0; }
+    }
+
+    @keyframes blinkClosed {
+      0%, 88%, 100% { opacity: 0; }
+      90%, 94% { opacity: 1; }
+    }
+
+    @media (max-width: 820px) {
+      .hud {
+        max-width: calc(100vw - 32px);
+        left: 16px;
+        right: 16px;
+        top: 16px;
+      }
+
+      .character-wrap {
+        width: min(88vw, 370px);
+        transform: translateX(-50%) scale(0.9);
+        transform-origin: bottom center;
+      }
+    }
+  </style>
+</head>
+<body class="walk-preview">
+  <main class="scene">
+    <section class="hud">
+      <h1>Loke walk preview</h1>
+      <p>Detta ar en lokal browser-preview av nya Loke som en modig, busig och snall djungelpojke med glasogon, gron keps och bla klader. Previewn visar en fardig walk-loop i samma formsprak som de genererade assetsen.</p>
+      <div class="hud-controls" aria-label="Preview controls">
+        <button type="button" class="is-active" data-mode="live">Live</button>
+        <button type="button" data-mode="still">Still</button>
+      </div>
+      <div class="hud-status" id="preview-status">Lage: live-loop</div>
+    </section>
+
+    <section class="stage" aria-label="Loke walk animation preview">
+      <div class="sun"></div>
+      <div class="leaf-cluster a"></div>
+      <div class="leaf-cluster b"></div>
+      <div class="hill a"></div>
+      <div class="hill b"></div>
+      <div class="path"></div>
+
+      <div class="character-wrap">
+        <svg viewBox="0 -48 400 688" width="370" height="540" role="img" aria-label="Loke walking through the jungle">
+          <g id="character">
+            <g transform="translate(74 510)">
+              <g id="shadow">
+                <ellipse cx="130" cy="40" rx="100" ry="24" fill="#0000001A"/>
+              </g>
+            </g>
+
+            <g id="leg-left-rig" transform="translate(132 332)">
+              <g id="leg-left-upper">
+                <rect x="14" y="8" width="52" height="40" rx="14" fill="#4A7CFF" stroke="#926F5D" stroke-width="4"/>
+                <rect x="18" y="38" width="44" height="82" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                <g transform="translate(4 98)">
+                  <g id="leg-left-lower">
+                    <rect x="14" y="6" width="44" height="114" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                    <g id="shoe-left" transform="translate(-46 168) scale(0.64)">
+                      <path d="M 28 66 Q 52 34 110 38 Q 146 40 160 62 L 156 90 Q 130 108 58 108 Q 18 106 14 82 Z" fill="#FFF0B8" stroke="#926F5D" stroke-width="4"/>
+                      <path d="M 30 80 Q 82 94 150 86" fill="none" stroke="#FF8A5B" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M 18 88 Q 86 112 160 96 L 160 106 Q 84 122 16 100 Z" fill="#FFFCEF" stroke="#926F5D" stroke-width="3"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+
+            <g id="leg-right-rig" transform="translate(208 332)">
+              <g id="leg-right-upper">
+                <rect x="14" y="8" width="52" height="40" rx="14" fill="#4A7CFF" stroke="#926F5D" stroke-width="4"/>
+                <rect x="18" y="38" width="44" height="82" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                <g transform="translate(4 98)">
+                  <g id="leg-right-lower">
+                    <rect x="14" y="6" width="44" height="114" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                    <g id="shoe-right" transform="translate(-42 168) scale(0.64)">
+                      <path d="M 28 66 Q 52 34 110 38 Q 146 40 160 62 L 156 90 Q 130 108 58 108 Q 18 106 14 82 Z" fill="#FFF0B8" stroke="#926F5D" stroke-width="4"/>
+                      <path d="M 30 80 Q 82 94 150 86" fill="none" stroke="#FF8A5B" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M 18 88 Q 86 112 160 96 L 160 106 Q 84 122 16 100 Z" fill="#FFFCEF" stroke="#926F5D" stroke-width="3"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+
+            <g id="upper-body">
+              <g id="backpack" transform="translate(70 188) scale(0.70)">
+                <rect x="74" y="48" width="112" height="148" rx="32" fill="#F2C94C" stroke="#926F5D" stroke-width="4"/>
+                <rect x="96" y="74" width="68" height="20" rx="10" fill="#D0AD41"/>
+                <rect x="88" y="108" width="84" height="60" rx="22" fill="#F3CE5E" stroke="#926F5D" stroke-width="3"/>
+              </g>
+
+              <g id="arm-left-rig" transform="translate(90 238) rotate(8 36 16)">
+                <g id="arm-left-upper">
+                  <rect x="18" y="10" width="36" height="112" rx="18" fill="#4A7CFF" stroke="#926F5D" stroke-width="4"/>
+                  <g transform="translate(-12 98)">
+                    <g id="arm-left-lower">
+                      <rect x="18" y="10" width="40" height="92" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                      <circle cx="38" cy="118" r="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                      <rect x="16" y="6" width="44" height="18" rx="9" fill="#416DE0" stroke="#926F5D" stroke-width="3"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+
+              <g id="torso" transform="translate(60 174)">
+                <path d="M 66 42 Q 82 16 140 18 Q 198 16 214 42 L 214 150 Q 180 186 140 186 Q 100 186 66 150 Z" fill="#4A7CFF" stroke="#926F5D" stroke-width="4"/>
+                <path d="M 92 48 Q 110 26 140 26 Q 170 26 188 48 L 176 72 Q 160 58 140 58 Q 120 58 104 72 Z" fill="#6B94FF" opacity="0.85"/>
+                <rect x="88" y="144" width="104" height="26" rx="12" fill="#5886FF" stroke="#926F5D" stroke-width="3"/>
+              </g>
+
+              <g id="arm-right-rig" transform="translate(238 238) rotate(-8 36 16)">
+                <g id="arm-right-upper">
+                  <rect x="18" y="10" width="36" height="112" rx="18" fill="#4A7CFF" stroke="#926F5D" stroke-width="4"/>
+                  <g transform="translate(10 98)">
+                    <g id="arm-right-lower">
+                      <rect x="18" y="10" width="40" height="92" rx="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                      <circle cx="38" cy="118" r="18" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                      <rect x="16" y="6" width="44" height="18" rx="9" fill="#416DE0" stroke="#926F5D" stroke-width="3"/>
+                    </g>
+                  </g>
+                </g>
+              </g>
+
+              <g id="head-group" transform="translate(72 24)">
+                <path d="M 52 92 Q 56 40 130 28 Q 208 40 208 100 Q 196 70 130 64 Q 70 66 52 92 Z" fill="#C59166" stroke="#926F5D" stroke-width="4"/>
+                <ellipse cx="130" cy="126" rx="88" ry="82" fill="#E7B187" stroke="#926F5D" stroke-width="4"/>
+                <ellipse cx="86" cy="154" rx="18" ry="12" fill="#EFA990" opacity="0.55"/>
+                <ellipse cx="174" cy="154" rx="18" ry="12" fill="#EFA990" opacity="0.55"/>
+
+                <g id="eyes-open" transform="translate(0 30)">
+                  <ellipse cx="96" cy="66" rx="18" ry="22" fill="white" stroke="#926F5D" stroke-width="3"/>
+                  <ellipse cx="164" cy="66" rx="18" ry="22" fill="white" stroke="#926F5D" stroke-width="3"/>
+                  <circle cx="96" cy="70" r="8" fill="#785B4C"/>
+                  <circle cx="164" cy="70" r="8" fill="#785B4C"/>
+                  <circle cx="100" cy="66" r="3" fill="white"/>
+                  <circle cx="168" cy="66" r="3" fill="white"/>
+                  <rect x="76" y="50" width="40" height="28" rx="10" fill="none" stroke="#866656" stroke-width="4"/>
+                  <rect x="144" y="50" width="40" height="28" rx="10" fill="none" stroke="#866656" stroke-width="4"/>
+                  <line x1="116" y1="64" x2="144" y2="64" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="64" y1="64" x2="76" y2="62" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="184" y1="62" x2="196" y2="64" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                </g>
+
+                <g id="eyes-blink" transform="translate(0 30)">
+                  <path d="M 78 72 Q 96 80 114 72" fill="none" stroke="#785B4C" stroke-width="4" stroke-linecap="round"/>
+                  <path d="M 146 72 Q 164 80 182 72" fill="none" stroke="#785B4C" stroke-width="4" stroke-linecap="round"/>
+                  <rect x="76" y="50" width="40" height="28" rx="10" fill="none" stroke="#866656" stroke-width="4"/>
+                  <rect x="144" y="50" width="40" height="28" rx="10" fill="none" stroke="#866656" stroke-width="4"/>
+                  <line x1="116" y1="64" x2="144" y2="64" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="64" y1="64" x2="76" y2="62" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                  <line x1="184" y1="62" x2="196" y2="64" stroke="#866656" stroke-width="4" stroke-linecap="round"/>
+                </g>
+
+                <g id="mouth" transform="translate(0 106)">
+                  <path d="M 90 60 Q 130 94 170 60" fill="none" stroke="#785B4C" stroke-width="5" stroke-linecap="round"/>
+                </g>
+
+                <g id="hat" transform="translate(-28 -24)">
+                  <path d="M 88 118 Q 112 48 176 44 Q 232 44 252 118 L 88 118 Z" fill="#8ED081" stroke="#926F5D" stroke-width="4"/>
+                  <path d="M 124 118 Q 174 138 246 118 Q 210 148 124 134 Z" fill="#7DB772" stroke="#926F5D" stroke-width="3"/>
+                  <rect x="118" y="84" width="88" height="14" rx="7" fill="#FF8A5B"/>
+                </g>
+              </g>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll("[data-mode]"));
+    const status = document.getElementById("preview-status");
+
+    function applyMode(mode) {
+      document.body.classList.toggle("still-preview", mode === "still");
+      buttons.forEach((button) => {
+        button.classList.toggle("is-active", button.dataset.mode === mode);
+      });
+      status.textContent = mode === "still" ? "Lage: stillbild" : "Lage: live-loop";
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => applyMode(button.dataset.mode));
+    });
+  </script>
+</body>
+</html>

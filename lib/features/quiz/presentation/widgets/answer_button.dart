@@ -60,7 +60,7 @@ class _AnswerButtonState extends State<AnswerButton>
     ]).animate(
       CurvedAnimation(
         parent: _feedbackController,
-        curve: Curves.easeOutBack,
+        curve: Curves.easeOut,
       ),
     );
     // Wrong: horizontal shake (damped sine) — computed inline in builder
@@ -98,6 +98,10 @@ class _AnswerButtonState extends State<AnswerButton>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final resolvedMinHeight =
+        widget.minHeight ?? AppConstants.answerButtonHeight;
+    final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
+    final ultraCompact = resolvedMinHeight <= 52;
     Color backgroundColor;
     Color textColor;
     String caption;
@@ -185,11 +189,13 @@ class _AnswerButtonState extends State<AnswerButton>
                 foregroundColor: textColor,
                 minimumSize: Size(
                   double.infinity,
-                  (widget.minHeight ?? AppConstants.answerButtonHeight).h,
+                  resolvedMinHeight.h,
                 ),
                 padding: EdgeInsets.symmetric(
                   horizontal: AppConstants.defaultPadding.w,
-                  vertical: AppConstants.defaultPadding.h,
+                  vertical: compact
+                      ? AppConstants.smallPadding.h
+                      : AppConstants.defaultPadding.h,
                 ),
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 side: BorderSide(
@@ -218,26 +224,37 @@ class _AnswerButtonState extends State<AnswerButton>
                 children: [
                   Text(
                     widget.answer.toString(),
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          color: textColor,
-                          fontWeight: FontWeight.w900,
-                        ),
+                    style: (compact
+                            ? Theme.of(context).textTheme.titleLarge
+                            : Theme.of(context).textTheme.headlineMedium)
+                        ?.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
-                  SizedBox(height: AppConstants.microSpacing4.h),
+                  SizedBox(
+                    height: (ultraCompact
+                            ? AppConstants.microSpacing2
+                            : AppConstants.microSpacing4)
+                        .h,
+                  ),
                   Text(
                     caption,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: textColor.withValues(alpha: 0.88),
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
-                        ),
+                    style: (compact
+                            ? Theme.of(context).textTheme.labelMedium
+                            : Theme.of(context).textTheme.labelLarge)
+                        ?.copyWith(
+                      color: textColor.withValues(alpha: 0.88),
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.3,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-        ),       // ExcludeSemantics
-      ),         // Semantics
-    );           // AnimatedBuilder
+        ), // ExcludeSemantics
+      ), // Semantics
+    ); // AnimatedBuilder
   }
 }

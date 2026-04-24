@@ -205,32 +205,6 @@
       }
     },
     {
-      "label": "Assets: Generate Lottie Effects",
-      "type": "shell",
-      "command": "dart",
-      "args": ["run", "scripts/generate_lottie_effects.dart"],
-      "group": "build",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared",
-        "clear": false
-      }
-    },
-    {
-      "label": "Assets: Generate Rive Blueprint",
-      "type": "shell",
-      "command": "dart",
-      "args": ["run", "scripts/generate_rive_blueprint.dart"],
-      "group": "build",
-      "problemMatcher": [],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared",
-        "clear": false
-      }
-    },
-    {
       "label": "Assets: Generate Mascot Composite SVG",
       "type": "shell",
       "command": "dart",
@@ -244,12 +218,10 @@
       }
     },
     {
-      "label": "Assets: Generate All (SVG + Lottie + Rive Blueprint)",
+      "label": "Assets: Generate All (SVG)",
       "dependsOrder": "sequence",
       "dependsOn": [
         "Assets: Generate Mascot SVG Parts",
-        "Assets: Generate Lottie Effects",
-        "Assets: Generate Rive Blueprint",
         "Assets: Generate Mascot Composite SVG"
       ],
       "group": "build",

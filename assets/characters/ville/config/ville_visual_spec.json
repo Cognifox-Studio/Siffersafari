@@ -1,0 +1,37 @@
+{
+  "name": "Ville",
+  "version": "1.0.0",
+  "style": "cartoon_flat",
+  "baseFormRef": "assets/characters/_shared/config/humanoid_base_form_v1.json",
+  "proportions": {
+    "headToBodyRatio": 1.5,
+    "limbThickness": "chubby"
+  },
+  "palette": {
+    "primary": "#4CAF50",
+    "secondary": "#FFC107",
+    "accent": "#2196F3",
+    "skin": "#8D6E63",
+    "hair": "#3E2723"
+  },
+  "parts": [
+    "ville_head",
+    "ville_hat",
+    "ville_eyes_open",
+    "ville_eyes_blink",
+    "ville_mouth_neutral",
+    "ville_mouth_happy",
+    "ville_mouth_sad",
+    "ville_torso",
+    "ville_backpack",
+    "ville_arm_left",
+    "ville_arm_right",
+    "ville_hand_left",
+    "ville_hand_right",
+    "ville_leg_left",
+    "ville_leg_right",
+    "ville_shoe_left",
+    "ville_shoe_right",
+    "ville_shadow"
+  ]
+}

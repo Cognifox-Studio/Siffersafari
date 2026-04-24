@@ -1,0 +1,83 @@
+{
+  "character": "Ville",
+  "version": "1.0",
+  "rig": {
+    "type": "humanoid_extended",
+    "bones": [
+      "root",
+      "pelvis",
+      "spine",
+      "chest",
+      "neck",
+      "head",
+      "shoulder_left",
+      "upper_arm_left",
+      "lower_arm_left",
+      "wrist_left",
+      "hand_left",
+      "shoulder_right",
+      "upper_arm_right",
+      "lower_arm_right",
+      "wrist_right",
+      "hand_right",
+      "hip_left",
+      "upper_leg_left",
+      "lower_leg_left",
+      "ankle_left",
+      "foot_left",
+      "toe_left",
+      "hip_right",
+      "upper_leg_right",
+      "lower_leg_right",
+      "ankle_right",
+      "foot_right",
+      "toe_right"
+    ]
+  },
+  "animations": [
+    {
+      "name": "idle",
+      "loop": true,
+      "description": "Står stilla och andas mjukt, blinkar då och då."
+    },
+    {
+      "name": "walk",
+      "loop": true,
+      "description": "Enkel gångcykel från sidan med gungande ryggsäck."
+    },
+    {
+      "name": "answer_correct",
+      "loop": false,
+      "description": "Gör tummen upp och ler brett (Happy)."
+    },
+    {
+      "name": "answer_wrong",
+      "loop": false,
+      "description": "Tittar ner och ser fundersam/ledsen ut (Sad)."
+    },
+    {
+      "name": "tap",
+      "loop": false,
+      "description": "Rättar till hatten."
+    },
+    {
+      "name": "enter",
+      "loop": false,
+      "description": "Hoppar in i bild."
+    },
+    {
+      "name": "exit",
+      "loop": false,
+      "description": "Går snabbt ut ur bild."
+    }
+  ],
+  "state_machine": {
+    "name": "ville_main_sm",
+    "inputs": [
+      { "name": "isWalking", "type": "boolean" },
+      { "name": "triggerCorrect", "type": "trigger" },
+      { "name": "triggerWrong", "type": "trigger" },
+      { "name": "triggerTap", "type": "trigger" }
+    ]
+  }
+}

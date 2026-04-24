@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T11:00:38.381663+00:00",
+  "generated_at": "2026-04-24T22:40:14.580002+00:00",
   "pipeline_version": 1,
   "notes": {
     "rive": "Only blueprint outputs are generated automatically right now. Final .riv files still require manual work in Rive.",
@@ -67,6 +67,7 @@
           "assets/characters/mascot/svg/mascot_backpack.svg",
           "assets/characters/mascot/svg/mascot_body.svg",
           "assets/characters/mascot/svg/mascot_composite.svg",
+          "assets/characters/mascot/svg/mascot_composite_celebrate.svg",
           "assets/characters/mascot/svg/mascot_eyes_blink.svg",
           "assets/characters/mascot/svg/mascot_eyes_closed.svg",
           "assets/characters/mascot/svg/mascot_eyes_open.svg",
@@ -198,6 +199,7 @@
       "assets/characters/mascot/svg/mascot_backpack.svg",
       "assets/characters/mascot/svg/mascot_body.svg",
       "assets/characters/mascot/svg/mascot_composite.svg",
+      "assets/characters/mascot/svg/mascot_composite_celebrate.svg",
       "assets/characters/mascot/svg/mascot_eyes_blink.svg",
       "assets/characters/mascot/svg/mascot_eyes_closed.svg",
       "assets/characters/mascot/svg/mascot_eyes_open.svg",

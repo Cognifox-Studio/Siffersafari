@@ -1,0 +1,36 @@
+{
+  "$schema": "rive_blueprint_v1",
+  "name": "Ville",
+  "format": "riv",
+  "expectedStateMachines": [
+    {
+      "name": "ville_main_sm",
+      "inputs": [
+        "isWalking",
+        "triggerCorrect",
+        "triggerWrong",
+        "triggerTap"
+      ]
+    }
+  ],
+  "expectedAnimations": [
+    "idle",
+    "walk",
+    "answer_correct",
+    "answer_wrong",
+    "tap",
+    "enter",
+    "exit"
+  ],
+  "instructions": "See artifacts/VILLE_RIVE_GUIDE.md for detailed manual rigging steps.",
+  "svgDependencies": [
+    "assets/characters/ville/svg/ville_head.svg",
+    "assets/characters/ville/svg/ville_hat.svg",
+    "assets/characters/ville/svg/ville_torso.svg",
+    "assets/characters/ville/svg/ville_backpack.svg",
+    "assets/characters/ville/svg/ville_arm_left.svg",
+    "assets/characters/ville/svg/ville_arm_right.svg",
+    "assets/characters/ville/svg/ville_leg_left.svg",
+    "assets/characters/ville/svg/ville_leg_right.svg"
+  ]
+}

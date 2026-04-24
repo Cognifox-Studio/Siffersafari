@@ -102,19 +102,6 @@ STEPS = {
         command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_mascot_svg_parts.dart"),
         expected_outputs=SVG_OUTPUTS,
     ),
-    "lottie": Step(
-        name="Lottie effects",
-        command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_lottie_effects.dart"),
-        expected_outputs=LOTTIE_OUTPUTS,
-    ),
-    "rive": Step(
-        name="Rive blueprint",
-        command=(DART_EXECUTABLE or "dart", "run", "scripts/generate_rive_blueprint.dart"),
-        expected_outputs=(
-            repo_path("artifacts", "mascot_rive_blueprint.json"),
-            repo_path("artifacts", "mascot_rive_guide.md"),
-        ),
-    ),
     # mascot-specific — assemble final composite SVG for the mascot character
     "mascot_composite": Step(
         name="Mascot composite",
@@ -173,8 +160,6 @@ def ensure_repo_layout(strict: bool) -> None:
     required = [
         repo_path("pubspec.yaml"),
         repo_path("scripts", "generate_mascot_svg_parts.dart"),
-        repo_path("scripts", "generate_lottie_effects.dart"),
-        repo_path("scripts", "generate_rive_blueprint.dart"),
         repo_path("scripts", "generate_mascot_composite.dart"),
         repo_path("assets", "characters", "mascot", "config", "mascot_visual_spec.json"),
         repo_path("assets", "characters", "mascot", "config", "mascot_animation_spec.json"),
@@ -872,10 +857,8 @@ def main() -> None:
     validated_specs = validate_specs(specs)
 
     command_to_steps = {
-        "build-all": ("mascot_parts", "lottie", "rive", "mascot_composite"),
+        "build-all": ("mascot_parts", "mascot_composite"),
         "build-svg": ("mascot_parts",),
-        "build-lottie": ("lottie",),
-        "build-rive": ("rive",),
         "build-composite": ("mascot_composite"),
     }
 

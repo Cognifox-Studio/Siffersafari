@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart';
+
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
@@ -49,8 +49,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   bool _applied = false;
   bool _characterCelebrate = false;
   Timer? _celebrateTimer;
-
-  late final AnimationController _lottieController;
   late final AnimationController _entranceController;
   late final Animation<Offset> _heroSlide;
   late final Animation<double> _heroOpacity;
@@ -168,7 +166,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   @override
   void initState() {
     super.initState();
-    _lottieController = AnimationController(vsync: this);
     _entranceController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 600),
@@ -211,7 +208,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   @override
   void dispose() {
     _celebrateTimer?.cancel();
-    _lottieController.dispose();
     _entranceController.dispose();
     super.dispose();
   }
@@ -382,16 +378,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             },
             child: SizedBox(
               height: 150.h,
-              child: Lottie.asset(
-                'assets/animations/celebration.json',
-                fit: BoxFit.contain,
-                controller: _lottieController,
-                onLoaded: (composition) {
-                  _lottieController.duration = composition.duration;
-                  _lottieController.forward().whenCompleteOrCancel(() {
-                    if (mounted) _lottieController.forward(from: 0);
-                  });
-                },
+              child: Icon(
+                Icons.star_rounded,
+                size: 100.w,
+                color: Colors.amber,
               ),
             ),
           ),
