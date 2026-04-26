@@ -118,10 +118,15 @@ void main() {
             final maxPossibleUnique =
                 (expected.max - expected.min + 1) / sampleCount;
             // Base expectations
+            final isHighGradeSigned = grade >= 7 &&
+                (operation == OperationType.addition ||
+                    operation == OperationType.subtraction);
             final baseExpected = operation == OperationType.multiplication ||
                     operation == OperationType.division
                 ? 0.02 // Multiplication/Division: 2% is acceptable
-                : 0.10; // Addition/Subtraction: expect at least 10% when range allows
+                : isHighGradeSigned
+                    ? 0.06
+                    : 0.10; // Addition/Subtraction: expect at least 10% when range allows
             // Don't expect more than 80% of theoretical maximum
             final expectedUniqueRatio =
                 min(baseExpected, maxPossibleUnique * 0.8);

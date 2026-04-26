@@ -54,9 +54,10 @@ class QuestionGeneratorService {
     return range.min + _random.nextInt(range.max - range.min + 1);
   }
 
-  int _randomSignedValue(int maxAbs) {
+  int _randomSignedValue(int maxAbs, {int minAbs = 0}) {
     final safeMaxAbs = max(1, maxAbs);
-    final value = _random.nextInt(safeMaxAbs + 1);
+    final safeMinAbs = max(0, min(minAbs, safeMaxAbs));
+    final value = safeMinAbs + _random.nextInt(safeMaxAbs - safeMinAbs + 1);
     return _random.nextBool() ? value : -value;
   }
 
@@ -2029,8 +2030,9 @@ Vilken typ av korrelation har variablerna?
               ? min(100, max(1, range.max))
               : min(1000, max(1, range.max));
 
-      operand1 = _randomSignedValue(maxAbs);
-      operand2 = _randomSignedValue(maxAbs);
+      final minAbs = (maxAbs * 0.25).floor();
+      operand1 = _randomSignedValue(maxAbs, minAbs: minAbs);
+      operand2 = _randomSignedValue(maxAbs, minAbs: minAbs);
       if (operand1 == 0 && operand2 == 0) {
         operand2 = 1;
       }
@@ -2202,9 +2204,10 @@ Vilken typ av korrelation har variablerna?
               ? min(100, max(1, range.max))
               : min(1000, max(1, range.max));
 
-      operand1 = _randomSignedValue(maxAbs);
+      final minAbs = (maxAbs * 0.25).floor();
+      operand1 = _randomSignedValue(maxAbs, minAbs: minAbs);
       // Keep operand2 positive/non-zero to avoid "a - -b" at this stage.
-      operand2 = _randomInRange(DifficultyNumberRange(1, maxAbs));
+      operand2 = _randomInRange(DifficultyNumberRange(max(1, minAbs), maxAbs));
     } else if (isGrade1 && range.max >= 10 && _random.nextDouble() < 0.35) {
       operand1 = 10;
       operand2 = _randomInRange(const DifficultyNumberRange(0, 10));
