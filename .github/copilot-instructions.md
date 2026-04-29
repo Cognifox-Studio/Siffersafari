@@ -14,6 +14,19 @@ Läs först dessa dokument vid behov, och länka hellre dit än att duplicera in
 - `docs/SERVICES_API.md` för service- och providerkontrakt
 - `docs/DECISIONS_LOG.md` för stabila beslut
 
+## Agentprinciper
+
+- **Länka hellre än duplicera.** Kopiera inte in text från `docs/` hit. Länka dit.
+- **Nulägesfacit:** `docs/ARCHITECTURE.md` och `docs/DECISIONS_LOG.md` gäller över äldre historik.
+- **Sessionskontext:** Läs alltid `docs/SESSION_BRIEF.md` vid start eller "fortsätt".
+- **Lärdomar:** Läs repo-minnen i `/memories/repo/` för kända fallgropar. Uppdatera minnet när ny insikt nås.
+
+## Innan du kodar
+1. COPPA-compliance: offline-first, ingen persondata. Se `docs/PRIVACY_POLICY.md`.
+2. UI-arkitektur: Ny UI under `lib/features/<feature>/presentation/`. Delad UI i `lib/presentation/widgets/`.
+3. QA & Test: Bestäm snävaste rimliga QA. Analysera innan test.
+4. Beslut: Uppdatera `docs/DECISIONS_LOG.md` om du ändrat kodens strukturella riktning.
+
 ## Bygg och QA
 
 Standardkommandon:
@@ -43,6 +56,11 @@ Om repo-skillen matchar, använd den i stället för att improvisera arbetsflöd
 - `.github/skills/flutter-qa-guard/SKILL.md`
 - `.github/skills/asset-generation-runner/SKILL.md`
 - `.github/skills/release-readiness-check/SKILL.md`
+
+## Custom Agents
+
+- **Plan** (`.github/agents/plan.agent.md`): Research, analys, riskbedömning och testplan (körs utan kodändringar).
+- **Beast Mode** (`.github/agents/beastmode.agent.md`): Självgående implementation, feltestning, QA-pass och systematiska kodrättelser.
 
 ## Automation-floden (skills)
 

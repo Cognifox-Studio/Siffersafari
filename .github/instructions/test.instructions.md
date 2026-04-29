@@ -96,9 +96,11 @@ testWidgets('[Widget] SkärmNamn – flöde som testas', (tester) async { ... })
 - Skapa tjänsten direkt i `setUp`: `service = MyService();`.
 - Testa beteende, inte implementation – inga internals som `_field`.
 
-## Vanliga fallgropar
+## Vanliga fallgropar och minne
 
-- **ScreenUtil-kraschar**: uppstår om en widget som använder `.w`/`.h` pumpas utan `MathGameApp` eller `ScreenUtilInit`. Lägg till wrappern.
+Läs alltid `/memories/repo/testing.md` och `/memories/repo/test_standardization_2026-03-05.md` vid återkommande problem innan du gissar felet.
+
+- **ScreenUtil-kraschar**: uppstår om en widget som använder `.w`/`.h` pumpas utan `MathGameApp` eller `ScreenUtilInit`. Lägg till wrappern via Helper.
 - **`getIt` är inte resetad**: om ett test registrerar något utan att anropa `getIt.reset()` smittar det nästa test. `setupWidgetTestDependencies()` hanterar detta.
 - **Onboarding blockerar flödet**: kalla `skipOnboardingIfPresent` eller sätt `onboarding_done_<userId>` = true i repositoryt innan pumpning.
 - **Animationer avslutas inte**: använd `pumpFor(tester, AppConstants.mediumAnimationDuration + const Duration(milliseconds: 150))` efter att ha tryckt på knappar.

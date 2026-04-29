@@ -1,51 +1,37 @@
----
+﻿---
 name: asset-generation-runner
-description: 'Generate or regenerate game assets for Siffersafari. Use when changing character specs, SVG parts, Lottie effects, Rive blueprints, composite SVG output, or when the user says generate assets, regenerera assets, rebuild visuals, uppdatera animation assets, or sync generated files.'
-argument-hint: 'Describe what changed and whether to run one generator or all.'
+description: 'Generate, refresh, validate, or promote Siffersafari assets. Use when changing SVG character specs/parts, mascot composite output, character promotion, generated assets, or when the user says generate assets, regenerera assets, rebuild visuals, uppdatera animation assets, sync generated files, or promote character.'
+argument-hint: 'Describe which asset or character changed, and whether to generate, promote, or verify only.'
 ---
 
 # Asset Generation Runner
 
 ## När den ska användas
-- När en visual spec eller animation spec har ändrats.
-- När SVG-delar, Lottie-effekter eller Rive-blueprints behöver genereras om.
-- När en preview eller appintegration visar gamla eller saknade genererade filer.
-- När användaren vill köra hela asset-pipelinen i rätt ordning.
+- När en karaktärs visual/animation spec eller SVG-delar har ändrats.
+- När mascot SVG-parts eller composite-SVG behöver genereras om.
+- När en ny/uppdaterad karaktär ska promotas.
+- När en preview/appintegration visar gamla/saknade filer.
 
 ## Mål
-Få fram korrekta genererade filer i `assets/` och `artifacts/` med minsta möjliga manuella steg.
+Ta fram korrekta filer i \ssets/\ och \rtifacts/\ med repo:ts befintliga scripts, och verifiera referenser.
+
+## Repo-standard
+- Produkt-UI är SVG-first för mascot/characters. (Ingen aktiv Rive-runtime).
+- \.riv\ och Rive-blueprints är research/framtida underlag och exporteras manuellt om de behövs.
+- Lottie används bara för UI-effekter.
 
 ## Arbetsflöde
-1. Identifiera vilken input som ändrats.
-   - Karaktärs-SVG/spec: kör SVG-generatorn.
-   - UI-effekter: kör Lottie-generatorn.
-   - Rigg/animation spec: kör Rive blueprint-generatorn.
-   - Osäker eller större ändring: kör hela asset-pipelinen.
-2. Föredra repo:ts befintliga VS Code tasks framför fria terminalkommandon.
-   - `Assets: Generate Mascot SVG Parts`
-   - `Assets: Generate Lottie Effects`
-   - `Assets: Generate Rive Blueprint`
-   - `Assets: Generate Mascot Composite SVG`
-   - `Assets: Generate All (SVG + Lottie + Rive Blueprint)`
-3. Verifiera att förväntade output-filer faktiskt uppdaterades i rätt mappar.
-4. Om nya filer ska användas i appen, kontrollera att `pubspec.yaml` och relevant Flutter-kod refererar rätt asset-path.
-5. Redovisa tydligt:
-   - vad som genererades
-   - vilka filer som blev output
-   - om något fortfarande måste göras manuellt
+1. Föredra repo:ts VS Code tasks före fria anrop:
+   - \Assets: Generate Mascot SVG Parts\
+   - \Assets: Generate Mascot Composite SVG\
+   - \Assets: Generate All (SVG)\
+   - \Assets: Promote New/Update Character\
+   - \Assets: Verify Git Changes\
+2. Verifiera att förväntade filer uppdaterades.
+3. Om appen ska använda nya assets: kolla \pubspec.yaml\ och relevanta widget/config-filer.
+4. Kör relevant QA när assets påverkar appflöden.
 
 ## Kvalitetsgränser
-- Påstå inte att en `.riv`-fil finns om bara blueprint/guide genererats.
-- Ändra inte genererade filer manuellt om källan är ett script eller en spec, om inte användaren uttryckligen vill göra ett engångsingrepp.
-- Om asset-cache misstänks i emulator/app, föreslå ny filnamnsversion eller deterministisk device-sync i stället för att gissa.
-
-## Repo-specifika kommandon
-- Task: `Assets: Generate All (SVG + Lottie + Rive Blueprint)`
-- Script: `dart run scripts/generate_mascot_svg_parts.dart`
-- Script: `dart run scripts/generate_lottie_effects.dart`
-- Script: `dart run scripts/generate_rive_blueprint.dart`
-- Script: `dart run scripts/generate_mascot_composite.dart`
-
-## Förväntad output
-- Uppdaterade filer under `assets/characters/...`, `assets/ui/lottie/...` och/eller `artifacts/...`
-- Kort status på vad som är klart automatiserat och vad som återstår
+- Påstå inte att en \.riv\-fil nyss skapats om du inte faktiskt vet att det är sant.
+- Nämn inga generator-scripts som inte finns.
+- Redovisa kort vad som kördes och resultatet.
