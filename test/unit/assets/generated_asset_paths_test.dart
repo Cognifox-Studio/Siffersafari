@@ -12,9 +12,7 @@ void main() {
           isTrue,
           reason: 'Missing composite SVG for $id',
         );
-
       }
     });
-
   });
 }

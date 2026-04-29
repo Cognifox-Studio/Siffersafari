@@ -372,16 +372,19 @@ class DifficultyConfig {
 
     final safeStart = startMax > cap ? cap : startMax;
     final maxVal = _lerpInt(safeStart, cap, t);
-    
+
     // For higher operations, scale the minimum value up so questions
     // don't collapse to '10+2' repeatedly at high levels.
     // We floor minVal to 0, taking ~25% of maxVal as the baseline minimum
     // if grade >= 4 and step >= 4, leaving a bit of variety but cutting out single digits.
     int minVal = 0;
-    if ((operationType == OperationType.addition || operationType == OperationType.subtraction) && grade >= 4 && step >= 4) {
+    if ((operationType == OperationType.addition ||
+            operationType == OperationType.subtraction) &&
+        grade >= 4 &&
+        step >= 4) {
       minVal = (maxVal * 0.25).floor();
     }
-    
+
     return DifficultyNumberRange(minVal, maxVal);
   }
 

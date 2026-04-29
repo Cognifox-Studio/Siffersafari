@@ -8,7 +8,6 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 
-
 void main() {
   group('[Unit] Quiz progression – Edge cases', () {
     test(

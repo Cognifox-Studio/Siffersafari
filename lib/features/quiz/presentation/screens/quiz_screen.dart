@@ -333,7 +333,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
-
         Expanded(
           child: Row(
             children: [

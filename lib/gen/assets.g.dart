@@ -12,13 +12,12 @@ final class AssetPaths {
 
   static String characterCompositeSvg(CharacterId id) {
     switch (id) {
-    case CharacterId.mascot:
-      return 'assets/characters/mascot/svg/mascot_composite.svg';
-    case CharacterId.loke:
-      return 'assets/characters/loke/svg/loke_composite.svg';
-    case CharacterId.skogshjalte:
-      return 'assets/characters/skogshjalte/svg/skogshjalte_composite.svg';
+      case CharacterId.mascot:
+        return 'assets/characters/mascot/svg/mascot_composite.svg';
+      case CharacterId.loke:
+        return 'assets/characters/loke/svg/loke_composite.svg';
+      case CharacterId.skogshjalte:
+        return 'assets/characters/skogshjalte/svg/skogshjalte_composite.svg';
     }
   }
-
 }

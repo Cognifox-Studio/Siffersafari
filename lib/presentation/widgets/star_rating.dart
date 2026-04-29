@@ -27,8 +27,8 @@ class _StarRatingState extends State<StarRating>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: _totalDuration)..forward();
+    _controller = AnimationController(vsync: this, duration: _totalDuration)
+      ..forward();
     _scales = List.generate(3, (i) {
       final start = i * 0.2;
       final end = start + 0.6;
