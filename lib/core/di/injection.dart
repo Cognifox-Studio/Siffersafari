@@ -12,7 +12,6 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:siffersafari/domain/services/parent_pin_service.dart';
-import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
 import '../services/achievement_service.dart';
 import '../services/audio_service.dart';
 import '../services/quest_progression_service.dart';
@@ -92,14 +91,6 @@ Future<void> initializeDependencies({
     _perf('getIt.register(AdaptiveDifficultyService)', () {
       getIt.registerLazySingleton<AdaptiveDifficultyService>(
         () => AdaptiveDifficultyService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<SpacedRepetitionService>()) {
-    _perf('getIt.register(SpacedRepetitionService)', () {
-      getIt.registerLazySingleton<SpacedRepetitionService>(
-        () => SpacedRepetitionService(),
       );
     });
   }

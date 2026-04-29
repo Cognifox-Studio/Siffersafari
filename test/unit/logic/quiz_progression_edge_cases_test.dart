@@ -7,6 +7,7 @@ import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
+import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
 
 void main() {
   group('[Unit] Quiz progression – Edge cases', () {
@@ -40,6 +41,8 @@ void main() {
         FeedbackService(),
         audio,
         repo,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
       );
 
       notifier.startSession(
@@ -90,6 +93,8 @@ void main() {
         FeedbackService(),
         audio,
         repo,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
       );
 
       notifier.startCustomSession(
@@ -119,6 +124,7 @@ void main() {
         audio,
         repo,
         adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
       );
 
       notifier.startSession(
@@ -158,6 +164,7 @@ void main() {
         audio,
         repo,
         adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
       );
 
       notifier.startSession(

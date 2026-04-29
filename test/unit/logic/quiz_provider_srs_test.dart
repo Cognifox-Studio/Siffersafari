@@ -6,6 +6,8 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
+import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 
@@ -29,6 +31,8 @@ void main() {
         FeedbackService(),
         audio,
         repository,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
       );
     });
 

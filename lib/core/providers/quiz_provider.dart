@@ -126,12 +126,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
     this._feedbackService,
     this._audioService,
     this._repository, {
-    AdaptiveDifficultyService? adaptiveDifficultyService,
-    SpacedRepetitionService? spacedRepetitionService,
-  })  : _adaptiveDifficultyService =
-            adaptiveDifficultyService ?? AdaptiveDifficultyService(),
-        _spacedRepetitionService =
-            spacedRepetitionService ?? SpacedRepetitionService(),
+    required AdaptiveDifficultyService adaptiveDifficultyService,
+    required SpacedRepetitionService spacedRepetitionService,
+  })  : _adaptiveDifficultyService = adaptiveDifficultyService,
+        _spacedRepetitionService = spacedRepetitionService,
         super(const QuizState());
 
   final QuestionGeneratorService _questionGenerator;
