@@ -2892,6 +2892,46 @@ Vilken typ av korrelation har variablerna?
     String key,
     DifficultyLevel difficulty,
   ) {
+    if (key.startsWith('v2|')) {
+      final parts = key.substring(3).split('|');
+      if (parts.length >= 5) {
+        final opName = parts[0];
+        final op1 = int.tryParse(parts[1]);
+        final op2 = int.tryParse(parts[2]);
+        final correct = int.tryParse(parts[3]);
+        // Rejoin the rest in case displayQuestionText contains pipes
+        final displayQuestionText = parts.sublist(4).join('|');
+
+        if (op1 != null && op2 != null && correct != null) {
+          OperationType? opType;
+          for (final op in OperationType.values) {
+            if (op.name == opName && op != OperationType.mixed) {
+              opType = op;
+              break;
+            }
+          }
+
+          if (opType != null) {
+            String? promptText;
+            if (displayQuestionText != '$op1 ${opType.symbol} $op2 = ?') {
+              promptText = displayQuestionText;
+            }
+
+            return Question(
+              id: _uuid.v4(),
+              operationType: opType,
+              difficulty: difficulty,
+              operand1: op1,
+              operand2: op2,
+              correctAnswer: correct,
+              promptText: promptText,
+              wrongAnswers: _generateWrongAnswers(correct, 3),
+            );
+          }
+        }
+      }
+    }
+
     final pipeIndex = key.indexOf('|');
     if (pipeIndex < 1 || pipeIndex >= key.length - 1) return null;
 

@@ -6,17 +6,19 @@
 
 ---
 
-## Nuläge (2026-04-18)
+## Nuläge (2026-04-29)
 
-**Version:** 1.3.3+11 → bygger mot v1.3.4
-bygger mot v1.3.2  
-**Tester:** 190/190 ✅ (unit, inkl. 18 nya SRS-tester)  
-**flutter analyze:** 0 fel ✅  
-**Integration smoke:** 3/3 passed (FULL_SMOKE=false) ✅  
-**Release APK:** app-release.apk (73.1 MB) uppladdad till GitHub Release v1.3.1 ✅  
-**Git:** tagged v1.3.1 @ ce75334, pushed to origin ✅
+**Version:** 1.3.4 (Mergad & Taggad)
+**Tester:** Alla 190 tester passerar ?  
+**flutter analyze:** 0 fel ?  
+**Integration smoke:** 3/3 passed (FULL_SMOKE=false) ?  
+**Release APK:** Byggs och laddas upp just nu via GitHub Actions (v1.3.4) ?  
+**Git:** Taggad v1.3.4 och pushat till origin main ?
 
 ### Senaste leveranser
+
+**2026-04-29 - SRS V2 parsning**
+- Omfattande stöd för ordproblem, bråk, statistik och andra V2-problem i SRS (både 	`tryGenerateFromSrsKey` och `_reviewKeyForQuestion`). Operander/metadata packas numera som explicita delsträngar via ett `v2|`-prefix, med full bakåtkompatibilitet för de enkla ekvationssträngarna.
 
 **2026-04-18 — Teknisk sanering och Mocks-centralisering**
 - **Borttagning av Lottie/Rive**: Omfattande rensning av gamla Lottie- och Rive-beroenden från pubspec.yaml, testfiler och `tools/pipeline.py`. Endast procedurgenererade SVG-karaktärer är nu kvar som primär asset-runtime.
@@ -40,26 +42,21 @@ bygger mot v1.3.2
 **2026-04-18 — Analytics + SRS due-fråge-injektion**
 
 - `parent_mode_opened` och `quiz_abandoned` analytics-event
-- SRS due-fråge-injektion: `tryGenerateFromSrsKey`, cap `totalQuestions ~/3`, pendingDueKeys-flöde
+- SRS due-fråge-injektion: `t`tryGenerateFromSrsKey``, cap `totalQuestions ~/3`, pendingDueKeys-flöde
 - Integrationstester fixade (enstegs-onboarding 1/1)
 
 **2026-04-05 — Daily Challenge streak + combo-multiplikator**
 
 - `DailyChallengeState` med `isCompleted` och `streakCount`
-- `DailyChallengeCard` visar 🔥 N dagar-badge när `streak > 1`
+- `DailyChallengeCard` visar ?? N dagar-badge när `streak > 1`
 - Combo-multiplikator: 1.0x / 1.5× / 2.0× vid 3+/5+ rätt i rad
 
 ---
 
 ## Nästa steg
 
-### Kvar för v1.3.4-release
-- **Pusha Git tag (ex: 1.3.4)** för att avfyra den automatiserade Android APK-pipelinen.
-- Pipelinen .github/workflows/release.yml skapar ny release och laddar automatiskt upp APK.
-
-### SRS-begränsning att notera
-- `tryGenerateFromSrsKey` hanterar endast enkla aritmetikfrågor (t.ex. `4 × 7 = ?`)
-- Ordproblem, M4-statistik, sannolikhet, negativa tal etc. parseras inte → fallback till slumpmässig generering
+### Efter v1.3.4
+- Planera nästa funktion (t.ex. ytterligare djup i förklaringarna eller belöningssystemet).
 
 ---
 
@@ -70,3 +67,7 @@ Se `docs/DECISIONS_LOG.md` för fullständig historik. Nyckelbeslut:
 - Feature-first UI-struktur (`lib/features/`)
 - Hybrid adaptiv svårighet (micro + macro + cooldown)
 - Daily Challenge personaliseras via `getTodaysChallengeForUser` (mastery + operationDifficultySteps)
+
+
+
+

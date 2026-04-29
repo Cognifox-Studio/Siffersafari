@@ -132,5 +132,48 @@ void main() {
 
       expect(question, isNull);
     });
+
+    test('parsar giltig v2-nyckel för standardmönster utan promptText', () {
+      final question = service.tryGenerateFromSrsKey(
+        'v2|multiplication|4|7|28|4 × 7 = ?',
+        DifficultyLevel.easy,
+      );
+
+      expect(question, isNotNull);
+      expect(question!.operationType, OperationType.multiplication);
+      expect(question.operand1, 4);
+      expect(question.operand2, 7);
+      expect(question.correctAnswer, 28);
+      expect(question.promptText, isNull);
+    });
+
+    test('parsar giltig v2-nyckel med specialprompt', () {
+      final question = service.tryGenerateFromSrsKey(
+        'v2|addition|3|5|8|Anna har 3 äpplen, får 5 till. Totalt? = ?',
+        DifficultyLevel.easy,
+      );
+
+      expect(question, isNotNull);
+      expect(question!.operationType, OperationType.addition);
+      expect(question.operand1, 3);
+      expect(question.operand2, 5);
+      expect(question.correctAnswer, 8);
+      expect(question.promptText, 'Anna har 3 äpplen, får 5 till. Totalt? = ?');
+    });
+
+    test('parsar giltig v2-nyckel där promptText innehåller pipes', () {
+      final question = service.tryGenerateFromSrsKey(
+        'v2|multiplication|0|0|10|Tabell\nA | B\n1 | 2\nTotal? = ?',
+        DifficultyLevel.hard,
+      );
+
+      expect(question, isNotNull);
+      expect(question!.operationType, OperationType.multiplication);
+      expect(question.operand1, 0);
+      expect(question.operand2, 0);
+      expect(question.correctAnswer, 10);
+      expect(question.promptText, 'Tabell\nA | B\n1 | 2\nTotal? = ?');
+    });
   });
 }
+

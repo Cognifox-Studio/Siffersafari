@@ -144,6 +144,9 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
   String _reviewKeyForQuestion(Question question) {
     // Question IDs are per-session UUIDs, so use a stable content key instead.
+    if (question.promptText != null) {
+      return 'v2|${question.operationType.name}|${question.operand1}|${question.operand2}|${question.correctAnswer}|${question.displayQuestionText}';
+    }
     return '${question.operationType.name}|${question.displayQuestionText}';
   }
 
