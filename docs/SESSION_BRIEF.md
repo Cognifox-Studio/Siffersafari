@@ -17,6 +17,13 @@
 
 ### Senaste leveranser
 
+
+**2026-04-29 — Total Workspace Cleanup & Refactor (Faser 1-3)**
+- **Mappar:** Borttagning av tomma lib/presentation/screens och dialogs då feature-migreringen är klar.
+- **Rensning:** Loke, Ville och Skogshjalte flyttade till rtifacts/archive/ istället för produktionsträdet. Även 4 stycken oanvända/kass scripts arkiverades. 
+- **Refaktorering:** Stärkt Dependency Injection via Riverpod genom att ta bort GetIts LazySingleton för SpacedRepetitionService och istället skicka via Provider-constructor injection.
+- **Dokumentation:** Lade till tydliga READMEs under rtifacts/animation_preview/ och rtifacts/archive/ för agent/test-klarhet.
+
 **2026-04-29 - SRS V2 parsning**
 - Omfattande stöd för ordproblem, bråk, statistik och andra V2-problem i SRS (både 	`tryGenerateFromSrsKey` och `_reviewKeyForQuestion`). Operander/metadata packas numera som explicita delsträngar via ett `v2|`-prefix, med full bakåtkompatibilitet för de enkla ekvationssträngarna.
 
@@ -67,6 +74,7 @@ Se `docs/DECISIONS_LOG.md` för fullständig historik. Nyckelbeslut:
 - Feature-first UI-struktur (`lib/features/`)
 - Hybrid adaptiv svårighet (micro + macro + cooldown)
 - Daily Challenge personaliseras via `getTodaysChallengeForUser` (mastery + operationDifficultySteps)
+
 
 
 

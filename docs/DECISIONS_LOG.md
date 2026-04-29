@@ -1,4 +1,4 @@
-<!--
+﻿<!--
 typ: explanation
 syfte: Historik, varför vi gjort vissa arkitekturval
 uppdaterad: 2026-04-25
@@ -68,3 +68,6 @@ Princip: senaste datum vinner vid konflikt.
 - `docs/SERVICES_API.md` (aktuella servicekontrakt)
 - `docs/SESSION_BRIEF.md` (detaljerad sessionshistorik)
 ### 2026-04-25
+- Slutförde migration av features: borttagning av tomma foldrarna lib/presentation/screens och dialogs.
+- Arkiverade otestade experiment-karaktärer (Loke, Ville, Skogshjälte) för att minska repo-vikt och kontext-förvirring efter att Mascot-SVG fastställts 100%.
+- SpacedRepetitionService krävdes om från GetIt-ring till Riverpod DI (constructor-injection i notifier).
