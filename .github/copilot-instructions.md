@@ -68,6 +68,10 @@ Använd skill-floden när uppgiften matchar signalorden nedan.
 
 - QA och verifiering: `.github/skills/flutter-qa-guard/SKILL.md`
 	- Signalord: `verify`, `testa`, `QA`, `regression`, `analyze`
+- Pre-commit & Git Changes: `.github/skills/verify-git-changes/SKILL.md`
+	- Signalord: `pre-commit`, `commit`, `verify git changes`, `git status`
+- Difficulty Mix Audit: `.github/skills/difficulty-mix-audit/SKILL.md`
+	- Signalord: `difficulty audit`, `mix audit`, `svårighetsgrad`, `question generator`
 - Asset-generering: `.github/skills/asset-generation-runner/SKILL.md`
 	- Signalord: `generate assets`, `regenerera assets`, `uppdatera animation assets`, `sync generated files`
 - Karaktärspipeline: `.github/skills/game-character-pipeline/SKILL.md`
@@ -106,11 +110,12 @@ Detaljer finns i `docs/ARCHITECTURE.md` och `docs/PROJECT_STRUCTURE.md`.
 
 - **COPPA-compliance är obligatorisk** för detta barnspel (target: 6-12 år). Vid features som rör analytics, server-sync, dataexport eller användardata: läs `docs/PRIVACY_POLICY.md` och `/memories/repo/coppa_compliance_2026-03-04.md` först. Appen ska vara offline-first utan krav på konto eller molnsync.
 
-### Asset-runtime
+### Asset-runtime och Animation
 
-- **Mascot-runtime i produkt-UI är SVG-first.** Rive-blueprints och `.riv`-material i `artifacts/` är **research/future enhancement** – de är inte en aktiv runtime-dependency i huvudflödet och används inte i production UI.
+- **Mascot-runtime i produkt-UI är enbart SVG-baserad.** Vid rörelser och action-states (som "run") används *alltid* procedur-genererade biomekaniska SVG-skelett (frame-by-frame) – vi använder inte högupplösta statiska PNG-sekvenser för animation. Se minnet `/memories/repo/ville_biomechanics_skeleton_decision_2026-05-01.md`.
+- Rive-blueprints och `.riv`-material i `artifacts/` är **research/future enhancement** – de är inte en aktiv runtime-dependency i huvudflödet och används inte i production UI.
 - `.riv`-filer exporteras manuellt från Rive Editor om de ska användas. Script och blueprints genererar inte den slutliga `.riv`-filen automatiskt.
-- Lottie används för UI-effekter (konfetti, pulser), inte som fallback för mascot-runtime.
+- Lottie används endast för UI-effekter (konfetti, pulser), inte som fallback för mascot-runtime.
 
 ### Karaktärer och animation
 
