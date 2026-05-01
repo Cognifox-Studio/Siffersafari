@@ -68,6 +68,7 @@ flutter:
     # for app + integration-test builds.
     - assets/characters/mascot/config/
     - assets/characters/mascot/svg/
+    - assets/characters/ville/svg/
     - assets/images/
     - assets/images/brand/
     - assets/images/app_icon/

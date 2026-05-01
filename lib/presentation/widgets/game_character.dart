@@ -12,6 +12,7 @@ enum CharacterReaction {
   celebrate,
   userTap,
   screenChange,
+  run,
 }
 
 class GameCharacter extends StatefulWidget {
@@ -42,6 +43,7 @@ class _GameCharacterState extends State<GameCharacter>
   late final AnimationController _bobController;
   CharacterReaction _fallbackReaction = CharacterReaction.idle;
   int _reactionToken = 0;
+  bool _hasPrecached = false;
 
   @override
   void initState() {
@@ -55,6 +57,20 @@ class _GameCharacterState extends State<GameCharacter>
       duration: const Duration(milliseconds: 2000),
     )..repeat();
     _primeFallbackReaction();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_hasPrecached) {
+      _hasPrecached = true;
+      for (int i = 1; i <= 8; i++) {
+        final loader =
+            SvgAssetLoader('assets/characters/ville/svg/ville_run_$i.svg');
+        svg.cache
+            .putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
+      }
+    }
   }
 
   @override
@@ -81,6 +97,12 @@ class _GameCharacterState extends State<GameCharacter>
     _fallbackReaction = widget.reaction;
     _reactionController.duration = _fallbackDurationFor(widget.reaction);
     _bobController.stop();
+
+    if (_fallbackReaction == CharacterReaction.run) {
+      _reactionController.repeat();
+      return;
+    }
+
     _reactionController.forward(from: 0).whenCompleteOrCancel(() {
       if (!mounted) return;
       setState(() {
@@ -118,6 +140,12 @@ class _GameCharacterState extends State<GameCharacter>
 
     _bobController.stop();
     _reactionController.duration = _fallbackDurationFor(reaction);
+
+    if (reaction == CharacterReaction.run) {
+      _reactionController.repeat();
+      return;
+    }
+
     _reactionController.forward(from: 0).whenCompleteOrCancel(() {
       if (!mounted) return;
       if (activeToken != _reactionToken) return;
@@ -144,6 +172,8 @@ class _GameCharacterState extends State<GameCharacter>
         return const Duration(milliseconds: 360);
       case CharacterReaction.screenChange:
         return const Duration(milliseconds: 420);
+      case CharacterReaction.run:
+        return const Duration(milliseconds: 600); // 8 x 75ms = 600ms
     }
   }
 
@@ -156,15 +186,17 @@ class _GameCharacterState extends State<GameCharacter>
     return SizedBox(
       height: widget.height,
       child: GestureDetector(
-        onTap: () => _playFallbackReaction(CharacterReaction.userTap),
+        onTap: () {
+          if (_fallbackReaction == CharacterReaction.run) {
+            _playFallbackReaction(CharacterReaction.idle);
+          } else {
+            _playFallbackReaction(CharacterReaction.run);
+          }
+        },
         child: AnimatedBuilder(
           animation: Listenable.merge([_reactionController, _bobController]),
-          child: SvgPicture.asset(
-            _currentSvgPath(),
-            fit: widget.fit,
-            placeholderBuilder: (context) => _iconFallback(context),
-          ),
           builder: (context, child) {
+            final currentAsset = _currentAsset(context);
             final pose = _fallbackPoseFor(_reactionController.value);
             final offset = Offset(
               pose.dx * widget.height * 0.36,
@@ -180,7 +212,7 @@ class _GameCharacterState extends State<GameCharacter>
                   child: Transform.scale(
                     scale: pose.scale,
                     alignment: Alignment.center,
-                    child: child,
+                    child: currentAsset,
                   ),
                 ),
               ),
@@ -188,6 +220,23 @@ class _GameCharacterState extends State<GameCharacter>
           },
         ),
       ),
+    );
+  }
+
+  Widget _currentAsset(BuildContext context) {
+    if (_fallbackReaction == CharacterReaction.run) {
+      final frameIndex = (_reactionController.value * 8).floor() % 8 + 1;
+      return SvgPicture.asset(
+        'assets/characters/ville/svg/ville_run_$frameIndex.svg',
+        fit: widget.fit,
+        placeholderBuilder: (context) => _iconFallback(context),
+      );
+    }
+
+    return SvgPicture.asset(
+      _currentSvgPath(),
+      fit: widget.fit,
+      placeholderBuilder: (context) => _iconFallback(context),
     );
   }
 
@@ -284,6 +333,8 @@ class _GameCharacterState extends State<GameCharacter>
           rotation: -0.05 * eased,
           opacity: 1 - eased,
         );
+      case CharacterReaction.run:
+        return const _FallbackPose();
     }
   }
 

@@ -32,6 +32,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   DateTime? _questionStartTime;
   int? _selectedAnswer;
   bool _feedbackDialogVisible = false;
+  // Memoized answer options keyed by question id to prevent reshuffle on rebuild.
+  String? _cachedQuestionId;
+  List<int>? _cachedOptions;
+
+  List<int> _optionsForQuestion(Question question) {
+    if (_cachedQuestionId != question.id) {
+      _cachedQuestionId = question.id;
+      _cachedOptions = question.allAnswerOptions;
+    }
+    return _cachedOptions!;
+  }
 
   @override
   void initState() {
@@ -387,7 +398,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final buttonDisabledColor = themeCfg.disabledBackgroundColor;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
-    final options = question.allAnswerOptions;
+    final options = _optionsForQuestion(question);
 
     return LayoutBuilder(
       builder: (context, constraints) {

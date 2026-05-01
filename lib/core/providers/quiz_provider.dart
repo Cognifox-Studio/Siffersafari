@@ -422,10 +422,14 @@ class QuizNotifier extends StateNotifier<QuizState> {
       now,
     );
     final filtered = allDue.where((key) {
-      final pipeIdx = key.indexOf('|');
-      if (pipeIdx < 1) return false;
-      final opName = key.substring(0, pipeIdx);
       if (sessionOpType == OperationType.mixed) return true;
+      // v2-format: "v2|{opName}|..." — extract opName from segment [1]
+      // legacy format: "{opName}|..." — extract opName from segment [0]
+      final isV2 = key.startsWith('v2|');
+      final opName = isV2
+          ? key.split('|').elementAtOrNull(1) ?? ''
+          : key.substring(0, key.indexOf('|').clamp(0, key.length));
+      if (opName.isEmpty) return false;
       return opName == sessionOpType.name;
     }).toList();
 

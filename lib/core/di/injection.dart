@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -12,6 +11,7 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:siffersafari/domain/services/parent_pin_service.dart';
+
 import '../services/achievement_service.dart';
 import '../services/audio_service.dart';
 import '../services/quest_progression_service.dart';

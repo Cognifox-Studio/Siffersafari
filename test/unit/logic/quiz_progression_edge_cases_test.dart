@@ -1,6 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import '../../test_utils.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
@@ -8,6 +7,8 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
+
+import '../../test_utils.dart';
 
 void main() {
   group('[Unit] Quiz progression – Edge cases', () {

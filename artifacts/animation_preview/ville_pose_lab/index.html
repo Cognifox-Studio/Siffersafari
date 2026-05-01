@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ville Biomekanik-skelett</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #e8f5e9;
+      --ink: #24332a;
+      --muted: #607166;
+      --green: #2e7d32;
+      --blue: #1e88e5;
+      --line: #c8e6c9;
+      --shadow: rgba(38, 80, 47, 0.18);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 22px;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 50% 0%, #fbfffb 0, var(--bg) 56%, #d5ecd5 100%);
+    }
+
+    main {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      display: grid;
+      gap: 16px;
+      justify-items: center;
+    }
+
+    header {
+      display: grid;
+      gap: 8px;
+      text-align: center;
+    }
+
+    h1, h2, p { margin: 0; }
+
+    h1 {
+      font-size: clamp(24px, 5vw, 34px);
+      line-height: 1.1;
+    }
+
+    .lead {
+      max-width: 620px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .card {
+      width: min(540px, 100%);
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 3px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 18px 34px var(--shadow);
+    }
+
+    .card h2 {
+      font-size: 18px;
+      line-height: 1.25;
+      text-align: center;
+    }
+
+    .stage {
+      position: relative;
+      min-height: 430px;
+      overflow: hidden;
+      display: grid;
+      place-items: end center;
+      border-radius: 12px;
+      background: linear-gradient(#fff 0 71%, #c4ecc4 71% 100%);
+      isolation: isolate;
+    }
+
+    .stage::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 29%;
+      height: 4px;
+      background: #93d393;
+      opacity: .9;
+    }
+
+    .shadow {
+      position: absolute;
+      bottom: 72px;
+      width: 160px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(25, 63, 37, .16);
+      filter: blur(3px);
+      transform-origin: center;
+      z-index: 1;
+    }
+
+    .skeleton-wrap {
+      position: absolute;
+      bottom: 84px;
+      width: min(250px, 72vw);
+      height: 320px;
+      display: grid;
+      place-items: end center;
+      transform-origin: 50% 88%;
+      z-index: 3;
+    }
+
+    .motion-frame {
+      position: absolute;
+      width: 100%;
+      max-height: 320px;
+      object-fit: contain;
+      opacity: 0;
+      transform-origin: center bottom;
+      filter: drop-shadow(0 8px 10px rgba(32, 70, 40, .12));
+    }
+
+    .motion-frame.active { opacity: 1; }
+    .motion-frame.onion-prev,
+    .motion-frame.onion-next { opacity: 0; }
+
+    .show-onion .motion-frame.onion-prev,
+    .show-onion .motion-frame.onion-next {
+      opacity: .24;
+      filter: grayscale(1) drop-shadow(0 8px 10px rgba(32, 70, 40, .08));
+    }
+
+    .motion-frame.onion-prev { transform: translateX(-14px) scale(.98); }
+    .motion-frame.onion-next { transform: translateX(14px) scale(.98); }
+
+    .frame-meta {
+      display: grid;
+      gap: 4px;
+      min-height: 56px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #f5fbf5;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .frame-title {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .controls {
+      width: min(540px, 100%);
+      display: grid;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 12px 24px rgba(38, 80, 47, .12);
+    }
+
+    .control-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button, select {
+      min-height: 42px;
+      border: 0;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font: inherit;
+      font-weight: 750;
+      color: #fff;
+      background: var(--green);
+      cursor: pointer;
+    }
+
+    button.secondary { background: var(--blue); }
+    button.toggle[aria-pressed="true"] { outline: 4px solid rgba(251, 192, 45, .5); }
+    select { background: #455a64; }
+
+    .note {
+      width: min(540px, 100%);
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.72);
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .note strong { color: var(--ink); }
+
+    @media (max-width: 640px) {
+      body { padding: 14px; }
+      .stage { min-height: 390px; }
+      .skeleton-wrap { width: min(230px, 76vw); height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Ville Biomekanik-skelett</h1>
+      <p class="lead">Det här är den enda aktiva animationstråden: 8 SVG-frames med biomekanisk springcykel. PNG-/pose-swap-spåret är borttaget från labbet.</p>
+    </header>
+
+    <section class="controls" aria-label="Animation controls">
+      <div class="control-row">
+        <button type="button" id="playPause">Pausa</button>
+        <button type="button" class="secondary" id="prevFrame">Föregående frame</button>
+        <button type="button" class="secondary" id="nextFrame">Nästa frame</button>
+        <select id="speed" aria-label="Hastighet">
+          <option value="130">Långsam</option>
+          <option value="95" selected>Normal</option>
+          <option value="70">Snabb</option>
+        </select>
+        <button type="button" class="toggle" id="toggleOnion" aria-pressed="true">Onion skin</button>
+      </div>
+    </section>
+
+    <section class="card" aria-label="Biomekanik-skelett preview">
+      <h2>Biomekanik-skelett</h2>
+      <div id="stage" class="stage show-onion">
+        <div class="shadow" id="shadow"></div>
+        <div class="skeleton-wrap" id="skeletonFrames"></div>
+      </div>
+      <div class="frame-meta">
+        <div class="frame-title" id="frameTitle"></div>
+        <div id="frameDescription"></div>
+      </div>
+    </section>
+
+    <p class="note"><strong>Beslut:</strong> gameplay-animationen använder biomekanik-skelettet. Detaljerade PNG-spår finns inte längre i labbet eller i appens aktiva asset-lista.</p>
+  </main>
+
+  <script>
+    const frameData = [
+      { name: '1 Kontakt', note: 'Främre foten hittar marken, överkroppen lutar in i farten.', shadow: 'scaleX(1.04)', opacity: '.18' },
+      { name: '2 Squash', note: 'Tyngden går ner genom benet, kroppen trycks ihop.', shadow: 'scaleX(1.2)', opacity: '.22' },
+      { name: '3 Passering', note: 'Bakre benet passerar under kroppen och armarna byter riktning.', shadow: 'scaleX(1)', opacity: '.16' },
+      { name: '4 Hover', note: 'Kroppen lättar, benet driver fram och hatten kan släpa efter.', shadow: 'scaleX(.78)', opacity: '.08' },
+      { name: '5 Kontakt', note: 'Andra foten tar mark. Samma mekanik speglas.', shadow: 'scaleX(1.04)', opacity: '.18' },
+      { name: '6 Squash', note: 'Ny viktfas. Här ska kroppen kännas tung men inte stel.', shadow: 'scaleX(1.2)', opacity: '.22' },
+      { name: '7 Passering', note: 'Ben och armar korsar mitten igen.', shadow: 'scaleX(1)', opacity: '.16' },
+      { name: '8 Hover', note: 'Sista svävfasen innan loopen landar tillbaka på frame 1.', shadow: 'scaleX(.78)', opacity: '.08' },
+    ];
+
+    const stage = document.getElementById('stage');
+    const skeletonFrames = document.getElementById('skeletonFrames');
+    const shadow = document.getElementById('shadow');
+    const frameTitle = document.getElementById('frameTitle');
+    const frameDescription = document.getElementById('frameDescription');
+    const playPause = document.getElementById('playPause');
+    const speed = document.getElementById('speed');
+    const toggleOnion = document.getElementById('toggleOnion');
+    let frame = 0;
+    let playing = true;
+    let timer = null;
+
+    for (let index = 0; index < frameData.length; index += 1) {
+      const image = document.createElement('img');
+      image.className = 'motion-frame';
+      image.src = `../../../assets/characters/ville/svg/ville_run_${index + 1}.svg`;
+      image.alt = `Ville run frame ${index + 1}`;
+      skeletonFrames.appendChild(image);
+    }
+
+    const frames = Array.from(document.querySelectorAll('.motion-frame'));
+
+    function setFrame(nextFrame) {
+      frame = (nextFrame + frameData.length) % frameData.length;
+      const previous = (frame + frameData.length - 1) % frameData.length;
+      const next = (frame + 1) % frameData.length;
+
+      frames.forEach((image, index) => {
+        image.classList.toggle('active', index === frame);
+        image.classList.toggle('onion-prev', index === previous);
+        image.classList.toggle('onion-next', index === next);
+      });
+
+      const data = frameData[frame];
+      shadow.style.transform = data.shadow;
+      shadow.style.opacity = data.opacity;
+      frameTitle.textContent = data.name;
+      frameDescription.textContent = data.note;
+    }
+
+    function restartTimer() {
+      clearInterval(timer);
+      if (!playing) return;
+      timer = setInterval(() => setFrame(frame + 1), Number(speed.value));
+    }
+
+    playPause.addEventListener('click', () => {
+      playing = !playing;
+      playPause.textContent = playing ? 'Pausa' : 'Spela';
+      restartTimer();
+    });
+
+    document.getElementById('prevFrame').addEventListener('click', () => {
+      playing = false;
+      playPause.textContent = 'Spela';
+      restartTimer();
+      setFrame(frame - 1);
+    });
+
+    document.getElementById('nextFrame').addEventListener('click', () => {
+      playing = false;
+      playPause.textContent = 'Spela';
+      restartTimer();
+      setFrame(frame + 1);
+    });
+
+    speed.addEventListener('change', restartTimer);
+
+    toggleOnion.addEventListener('click', () => {
+      const nextState = toggleOnion.getAttribute('aria-pressed') !== 'true';
+      toggleOnion.setAttribute('aria-pressed', String(nextState));
+      stage.classList.toggle('show-onion', nextState);
+    });
+
+    setFrame(0);
+    restartTimer();
+  </script>
+</body>
+</html>
