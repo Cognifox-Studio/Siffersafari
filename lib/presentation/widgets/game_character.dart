@@ -22,7 +22,7 @@ class GameCharacter extends StatefulWidget {
     this.reactionNonce = 0,
     this.height = 96,
     this.fit = BoxFit.contain,
-    this.characterId = CharacterId.mascot,
+    this.characterId = CharacterId.loke,
   });
 
   final CharacterReaction reaction;
@@ -30,7 +30,7 @@ class GameCharacter extends StatefulWidget {
   final double height;
   final BoxFit fit;
 
-  /// Which character to display. Defaults to the original mascot.
+  /// Which character to display. Defaults to loke.
   final CharacterId characterId;
 
   @override
@@ -43,7 +43,6 @@ class _GameCharacterState extends State<GameCharacter>
   late final AnimationController _bobController;
   CharacterReaction _fallbackReaction = CharacterReaction.idle;
   int _reactionToken = 0;
-  bool _hasPrecached = false;
 
   @override
   void initState() {
@@ -57,20 +56,6 @@ class _GameCharacterState extends State<GameCharacter>
       duration: const Duration(milliseconds: 2000),
     )..repeat();
     _primeFallbackReaction();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_hasPrecached) {
-      _hasPrecached = true;
-      for (int i = 1; i <= 8; i++) {
-        final loader =
-            SvgAssetLoader('assets/characters/ville/svg/ville_run_$i.svg');
-        svg.cache
-            .putIfAbsent(loader.cacheKey(null), () => loader.loadBytes(null));
-      }
-    }
   }
 
   @override
@@ -187,17 +172,17 @@ class _GameCharacterState extends State<GameCharacter>
       height: widget.height,
       child: GestureDetector(
         onTap: () {
-          if (_fallbackReaction == CharacterReaction.run) {
-            _playFallbackReaction(CharacterReaction.idle);
-          } else {
-            _playFallbackReaction(CharacterReaction.run);
-          }
+          _playFallbackReaction(CharacterReaction.userTap);
         },
         child: AnimatedBuilder(
           animation: Listenable.merge([_reactionController, _bobController]),
           builder: (context, child) {
             final currentAsset = _currentAsset(context);
+
             final pose = _fallbackPoseFor(_reactionController.value);
+            // Using standard scale
+            final adjustedScale = pose.scale * 1.0;
+
             final offset = Offset(
               pose.dx * widget.height * 0.36,
               pose.dy * widget.height * 0.24,
@@ -210,7 +195,7 @@ class _GameCharacterState extends State<GameCharacter>
                 child: Transform.rotate(
                   angle: pose.rotation,
                   child: Transform.scale(
-                    scale: pose.scale,
+                    scale: adjustedScale,
                     alignment: Alignment.center,
                     child: currentAsset,
                   ),
@@ -224,26 +209,25 @@ class _GameCharacterState extends State<GameCharacter>
   }
 
   Widget _currentAsset(BuildContext context) {
-    if (_fallbackReaction == CharacterReaction.run) {
-      final frameIndex = (_reactionController.value * 8).floor() % 8 + 1;
-      return SvgPicture.asset(
-        'assets/characters/ville/svg/ville_run_$frameIndex.svg',
+    final assetPath = _currentSvgPath();
+    if (assetPath.endsWith('.png')) {
+      return Image.asset(
+        assetPath,
         fit: widget.fit,
-        placeholderBuilder: (context) => _iconFallback(context),
+        errorBuilder: (context, error, stackTrace) => _iconFallback(context),
       );
     }
 
     return SvgPicture.asset(
-      _currentSvgPath(),
+      assetPath,
       fit: widget.fit,
       placeholderBuilder: (context) => _iconFallback(context),
     );
   }
 
   String _currentSvgPath() {
-    if (_fallbackReaction == CharacterReaction.celebrate &&
-        widget.characterId == CharacterId.mascot) {
-      return 'assets/characters/mascot/svg/mascot_composite_celebrate.svg';
+    if (widget.characterId == CharacterId.loke) {
+      return 'assets/characters/loke/png/loke.png';
     }
     return AssetPaths.characterCompositeSvg(widget.characterId);
   }
@@ -252,8 +236,14 @@ class _GameCharacterState extends State<GameCharacter>
     final eased = Curves.easeInOut.transform(t.clamp(0.0, 1.0));
     switch (_fallbackReaction) {
       case CharacterReaction.idle:
-        final bob = math.sin(_bobController.value * 2 * math.pi);
-        return _FallbackPose(dy: -0.04 * bob);
+        final time = _bobController.value * 2 * math.pi;
+        final bob = math.sin(time);
+        final scaleBob = math.cos(time);
+        return _FallbackPose(
+          dy: -0.04 * bob,
+          scale: 1.0 + 0.04 * scaleBob,
+          rotation: 0.02 * bob,
+        );
       case CharacterReaction.enter:
         return _FallbackPose(
           scale:

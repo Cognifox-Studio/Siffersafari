@@ -159,7 +159,7 @@ class _StartupSplashGateState extends State<StartupSplashGate>
     }
 
     return AnimatedSwitcher(
-      duration: _isWidgetTest ? Duration.zero : _switchDuration,
+      duration: _switchDuration,
       switchInCurve: Curves.easeInOutCubic,
       switchOutCurve: Curves.easeInOutCubic,
       transitionBuilder: (child, animation) {
@@ -261,7 +261,14 @@ class _StartupSplashScaffold extends StatelessWidget {
                     child: ScaleTransition(
                       scale: studioScale,
                       child: RepaintBoundary(
-                        child: _StudioLogo(size: imageSize),
+                        child: Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: _SplashImage(
+                            assetPath: 'assets/images/brand/cognifox_logo.png',
+                            size: imageSize,
+                            fallbackIcon: Icons.auto_awesome,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -275,7 +282,11 @@ class _StartupSplashScaffold extends StatelessWidget {
                       child: ScaleTransition(
                         scale: appScale,
                         child: RepaintBoundary(
-                          child: _AppIcon(size: imageSize),
+                          child: _SplashImage(
+                            assetPath: 'assets/images/app_icon/icon_source.png',
+                            size: imageSize,
+                            fallbackIcon: Icons.calculate,
+                          ),
                         ),
                       ),
                     ),
@@ -290,46 +301,27 @@ class _StartupSplashScaffold extends StatelessWidget {
   }
 }
 
-class _StudioLogo extends StatelessWidget {
-  const _StudioLogo({required this.size});
+class _SplashImage extends StatelessWidget {
+  const _SplashImage({
+    required this.assetPath,
+    required this.size,
+    required this.fallbackIcon,
+  });
 
+  final String assetPath;
   final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    final onColor = Colors.white;
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Image.asset(
-        'assets/images/brand/cognifox_logo.png',
-        width: size,
-        height: size,
-        fit: BoxFit.contain,
-        gaplessPlayback: true,
-        errorBuilder: (context, error, stackTrace) {
-          return Icon(Icons.auto_awesome, size: 120, color: onColor);
-        },
-      ),
-    );
-  }
-}
-
-class _AppIcon extends StatelessWidget {
-  const _AppIcon({required this.size});
-
-  final double size;
+  final IconData fallbackIcon;
 
   @override
   Widget build(BuildContext context) {
     return Image.asset(
-      'assets/images/app_icon/icon_source.png',
+      assetPath,
       width: size,
       height: size,
       fit: BoxFit.contain,
       gaplessPlayback: true,
-      errorBuilder: (context, error, stackTrace) {
-        return const Icon(Icons.calculate, size: 120, color: Colors.white);
-      },
+      errorBuilder: (context, error, stackTrace) =>
+          Icon(fallbackIcon, size: 120, color: Colors.white),
     );
   }
 }

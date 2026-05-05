@@ -1,11 +1,11 @@
-<!--
+﻿<!--
 typ: reference
 syfte: Faktisk mapp- och filstruktur
-uppdaterad: 2026-04-25
+uppdaterad: 2026-05-02
 -->
-﻿# Project Structure (As-Is)
+# Project Structure (As-Is)
 
-Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-04-04).
+Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-02).
 
 ## Root
 
@@ -57,9 +57,8 @@ Byggartefakter som inte ar kallkod:
   - `onboarding/presentation/screens/`: `onboarding_screen.dart`, `initial_profile_setup_screen.dart`
   - `settings/presentation/screens/`: `settings_screen.dart`, `privacy_policy_screen.dart`
 - `presentation/`
-  - `screens/`: tom (alla skarmar ar nu i features/)
-  - `dialogs/`: tom (alla dialoger ar nu i features/)
   - `widgets/`: ateranvandbara UI-komponenter: `game_character.dart`, `mascot_reaction_view.dart`, `progress_indicator_bar.dart`, `star_rating.dart`, `themed_background_scaffold.dart`
+  - historiska `screens/` och `dialogs/` finns inte langre; ny UI ligger i `lib/features/**/presentation/**`
 
 ## Namngivningsbaseline
 
@@ -67,7 +66,7 @@ Byggartefakter som inte ar kallkod:
 - Feature-agd UI ligger i featuremappen i stallet for `lib/presentation/widgets/`.
 - `lib/presentation/widgets/` ar reserverad for verkligt delad UI.
 
-## Viktiga skarmar (med faktisk sökväg)
+## Viktiga skarmar (med faktisk sÃ¶kvÃ¤g)
 
 - `lib/app/bootstrap/presentation/startup_splash_gate.dart`
 - `lib/app/bootstrap/presentation/startup_flow_gate.dart`
@@ -86,33 +85,33 @@ Byggartefakter som inte ar kallkod:
 
 ## Providers (exempel)
 
-**State providers (för presentation-lagret):**
-- `userProvider` – UserState och UserNotifier
-- `quizProvider` – QuizState och QuizNotifier
-- `dailyChallengeProvider` (family, per userId) – DailyChallengeState och DailyChallengeNotifier
-- `storyProgressProvider` – StoryProgress beräknad från quest-status
-- `parentSettingsProvider` – ParentSettings
+**State providers (fÃ¶r presentation-lagret):**
+- `userProvider` â€“ UserState och UserNotifier
+- `quizProvider` â€“ QuizState och QuizNotifier
+- `dailyChallengeProvider` (family, per userId) â€“ DailyChallengeState och DailyChallengeNotifier
+- `storyProgressProvider` â€“ StoryProgress berÃ¤knad frÃ¥n quest-status
+- `parentSettingsProvider` â€“ ParentSettings
 
 **Settings providers:**
-- `wordProblemsEnabledProvider` – toggle för textuppgifter
-- `missingNumberEnabledProvider` – toggle för missing-number varianter
-- `spacedRepetitionEnabledProvider` – toggle för spaced repetition
+- `wordProblemsEnabledProvider` â€“ toggle fÃ¶r textuppgifter
+- `missingNumberEnabledProvider` â€“ toggle fÃ¶r missing-number varianter
+- `spacedRepetitionEnabledProvider` â€“ toggle fÃ¶r spaced repetition
 
-**Service providers (används via DI):**
-- `appAnalyticsProvider` – AppAnalyticsService
-- `appThemeProvider` – AppTheme
-- `audioServiceProvider` – AudioService
-- `adaptiveDifficultyServiceProvider` – AdaptiveDifficultyService
-- `feedbackServiceProvider` – FeedbackService
-- `achievementServiceProvider` – AchievementService
-- `dailyChallengeServiceProvider` – DailyChallengeService
-- `questionGeneratorServiceProvider` – QuestionGeneratorService
-- `questProgressionServiceProvider` – QuestProgressionService
-- `storyProgressionServiceProvider` – StoryProgressionService
-- `parentPinServiceProvider` – ParentPinService
-- `dataExportServiceProvider` – DataExportService
-- `spacedRepetitionServiceProvider` – SpacedRepetitionService
-- `localStorageRepositoryProvider` – LocalStorageRepository
+**Service providers (anvÃ¤nds via DI):**
+- `appAnalyticsProvider` â€“ AppAnalyticsService
+- `appThemeProvider` â€“ AppTheme
+- `audioServiceProvider` â€“ AudioService
+- `adaptiveDifficultyServiceProvider` â€“ AdaptiveDifficultyService
+- `feedbackServiceProvider` â€“ FeedbackService
+- `achievementServiceProvider` â€“ AchievementService
+- `dailyChallengeServiceProvider` â€“ DailyChallengeService
+- `questionGeneratorServiceProvider` â€“ QuestionGeneratorService
+- `questProgressionServiceProvider` â€“ QuestProgressionService
+- `storyProgressionServiceProvider` â€“ StoryProgressionService
+- `parentPinServiceProvider` â€“ ParentPinService
+- `dataExportServiceProvider` â€“ DataExportService
+- `spacedRepetitionServiceProvider` â€“ SpacedRepetitionService
+- `localStorageRepositoryProvider` â€“ LocalStorageRepository
 
 ## test/
 
@@ -131,9 +130,7 @@ Byggartefakter som inte ar kallkod:
 
 ## assets/
 
-- `characters/mascot/` (svg, config)
-- `characters/loke/` (svg, spec)
-- `animations/` (ovriga animation-JSON/referenser, inte godkand mascot-runtime)
+- `characters/loke/` (png)
 - `images/` (teman/brand/icon)
 - `sounds/` (wav-effekter/musik)
 
@@ -142,12 +139,11 @@ Byggartefakter som inte ar kallkod:
 Exempel:
 - `flutter_pixel6.ps1`
 - `extract_integration_screenshots.ps1`
-- `generate_mascot_svg_parts.dart`
 - `generate_android_launcher_icons.dart`
 
 ## Aktuell animationsregel
 
-- Karaktärer och animationer hanteras enbart via genererade SVG-layers, inga `Lottie` eller `Rive` assets tillåts.
+- Karaktärer och animationer hanteras enbart via procedurgenererade transformationer på PNG, varken `SVG`, `Lottie` eller `Rive` assets tillåts som core mascot-runtime.
 
 ## .github/
 
@@ -169,3 +165,4 @@ Exempel:
 - `docs/ARCHITECTURE.md`
 - `docs/SERVICES_API.md`
 - `docs/README.md`
+

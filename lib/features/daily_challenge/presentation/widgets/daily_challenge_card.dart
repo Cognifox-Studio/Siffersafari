@@ -133,7 +133,11 @@ class DailyChallengeCard extends ConsumerWidget {
                 foregroundColor: onPrimary,
                 side: BorderSide(color: accentColor),
               ),
-              icon: const Icon(Icons.flash_on_rounded),
+              icon: Image.asset(
+                'assets/images/ui/ic_ui_flash.png',
+                width: 24,
+                height: 24,
+              ),
               label: const Text('Spela'),
             ),
           ],

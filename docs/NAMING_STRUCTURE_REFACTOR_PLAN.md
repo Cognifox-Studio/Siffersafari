@@ -1,6 +1,6 @@
 <!--
-typ: how-to
-syfte: Genomför namn- och strukturstädning stegvis utan att bryta imports, tester eller onboarding.
+typ: explanation
+syfte: Historisk migrationsplan och naming-principer for namn- och strukturstadning.
 uppdaterad: 2026-04-18
 -->
 
@@ -155,7 +155,6 @@ Implementera i denna ordning:
    - `test/widget/daily_challenge_card_test.dart`
    - `test/unit/services/daily_challenge_streak_test.dart`
    - `docs/SERVICES_API.md`
-   - `docs/Plan.md`
 
 Verifiering:
 
@@ -190,7 +189,6 @@ Rekommenderade omdöpningar:
 - `StoryProgressionService.build(...)` -> `createStoryProgress(...)`
 - `OnboardingScreen._finish()` -> `_completeOnboardingAndSaveProfile()`
 - `QuizNotifier.goToNextQuestion()` -> `advanceToNextQuestion()`
-- `AppUpdateService.installUpdate(...)` -> `startUpdateInstallation(...)`
 
 Verifiering:
 

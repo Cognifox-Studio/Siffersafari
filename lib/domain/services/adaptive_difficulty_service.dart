@@ -53,11 +53,9 @@ class AdaptiveDifficultyService {
     final microStepDelta = _microStepDelta(recentResults);
     final macroStepDelta = _macroStepDelta(recentResults);
 
-    if (microStepDelta != 0 && microStepDelta == macroStepDelta) {
-      return (clampedCurrentStep + microStepDelta).clamp(minStep, maxStep);
-    }
-
-    if (microStepDelta == 0 && macroStepDelta != 0) {
+    // Apply change if macro is active AND micro either agrees or is neutral
+    if (macroStepDelta != 0 &&
+        (microStepDelta == 0 || microStepDelta == macroStepDelta)) {
       return (clampedCurrentStep + macroStepDelta).clamp(minStep, maxStep);
     }
 
@@ -94,7 +92,6 @@ class AdaptiveDifficultyService {
       case DifficultyLevel.easy:
         return DifficultyLevel.medium;
       case DifficultyLevel.medium:
-        return DifficultyLevel.hard;
       case DifficultyLevel.hard:
         return DifficultyLevel.hard;
     }
@@ -103,7 +100,6 @@ class AdaptiveDifficultyService {
   DifficultyLevel _decreaseDifficulty(DifficultyLevel current) {
     switch (current) {
       case DifficultyLevel.easy:
-        return DifficultyLevel.easy;
       case DifficultyLevel.medium:
         return DifficultyLevel.easy;
       case DifficultyLevel.hard:
@@ -127,12 +123,12 @@ class AdaptiveDifficultyService {
   }
 
   int _microStepDelta(List<bool> recentResults) {
-    if (_trailingCorrectCount(recentResults) >=
+    if (_trailingCount(recentResults, true) >=
         LearningConstants.consecutiveCorrectForIncrease) {
       return 1;
     }
 
-    if (_trailingIncorrectCount(recentResults) >=
+    if (_trailingCount(recentResults, false) >=
         LearningConstants.consecutiveIncorrectForDecrease) {
       return -1;
     }
@@ -140,22 +136,10 @@ class AdaptiveDifficultyService {
     return 0;
   }
 
-  int _trailingCorrectCount(List<bool> recentResults) {
+  int _trailingCount(List<bool> recentResults, bool targetValue) {
     var count = 0;
     for (var i = recentResults.length - 1; i >= 0; i--) {
-      if (recentResults[i]) {
-        count++;
-      } else {
-        break;
-      }
-    }
-    return count;
-  }
-
-  int _trailingIncorrectCount(List<bool> recentResults) {
-    var count = 0;
-    for (var i = recentResults.length - 1; i >= 0; i--) {
-      if (!recentResults[i]) {
+      if (recentResults[i] == targetValue) {
         count++;
       } else {
         break;

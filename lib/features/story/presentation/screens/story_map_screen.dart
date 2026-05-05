@@ -518,7 +518,12 @@ class _StopCard extends StatelessWidget {
               color: visual.color.withValues(alpha: 0.22),
               shape: BoxShape.circle,
             ),
-            child: Icon(visual.icon, color: onPrimary),
+            child: visual.assetPath != null
+                ? Center(
+                    child:
+                        Image.asset(visual.assetPath!, width: 28, height: 28),
+                  )
+                : Icon(visual.icon, color: onPrimary),
           ),
           const SizedBox(width: AppConstants.defaultPadding),
           Expanded(
@@ -715,6 +720,29 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                   ),
                                 ),
                               ),
+
+                            // 🏕️ Illustration for baslager landmark
+                            if (node.sceneTag == 'baslager')
+                              Positioned(
+                                bottom: 6,
+                                child: Image.asset(
+                                  'assets/images/story/campfire.png',
+                                  width: 48,
+                                  height: 48,
+                                ),
+                              ),
+
+                            // 🛖 Illustration for koja landmark
+                            if (node.sceneTag == 'koja')
+                              Positioned(
+                                bottom: 6,
+                                child: Image.asset(
+                                  'assets/images/story/cabin.png',
+                                  width: 54,
+                                  height: 54,
+                                ),
+                              ),
+
                             // Node circle drawn via paint – label only here
                             Positioned(
                               bottom: 0,
@@ -998,11 +1026,13 @@ class _StatusChip extends StatelessWidget {
 
 class _NodeVisual {
   const _NodeVisual({
-    required this.icon,
+    this.icon,
+    this.assetPath,
     required this.color,
   });
 
-  final IconData icon;
+  final IconData? icon;
+  final String? assetPath;
   final Color color;
 
   factory _NodeVisual.forSceneTag(
@@ -1014,7 +1044,12 @@ class _NodeVisual {
     switch (sceneTag) {
       case 'baslager':
         return _NodeVisual(
-          icon: Icons.cabin,
+          assetPath: 'assets/images/story/campfire.png',
+          color: primaryColor.withValues(alpha: 0.88),
+        );
+      case 'koja':
+        return _NodeVisual(
+          assetPath: 'assets/images/story/cabin.png',
           color: primaryColor.withValues(alpha: 0.88),
         );
       case 'frukt':

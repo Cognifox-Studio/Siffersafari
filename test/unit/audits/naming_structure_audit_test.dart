@@ -73,25 +73,13 @@ const _excludedPaths = {
 };
 
 const _canonicalPaths = {
-  '.github/prompts/continue-session.prompt.md',
-  '.github/prompts/qa-quick-select.prompt.md',
-  '.github/prompts/siffersafari-team.prompt.md',
-  '.github/prompts/workspace-cleanup-plan.prompt.md',
   'integration_test/integration_test_utils.dart',
-  'artifacts/mascot_rive_guide.md',
-  'artifacts/loke_rive_guide.md',
-  'artifacts/skogshjalte_rive_guide.md',
-  'artifacts/creature_rig.riv',
-  'artifacts/puppet_rig.riv',
-  'artifacts/simple_character_rig.riv',
-  'artifacts/state_machine_character_demo.riv',
   'lib/features/quiz/presentation/widgets/answer_button.dart',
   'lib/features/quiz/presentation/widgets/question_card.dart',
   'lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart',
   'lib/features/daily_challenge/providers/daily_challenge_provider.dart',
   'lib/core/config/quiz_feature_settings.dart',
   'lib/presentation/widgets/game_character.dart',
-  'lib/presentation/widgets/mascot_reaction_view.dart',
   'lib/app/bootstrap/presentation/startup_flow_gate.dart',
 };
 
@@ -109,8 +97,6 @@ const _retiredPatterns = {
   'Puppet Rig.riv',
   'Simple Character Rig.riv',
   'State Machine Character Demo.riv',
-  'lib/presentation/widgets/mascot_character.dart',
-  'lib/presentation/widgets/theme_mascot.dart',
   'lib/presentation/widgets/themed_character.dart',
   'lib/presentation/widgets/answer_button.dart',
   'lib/presentation/widgets/question_card.dart',

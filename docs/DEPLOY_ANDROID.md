@@ -221,28 +221,21 @@ ls -lh build/app/outputs/flutter-apk/app-release.apk
 # Target: < 50 MB (helst < 30 MB)
 ```
 
-### OTA-verifiering pa fysisk enhet (release-gate nar OTA andrats)
+### Uppdateringsmodell for release
 
-Krav: Denna checklista ska vara gron innan release bedoms som full go nar OTA-flodet andrats.
+Produktappen anvander inte langre OTA- eller in-app update-floden. Distribution och uppdateringar sker via Google Play, i linje med barnpolicy/COPPA-krav.
 
-1. Enhet: fysisk Android (inte emulator), med tidigare appversion installerad.
-2. Data-seed: skapa minst en profil och verifiera att statistik, PIN och quizhistorik finns.
-3. Oppna Foraldralage > Appuppdatering och tryck pa `Sok uppdatering`.
-4. Bekrafta att ny version hittas och att informationsdialog visas.
-5. Starta nedladdning och verifiera att installationsprompt visas efter nedladdning.
-6. Installera ovanpa befintlig app (ingen avinstallation fore uppdatering).
-7. Efter uppdatering: verifiera dataretention:
+Det betyder:
+
+1. Ingen release-gate for `ota_update` eller installationsprompt behovs.
+2. Verifiering av uppgradering sker i forsta hand via Play-sparet eller via vanlig installation ovanpa befintlig appversion nar migration/dataretention ska testas.
+3. Om du testar uppgradering manuellt, fokusera pa dataretention:
    - profil(er) kvar
    - foraldra-PIN kvar
    - statistik/poang kvar
    - quizhistorik kvar
-8. Verifiera OTA-kortets statusmeddelanden:
-   - ny version tillganglig
-   - senaste version installerad
-   - felmeddelande vid misslyckad release-kontroll
-   - checksum-status visas (aktiv eller saknas metadata)
 
-No-go: om installationsprompt inte visas, eller om dataretention misslyckas.
+No-go: om uppgradering eller ominstallation over befintlig version leder till tappad lokal data.
 
 ---
 

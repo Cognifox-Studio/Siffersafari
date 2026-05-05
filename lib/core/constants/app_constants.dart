@@ -1,6 +1,7 @@
 import 'dart:ui' show Offset;
 
 import 'package:siffersafari/domain/constants/learning_constants.dart';
+
 import 'achievement_ids.dart';
 import 'storage_constants.dart';
 import 'ui_constants.dart';
@@ -17,7 +18,7 @@ class AppConstants {
   static const String appName = 'Siffersafari';
 
   // Mascot
-  static const String mascotName = 'Maskoten';
+  static const String mascotName = 'Loke';
 
   // Session Configuration
   static const int questionsPerSession = 10;

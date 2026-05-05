@@ -121,7 +121,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget build(BuildContext context) {
     final quizState = ref.watch(quizProvider);
     final session = quizState.session;
-    final feedback = quizState.feedback;
 
     final themeCfg = ref.watch(appThemeConfigProvider);
     final scheme = Theme.of(context).colorScheme;
@@ -134,15 +133,50 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final lightTextColor = onPrimary;
     final mutedTextColor = onPrimary.withValues(alpha: AppOpacities.mutedText);
 
-    if (session == null || session.currentQuestion == null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        context.pushAndRemoveUntilSmooth(
-          const HomeScreen(),
-          (route) => false,
-        );
-      });
+    ref.listen(
+      quizProvider.select((state) => state.session),
+      (prev, session) {
+        if (session == null || session.currentQuestion == null) {
+          context.pushAndRemoveUntilSmooth(
+            const HomeScreen(),
+            (route) => false,
+          );
+        }
+      },
+    );
 
+    ref.listen(
+      quizProvider.select((state) => state.feedback),
+      (prev, feedback) {
+        if (feedback != null &&
+            _selectedAnswer != null &&
+            !_feedbackDialogVisible) {
+          _feedbackDialogVisible = true;
+
+          final currentSession = ref.read(quizProvider).session;
+          final isLastQuestion = currentSession != null &&
+              currentSession.currentQuestionIndex >=
+                  currentSession.totalQuestions - 1;
+
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => FeedbackDialog(
+              feedback: feedback,
+              onContinue: _handleNextQuestion,
+              continueLabel: isLastQuestion ? 'Se resultat' : 'Nästa',
+              continueButtonColor: primaryActionColor,
+              dialogBackgroundColor: cardColor,
+              messageTextColor: mutedTextColor,
+            ),
+          ).whenComplete(() {
+            _feedbackDialogVisible = false;
+          });
+        }
+      },
+    );
+
+    if (session == null || session.currentQuestion == null) {
       return const ThemedBackgroundScaffold(
         body: Center(
           child: CircularProgressIndicator(),
@@ -153,30 +187,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final question = session.currentQuestion!;
     final progress =
         (session.currentQuestionIndex + 1) / session.totalQuestions;
-    final isLastQuestion =
-        session.currentQuestionIndex >= session.totalQuestions - 1;
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (feedback != null &&
-          _selectedAnswer != null &&
-          !_feedbackDialogVisible) {
-        _feedbackDialogVisible = true;
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => FeedbackDialog(
-            feedback: feedback,
-            onContinue: _handleNextQuestion,
-            continueLabel: isLastQuestion ? 'Se resultat' : 'Nästa',
-            continueButtonColor: primaryActionColor,
-            dialogBackgroundColor: cardColor,
-            messageTextColor: mutedTextColor,
-          ),
-        ).whenComplete(() {
-          _feedbackDialogVisible = false;
-        });
-      }
-    });
 
     return ThemedBackgroundScaffold(
       appBar: AppBar(

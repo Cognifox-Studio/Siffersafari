@@ -87,9 +87,9 @@ class StoryProgressionService {
       'soltempel',
     ),
     _LandmarkData(
-      'Lägercirkeln',
+      'Trädkojan',
       'Expeditionen samlar kraft inför nästa etapp.',
-      'baslager',
+      'koja',
     ),
     _LandmarkData(
       'Mangolunden',

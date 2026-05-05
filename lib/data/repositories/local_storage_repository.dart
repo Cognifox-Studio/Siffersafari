@@ -146,57 +146,24 @@ class LocalStorageRepository {
   List<Map<String, dynamic>> getQuizHistory(String userId, {int? limit}) {
     if (limit != null && limit <= 0) return const [];
 
-    // Fast path: when limit is small (typical UI use), avoid sorting the full
-    // history. Keep only the newest [limit] items while iterating.
-    if (limit != null) {
-      final top = <Map<String, dynamic>>[]; // newest -> oldest
-
-      for (final value in _quizHistoryBox.values) {
-        // Validate before accessing
-        final session = _validateQuizSession(value);
-        if (session == null) continue;
-        if (session['userId'] != userId) continue;
-
-        final date = _sessionStartTime(session);
-
-        var insertAt = top.length;
-        for (var i = 0; i < top.length; i++) {
-          final existingDate = _sessionStartTime(top[i]);
-          if (date.isAfter(existingDate)) {
-            insertAt = i;
-            break;
-          }
-        }
-
-        if (insertAt == top.length) {
-          if (top.length < limit) {
-            top.add(session);
-          }
-        } else {
-          top.insert(insertAt, session);
-          if (top.length > limit) {
-            top.removeLast();
-          }
-        }
-      }
-
-      return top;
-    }
-
-    // Full list requested.
     final allSessions = <Map<String, dynamic>>[];
+
+    // Hämta och filtrera alla giltiga sessioner
     for (final value in _quizHistoryBox.values) {
-      // Validate before accessing
       final session = _validateQuizSession(value);
       if (session == null) continue;
       if (session['userId'] != userId) continue;
       allSessions.add(session);
     }
 
-    // Sort by date (newest first)
+    // Sortera efter nyaste först
     allSessions.sort((a, b) {
       return _sessionStartTime(b).compareTo(_sessionStartTime(a));
     });
+
+    if (limit != null && limit < allSessions.length) {
+      return allSessions.take(limit).toList();
+    }
 
     return allSessions;
   }
@@ -206,9 +173,10 @@ class LocalStorageRepository {
     final keys = _quizHistoryBox.keys.toList(growable: false);
     for (final key in keys) {
       final value = _quizHistoryBox.get(key);
-      // Validate before accessing
       final session = _validateQuizSession(value);
-      if (session != null && session['userId'] == userId) {
+
+      // Om trasig session ELLER tillhör denna user, ta bort.
+      if (session == null || session['userId'] == userId) {
         await _quizHistoryBox.delete(key);
       }
     }

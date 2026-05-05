@@ -1,0 +1,1041 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Siffersafari Project Map</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0d1616;
+        --panel: rgba(19, 36, 38, 0.88);
+        --panel-strong: #102324;
+        --border: rgba(141, 202, 192, 0.18);
+        --text: #effaf4;
+        --muted: #96beb6;
+        --accent: #72d6af;
+        --accent-strong: #b6ffdf;
+        --feature: #8ee28d;
+        --state: #79b8ff;
+        --service: #ffd36f;
+        --foundation: #ff9f80;
+        --entry: #9ae6d7;
+        --shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+        --radius: 22px;
+        --node-radius: 18px;
+        --grid-gap: 18px;
+        --line: rgba(173, 240, 222, 0.2);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+        background:
+          radial-gradient(circle at top left, rgba(92, 161, 146, 0.18), transparent 32%),
+          radial-gradient(circle at top right, rgba(244, 189, 91, 0.12), transparent 28%),
+          linear-gradient(180deg, #0d1616 0%, #091012 100%);
+        color: var(--text);
+        font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+      }
+
+      body {
+        padding: 24px;
+      }
+
+      .shell {
+        display: grid;
+        grid-template-columns: minmax(0, 1.85fr) minmax(320px, 0.95fr);
+        gap: 20px;
+        align-items: start;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(16px);
+      }
+
+      .hero {
+        padding: 24px;
+        margin-bottom: 18px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .hero::after {
+        content: "";
+        position: absolute;
+        inset: auto -80px -80px auto;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(114, 214, 175, 0.28), transparent 68%);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(114, 214, 175, 0.12);
+        color: var(--accent-strong);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      .hero h1 {
+        margin-top: 14px;
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.02;
+        max-width: 12ch;
+      }
+
+      .hero p {
+        margin-top: 12px;
+        max-width: 70ch;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .stat {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(10, 22, 24, 0.72);
+        border: 1px solid rgba(173, 240, 222, 0.12);
+      }
+
+      .stat__label {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stat__value {
+        display: block;
+        margin-top: 10px;
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: 30px;
+      }
+
+      .controls {
+        display: grid;
+        grid-template-columns: minmax(220px, 1.4fr) minmax(180px, 0.8fr) auto;
+        gap: 12px;
+        padding: 0 24px 24px;
+      }
+
+      .field {
+        display: grid;
+        gap: 8px;
+      }
+
+      .field label,
+      .field output {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      input[type="search"],
+      input[type="range"] {
+        width: 100%;
+      }
+
+      input[type="search"] {
+        border: 1px solid rgba(173, 240, 222, 0.16);
+        border-radius: 16px;
+        padding: 14px 16px;
+        background: rgba(5, 14, 16, 0.7);
+        color: var(--text);
+        font: inherit;
+      }
+
+      input[type="search"]::placeholder {
+        color: rgba(150, 190, 182, 0.66);
+      }
+
+      .toggle {
+        align-self: end;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(5, 14, 16, 0.7);
+        border: 1px solid rgba(173, 240, 222, 0.14);
+        cursor: pointer;
+      }
+
+      .graph-panel {
+        padding: 0 24px 24px;
+      }
+
+      .graph-panel__status {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        padding-bottom: 14px;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .graph-panel__viewport {
+        overflow: auto;
+        border-radius: 24px;
+        border: 1px solid rgba(173, 240, 222, 0.12);
+        background:
+          linear-gradient(rgba(173, 240, 222, 0.04) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(173, 240, 222, 0.04) 1px, transparent 1px),
+          linear-gradient(180deg, rgba(7, 18, 20, 0.98), rgba(11, 24, 27, 0.98));
+        background-size: 28px 28px, 28px 28px, auto;
+        max-height: calc(100vh - 300px);
+      }
+
+      .graph-canvas {
+        position: relative;
+        min-width: 1100px;
+        min-height: 720px;
+        padding: 26px;
+      }
+
+      #edges-layer {
+        position: absolute;
+        inset: 0;
+        overflow: visible;
+        pointer-events: none;
+      }
+
+      .columns {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(220px, 1fr));
+        gap: 22px;
+        z-index: 1;
+      }
+
+      .column {
+        display: grid;
+        align-content: start;
+        gap: var(--grid-gap);
+      }
+
+      .column__header {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        padding: 16px 16px 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(173, 240, 222, 0.12);
+        background: rgba(5, 14, 16, 0.9);
+        backdrop-filter: blur(8px);
+      }
+
+      .column__header span {
+        display: block;
+        color: var(--muted);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .column__header strong {
+        display: block;
+        margin-top: 6px;
+        font-size: 18px;
+      }
+
+      .node {
+        position: relative;
+        padding: 16px;
+        border-radius: var(--node-radius);
+        border: 1px solid rgba(173, 240, 222, 0.13);
+        background: rgba(14, 28, 30, 0.9);
+        cursor: pointer;
+        transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+      }
+
+      .node::before {
+        content: "";
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 4px;
+        border-radius: 18px 0 0 18px;
+        background: var(--node-accent, var(--accent));
+      }
+
+      .node:hover {
+        transform: translateY(-2px);
+        border-color: rgba(173, 240, 222, 0.26);
+        box-shadow: 0 18px 30px rgba(0, 0, 0, 0.22);
+      }
+
+      .node.is-selected {
+        border-color: rgba(255, 255, 255, 0.28);
+        box-shadow: 0 18px 34px rgba(114, 214, 175, 0.18);
+      }
+
+      .node.is-dimmed {
+        opacity: 0.38;
+      }
+
+      .node__meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+      }
+
+      .node h3 {
+        margin-top: 12px;
+        font-size: 20px;
+      }
+
+      .node p {
+        margin-top: 8px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .node__summary {
+        margin-top: 10px;
+        color: var(--text);
+        font-size: 13px;
+        opacity: 0.88;
+      }
+
+      .node__technical {
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      .sidebar {
+        position: sticky;
+        top: 24px;
+        padding: 24px;
+      }
+
+      .sidebar h2 {
+        font-family: "Space Grotesk", "IBM Plex Sans", sans-serif;
+        font-size: 28px;
+      }
+
+      .sidebar p {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .sidebar__section {
+        margin-top: 24px;
+        padding-top: 20px;
+        border-top: 1px solid rgba(173, 240, 222, 0.12);
+      }
+
+      .chips,
+      .list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .chip,
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 9px 12px;
+        border-radius: 999px;
+        background: rgba(8, 19, 20, 0.78);
+        border: 1px solid rgba(173, 240, 222, 0.12);
+        color: var(--text);
+        font-size: 13px;
+      }
+
+      .list {
+        flex-direction: column;
+      }
+
+      .list-item {
+        display: grid;
+        gap: 4px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        background: rgba(8, 19, 20, 0.82);
+        border: 1px solid rgba(173, 240, 222, 0.1);
+      }
+
+      .list-item__title {
+        font-size: 14px;
+        font-weight: 600;
+      }
+
+      .list-item__meta,
+      .small {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .empty-state {
+        padding: 22px;
+        border-radius: 20px;
+        background: rgba(8, 19, 20, 0.76);
+        border: 1px dashed rgba(173, 240, 222, 0.18);
+      }
+
+      .legend {
+        display: grid;
+        gap: 10px;
+        margin-top: 16px;
+      }
+
+      .legend .badge {
+        justify-content: flex-start;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: currentColor;
+      }
+
+      @media (max-width: 1200px) {
+        .shell {
+          grid-template-columns: 1fr;
+        }
+
+        .sidebar {
+          position: static;
+        }
+      }
+
+      @media (max-width: 760px) {
+        body {
+          padding: 14px;
+        }
+
+        .stats,
+        .controls {
+          grid-template-columns: 1fr;
+        }
+
+        .graph-panel__viewport {
+          max-height: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="shell">
+      <main>
+        <section class="panel hero">
+          <div class="eyebrow">Live Project Map</div>
+          <h1>Hela appens struktur, i en uppdaterad karta.</h1>
+          <p>
+            Sidan läser den genererade grafen från <strong>graph-data.js</strong> och ritar en
+            modulöversikt för <strong>appstart</strong>, <strong>skärmar</strong>,
+            <strong>tillstånd och tjänstkoppling</strong>, <strong>tjänster</strong> och resten av fundamentet.
+            Kör generatorn i watch-läge så uppdateras kartan löpande när du ändrar Dart-kod.
+          </p>
+
+          <div class="stats" id="stats"></div>
+        </section>
+
+        <section class="panel">
+          <div class="controls">
+            <div class="field">
+              <label for="search">Filtrera moduler eller filer</label>
+              <input id="search" type="search" placeholder="Sök på quiz, provider, story_map...">
+            </div>
+
+            <div class="field">
+              <label for="edge-weight">Minsta edge-vikt</label>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <input id="edge-weight" type="range" min="1" max="8" step="1" value="1">
+                <output id="edge-weight-value" for="edge-weight">1+</output>
+              </div>
+            </div>
+
+            <label class="toggle" for="auto-refresh">
+              <input id="auto-refresh" type="checkbox" checked>
+              <span>Auto-refresh var 3:e sekund</span>
+            </label>
+          </div>
+
+          <div class="graph-panel">
+            <div class="graph-panel__status">
+              <span id="graph-status">Läser grafdata...</span>
+              <span id="graph-generated-at">Ingen data ännu</span>
+            </div>
+
+            <div class="graph-panel__viewport" id="graph-viewport">
+              <div class="graph-canvas" id="graph-content">
+                <svg id="edges-layer" aria-hidden="true"></svg>
+                <div class="columns" id="graph-columns"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="panel sidebar">
+        <h2 id="details-title">Välj en modul</h2>
+        <p id="details-description">
+          Klicka på en nod i kartan för att se dess filer, roller, beroenden och vilka andra
+          delar av appen som använder den.
+        </p>
+
+        <div class="sidebar__section">
+          <div class="small">Hur du använder sidan</div>
+          <div class="list">
+            <div class="list-item">
+              <div class="list-item__title">1. Generera kartan</div>
+              <div class="list-item__meta">`dart run scripts/generate_project_map.dart --watch`</div>
+            </div>
+            <div class="list-item">
+              <div class="list-item__title">2. Öppna sidan</div>
+              <div class="list-item__meta">Öppna filen `site/project-map/index.html` i webbläsaren.</div>
+            </div>
+            <div class="list-item">
+              <div class="list-item__title">3. Följ förändringar live</div>
+              <div class="list-item__meta">Sidan hämtar om datafilen automatiskt och ritar om grafen vid ändringar.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar__section">
+          <div class="small">Färglegend</div>
+          <div class="legend">
+            <span class="badge" style="color: var(--entry);"><span class="dot"></span> Appstart och uppstart</span>
+            <span class="badge" style="color: var(--feature);"><span class="dot"></span> Features och delad UI</span>
+            <span class="badge" style="color: var(--state);"><span class="dot"></span> Tillstånd och tjänstkoppling</span>
+            <span class="badge" style="color: var(--service);"><span class="dot"></span> Tjänster</span>
+            <span class="badge" style="color: var(--foundation);"><span class="dot"></span> Regler, modeller och lagring</span>
+          </div>
+        </div>
+
+        <div class="sidebar__section" id="details-panel"></div>
+      </aside>
+    </div>
+
+    <script>
+      const state = {
+        graph: null,
+        selectedModuleId: null,
+        minWeight: 1,
+        filterText: '',
+        autoRefresh: true,
+        currentScript: null,
+      };
+
+      const colorByColumn = {
+        entry: 'var(--entry)',
+        features: 'var(--feature)',
+        state: 'var(--state)',
+        services: 'var(--service)',
+        foundation: 'var(--foundation)',
+      };
+
+      const graphColumns = document.getElementById('graph-columns');
+      const graphContent = document.getElementById('graph-content');
+      const edgesLayer = document.getElementById('edges-layer');
+      const detailsPanel = document.getElementById('details-panel');
+      const detailsTitle = document.getElementById('details-title');
+      const detailsDescription = document.getElementById('details-description');
+      const graphStatus = document.getElementById('graph-status');
+      const graphGeneratedAt = document.getElementById('graph-generated-at');
+      const stats = document.getElementById('stats');
+      const search = document.getElementById('search');
+      const edgeWeight = document.getElementById('edge-weight');
+      const edgeWeightValue = document.getElementById('edge-weight-value');
+      const autoRefresh = document.getElementById('auto-refresh');
+
+      search.addEventListener('input', () => {
+        state.filterText = search.value.trim().toLowerCase();
+        renderGraph();
+      });
+
+      edgeWeight.addEventListener('input', () => {
+        state.minWeight = Number(edgeWeight.value);
+        edgeWeightValue.textContent = `${state.minWeight}+`;
+        drawEdges();
+        renderDetails();
+      });
+
+      autoRefresh.addEventListener('change', () => {
+        state.autoRefresh = autoRefresh.checked;
+      });
+
+      window.addEventListener('resize', () => drawEdges());
+      document.getElementById('graph-viewport').addEventListener('scroll', () => drawEdges());
+
+      function createStat(label, value) {
+        const item = document.createElement('div');
+        item.className = 'stat';
+        item.innerHTML = `
+          <span class="stat__label">${label}</span>
+          <span class="stat__value">${value}</span>
+        `;
+        return item;
+      }
+
+      function renderStats() {
+        if (!state.graph) {
+          stats.innerHTML = '';
+          return;
+        }
+
+        const { dartFiles, modules, edges } = state.graph.stats;
+        const visibleModules = getVisibleModules().length;
+        stats.replaceChildren(
+          createStat('Dart-filer', dartFiles),
+          createStat('Moduler', modules),
+          createStat('Edges', edges),
+          createStat('Synliga moduler', visibleModules),
+        );
+      }
+
+      function loadGraphData() {
+        return new Promise((resolve, reject) => {
+          if (state.currentScript) {
+            state.currentScript.remove();
+            state.currentScript = null;
+          }
+          delete window.__PROJECT_GRAPH__;
+
+          const script = document.createElement('script');
+          script.src = `./graph-data.js?ts=${Date.now()}`;
+          script.async = true;
+          script.onload = () => {
+            state.currentScript = script;
+            resolve(window.__PROJECT_GRAPH__);
+          };
+          script.onerror = () => reject(new Error('Kunde inte läsa graph-data.js'));
+          document.body.appendChild(script);
+        });
+      }
+
+      function getVisibleModules() {
+        if (!state.graph) {
+          return [];
+        }
+
+        return state.graph.modules.filter((module) => matchesFilter(module));
+      }
+
+      function matchesFilter(module) {
+        if (!state.filterText) {
+          return true;
+        }
+
+        const haystacks = [
+          module.label,
+          module.technicalLabel,
+          module.description,
+          module.path,
+          ...module.files,
+        ];
+        return haystacks.some((value) => value.toLowerCase().includes(state.filterText));
+      }
+
+      function getVisibleEdges() {
+        if (!state.graph) {
+          return [];
+        }
+
+        const visibleIds = new Set(getVisibleModules().map((module) => module.id));
+        return state.graph.edges.filter((edge) => {
+          return edge.weight >= state.minWeight && visibleIds.has(edge.source) && visibleIds.has(edge.target);
+        });
+      }
+
+      function summarizeRoles(roleCounts) {
+        const preferredOrder = [
+          'screen',
+          'dialog',
+          'widget',
+          'provider',
+          'service',
+          'repository',
+          'entity',
+          'enum',
+          'config',
+          'constant',
+          'entrypoint',
+          'dart',
+        ];
+
+        const pairs = Object.entries(roleCounts)
+          .sort((left, right) => preferredOrder.indexOf(left[0]) - preferredOrder.indexOf(right[0]))
+          .filter(([, count]) => count > 0)
+          .slice(0, 4)
+          .map(([role, count]) => `${count} ${translateRole(role, count)}`);
+
+        return pairs.length > 0 ? pairs.join(' · ') : 'Inga rollträffar';
+      }
+
+      function translateRole(role, count) {
+        const labels = {
+          screen: count === 1 ? 'screen' : 'screens',
+          dialog: count === 1 ? 'dialog' : 'dialoger',
+          widget: count === 1 ? 'widget' : 'widgets',
+          provider: count === 1 ? 'provider' : 'providers',
+          service: count === 1 ? 'service' : 'services',
+          repository: count === 1 ? 'repository' : 'repositories',
+          entity: count === 1 ? 'entity' : 'entities',
+          enum: count === 1 ? 'enum' : 'enums',
+          config: count === 1 ? 'config' : 'configfiler',
+          constant: count === 1 ? 'constant' : 'konstanter',
+          entrypoint: 'entrypoint',
+          dart: count === 1 ? 'övrig fil' : 'övriga filer',
+        };
+        return labels[role] || role;
+      }
+
+      function columnAccent(columnId) {
+        return colorByColumn[columnId] || 'var(--accent)';
+      }
+
+      function renderGraph() {
+        if (!state.graph) {
+          return;
+        }
+
+        const modules = getVisibleModules();
+        const groups = new Map(state.graph.columns.map((column) => [column.id, []]));
+        modules.forEach((module) => groups.get(module.column).push(module));
+
+        graphColumns.innerHTML = '';
+
+        state.graph.columns.forEach((column) => {
+          const columnElement = document.createElement('section');
+          columnElement.className = 'column';
+          columnElement.innerHTML = `
+            <header class="column__header">
+              <span>${describeColumn(column.id)}</span>
+              <strong>${column.label}</strong>
+            </header>
+          `;
+
+          const columnModules = groups.get(column.id);
+          columnModules.forEach((module) => {
+            const node = document.createElement('article');
+            node.className = 'node';
+            node.dataset.moduleId = module.id;
+            node.style.setProperty('--node-accent', columnAccent(module.column));
+
+            const selected = state.selectedModuleId === module.id;
+            const connected = !state.selectedModuleId || isConnectedToSelection(module.id);
+            if (selected) {
+              node.classList.add('is-selected');
+            }
+            if (!connected) {
+              node.classList.add('is-dimmed');
+            }
+
+            node.innerHTML = `
+              <div class="node__meta">
+                <span>${module.kindLabel}</span>
+                <span>${module.fileCount} filer</span>
+              </div>
+              <h3>${module.label}</h3>
+              <p>${module.description}</p>
+              <p class="node__summary">${summarizeRoles(module.roleCounts)}</p>
+              <div class="node__technical">Tekniskt namn: ${module.technicalLabel}</div>
+            `;
+            node.addEventListener('click', () => {
+              state.selectedModuleId = state.selectedModuleId === module.id ? null : module.id;
+              renderGraph();
+              renderDetails();
+            });
+
+            columnElement.appendChild(node);
+          });
+
+          if (columnModules.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'empty-state';
+            empty.textContent = 'Inga moduler matchar filtret här.';
+            columnElement.appendChild(empty);
+          }
+
+          graphColumns.appendChild(columnElement);
+        });
+
+        renderStats();
+        renderDetails();
+        requestAnimationFrame(drawEdges);
+      }
+
+      function isConnectedToSelection(moduleId) {
+        if (!state.selectedModuleId) {
+          return true;
+        }
+
+        if (moduleId === state.selectedModuleId) {
+          return true;
+        }
+
+        return state.graph.edges.some((edge) => {
+          const touchesSelection = edge.source === state.selectedModuleId || edge.target === state.selectedModuleId;
+          const touchesModule = edge.source === moduleId || edge.target === moduleId;
+          return touchesSelection && touchesModule;
+        });
+      }
+
+      function drawEdges() {
+        if (!state.graph) {
+          return;
+        }
+
+        const visibleEdges = getVisibleEdges();
+        const bounds = graphColumns.getBoundingClientRect();
+        const width = Math.max(graphColumns.scrollWidth, graphColumns.offsetWidth);
+        const height = Math.max(graphColumns.scrollHeight, graphColumns.offsetHeight);
+
+        graphContent.style.width = `${width + 52}px`;
+        graphContent.style.height = `${height + 52}px`;
+        edgesLayer.setAttribute('width', String(width + 52));
+        edgesLayer.setAttribute('height', String(height + 52));
+        edgesLayer.setAttribute('viewBox', `0 0 ${width + 52} ${height + 52}`);
+        edgesLayer.innerHTML = '';
+
+        visibleEdges.forEach((edge) => {
+          const source = graphColumns.querySelector(`[data-module-id="${cssEscape(edge.source)}"]`);
+          const target = graphColumns.querySelector(`[data-module-id="${cssEscape(edge.target)}"]`);
+          if (!source || !target) {
+            return;
+          }
+
+          const sourceRect = source.getBoundingClientRect();
+          const targetRect = target.getBoundingClientRect();
+          const startX = sourceRect.right - bounds.left;
+          const startY = sourceRect.top - bounds.top + sourceRect.height / 2;
+          const endX = targetRect.left - bounds.left;
+          const endY = targetRect.top - bounds.top + targetRect.height / 2;
+          const bend = Math.max(50, Math.abs(endX - startX) * 0.32);
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${startX} ${startY} C ${startX + bend} ${startY}, ${endX - bend} ${endY}, ${endX} ${endY}`);
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke-linecap', 'round');
+          path.setAttribute('stroke-width', String(1 + Math.log(edge.weight + 1) * 1.8));
+
+          const selected = state.selectedModuleId && (edge.source === state.selectedModuleId || edge.target === state.selectedModuleId);
+          path.setAttribute('stroke', selected ? 'rgba(255, 255, 255, 0.66)' : 'rgba(173, 240, 222, 0.2)');
+          path.setAttribute('opacity', selected ? '1' : state.selectedModuleId ? '0.16' : '0.42');
+          edgesLayer.appendChild(path);
+        });
+      }
+
+      function renderDetails() {
+        if (!state.graph || !state.selectedModuleId) {
+          detailsPanel.innerHTML = `
+            <div class="empty-state">
+              Välj en modul för att se detaljer. Om du vill minska bruset kan du höja edge-vikten eller filtrera på en feature.
+            </div>
+          `;
+          detailsTitle.textContent = 'Välj en modul';
+          detailsDescription.textContent = 'Detaljer visas här när du klickar på en nod.';
+          return;
+        }
+
+        const module = state.graph.modules.find((item) => item.id === state.selectedModuleId);
+        if (!module) {
+          return;
+        }
+
+        const outgoing = getVisibleEdges()
+          .filter((edge) => edge.source === module.id)
+          .sort((left, right) => right.weight - left.weight);
+        const incoming = getVisibleEdges()
+          .filter((edge) => edge.target === module.id)
+          .sort((left, right) => right.weight - left.weight);
+
+        detailsTitle.textContent = module.label;
+        detailsDescription.textContent = `${module.description} Tekniskt namn: ${module.technicalLabel}.`;
+
+        detailsPanel.innerHTML = '';
+        detailsPanel.appendChild(sectionTitle('Tekniskt namn'));
+
+        const technicalChip = document.createElement('div');
+        technicalChip.className = 'chips';
+        technicalChip.innerHTML = `
+          <span class="chip">${module.technicalLabel}</span>
+          <span class="chip">${module.path}</span>
+        `;
+        detailsPanel.appendChild(technicalChip);
+
+        detailsPanel.appendChild(sectionTitle('Roller'));
+
+        const chips = document.createElement('div');
+        chips.className = 'chips';
+        Object.entries(module.roleCounts).forEach(([role, count]) => {
+          const chip = document.createElement('span');
+          chip.className = 'chip';
+          chip.textContent = `${count} ${translateRole(role, count)}`;
+          chips.appendChild(chip);
+        });
+        detailsPanel.appendChild(chips);
+
+        detailsPanel.appendChild(sectionTitle('Beroenden ut'));
+        detailsPanel.appendChild(buildEdgeList(outgoing, 'target'));
+
+        detailsPanel.appendChild(sectionTitle('Beroenden in'));
+        detailsPanel.appendChild(buildEdgeList(incoming, 'source'));
+
+        detailsPanel.appendChild(sectionTitle('Filer'));
+        detailsPanel.appendChild(buildFileList(module.files));
+      }
+
+      function sectionTitle(text) {
+        const title = document.createElement('div');
+        title.className = 'small';
+        title.style.marginTop = '18px';
+        title.textContent = text;
+        return title;
+      }
+
+      function describeColumn(columnId) {
+        const labels = {
+          entry: 'startflöde',
+          features: 'det användaren ser',
+          state: 'appens minne och kopplingar',
+          services: 'återanvändbar logik',
+          foundation: 'underliggande byggdelar',
+        };
+        return labels[columnId] || columnId;
+      }
+
+      function buildEdgeList(edges, field) {
+        if (edges.length === 0) {
+          const empty = document.createElement('div');
+          empty.className = 'empty-state';
+          empty.textContent = 'Inga synliga kopplingar med nuvarande filter.';
+          return empty;
+        }
+
+        const list = document.createElement('div');
+        list.className = 'list';
+        edges.slice(0, 10).forEach((edge) => {
+          const otherModule = state.graph.modules.find((module) => module.id === edge[field]);
+          const item = document.createElement('div');
+          item.className = 'list-item';
+          item.innerHTML = `
+            <div class="list-item__title">${otherModule ? otherModule.label : edge[field]}</div>
+            <div class="list-item__meta">${edge.weight} importer · ${otherModule ? otherModule.technicalLabel : edge[field]} · exempel: ${formatExample(edge.examples[0])}</div>
+          `;
+          list.appendChild(item);
+        });
+        return list;
+      }
+
+      function formatExample(example) {
+        if (!example) {
+          return 'saknas';
+        }
+        return `${trimLibPrefix(example.from)} → ${trimLibPrefix(example.to)}`;
+      }
+
+      function trimLibPrefix(value) {
+        return value.replace(/^lib\//, '');
+      }
+
+      function buildFileList(files) {
+        const list = document.createElement('div');
+        list.className = 'list';
+
+        files.slice(0, 18).forEach((file) => {
+          const item = document.createElement('div');
+          item.className = 'list-item';
+          item.innerHTML = `
+            <div class="list-item__title">${file.split('/').slice(-1)[0]}</div>
+            <div class="list-item__meta">${file}</div>
+          `;
+          list.appendChild(item);
+        });
+
+        if (files.length > 18) {
+          const extra = document.createElement('div');
+          extra.className = 'small';
+          extra.style.marginTop = '10px';
+          extra.textContent = `Visar 18 av ${files.length} filer.`;
+          list.appendChild(extra);
+        }
+
+        return list;
+      }
+
+      function cssEscape(value) {
+        if (window.CSS && typeof window.CSS.escape === 'function') {
+          return window.CSS.escape(value);
+        }
+        return value.replace(/([#.;?+*~':"!^$\[\]()=>|/@])/g, '\\$1');
+      }
+
+      async function refreshGraph({ initial = false } = {}) {
+        try {
+          const graph = await loadGraphData();
+          if (!graph) {
+            throw new Error('graph-data.js returnerade ingen data');
+          }
+
+          if (state.graph && state.graph.generatedAt === graph.generatedAt) {
+            graphStatus.textContent = 'Ingen ny kodändring ännu';
+            return;
+          }
+
+          state.graph = graph;
+          if (state.selectedModuleId && !graph.modules.some((module) => module.id === state.selectedModuleId)) {
+            state.selectedModuleId = null;
+          }
+
+          graphStatus.textContent = initial ? 'Första grafen inläst' : 'Kartan uppdaterad från senaste genereringen';
+          graphGeneratedAt.textContent = `Senast genererad: ${new Date(graph.generatedAt).toLocaleString('sv-SE')}`;
+          renderGraph();
+        } catch (error) {
+          graphStatus.textContent = 'Kunde inte läsa grafdata';
+          graphGeneratedAt.textContent = String(error);
+        }
+      }
+
+      refreshGraph({ initial: true });
+      setInterval(() => {
+        if (state.autoRefresh) {
+          refreshGraph();
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>

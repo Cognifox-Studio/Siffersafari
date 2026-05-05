@@ -67,8 +67,8 @@ void main() {
       await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
 
       await tester.pumpWidget(
-        ProviderScope(
-          child: SiffersafariApp(initFuture: Future.value(null)),
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
         ),
       );
 

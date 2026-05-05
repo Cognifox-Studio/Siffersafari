@@ -72,14 +72,8 @@ function Check-UnexpectedAssets {
         Write-Host "  [OK] lib/gen/assets.g.dart (auto-generated, OK)" -ForegroundColor Green
     }
     
-    # Check for spec/config changes
-    $specChanges = $all | Where-Object { $_ -like "specs/*" }
-    if ($specChanges) {
-        Write-Host "  [OK] specs/* (character configs, OK)" -ForegroundColor Green
-    }
-    
     # Check for runtime asset changes
-    $assetChanges = $all | Where-Object { $_ -like "assets/characters/*" -or $_ -like "assets/ui/lottie/*" -or $_ -like "assets/sounds/*" }
+    $assetChanges = $all | Where-Object { $_ -like "assets/characters/*" -or $_ -like "assets/images/*" -or $_ -like "assets/sounds/*" }
     if ($assetChanges) {
         Write-Host "  [OK] assets/* (runtime assets, OK)" -ForegroundColor Green
         $assetChanges | ForEach-Object { Write-Host "    $_" -ForegroundColor Green }

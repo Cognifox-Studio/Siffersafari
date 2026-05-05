@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+
 import 'local_storage_repository_provider.dart';
 
 const _baseOperations = <OperationType>[
@@ -36,20 +36,16 @@ class ParentSettingsNotifier
     Set<OperationType>? defaultOperations,
   }) {
     final rawList = _repository.getAllowedOperationNames(userId);
+    final fallback = defaultOperations ?? _baseOperations.toSet();
 
-    Set<OperationType> ops;
-    if (rawList.isNotEmpty) {
-      ops = rawList
-          .map(_operationFromName)
-          .whereType<OperationType>()
-          .where((op) => _baseOperations.contains(op))
-          .toSet();
-    } else {
-      ops = (defaultOperations ?? _baseOperations.toSet()).toSet();
-    }
+    var ops = rawList
+        .map(_operationFromName)
+        .whereType<OperationType>()
+        .where(_baseOperations.contains)
+        .toSet();
 
     if (ops.isEmpty) {
-      ops = (defaultOperations ?? _baseOperations.toSet()).toSet();
+      ops = fallback;
     }
 
     state = {
@@ -59,10 +55,8 @@ class ParentSettingsNotifier
   }
 
   OperationType? _operationFromName(String name) {
-    for (final op in OperationType.values) {
-      if (op.name == name) return op;
-    }
-    return null;
+    if (name.isEmpty) return null;
+    return OperationType.values.asNameMap()[name];
   }
 
   Future<void> setOperationAllowed(
@@ -71,16 +65,11 @@ class ParentSettingsNotifier
     bool allowed,
   ) async {
     final current = allowedOperationsFor(userId);
+    if (current.contains(operation) == allowed) return;
 
-    final updated = {
-      ...current,
-    };
-
-    if (allowed) {
-      updated.add(operation);
-    } else {
-      updated.remove(operation);
-    }
+    final updated = allowed
+        ? {...current, operation}
+        : current.where((op) => op != operation).toSet();
 
     if (updated.isEmpty) {
       // Never allow an empty set; keep current.

@@ -269,45 +269,22 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return;
     }
 
-    final inProgressId = _repository.inProgressQuizSessionId(
-      userId: userId,
-      operationTypeName: session.operationType.name,
-    );
-
-    // Clean up any legacy in-progress entries so benchmark underlag doesn't
-    // overcount abandoned sessions.
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: session.operationType.name,
-        exceptSessionId: inProgressId,
-      ),
-    );
-
     final now = DateTime.now();
     final start = session.startTime ?? now;
     final end = session.endTime ?? now;
 
     final rate = answered == 0 ? 0.0 : (session.correctAnswers / answered);
 
-    // Fire-and-forget so answering stays snappy.
-    unawaited(
-      _repository.saveQuizSession({
-        'sessionId': inProgressId,
-        'userId': userId,
-        'operationType': session.operationType.name,
-        'difficulty': session.difficulty.name,
-        'correctAnswers': session.correctAnswers,
-        // For in-progress sessions, totalQuestions means answered so far.
-        'totalQuestions': answered,
-        'successRate': rate,
-        'points': session.totalPoints,
-        'bonusPoints': 0,
-        'pointsWithBonus': session.totalPoints,
-        'startTime': start.toIso8601String(),
-        'endTime': end.toIso8601String(),
-        'isComplete': false,
-      }),
+    _writeSessionInfo(
+      userId: userId,
+      operationType: session.operationType,
+      difficulty: session.difficulty,
+      correctAnswers: session.correctAnswers,
+      totalQuestions: answered, // For in-progress, total means answered so far.
+      successRate: rate,
+      points: session.totalPoints,
+      start: start,
+      end: end,
     );
   }
 
@@ -316,27 +293,75 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required OperationType operationType,
     required DifficultyLevel difficulty,
   }) {
+    final now = DateTime.now();
+    _writeSessionInfo(
+      userId: userId,
+      operationType: operationType,
+      difficulty: difficulty,
+      correctAnswers: 0,
+      totalQuestions: 0,
+      successRate: 0.0,
+      points: 0,
+      start: now,
+      end: now,
+    );
+  }
+
+  void _writeSessionInfo({
+    required String userId,
+    required OperationType operationType,
+    required DifficultyLevel difficulty,
+    required int correctAnswers,
+    required int totalQuestions,
+    required double successRate,
+    required int points,
+    required DateTime start,
+    required DateTime end,
+  }) {
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
       operationTypeName: operationType.name,
     );
 
+    // Clean up any legacy in-progress entries so benchmark underlag doesn't
+    // overcount abandoned sessions.
+    unawaited(
+      _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: operationType.name,
+        exceptSessionId: inProgressId,
+      ),
+    );
+
+    // Fire-and-forget so answering stays snappy.
     unawaited(
       _repository.saveQuizSession({
         'sessionId': inProgressId,
         'userId': userId,
         'operationType': operationType.name,
         'difficulty': difficulty.name,
-        'correctAnswers': 0,
-        'totalQuestions': 0,
-        'successRate': 0.0,
-        'points': 0,
+        'correctAnswers': correctAnswers,
+        'totalQuestions': totalQuestions,
+        'successRate': successRate,
+        'points': points,
         'bonusPoints': 0,
-        'pointsWithBonus': 0,
-        'startTime': DateTime.now().toIso8601String(),
-        'endTime': DateTime.now().toIso8601String(),
+        'pointsWithBonus': points,
+        'startTime': start.toIso8601String(),
+        'endTime': end.toIso8601String(),
         'isComplete': false,
       }),
+    );
+  }
+
+  void _prepareInProgressStorage({
+    required String userId,
+    required OperationType operationType,
+    required DifficultyLevel difficulty,
+  }) {
+    _resetInProgressUnderlag(
+      userId: userId,
+      operationType: operationType,
+      difficulty: difficulty,
     );
   }
 
@@ -453,25 +478,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
       '[QuizNotifier] startSession: userId=$userId, '
       'operation=${operationType.name}, difficulty=${difficulty.name}',
     );
-    // Reset in-progress underlag immediately when the child starts playing the
-    // same operation again (even before the first answer).
-    _resetInProgressUnderlag(
+
+    _prepareInProgressStorage(
       userId: userId,
       operationType: operationType,
       difficulty: difficulty,
-    );
-
-    // Also purge any legacy in-progress entries for the same operation.
-    final inProgressId = _repository.inProgressQuizSessionId(
-      userId: userId,
-      operationTypeName: operationType.name,
-    );
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: operationType.name,
-        exceptSessionId: inProgressId,
-      ),
     );
 
     final count = DifficultyConfig.getQuestionsPerSession(ageGroup);
@@ -562,22 +573,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return;
     }
 
-    _resetInProgressUnderlag(
+    _prepareInProgressStorage(
       userId: userId,
       operationType: operationType,
       difficulty: difficulty,
-    );
-
-    final inProgressId = _repository.inProgressQuizSessionId(
-      userId: userId,
-      operationTypeName: operationType.name,
-    );
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: operationType.name,
-        exceptSessionId: inProgressId,
-      ),
     );
 
     final featureFlags = _resolveSessionFeatureFlags(

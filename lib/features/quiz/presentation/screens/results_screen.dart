@@ -200,7 +200,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       ),
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) _entranceController.forward();
+      if (mounted) {
+        _entranceController.forward();
+        _applySessionResults();
+      }
     });
   }
 
@@ -211,10 +214,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     super.dispose();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
+  void _applySessionResults() {
     if (_applied) return;
 
     final quizState = ref.read(quizProvider);
@@ -289,7 +289,9 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         );
       }
 
-      _applied = true;
+      setState(() {
+        _applied = true;
+      });
     }
   }
 
@@ -377,11 +379,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             },
             child: SizedBox(
               height: 150.h,
-              child: Icon(
-                Icons.star_rounded,
-                size: 100.w,
-                color: Colors.amber,
-              ),
+              child: Image.asset('assets/images/ui/ic_ui_star.png', width: 100.w, height: 100.w),
             ),
           ),
           const SizedBox(height: AppConstants.largePadding),
@@ -751,10 +749,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         children: [
           Row(
             children: [
-              Text(
-                badgeTeaser.badgeEmoji,
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+              if (badgeTeaser.badgeImageAsset != null)
+                SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: Image.asset(badgeTeaser.badgeImageAsset!),
+                )
+              else
+                Text(
+                  badgeTeaser.badgeEmoji,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
               SizedBox(width: AppConstants.defaultPadding.w),
               Expanded(
                 child: Text(
@@ -935,9 +940,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     String badgeEmoji;
     String badgeTitle;
     String badgeBody;
+    String? badgeImageAsset;
 
     if (didUnlockSomething) {
       badgeEmoji = '🎁';
+      badgeImageAsset = 'assets/images/ui/reward_chest.png';
       badgeTitle = _mascotSays(
         _pick(
           seed,
@@ -992,6 +999,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       badgeTitle: badgeTitle,
       badgeBody: badgeBody,
       teaser: teaser,
+      badgeImageAsset: badgeImageAsset,
     );
   }
 
@@ -1048,12 +1056,14 @@ class _BadgeTeaser {
     required this.badgeTitle,
     required this.badgeBody,
     required this.teaser,
+    this.badgeImageAsset,
   });
 
   final String badgeEmoji;
   final String badgeTitle;
   final String badgeBody;
   final String teaser;
+  final String? badgeImageAsset;
 }
 
 class _StoryFocusCard extends StatelessWidget {
@@ -1114,19 +1124,23 @@ class _LevelUpBanner extends StatelessWidget {
       highlightColor: scheme.primary,
       child: Row(
         children: [
-          Container(
-            width: 52,
-            height: 52,
-            decoration: BoxDecoration(
-              color: scheme.primary.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: scheme.primary.withValues(alpha: 0.32),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: value,
+                child: child,
+              );
+            },
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Image.asset(
+                'assets/images/ui/reward_chest.png',
+                fit: BoxFit.contain,
               ),
-            ),
-            child: Icon(
-              Icons.auto_awesome_rounded,
-              color: scheme.onPrimary,
             ),
           ),
           const SizedBox(width: AppConstants.defaultPadding),
@@ -1157,3 +1171,4 @@ class _LevelUpBanner extends StatelessWidget {
     );
   }
 }
+

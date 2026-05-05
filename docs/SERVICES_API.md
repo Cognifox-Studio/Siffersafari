@@ -1,6 +1,6 @@
 ﻿# Services API (As-Is)
 
-Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-04-04).
+Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-05-01).
 
 ## Oversikt
 
@@ -92,17 +92,6 @@ Ansvar:
 
 Anvands av:
 - `storyProgressProvider`
-
-### AppUpdateService
-Fil: `lib/core/services/app_update_service.dart`
-
-Ansvar:
-- hamta senaste release via GitHub API
-- jamfora installerad version med release-tag
-- starta OTA-installation pa Android via `ota_update`
-
-Anvands av:
-- `ParentDashboardScreen`
 
 ## Domain services
 

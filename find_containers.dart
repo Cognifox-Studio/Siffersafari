@@ -1,0 +1,1 @@
+import 'dart:io'; void main() { var root = Directory('lib/features'); var files = root.listSync(recursive: true).where((f) => f.path.endsWith('.dart')); for (var file in files) { var text = File(file.path).readAsStringSync(); if (text.contains('Container(')) { print(file.path); } } }

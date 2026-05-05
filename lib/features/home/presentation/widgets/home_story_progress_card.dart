@@ -130,7 +130,11 @@ class HomeStoryProgressCard extends StatelessWidget {
               const SizedBox(height: AppConstants.smallPadding),
               OutlinedButton.icon(
                 onPressed: onOpenMap,
-                icon: const Icon(Icons.map_outlined),
+                icon: Image.asset(
+                  'assets/images/ui/ic_ui_map.png',
+                  width: 24,
+                  height: 24,
+                ),
                 label: const Text('Öppna kartan'),
               ),
             ],

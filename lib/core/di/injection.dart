@@ -1,6 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:siffersafari/core/services/achievement_service.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
+import 'package:siffersafari/core/services/quest_progression_service.dart';
+import 'package:siffersafari/core/services/question_generator_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -11,11 +15,6 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:siffersafari/domain/services/parent_pin_service.dart';
-
-import '../services/achievement_service.dart';
-import '../services/audio_service.dart';
-import '../services/quest_progression_service.dart';
-import '../services/question_generator_service.dart';
 
 final getIt = GetIt.instance;
 
@@ -46,6 +45,15 @@ Future<T> _perfAsync<T>(String name, Future<T> Function() fn) async {
   }
 }
 
+/// Generic helper to drastically reduce duplicate registration logic
+void _registerLazy<T extends Object>(T Function() factoryFunc) {
+  if (!getIt.isRegistered<T>()) {
+    _perf('getIt.register($T)', () {
+      getIt.registerLazySingleton<T>(factoryFunc);
+    });
+  }
+}
+
 /// Initialize all dependencies
 Future<void> initializeDependencies({
   bool initializeHive = true,
@@ -62,70 +70,17 @@ Future<void> initializeDependencies({
   }
 
   // Register repositories
-  if (!getIt.isRegistered<LocalStorageRepository>()) {
-    _perf('getIt.register(LocalStorageRepository)', () {
-      getIt.registerLazySingleton<LocalStorageRepository>(
-        () => LocalStorageRepository(),
-      );
-    });
-  }
+  _registerLazy<LocalStorageRepository>(() => LocalStorageRepository());
 
   // Register services
-  if (!getIt.isRegistered<QuestionGeneratorService>()) {
-    _perf('getIt.register(QuestionGeneratorService)', () {
-      getIt.registerLazySingleton<QuestionGeneratorService>(
-        () => QuestionGeneratorService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<AudioService>()) {
-    _perf('getIt.register(AudioService)', () {
-      getIt.registerLazySingleton<AudioService>(
-        () => AudioService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<AdaptiveDifficultyService>()) {
-    _perf('getIt.register(AdaptiveDifficultyService)', () {
-      getIt.registerLazySingleton<AdaptiveDifficultyService>(
-        () => AdaptiveDifficultyService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<QuestProgressionService>()) {
-    _perf('getIt.register(QuestProgressionService)', () {
-      getIt.registerLazySingleton<QuestProgressionService>(
-        () => const QuestProgressionService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<FeedbackService>()) {
-    _perf('getIt.register(FeedbackService)', () {
-      getIt.registerLazySingleton<FeedbackService>(
-        () => FeedbackService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<AchievementService>()) {
-    _perf('getIt.register(AchievementService)', () {
-      getIt.registerLazySingleton<AchievementService>(
-        () => AchievementService(),
-      );
-    });
-  }
-
-  if (!getIt.isRegistered<ParentPinService>()) {
-    _perf('getIt.register(ParentPinService)', () {
-      getIt.registerLazySingleton<ParentPinService>(
-        () => ParentPinService(getIt<LocalStorageRepository>()),
-      );
-    });
-  }
+  _registerLazy<QuestionGeneratorService>(() => QuestionGeneratorService());
+  _registerLazy<AudioService>(() => AudioService());
+  _registerLazy<AdaptiveDifficultyService>(() => AdaptiveDifficultyService());
+  _registerLazy<QuestProgressionService>(() => const QuestProgressionService());
+  _registerLazy<FeedbackService>(() => FeedbackService());
+  _registerLazy<AchievementService>(() => AchievementService());
+  _registerLazy<ParentPinService>(
+      () => ParentPinService(getIt<LocalStorageRepository>()),);
 
   if (total != null) {
     total.stop();
@@ -147,23 +102,18 @@ Future<void> _initializeHive({required bool openQuizHistoryBox}) async {
     _registerHiveAdapter(UserProgressAdapter());
   });
 
-  // Open boxes
+  // Open boxes concurrently
   final openFutures = <Future<void>>[
-    _perfAsync("Hive.openBox('user_progress')", () async {
-      await Hive.openBox('user_progress');
-    }),
-    _perfAsync("Hive.openBox('settings')", () async {
-      await Hive.openBox('settings');
-    }),
+    _perfAsync(
+        "Hive.openBox('user_progress')", () => Hive.openBox('user_progress'),),
+    _perfAsync("Hive.openBox('settings')", () => Hive.openBox('settings')),
     if (openQuizHistoryBox)
-      _perfAsync("Hive.openBox('quiz_history')", () async {
-        await Hive.openBox('quiz_history');
-      }),
+      _perfAsync(
+          "Hive.openBox('quiz_history')", () => Hive.openBox('quiz_history'),),
   ];
 
-  await _perfAsync('Hive.openBox(all required)', () async {
-    await Future.wait(openFutures);
-  });
+  await _perfAsync(
+      'Hive.openBox(all required)', () => Future.wait(openFutures),);
 }
 
 void _registerHiveAdapter<T>(TypeAdapter<T> adapter) {

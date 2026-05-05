@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
-import 'package:siffersafari/core/providers/data_export_service_provider.dart';
 import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
 import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
 import 'package:siffersafari/core/providers/parent_settings_provider.dart';
@@ -43,11 +42,6 @@ class ParentDashboardScreen extends ConsumerWidget {
             icon: const Icon(Icons.settings),
           ),
           IconButton(
-            tooltip: 'Exportera data (GDPR)',
-            onPressed: () => _showExportDialog(context, ref, user?.userId),
-            icon: const Icon(Icons.download),
-          ),
-          IconButton(
             tooltip: 'Byt PIN',
             onPressed: () {
               context.pushSmooth(const ParentPinScreen(forceSetNewPin: true));
@@ -82,112 +76,6 @@ class ParentDashboardScreen extends ConsumerWidget {
         },
       ),
     );
-  }
-
-  // endregion
-
-  // region Export Dialog Methods
-
-  static void _showExportDialog(
-    BuildContext context,
-    WidgetRef ref,
-    String? userId,
-  ) {
-    if (userId == null) return;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Exportera data'),
-        content: const Text(
-          'Ladda ned dina data i JSON-format. '
-          'Alla dina svar och profiluppgifter (men inte lösenord) kommer att sparas.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Avbryt'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _performExport(context, ref, userId, fullData: false);
-            },
-            child: const Text('Metadata'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _performExport(context, ref, userId, fullData: true);
-            },
-            child: const Text('Allt'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  static Future<void> _performExport(
-    BuildContext context,
-    WidgetRef ref,
-    String userId, {
-    required bool fullData,
-  }) async {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (ctx) => const AlertDialog(
-        title: Text('Exporterar...'),
-        content: SizedBox(
-          height: 50,
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ),
-    );
-
-    try {
-      final exportService = ref.read(dataExportServiceProvider);
-      final filePath = fullData
-          ? await exportService.exportUserDataAsJson(userId)
-          : await exportService.exportUserMetadataAsJson(userId);
-
-      if (!context.mounted) return;
-      Navigator.of(context).pop(); // Close progress dialog
-
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Export slutfört'),
-          content: Text(
-            'Din data har sparats till:\n\n$filePath\n\n'
-            'Filen är en JSON-fil som kan öppnas i valfri textredigerare.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } catch (e) {
-      if (!context.mounted) return;
-      Navigator.of(context).pop(); // Close progress dialog
-
-      showDialog(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Exportfel'),
-          content: Text('Kunde inte exportera data: $e'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
   }
 
   // endregion
@@ -1610,9 +1498,7 @@ class _CharacterPickerTile extends ConsumerWidget {
   final String userId;
 
   static const _characters = [
-    ('mascot', 'Safari-safaristen'),
     ('loke', 'Loke'),
-    ('skogshjalte', 'Skogshjälten'),
   ];
 
   @override

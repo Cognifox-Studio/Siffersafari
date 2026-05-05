@@ -188,83 +188,22 @@ class QuestProgressionService {
   }) {
     final grade = user.gradeLevel;
 
-    QuestPath basePath;
-
     // Grade-based paths (recommended guidance). Keep it simple and predictable.
-    // - Åk 1-2: only Easy
-    // - Åk 3-4: Easy + Medium
-    // - Åk 5+: Easy + Medium (Hard quests can be added later)
-    if (grade != null) {
-      if (grade <= 2) {
-        basePath = defaultQuests
-            .where((q) => q.difficulty == DifficultyLevel.easy)
-            .toList(growable: false);
-        return _applyAllowedOperations(
-          basePath: basePath,
-          allowedOperations: allowedOperations,
-        );
-      }
-      if (grade <= 4) {
-        basePath = defaultQuests
-            .where(
-              (q) =>
-                  q.difficulty == DifficultyLevel.easy ||
-                  q.difficulty == DifficultyLevel.medium,
-            )
-            .toList(growable: false);
-        return _applyAllowedOperations(
-          basePath: basePath,
-          allowedOperations: allowedOperations,
-        );
-      }
-      basePath = defaultQuests
-          .where(
-            (q) =>
-                q.difficulty == DifficultyLevel.easy ||
-                q.difficulty == DifficultyLevel.medium,
-          )
-          .toList(growable: false);
-      return _applyAllowedOperations(
-        basePath: basePath,
-        allowedOperations: allowedOperations,
-      );
-    }
+    // - Åk 1-2 & Age.young: only Easy
+    // - Åk 3-4, 5+ & Age.middle, Age.older: Easy + Medium (Hard quests can be added later)
+    final includeMedium = (grade != null && grade > 2) ||
+        (grade == null && user.ageGroup != AgeGroup.young);
 
-    // Fallback: age group
-    switch (user.ageGroup) {
-      case AgeGroup.young:
-        basePath = defaultQuests
-            .where((q) => q.difficulty == DifficultyLevel.easy)
-            .toList(growable: false);
-        return _applyAllowedOperations(
-          basePath: basePath,
-          allowedOperations: allowedOperations,
-        );
-      case AgeGroup.middle:
-        basePath = defaultQuests
-            .where(
-              (q) =>
-                  q.difficulty == DifficultyLevel.easy ||
-                  q.difficulty == DifficultyLevel.medium,
-            )
-            .toList(growable: false);
-        return _applyAllowedOperations(
-          basePath: basePath,
-          allowedOperations: allowedOperations,
-        );
-      case AgeGroup.older:
-        basePath = defaultQuests
-            .where(
-              (q) =>
-                  q.difficulty == DifficultyLevel.easy ||
-                  q.difficulty == DifficultyLevel.medium,
-            )
-            .toList(growable: false);
-        return _applyAllowedOperations(
-          basePath: basePath,
-          allowedOperations: allowedOperations,
-        );
-    }
+    final basePath = defaultQuests.where((q) {
+      if (q.difficulty == DifficultyLevel.easy) return true;
+      if (includeMedium && q.difficulty == DifficultyLevel.medium) return true;
+      return false; // Ignorera hard tills det lanseras
+    }).toList(growable: false);
+
+    return _applyAllowedOperations(
+      basePath: basePath,
+      allowedOperations: allowedOperations,
+    );
   }
 
   QuestPath _applyAllowedOperations({

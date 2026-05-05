@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "type": "command",
+        "windows": "powershell -NoProfile -Command \"$inputData = [Console]::In.ReadToEnd(); if ($inputData -match '(?i)(/create-(skill|prompt|agent|instruction|hook)|AGENTS\\.md|copilot-instructions|\\.github[/\\\\](skills|prompts|agents|instructions|hooks)|chat customization|customization)') { '{\"continue\":true,\"systemMessage\":\"Customization hygiene: verify relative links from the current file folder, ensure skill name matches folder name, prefer updating existing central files, and keep using link, don''t embed.\"}' }\"",
+        "linux": "sh -lc 'cat >/dev/null; exit 0'",
+        "osx": "sh -lc 'cat >/dev/null; exit 0'",
+        "timeout": 5
+      }
+    ]
+  }
+}

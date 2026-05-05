@@ -1,73 +1,37 @@
 ﻿<!--
 typ: explanation
 syfte: Historik, varför vi gjort vissa arkitekturval
-uppdaterad: 2026-04-25
+uppdaterad: 2026-05-05
 -->
-﻿# Beslut och antaganden (Siffersafari)
+# Beslut och antaganden (Siffersafari)
 
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gallande nulage (2026-03-18)
+## Gällande nuläge (2026-05-05)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
 - Animation:
-  - SVG-first for mascot-runtime i produkt-UI
-  - `.riv`-filer, blueprint-guider och karaktarsmappar under `assets/characters/*/rive/` ar fortsatt tillatna som framtida enhancement-spor, men de styr inte nuvarande mascot-runtime
-- Responsiv layout styrs av tillganglig bredd (`compact < 600`, `medium >= 600`, `expanded >= 840`).
+  - Procedurgenererade transformationer på enkla PNG-bilder prioriteras över komplicerad cut-out layout med SVG för mascots. Rive och Lottie är slopade.
+- Responsiv layout styrs av tillganglig bredd (compact < 600, medium >= 600, expanded >= 840).
 - Quizens adaptiva svarighetsmodell ar hybrid (micro + macro + cooldown) och persisteras per raknesatt.
-- Uppdateringsflode i foraldralage anvander GitHub Releases + OTA pa Android, utan avinstallation.
+- Distribution och uppdateringar for produktappen sker via Google Play. Inget OTA- eller in-app update-flode ar en aktiv del av produktens nulage.
+- Copilot-customizations i `.github/` ska vara repoanknutna, länka vidare till docs i stället för att duplicera innehåll, och använda skill-namn som matchar respektive mappnamn.
 
 ## Historik (kort)
 
-### 2026-03-03
-- Extern kontext via dokument i `docs/` i stallet for chat-historik.
-- Standard QA-flode: analyze -> relevanta tester -> full suite vid storre andringar.
-- Pixel_6-script anvands for deterministisk lokal korning vid behov.
+### 2026-05-05
+- **Customization-systemet härdat:** `.github`-lagret för instructions, skills, agents och promptar sanerades så att stale referenser togs bort, relativa länkar pekar rätt och varje skill nu använder ett `name` som matchar sitt mappnamn. Detta låser discovery mot repoets faktiska filer i stället för gamla alias.
 
-### 2026-03-04
-- Mix-audits och curriculum-gates kalibrerades for att undvika for tidiga svarighetshopp.
-- Textuppgifter sparas per barnprofil och styrs av onboarding/installing.
+### 2026-05-03
+- **Maskot-runtime bytt från SVG till PNG:** Föregående "SVG-first" beslut gav för hög komplexitet och överlappning. Mascot-runtime förenklades till en enda tajt beskuren loke.png med procedurgenererad scale/rotation i Flutter. All komposit-logik i SVG skrotades. Maskoten bytte namn permanent från Ville till Loke i hela projektet.
+- **Svensk standard för Agenter:** Alla Github Copilot-instructions och SKILL.md filer bytte namn och beskrivningar till svenska för att fungera konsekvent med de globala svenskkraven för korta agent-svar.
 
-### 2026-03-06
-- Story progression och quest-reveal kopplades till faktisk quest completion.
-- Storykarta utokad till 20 checkpoints med etappvis visualisering.
-- Parent update-check + in-app update etablerad i dashboard.
+### 2026-05-01
+- **Inga autoupdates (Play COPPA):** Uppdateringar sker _endast_ via Google Play Console. Appen rullar helt bort fristående uppdateringsverktyg (ota_update) och permissions som REQUEST_INSTALL_PACKAGES.
+- **Slopad bildgenerering i terminal:** Automationsverktygen för maskotskapande och riggning togs bort. Bilderna ska beställas och sparas direkt till project istället för via ett Python-mellanskikt.
 
-### 2026-03-09
-- Adaptiv svarighetsmodell hardenades till hybrid-regler med cooldown.
-- Tidigare Lottie-only-spor finns i historiken, men ersattes av senare hybridbeslut.
-
-### 2026-03-10
-- Hybrid animation faststalldes som gallande riktning.
-- Bilddriven karaktarsprocess etablerades (assetkit + spec + Rive-guide).
-- Loke introducerades som forsta verifierade karaktar i detta arbetsflode.
-
-### 2026-03-18
-- Mascot-runtime forenklades till en tydlig SVG-first-modell: `GameCharacter` och `MascotReactionView.withState` anvander nu alltid composite-SVG + Flutter-animationer i produkt-UI.
-- Oanvand theme/runtime-konfiguration for Rive togs bort for att minska parallella sanningar mellan kod och dokumentation.
-- Optional Rive-material ligger kvar i repo:t som ett separat framtidsspor, inte som aktiv fallback i nuvarande app.
-
-### 2026-03-13
-- Detta dokumenteras nu som historisk verifiering av asset-innehall, inte som gallande runtime-arkitektur.
-
-### 2026-03-11
-- Humanoid-standard faststalld: nya humanoid-karaktarer ska utga fran `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef` i respektive visual spec.
-- Humanoid-standard utokad: den gemensamma riggmodellen ska nu stotta pelvis, shoulders, wrists, hips, ankles och toes som standard, med fallback-bindning till samma bilddel nar separata assets saknas.
-
-### 2026-03-12
-- Aterkommande Copilot-arbetsfloden for assetproduktion och kvalitetskontroll ska i forsta hand paketeras som workspace-skills under `.github/skills/` i stallet for att bara beskrivas i fri text.
-- For detta repo ar foljande skills etablerade som basuppsattning: `game-character-pipeline`, `animation-preview-lab`, `asset-generation-runner`, `flutter-qa-guard`, `release-readiness-check`.
-- Preview-strukturen for humanoid-animationer ska anvanda en tydlig labbkedja: `reference_preview` -> `still_preview` -> `motion_lab` -> `clean_preview` -> `scene_preview`, och canonical previews ska markeras i den centrala preview-hubben under `artifacts/animation_preview/`.
-
-## Relaterade dokument
-
-- `docs/ARCHITECTURE.md` (systemets faktiska nulage)
-- `docs/PROJECT_STRUCTURE.md` (faktisk filstruktur)
-- `docs/SERVICES_API.md` (aktuella servicekontrakt)
-- `docs/SESSION_BRIEF.md` (detaljerad sessionshistorik)
-### 2026-04-25
-- Slutförde migration av features: borttagning av tomma foldrarna lib/presentation/screens och dialogs.
-- Arkiverade otestade experiment-karaktärer (Loke, Ville, Skogshjälte) för att minska repo-vikt och kontext-förvirring efter att Mascot-SVG fastställts 100%.
-- SpacedRepetitionService krävdes om från GetIt-ring till Riverpod DI (constructor-injection i notifier).
+### 2026-04-18
+- UI-anrop via `PostFrameCallback` inuti `build()` ersattes med `ref.listen` for sidoeffekter.
+- Borttagning av Lottie/Rive från primary runtime.

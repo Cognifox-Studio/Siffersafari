@@ -32,7 +32,7 @@ class UserProgress extends Equatable {
     this.achievements = const [],
     this.masteryLevels = const {},
     this.operationDifficultySteps = const {},
-    this.selectedCharacterId = 'mascot',
+    this.selectedCharacterId = 'loke',
   });
 
   @HiveField(0)
@@ -101,9 +101,9 @@ class UserProgress extends Equatable {
   @HiveField(19, defaultValue: <String, int>{})
   final Map<String, int> operationDifficultySteps;
 
-  /// Slug of the selected character (e.g. 'mascot', 'loke', 'skogshjalte').
-  /// Defaults to 'mascot' for all existing profiles.
-  @HiveField(20, defaultValue: 'mascot')
+  /// Slug of the selected character (e.g. 'loke').
+  /// Defaults to 'loke' for all existing profiles.
+  @HiveField(20, defaultValue: 'loke')
   final String selectedCharacterId;
 
   static const int pointsPerLevel = 200;

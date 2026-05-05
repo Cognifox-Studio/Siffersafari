@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -19,8 +18,6 @@ class InitialProfileSetupScreen extends ConsumerWidget {
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final subtleOnPrimary =
         onPrimary.withValues(alpha: AppOpacities.subtleText);
-
-    final themeCfg = ref.watch(appThemeConfigProvider);
     final mascotHeight =
         layoutDependentMascotHeight(MediaQuery.sizeOf(context).height);
 
@@ -177,7 +174,11 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           spacing: AppConstants.smallPadding,
                           runSpacing: AppConstants.microSpacing6,
                           children: [
-                            Icon(Icons.stars, color: themeCfg.accentColor),
+                            Image.asset(
+                              'assets/images/ui/ic_ui_star.png',
+                              width: 24,
+                              height: 24,
+                            ),
                             Text(
                               'Redo för matte-äventyr!',
                               style: Theme.of(context)

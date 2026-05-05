@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/level_up_event.dart';
 import 'package:siffersafari/domain/entities/quest.dart';
@@ -161,11 +160,10 @@ class UserNotifier extends StateNotifier<UserState> {
   }
 
   QuestStatus _getQuestStatus(UserProgress user) {
-    return _questProgressionService.getCurrentStatus(
+    return _getQuestStatusWith(
       user: user,
       currentQuestId: _readCurrentQuestId(user.userId),
       completedQuestIds: _readCompletedQuestIds(user.userId),
-      allowedOperations: _effectiveAllowedOperationsFor(user),
     );
   }
 
@@ -326,24 +324,19 @@ class UserNotifier extends StateNotifier<UserState> {
       gradeLevel: gradeLevel,
     );
 
-    await _repository.saveUserProgress(newUser);
-    await _repository.setActiveUserId(userId);
-    await _reconcileQuestPointer(newUser);
-    await loadUsers();
-    _syncAudioSettings(newUser);
-    state = state.copyWith(activeUser: newUser);
+    await saveUser(newUser);
   }
 
   Future<void> saveUser(UserProgress user) async {
     await _repository.saveUserProgress(user);
-    await _repository.saveSetting(SettingsKeys.activeUserId, user.userId);
+    await _repository.setActiveUserId(user.userId);
     await _reconcileQuestPointer(user);
     await loadUsers();
     _syncAudioSettings(user);
     state = state.copyWith(activeUser: user);
   }
 
-  /// Persist the selected character slug (e.g. 'mascot', 'loke', 'skogshjalte')
+  /// Persist the selected character slug (e.g. 'loke')
   /// for the currently active user.
   Future<void> setCharacter(String characterSlug) async {
     final user = state.activeUser;

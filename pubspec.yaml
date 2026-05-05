@@ -51,6 +51,7 @@ dev_dependencies:
   # Testing
   mocktail: ^1.0.1
   import_sorter: ^4.6.0
+  args: ^2.7.0
 
 flutter:
   uses-material-design: true
@@ -65,11 +66,11 @@ flutter:
     - assets/sounds/wrong.wav
     # Character assets are listed per runtime folder to keep bundling explicit
     # for app + integration-test builds.
-    - assets/characters/mascot/config/
-    - assets/characters/mascot/svg/
-    - assets/characters/ville/svg/
+    - assets/characters/loke/png/
     - assets/images/
     - assets/images/brand/
     - assets/images/app_icon/
     - assets/images/themes/space/
     - assets/images/themes/jungle/
+    - assets/images/story/
+    - assets/images/ui/

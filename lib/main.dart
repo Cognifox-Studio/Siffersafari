@@ -19,7 +19,7 @@ import 'domain/enums/app_theme.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Global error handling for Flutter framework errors
+  // Global felhantering för Flutter-ramverket
   FlutterError.onError = (FlutterErrorDetails details) {
     final message = details.exceptionAsString();
     final isKnownTestTeardownAnimationWarning = message.contains(
@@ -38,37 +38,41 @@ Future<void> main() async {
     debugPrintStack(stackTrace: details.stack);
   };
 
-  // Global error handling for async errors outside Flutter framework
+  // Global felhantering för asynkrona fel utanför ramverket
   PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
     debugPrint('Platform error: $error');
     debugPrintStack(stackTrace: stack);
-    return true; // Prevent crash
+    return true; // Förhindra krasch
   };
 
-  // Global error handling for isolate errors
+  // Global felhantering för isolerade processer
   Isolate.current.addErrorListener(
     RawReceivePort((dynamic pair) {
-      final List<dynamic> errorAndStacktrace = pair as List<dynamic>;
+      final errorAndStacktrace = pair as List<dynamic>;
       debugPrint('Isolate error: ${errorAndStacktrace.first}');
+      if (errorAndStacktrace.length > 1) {
+        debugPrint('Isolate stacktrace: ${errorAndStacktrace[1]}');
+      }
     }).sendPort,
   );
 
-  // Register services/repositories up front so providers (e.g. theme) can
-  // resolve GetIt dependencies during the first build.
-  // Hive boxes are opened later in [_initializeAsync].
+  // Registrera beroenden direkt så att moduler (t.ex. tema) kan
+  // hitta sina GetIt-instanser direkt vid första ritningen (Frame).
+  // Hive initieras efteråt i [_initializeAsync].
   await _measureAsync(
     'initializeDependencies(initializeHive: false)',
     () => initializeDependencies(initializeHive: false),
   );
 
-  // Run heavy init before first Flutter frame so we avoid jank/skipped frames.
-  // Android's launch screen will remain visible until the first frame renders.
+  // Kör all tung uppstart före Flutter anropar "runApp".
+  // Androids startskärm ligger kvar orörd tills den första widget-vyen renderas,
+  // vilket gör att vi kan visa resultatet utan mellansteg.
   final initError = await _initializeAsync();
 
   runApp(
     ProviderScope(
       child: SiffersafariApp(
-        initFuture: Future.value(initError),
+        initError: initError,
       ),
     ),
   );
@@ -83,7 +87,7 @@ Future<String?> _initializeAsync() async {
       () => initializeDependencies(openQuizHistoryBox: false),
     );
 
-    // Open quiz_history box after core dependencies (non-blocking)
+    // Boxen quiz_history öppnas asynkront efter primära core-beroenden
     unawaited(
       _measureAsync('Hive.openBox(quiz_history)', () async {
         await Hive.openBox('quiz_history');
@@ -92,7 +96,7 @@ Future<String?> _initializeAsync() async {
       }),
     );
 
-    return null; // Success
+    return null; // Uppstart slutförd korrret
   } catch (e, st) {
     debugPrint('Initialization failed: $e');
     debugPrintStack(stackTrace: st);
@@ -116,49 +120,33 @@ Future<T> _measureAsync<T>(String name, Future<T> Function() fn) async {
 }
 
 class SiffersafariApp extends ConsumerWidget {
-  const SiffersafariApp({super.key, required this.initFuture});
+  const SiffersafariApp({super.key, required this.initError});
 
-  final Future<String?> initFuture;
+  final String? initError;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final defaultTheme = AppThemeConfig.forTheme(AppTheme.jungle).themeData();
+    final theme =
+        (initError == null) ? ref.watch(appThemeDataProvider) : defaultTheme;
+
+    final Widget home;
+    if (initError != null) {
+      home = _BootstrapErrorScreen(error: initError!);
+    } else {
+      home = const StartupSplashGate(child: StartupFlowGate());
+    }
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return FutureBuilder<String?>(
-          future: initFuture,
-          builder: (context, snapshot) {
-            final isDone = snapshot.connectionState == ConnectionState.done;
-            final initError = isDone ? snapshot.data : null;
-
-            final theme = (isDone && initError == null)
-                ? ref.watch(appThemeDataProvider)
-                : defaultTheme;
-
-            final Widget home;
-            if (!isDone) {
-              home = const Scaffold(
-                body: Center(
-                  child: CircularProgressIndicator(),
-                ),
-              );
-            } else if (initError != null) {
-              home = _BootstrapErrorScreen(error: initError);
-            } else {
-              home = const StartupSplashGate(child: StartupFlowGate());
-            }
-
-            return MaterialApp(
-              title: 'Siffersafari',
-              debugShowCheckedModeBanner: false,
-              theme: theme,
-              home: home,
-            );
-          },
+        return MaterialApp(
+          title: 'Siffersafari',
+          debugShowCheckedModeBanner: false,
+          theme: theme,
+          home: home,
         );
       },
     );
@@ -172,8 +160,11 @@ class _BootstrapErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Kräver ingen import eftersom färgkod kan läggas direkt.
+    // Låt oss garantera att styling fungerar även om tema failar.
     return Scaffold(
-      backgroundColor: AppColors.spaceBackground,
+      backgroundColor:
+          const Color(0xFF0F1722), // Hardkodad fallback spaceBackground
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(AppConstants.defaultPadding),

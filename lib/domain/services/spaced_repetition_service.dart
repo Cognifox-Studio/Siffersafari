@@ -54,27 +54,18 @@ class SpacedRepetitionService {
   }) {
     final currentTime = now ?? DateTime.now();
 
+    final newConsecutiveCorrect =
+        wasCorrect ? (previous?.consecutiveCorrect ?? 0) + 1 : 0;
+    final intervalDays = _getNextInterval(newConsecutiveCorrect);
+
     if (previous == null) {
-      const intervalDays = LearningConstants.firstReviewInterval;
       return ReviewSchedule(
         questionId: questionId,
-        nextReviewDate: currentTime.add(const Duration(days: intervalDays)),
+        nextReviewDate: currentTime.add(Duration(days: intervalDays)),
         intervalDays: intervalDays,
-        consecutiveCorrect: wasCorrect ? 1 : 0,
+        consecutiveCorrect: newConsecutiveCorrect,
       );
     }
-
-    if (!wasCorrect) {
-      const intervalDays = LearningConstants.firstReviewInterval;
-      return previous.copyWith(
-        nextReviewDate: currentTime.add(const Duration(days: intervalDays)),
-        intervalDays: intervalDays,
-        consecutiveCorrect: 0,
-      );
-    }
-
-    final newConsecutiveCorrect = previous.consecutiveCorrect + 1;
-    final intervalDays = _getNextInterval(newConsecutiveCorrect);
 
     return previous.copyWith(
       nextReviewDate: currentTime.add(Duration(days: intervalDays)),
@@ -95,9 +86,9 @@ class SpacedRepetitionService {
     List<ReviewSchedule> schedules,
     DateTime now,
   ) {
-    return schedules
-        .where((schedule) => !schedule.nextReviewDate.isAfter(now))
-        .map((schedule) => schedule.questionId)
-        .toList();
+    return [
+      for (final schedule in schedules)
+        if (!schedule.nextReviewDate.isAfter(now)) schedule.questionId,
+    ];
   }
 }

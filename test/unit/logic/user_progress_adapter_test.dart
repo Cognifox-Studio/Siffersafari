@@ -37,7 +37,7 @@ void main() {
       expect(progress.achievements, isEmpty);
       expect(progress.masteryLevels, isEmpty);
       expect(progress.operationDifficultySteps, isEmpty);
-      expect(progress.selectedCharacterId, 'mascot');
+      expect(progress.selectedCharacterId, 'loke');
     });
   });
 }

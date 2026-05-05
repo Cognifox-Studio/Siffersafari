@@ -62,6 +62,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final notifier = ref.read(userProvider.notifier);
       await notifier.loadUsers();
 
+      if (!mounted) return;
+      final activeUser = ref.read(userProvider).activeUser;
+      if (activeUser != null) {
+        _checkUserData(activeUser.userId);
+      }
+
       // Start background music when home screen loads
       ref.read(audioServiceProvider).playMusic();
 
@@ -72,6 +78,45 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
       }
     });
+  }
+
+  void _checkUserData(String userId) {
+    if (_loadedAllowedOpsForUserId != userId) {
+      _loadedAllowedOpsForUserId = userId;
+      ref.read(parentSettingsProvider.notifier).loadAllowedOperations(userId);
+    }
+
+    if (_loadedReviewSummaryForUserId != userId) {
+      _loadedReviewSummaryForUserId = userId;
+      ref.read(quizProvider.notifier).hydrateReviewSummaryForUser(userId);
+    }
+
+    if (_checkedOnboardingForUserId != userId) {
+      _checkedOnboardingForUserId = userId;
+      _checkOnboarding(userId);
+    }
+  }
+
+  void _checkOnboarding(String userId) {
+    if (_onboardingPushInFlight || OnboardingScreen.isActive) return;
+
+    final repo = ref.read(localStorageRepositoryProvider);
+    final done = repo.isOnboardingDone(userId);
+
+    if (done != true) {
+      _onboardingPushInFlight = true;
+      Navigator.of(context)
+          .push(
+        MaterialPageRoute(
+          builder: (_) => OnboardingScreen(userId: userId),
+        ),
+      )
+          .whenComplete(() {
+        if (mounted) {
+          _onboardingPushInFlight = false;
+        }
+      });
+    }
   }
 
   Future<void> _loadAppVersion() async {
@@ -202,6 +247,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(userProvider, (previous, next) {
+      final nextUser = next.activeUser;
+      if (nextUser != null) {
+        _checkUserData(nextUser.userId);
+      }
+    });
+
     final userState = ref.watch(userProvider);
     final user = userState.activeUser;
     final storyProgress = ref.watch(storyProgressProvider);
@@ -216,59 +268,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final onPrimary = scheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final faintOnPrimary = onPrimary.withValues(alpha: AppOpacities.faintText);
-
-    if (user != null && _loadedAllowedOpsForUserId != user.userId) {
-      // Mark as scheduled immediately to avoid multiple callbacks being queued
-      // during rapid rebuilds.
-      _loadedAllowedOpsForUserId = user.userId;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ref
-            .read(parentSettingsProvider.notifier)
-            .loadAllowedOperations(user.userId);
-      });
-    }
-
-    if (user != null && _loadedReviewSummaryForUserId != user.userId) {
-      _loadedReviewSummaryForUserId = user.userId;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        ref
-            .read(quizProvider.notifier)
-            .hydrateReviewSummaryForUser(user.userId);
-      });
-    }
-
-    if (user != null && _checkedOnboardingForUserId != user.userId) {
-      // Mark as scheduled immediately to avoid pushing onboarding twice.
-      _checkedOnboardingForUserId = user.userId;
-      WidgetsBinding.instance.addPostFrameCallback((_) async {
-        if (!mounted) return;
-
-        // Avoid stacking onboarding routes (can happen if Home is recreated
-        // while an onboarding route is already on top).
-        if (_onboardingPushInFlight || OnboardingScreen.isActive) return;
-
-        final navigator = Navigator.of(context);
-
-        final repo = ref.read(localStorageRepositoryProvider);
-        final done = repo.isOnboardingDone(user.userId);
-        if (!mounted) return;
-
-        if (done != true) {
-          _onboardingPushInFlight = true;
-          try {
-            await navigator.push(
-              MaterialPageRoute(
-                builder: (_) => OnboardingScreen(userId: user.userId),
-              ),
-            );
-          } finally {
-            _onboardingPushInFlight = false;
-          }
-        }
-      });
-    }
 
     final parentAllowedOps = user == null
         ? _defaultAllowedOperations()
@@ -371,7 +370,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     );
                                     context.pushSmooth(const ParentPinScreen());
                                   },
-                                  icon: Icon(Icons.lock, color: mutedOnPrimary),
+                                  icon: Image.asset(
+                                    'assets/images/ui/ic_ui_padlock.png',
+                                    width: 24,
+                                    height: 24,
+                                  ),
                                 ),
                             ],
                           ),
@@ -597,6 +600,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     BuildContext context,
     OperationType operation,
     IconData icon,
+    String? assetPath,
   ) {
     final themeCfg = ref.read(appThemeConfigProvider);
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
@@ -632,11 +636,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 ),
                 child: Hero(
                   tag: 'operation_${operation.name}',
-                  child: Icon(
-                    icon,
-                    size: iconSize,
-                    color: onPrimary,
-                  ),
+                  child: assetPath != null
+                      ? Center(
+                          child: Image.asset(
+                            assetPath,
+                            width: iconBubbleSize * 0.7,
+                            height: iconBubbleSize * 0.7,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : Icon(
+                          icon,
+                          size: iconSize,
+                          color: onPrimary,
+                        ),
                 ),
               ),
               SizedBox(
@@ -789,17 +802,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     BuildContext context,
     Set<OperationType> allowedOps,
   ) {
-    const configs = <({OperationType operation, IconData icon})>[
-      (operation: OperationType.addition, icon: Icons.add),
-      (operation: OperationType.subtraction, icon: Icons.remove),
-      (operation: OperationType.multiplication, icon: Icons.close),
-      (operation: OperationType.division, icon: Icons.percent),
+    const configs =
+        <({OperationType operation, IconData icon, String? assetPath})>[
+      (
+        operation: OperationType.addition,
+        icon: Icons.add,
+        assetPath: 'assets/images/ui/ic_math_addition.png'
+      ),
+      (
+        operation: OperationType.subtraction,
+        icon: Icons.remove,
+        assetPath: 'assets/images/ui/ic_math_subtraction.png'
+      ),
+      (
+        operation: OperationType.multiplication,
+        icon: Icons.close,
+        assetPath: 'assets/images/ui/ic_math_multiplication.png'
+      ),
+      (
+        operation: OperationType.division,
+        icon: Icons.percent,
+        assetPath: 'assets/images/ui/ic_math_division.png'
+      ),
     ];
 
     return configs
         .where((cfg) => allowedOps.contains(cfg.operation))
         .map(
-          (cfg) => _buildOperationCard(context, cfg.operation, cfg.icon),
+          (cfg) => _buildOperationCard(
+            context,
+            cfg.operation,
+            cfg.icon,
+            cfg.assetPath,
+          ),
         )
         .toList(growable: false);
   }

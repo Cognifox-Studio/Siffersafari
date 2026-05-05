@@ -1,11 +1,11 @@
-<!--
+﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-04-25
+uppdaterad: 2026-05-03
 -->
-﻿# Arkitektur (As-Is)
+# Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-25).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-02).
 
 ## Snabboversikt
 
@@ -13,15 +13,17 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-25)
 - Arkitektur: hybrid (`app`, `features`, kvarvarande `presentation`, `core`, `domain`, `data`)
 - State: Riverpod (`StateNotifierProvider` + `Provider`)
 - DI: GetIt
+- Navigation: Imperativ standardnavigering (`Navigator` med lokala helpers, inget externt router-paket)
 - Persistens: Hive (`user_progress`, `settings`, `quiz_history`)
-- Animation:
-  - SVG-first for mascot-runtime i produkt-UI
-   - Flutter-styrda reaktioner ovanpa composite-SVG i `GameCharacter`
-  - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spor, men ar inte en aktiv runtime-dependency i appens huvudfloden
+- Assets & Animation:
+  - Custom PNG-assets för både UI-ikoner (`ic_*`), avatarer (`img_*`) och karaktärer. Emojis och Flutter standard-ikoner är under utfasning.
+  - PNG-first för mascot-runtime i produkt-UI
+  - Flutter-styrda proceduranimationer (via `AnimatedBuilder` och math/sin) ovanpå PNG i GameCharacter
+  - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spår, men är inte en aktiv runtime-dependency i appens huvudflöden
 
 ## Namngivningsbaseline
 
-- Tekniska filnamn ar engelska och använder `snake_case.dart`.
+- Tekniska filnamn ar engelska och anvÃ¤nder `snake_case.dart`.
 - Feature-agd UI ligger i `lib/features/<feature>/presentation/widgets/`.
 - `lib/presentation/widgets/` innehaller bara delad UI och app-shell-komponenter.
 
@@ -44,11 +46,11 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-04-25)
 UI-lagret ar feature-first:
 - `lib/app/bootstrap/` for startup och routing in i appen
 - `lib/features/` for alla featureagda skarmar, dialoger och widgets
-- `lib/presentation/screens/` och `lib/presentation/dialogs/` ar tomma (migration klar)
-- `lib/presentation/widgets/` innehaller delade UI-komponenter
+- `lib/presentation/` innehaller bara delade UI-komponenter under `widgets/`
+- historiska `lib/presentation/screens/` och `lib/presentation/dialogs/` ar avvecklade och ska inte anvandas for ny UI
 - `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
 
-Viktiga skarmar (med faktisk sokväg):
+Viktiga skarmar (med faktisk sokvÃ¤g):
 - `app/bootstrap/presentation/startup_splash_gate.dart`
 - `app/bootstrap/presentation/startup_flow_gate.dart`
 - `features/onboarding/presentation/screens/onboarding_screen.dart`
@@ -75,7 +77,6 @@ Viktiga delar:
 - `core/services/question_generator_service.dart`
 - `core/services/audio_service.dart`
 - `core/services/achievement_service.dart`
-- `core/services/app_update_service.dart`
 - `core/services/quest_progression_service.dart`
 - `core/services/story_progression_service.dart`
 - `core/services/daily_challenge_service.dart`
@@ -105,7 +106,7 @@ Repository-implementation for lokal lagring:
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback
    - poang/streak
-   - combo-multiplikator (1.5× vid 3+ streak, 2.0× vid 5+ streak) via `_comboMultiplierForStreak(...)`
+   - combo-multiplikator (1.5Ã— vid 3+ streak, 2.0Ã— vid 5+ streak) via `_comboMultiplierForStreak(...)`
    - adaptiv difficulty step per raknesatt
    - spaced repetition-review per fraga nar funktionen ar aktiverad
    - lokal analytics-event
@@ -123,8 +124,8 @@ Repository-implementation for lokal lagring:
 - PIN verifiering via BCrypt-hash i `ParentPinService`
 - lockout efter 5 felaktiga forsok (5 minuter)
 - security question-baserad recovery
-- dashboard med statistik och export
-- app update-check via GitHub Releases API + OTA-installation pa Android
+- dashboard med statistik, export och lokala foraldrainstallningar
+- manuella installningar for t.ex. raknesatt, textuppgifter, missing numbers, spaced repetition och difficulty step
 
 ## Persistensmodell
 
@@ -161,3 +162,5 @@ CI/workflows:
 - `docs/SERVICES_API.md`
 - `docs/DECISIONS_LOG.md`
 - `docs/SESSION_BRIEF.md`
+
+

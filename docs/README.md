@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-04-25
+uppdaterad: 2026-05-01
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-04-18.
+Senast uppdaterad: 2026-05-01.
 
 ## Naming-baseline
 
@@ -25,9 +25,7 @@ Senast uppdaterad: 2026-04-18.
 
 ### How-to guides (lös ett specifikt problem)
 - `DEPLOY_ANDROID.md` – Så deployar du till Android
-- `ASSET_GENERATION.md` – Så genererar du assets
-- `AI_ASSET_PIPELINE.md` – Generera AI-baserade assets
-- `NAMING_STRUCTURE_REFACTOR_PLAN.md` – Genomför namn- och strukturstädning stegvis
+- `PROJECT_MAP.md` – Generera och öppna den lokala live-kartan över projektets moduler
 - `SETUP_ENVIRONMENT.md` – Sätt upp miljön
 - `CONTRIBUTING.md` – Bidra till projektet
 
@@ -36,12 +34,12 @@ Senast uppdaterad: 2026-04-18.
 - `PROJECT_STRUCTURE.md` – Repo-struktur
 - `SERVICES_API.md` – Servicekontrakt
 - `KUNSKAPSNIVA_PER_AK.md` – Nivåspecifikationer
-- `CHARACTER_ANIMATIONS.md` – Animation API
-- `AI_ASSET_PIPELINE.md` – Asset pipeline
 
 ### Explanation (förklaringar, design, varför)
+- `ROADMAP.md` – Prioriterad release- och genomförandeplan
 - `DECISIONS_LOG.md` – Beslutslogg och varför
 - `RIVERPOD_PATTERNS.md` – Provider-mönster och resonemang
+- `NAMING_STRUCTURE_REFACTOR_PLAN.md` – Historisk migrationsplan och naming-principer
 
 ### Övrigt
 - `PRIVACY_POLICY.md` – Policy (källtext för publik privacy policy-sida)

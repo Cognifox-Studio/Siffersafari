@@ -43,7 +43,7 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
           fields[16] == null ? {} : (fields[16] as Map).cast<String, double>(),
       operationDifficultySteps:
           fields[19] == null ? {} : (fields[19] as Map).cast<String, int>(),
-      selectedCharacterId: fields[20] == null ? 'mascot' : fields[20] as String,
+      selectedCharacterId: fields[20] == null ? 'loke' : fields[20] as String,
     );
   }
 

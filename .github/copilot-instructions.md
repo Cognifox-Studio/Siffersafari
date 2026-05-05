@@ -2,30 +2,44 @@
 
 ## Projektet
 
-Siffersafari är ett Flutter-baserat mattespel för barn. Appen är Android-first och offline-first.
+Siffersafari är ett Flutter-baserat mattespel för barn. Appen är Android-first, offline-first och byggd för ett enkelt barnflöde: profilval -> quiz -> resultat -> story map.
 
-Primärt flöde: profilval → quiz → resultat → story map.
+## Läsordning
 
-Läs först dessa dokument vid behov, och länka hellre dit än att duplicera innehåll:
+Läs dessa källor i den här ordningen när uppgiften kräver mer kontext:
 
-- `docs/README.md` för dokumentationsindex
-- `docs/ARCHITECTURE.md` för faktisk arkitektur och startup
-- `docs/PROJECT_STRUCTURE.md` för repo-struktur
-- `docs/SERVICES_API.md` för service- och providerkontrakt
-- `docs/DECISIONS_LOG.md` för stabila beslut
+1. `docs/SESSION_BRIEF.md` vid start, vid "fortsätt" och när du behöver nuläget.
+2. `docs/README.md` som index till övrig dokumentation.
+3. `docs/ARCHITECTURE.md` för faktisk arkitektur, startup och aktiva runtime-val.
+4. `docs/DECISIONS_LOG.md` när äldre beslut eller avvägningar påverkar lösningen.
+5. `docs/PROJECT_STRUCTURE.md` och `docs/SERVICES_API.md` när struktur eller servicekontrakt berörs.
 
-## Agentprinciper
+Länka hellre till dessa dokument än att duplicera innehåll i nya customizations.
 
-- **Länka hellre än duplicera.** Kopiera inte in text från `docs/` hit. Länka dit.
-- **Nulägesfacit:** `docs/ARCHITECTURE.md` och `docs/DECISIONS_LOG.md` gäller över äldre historik.
-- **Sessionskontext:** Läs alltid `docs/SESSION_BRIEF.md` vid start eller "fortsätt".
-- **Lärdomar:** Läs repo-minnen i `/memories/repo/` för kända fallgropar. Uppdatera minnet när ny insikt nås.
+## Kärnregler
 
-## Innan du kodar
-1. COPPA-compliance: offline-first, ingen persondata. Se `docs/PRIVACY_POLICY.md`.
-2. UI-arkitektur: Ny UI under `lib/features/<feature>/presentation/`. Delad UI i `lib/presentation/widgets/`.
-3. QA & Test: Bestäm snävaste rimliga QA. Analysera innan test.
-4. Beslut: Uppdatera `docs/DECISIONS_LOG.md` om du ändrat kodens strukturella riktning.
+- **Nulägesfacit först:** `docs/ARCHITECTURE.md`, `docs/DECISIONS_LOG.md` och `docs/SESSION_BRIEF.md` väger högre än äldre artefakter och historiska spår.
+- **COPPA gäller alltid:** ingen persondata, inga trackers, inga annons-SDK:er och inga onlinekrav i huvudupplevelsen. Läs `docs/PRIVACY_POLICY.md` och `/memories/repo/coppa_compliance_2026-03-04.md` före ändringar som rör analytics, nätverk, export eller användardata.
+- **Feature-first UI:** ny featureägd UI ligger under `lib/features/<feature>/presentation/`. `lib/presentation/widgets/` är endast för verkligt delad UI.
+- **PNG-first mascot-runtime:** produkt-UI använder Loke som PNG med Flutter-styrda proceduranimationer. Rive och `.riv` är researchspår, inte aktiv runtime. Lottie används bara för fristående UI-effekter.
+- **Offline-first persistens:** Hive via repository-lagret. Session-state som byggs upp under quiz måste mergas tillbaka till permanent användarprofil vid avslut.
+- **Link, don't embed:** håll customizations korta och repo-specifika. Peka vidare till docs, minnen och smalare instruktioner i stället för att samla allt här.
+
+## När du jobbar med .github-customizations
+
+- Uppdatera befintliga `AGENTS.md`, `.github/copilot-instructions.md`, skills och instruktioner före att skapa nya centrala filer.
+- `AGENTS.md` är snabb routingyta för agentval; `.github/copilot-instructions.md` är alltid-på repo-regler.
+- Nya skills ska ha `name` som matchar mappnamn och en konkret `description` med tydliga triggerord.
+- Lägg smala regler i `.github/instructions/` eller `.github/skills/` i stället för att svälla centralfilen.
+- Behåll "link, don't embed": länka till `docs/README.md`, `docs/ARCHITECTURE.md` och `docs/SESSION_BRIEF.md` när detaljer redan finns där.
+- Använd `.github/prompts/customization-audit-pass.prompt.md` för en snabb audit och `.github/hooks/customization-path-guard.json` som lättviktsvarning vid customization-arbete.
+
+## Före kodändring
+
+1. Identifiera ägande kodväg och billigaste möjliga verifiering.
+2. Välj den minsta rimliga QA-slicen för ändringen.
+3. Kontrollera om en befintlig skill eller instruktion redan täcker arbetsflödet.
+4. Uppdatera `docs/DECISIONS_LOG.md` eller `docs/SESSION_BRIEF.md` bara när verkligheten faktiskt har ändrats.
 
 ## Bygg och QA
 
@@ -36,9 +50,11 @@ flutter pub get
 flutter analyze
 flutter test
 flutter test <path>
+flutter test integration_test/app_smoke_test.dart --dart-define=FULL_SMOKE=false
+powershell -ExecutionPolicy Bypass -File scripts/verify_git_changes.ps1
 ```
 
-Använd Pixel_6-flödet för emulatorarbete:
+Pixel_6-flödet används när ändringen berör rendering, navigation, assets eller annat device-specifikt:
 
 - `scripts/flutter_pixel6.ps1 -Action run`
 - `scripts/flutter_pixel6.ps1 -Action install`
@@ -46,102 +62,66 @@ Använd Pixel_6-flödet för emulatorarbete:
 
 Arbetsstandard:
 
-1. Kör `flutter analyze` före commit.
-2. Kör relevant testsvit för ändringen. Kör full testsvit vid större ändringar.
-3. Kör Pixel_6 sync/install när ändringen påverkar navigation, rendering, assets eller device-specifikt beteende.
-4. **Alla tester ska passera före commit vid stora ändringar.** Vid fel, fixa grundorsaken och verifiera med `flutter test` innan commit.
+1. Kör smalast möjliga verifiering först.
+2. Kör `flutter analyze` före commit och efter större kodändringar.
+3. Kör fokuserade tester för berörd yta; eskalera till full testsvit bara när riskytan kräver det.
+4. Kör Pixel_6 sync/install när ändringen är UI-, asset-, navigation- eller Android-specifik.
+5. Lämna inte nya analyze- eller testfel efter dig.
 
-Om repo-skillen matchar, använd den i stället för att improvisera arbetsflödet:
+## Skills och routing
 
-- `.github/skills/flutter-qa-guard/SKILL.md`
-- `.github/skills/asset-generation-runner/SKILL.md`
-- `.github/skills/release-readiness-check/SKILL.md`
+Använd repo-skillen i stället för att improvisera när uppgiften matchar något av följande:
+
+- GitHub-customization audit: `.github/skills/granska-github-customizations/SKILL.md`
+- QA och verifiering: `.github/skills/testa-att-appen-fungerar/SKILL.md`
+- Pre-commit och diffklassning: `.github/skills/dubbelkolla-andrad-kod/SKILL.md`
+- Quiz-persistens och merge: `.github/skills/testa-att-quiz-sparas-ratt/SKILL.md`
+- Hive-diagnostik: `.github/skills/felsok-sparad-data/SKILL.md`
+- Difficulty mix audit: `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md`
+- Android-emulator och Pixel_6: `.github/skills/felsok-android-emulatorn/SKILL.md`
+- Dokumentation: `.github/skills/uppdatera-dokumentationen/SKILL.md`
+- Analytics-kontrakt: `.github/skills/faststall-spelar-statistik/SKILL.md`
+- UI-extraktion eller logikflytt: `.github/skills/bryt-ut-delade-visuella-komponenter/SKILL.md`, `.github/skills/flytta-ut-logik-fran-ui/SKILL.md`
+- Formulärgranskning: `.github/skills/validera-formular-och-input/SKILL.md`
+- Bildbeställningar: `.github/skills/skapa-bildbestallning/SKILL.md`
+- Release readiness och COPPA-kontroll: `.github/skills/kolla-om-appen-ar-redo-att-slappas/SKILL.md`, `.github/skills/verifiera-coppa-regler/SKILL.md`
 
 ## Custom Agents
 
-- **Plan** (`.github/agents/plan.agent.md`): Research, analys, riskbedömning och testplan (körs utan kodändringar).
-- **Beast Mode** (`.github/agents/beastmode.agent.md`): Självgående implementation, feltestning, QA-pass och systematiska kodrättelser.
-
-## Automation-floden (skills)
-
-Använd skill-floden när uppgiften matchar signalorden nedan.
-
-- QA och verifiering: `.github/skills/flutter-qa-guard/SKILL.md`
-	- Signalord: `verify`, `testa`, `QA`, `regression`, `analyze`
-- Pre-commit & Git Changes: `.github/skills/verify-git-changes/SKILL.md`
-	- Signalord: `pre-commit`, `commit`, `verify git changes`, `git status`
-- Difficulty Mix Audit: `.github/skills/difficulty-mix-audit/SKILL.md`
-	- Signalord: `difficulty audit`, `mix audit`, `svårighetsgrad`, `question generator`
-- Asset-generering: `.github/skills/asset-generation-runner/SKILL.md`
-	- Signalord: `generate assets`, `regenerera assets`, `uppdatera animation assets`, `sync generated files`
-- Karaktärspipeline: `.github/skills/game-character-pipeline/SKILL.md`
-	- Signalord: `spelklar karaktär`, `användbar karaktär`, `character pipeline`, `Gör en användbar karaktär av denna`
-- Animation preview-lab: `.github/skills/animation-preview-lab/SKILL.md`
-	- Signalord: `idle`, `walk`, `pivot`, `wave`, `T-pose`, `motion-lab`, `clean preview`
-- Release readiness: `.github/skills/release-readiness-check/SKILL.md`
-	- Signalord: `release check`, `readiness`, `ship`, `preflight`, `final QA`
-- Dokumentationspass: `.github/skills/documentation/SKILL.md`
-	- Signalord: `dokumentera`, `uppdatera docs`, `documentation audit`, `synka docs med kod`
-
-## Arkitektur
-
-UI-lagret är feature-first. Migrationen från `presentation/screens` och `presentation/dialogs` är klar:
-
-- `lib/app/` för bootstrap och routing
-- `lib/features/` för alla featureägda skärmar, dialoger och widgets
-- `lib/presentation/screens/` och `lib/presentation/dialogs/` är tomma
-- `lib/presentation/widgets/` för delade UI-komponenter
-- `lib/core/` för DI, providers, services, tema och utilities
-- `lib/domain/` för Flutter-fri domänlogik
-- `lib/data/` för lokal persistens via Hive
-
-Teknikval som gäller repo-brett:
-
-- State: Riverpod
-- DI: GetIt
-- Persistens: Hive
-- Layout: `AdaptiveLayoutInfo` med breakpoints compact `<600`, medium `>=600`, expanded `>=840`
-
-Detaljer finns i `docs/ARCHITECTURE.md` och `docs/PROJECT_STRUCTURE.md`.
-
-## Repo-specifika regler
-
-### Compliance och juridik
-
-- **COPPA-compliance är obligatorisk** för detta barnspel (target: 6-12 år). Vid features som rör analytics, server-sync, dataexport eller användardata: läs `docs/PRIVACY_POLICY.md` och `/memories/repo/coppa_compliance_2026-03-04.md` först. Appen ska vara offline-first utan krav på konto eller molnsync.
-
-### Asset-runtime och Animation
-
-- **Mascot-runtime i produkt-UI är enbart SVG-baserad.** Vid rörelser och action-states (som "run") används *alltid* procedur-genererade biomekaniska SVG-skelett (frame-by-frame) – vi använder inte högupplösta statiska PNG-sekvenser för animation. Se minnet `/memories/repo/ville_biomechanics_skeleton_decision_2026-05-01.md`.
-- Rive-blueprints och `.riv`-material i `artifacts/` är **research/future enhancement** – de är inte en aktiv runtime-dependency i huvudflödet och används inte i production UI.
-- `.riv`-filer exporteras manuellt från Rive Editor om de ska användas. Script och blueprints genererar inte den slutliga `.riv`-filen automatiskt.
-- Lottie används endast för UI-effekter (konfetti, pulser), inte som fallback för mascot-runtime.
-
-### Karaktärer och animation
-
-- Nya humanoid-karaktärer ska referera `assets/characters/_shared/config/humanoid_base_form_v1.json` via `baseFormRef`.
-- För asset-automation: använd `scripts/promote_assets.ps1` och `.github/skills/asset-generation-runner/SKILL.md` för komplett workflow med validering, QA och promotion.
-
-### State och progression
-
-- `SpacedRepetitionService` finns implementerad men är inte fullt inkopplad i hela quiz-flödet. Anta inte att den används överallt.
-- Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till persistent user state vid quiz-slut.
+- **Plan** (`.github/agents/plan.agent.md`): analys, research, risker och testplan utan kodändringar.
+- **Beast Mode** (`.github/agents/beastmode.agent.md`): genomförande, iteration och QA end-to-end.
+- **Customization Maintainer** (`.github/agents/customization-maintainer.agent.md`): underhåll av prompts, skills, hooks, instruktioner och agentfiler under `.github/`.
+- **UI Reviewer** (`.github/agents/ui-reviewer.agent.md`): UI/UX- och responsivitetsgranskning.
+- **Release Manager** (`.github/agents/release-manager.agent.md`): releaseförberedelser, versionsbump och Play-flöde.
 
 ## Områdesspecifika instruktioner
 
-Följ dessa filer när uppgiften berör respektive område:
+Följ rätt instruktion när motsvarande filtyp eller arbetsyta berörs:
 
-- `.github/instructions/features.instructions.md` för `lib/features/**`
-- `.github/instructions/presentation.instructions.md` för `lib/presentation/**`
-- `.github/instructions/test.instructions.md` för `test/**`
-- `.github/instructions/character-pipeline.instructions.md` när en bild ska bli en spelklar karaktär
+- `.github/instructions/regler-for-customization-hygien.instructions.md`
+- `.github/instructions/regler-for-hur-skarmar-och-knappar-ska-se-ut.instructions.md`
+- `.github/instructions/regler-for-app-navigation.instructions.md`
+- `.github/instructions/regler-for-formular-och-validering.instructions.md`
+- `.github/instructions/regler-for-async-och-loading.instructions.md`
+- `.github/instructions/regler-for-att-uppdatera-information-pa-skarmen.instructions.md`
+- `.github/instructions/regler-for-att-spara-saker-permanent-i-telefonen.instructions.md`
+- `.github/instructions/regler-for-hur-pabade-quiz-avbryts-och-sparas.instructions.md`
+- `.github/instructions/regler-for-appens-inre-logik.instructions.md`
+- `.github/instructions/regler-for-hur-appens-osynliga-delar-kopplas-ihop.instructions.md`
+- `.github/instructions/regler-for-animationer-och-rorelser.instructions.md`
+- `.github/instructions/regler-for-hur-vi-testar-att-appen-fungerar.instructions.md`
+- `.github/instructions/regler-for-smarta-hjalpskript.instructions.md`
+- `.github/instructions/regler-for-att-paketera-ihop-android-appen.instructions.md`
+- `.github/instructions/regler-for-att-ladda-upp-appen-pa-google-play.instructions.md`
+- `.github/instructions/regler-for-att-stada-upp-snurrig-kod.instructions.md`
 
-## Vanliga fallgropar
+## Repo-fallgropar
 
-- Pixel_6-emulatorn kan fastna offline i adb. Använd cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
-- Stale APK på device efter rebuild löses ofta med explicit install via `flutter_pixel6.ps1 -Action install`.
-- Historiska dokument och artifacts kan beskriva gamla spår. Behandla `docs/ARCHITECTURE.md` som nulägesfacit före äldre guider.
-- **Rive-förvirring:** Om du hittar `.riv`-filer eller Rive-relaterade artifacts, kom ihåg att de är research/exploration – productkoden använder SVG för mascot-runtime.
+- Pixel_6 kan fastna offline i adb. Prioritera cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
+- Stale APK efter rebuild löses ofta med `scripts/flutter_pixel6.ps1 -Action install` eller `-Action sync`.
+- Historiska docs och artifacts kan vara stale. Kontrollera alltid mot `docs/ARCHITECTURE.md` och aktuell kod.
+- Anta inte längre SVG-first mascot-runtime. Den aktiva maskotvägen är PNG-first med Flutter-animationer ovanpå.
+- Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till `UserProgress` när quizet avslutas.
 
 ## Sessionskontinuitet
 
@@ -153,5 +133,15 @@ Använd dessa filer som extern kontext i stället för att förlita dig på chat
 Standardrutin:
 
 1. Läs `docs/SESSION_BRIEF.md` vid start och när användaren säger "fortsätt".
-2. Läs `docs/DECISIONS_LOG.md` vid komplexa uppgifter eller när äldre beslut påverkar arbetet.
-3. Uppdatera dessa filer när uppgiften uttryckligen handlar om sessionslogg eller beslut.
+2. Läs `docs/DECISIONS_LOG.md` när beslutshistorik påverkar arbetet.
+3. Uppdatera dem bara när ändringen faktiskt påverkar nuläge eller beslut.
+
+## Workspace-prompter
+
+- `.github/prompts/customization-audit-pass.prompt.md` för att auditera `.github` och få en kort prioriterad åtgärdslista.
+- `.github/prompts/repo-start-routing.prompt.md` för att välja rätt agent, skill och minsta QA-slice vid arbetets start.
+- `.github/prompts/repo-qa-slice.prompt.md` för att välja och köra minsta tillräckliga QA-slice för aktuell diff eller riskyta.
+
+## Hooks
+
+- `.github/hooks/customization-path-guard.json` lägger in en kort hygiene-varning när en prompt ser ut att gälla nya eller ändrade chat-customizations.

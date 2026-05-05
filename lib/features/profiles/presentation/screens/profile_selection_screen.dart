@@ -186,9 +186,13 @@ class _ProfileAvatar extends StatelessWidget {
         ),
       ),
       alignment: Alignment.center,
-      child: Text(
-        avatarEmoji,
-        style: Theme.of(context).textTheme.displaySmall,
+      child: ClipOval(
+        child: Image.asset(
+          'assets/images/ui/img_avatar_animal.png',
+          width: 84,
+          height: 84,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

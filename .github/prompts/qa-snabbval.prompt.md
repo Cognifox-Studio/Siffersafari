@@ -10,10 +10,10 @@ Välj rätt QA-nivå för den aktuella ändringen i detta repo och kör den mest
 Utgå från dessa källor och regler:
 
 - [copilot-instructions.md](../copilot-instructions.md)
-- [docs/ARCHITECTURE.md](../docs/ARCHITECTURE.md)
-- [docs/DECISIONS_LOG.md](../docs/DECISIONS_LOG.md)
-- [docs/SESSION_BRIEF.md](../docs/SESSION_BRIEF.md)
-- [.vscode/tasks.json](../.vscode/tasks.json)
+- [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
+- [docs/DECISIONS_LOG.md](../../docs/DECISIONS_LOG.md)
+- [docs/SESSION_BRIEF.md](../../docs/SESSION_BRIEF.md)
+- [.vscode/tasks.json](../../.vscode/tasks.json)
 
 Använd workspace-tasks när de passar bättre än manuella kommandon.
 
