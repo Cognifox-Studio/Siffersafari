@@ -23,6 +23,8 @@ class GameCharacter extends StatefulWidget {
     this.height = 96,
     this.fit = BoxFit.contain,
     this.characterId = CharacterId.loke,
+    this.equippedItems,
+    this.onTap,
   });
 
   final CharacterReaction reaction;
@@ -32,6 +34,12 @@ class GameCharacter extends StatefulWidget {
 
   /// Which character to display. Defaults to loke.
   final CharacterId characterId;
+
+  /// Equipped inventory items (key: slot, value: item slug)
+  final Map<String, String>? equippedItems;
+
+  /// Callback when the character is tapped.
+  final VoidCallback? onTap;
 
   @override
   State<GameCharacter> createState() => _GameCharacterState();
@@ -173,6 +181,7 @@ class _GameCharacterState extends State<GameCharacter>
       child: GestureDetector(
         onTap: () {
           _playFallbackReaction(CharacterReaction.userTap);
+          widget.onTap?.call();
         },
         child: AnimatedBuilder(
           animation: Listenable.merge([_reactionController, _bobController]),
@@ -210,18 +219,78 @@ class _GameCharacterState extends State<GameCharacter>
 
   Widget _currentAsset(BuildContext context) {
     final assetPath = _currentSvgPath();
+    Widget characterAsset;
+
     if (assetPath.endsWith('.png')) {
-      return Image.asset(
+      characterAsset = Image.asset(
         assetPath,
         fit: widget.fit,
         errorBuilder: (context, error, stackTrace) => _iconFallback(context),
       );
+    } else {
+      characterAsset = SvgPicture.asset(
+        assetPath,
+        fit: widget.fit,
+        placeholderBuilder: (context) => _iconFallback(context),
+      );
     }
 
-    return SvgPicture.asset(
-      assetPath,
-      fit: widget.fit,
-      placeholderBuilder: (context) => _iconFallback(context),
+    if (widget.equippedItems == null || widget.equippedItems!.isEmpty) {
+      return characterAsset;
+    }
+
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        if (widget.equippedItems!.containsKey('back'))
+          Positioned(
+            top: widget.height * 0.45,
+            left: widget.height * 0.05,
+            width: widget.height * 0.35,
+            child: Image.asset(
+              'assets/images/items/${widget.equippedItems!['back']}.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        characterAsset,
+        if (widget.equippedItems!.containsKey('body'))
+          Positioned(
+            top: widget.height * 0.55,
+            width: widget.height * 0.55,
+            child: Image.asset(
+              'assets/images/items/${widget.equippedItems!['body']}.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        if (widget.equippedItems!.containsKey('face'))
+          Positioned(
+            top: widget.height * 0.30,
+            width: widget.height * 0.45,
+            child: Image.asset(
+              'assets/images/items/${widget.equippedItems!['face']}.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        if (widget.equippedItems!.containsKey('head'))
+          Positioned(
+            top: widget.height * -0.05,
+            width: widget.height * 0.50,
+            child: Image.asset(
+              'assets/images/items/${widget.equippedItems!['head']}.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        if (widget.equippedItems!.containsKey('accessory'))
+          Positioned(
+            bottom: widget.height * 0.25,
+            right: widget.height * 0.15,
+            width: widget.height * 0.30,
+            child: Image.asset(
+              'assets/images/items/${widget.equippedItems!['accessory']}.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+      ],
     );
   }
 
