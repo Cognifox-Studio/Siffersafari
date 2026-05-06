@@ -1,8 +1,8 @@
-name: siffersafari
-description: Siffersafari — an educational math game for children to practice basic arithmetic.
+﻿name: siffersafari
+description: Siffersafari â€” an educational math game for children to practice basic arithmetic.
 publish_to: 'none'
 
-version: 1.3.6+14
+version: 1.4.0+15
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -57,8 +57,8 @@ flutter:
   uses-material-design: true
   
   assets:
-    # Lista ljudfiler explicit så att backups (t.ex. *.wav.backup_*)
-    # inte råkar packas in i APK:n.
+    # Lista ljudfiler explicit sÃ¥ att backups (t.ex. *.wav.backup_*)
+    # inte rÃ¥kar packas in i APK:n.
     - assets/sounds/background_music.wav
     - assets/sounds/celebration.wav
     - assets/sounds/click.wav
