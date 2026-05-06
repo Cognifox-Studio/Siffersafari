@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 
 enum CharacterReaction {
@@ -241,62 +242,61 @@ class _GameCharacterState extends State<GameCharacter>
 
     return Stack(
       alignment: Alignment.center,
+      clipBehavior: Clip.none,
       children: [
-        if (widget.equippedItems!.containsKey('back'))
-          Positioned(
-            top: widget.height * 0.45,
-            left: widget.height * 0.05,
-            width: widget.height * 0.35,
-            child: Image.asset(
-              'assets/images/items/${widget.equippedItems!['back']}.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+        ..._buildEquippedItem('back'),
         characterAsset,
-        if (widget.equippedItems!.containsKey('body'))
-          Positioned(
-            top: widget.height * 0.55,
-            width: widget.height * 0.55,
-            child: Image.asset(
-              'assets/images/items/${widget.equippedItems!['body']}.png',
-              fit: BoxFit.contain,
-            ),
-          ),
-        if (widget.equippedItems!.containsKey('face'))
-          Positioned(
-            top: widget.height * 0.30,
-            width: widget.height * 0.45,
-            child: Image.asset(
-              'assets/images/items/${widget.equippedItems!['face']}.png',
-              fit: BoxFit.contain,
-            ),
-          ),
-        if (widget.equippedItems!.containsKey('head'))
-          Positioned(
-            top: widget.height * -0.05,
-            width: widget.height * 0.50,
-            child: Image.asset(
-              'assets/images/items/${widget.equippedItems!['head']}.png',
-              fit: BoxFit.contain,
-            ),
-          ),
-        if (widget.equippedItems!.containsKey('accessory'))
-          Positioned(
-            bottom: widget.height * 0.25,
-            right: widget.height * 0.15,
-            width: widget.height * 0.30,
-            child: Image.asset(
-              'assets/images/items/${widget.equippedItems!['accessory']}.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+        ..._buildEquippedItem('body'),
+        ..._buildEquippedItem('face'),
+        ..._buildEquippedItem('head'),
+        ..._buildEquippedItem('accessory'),
+        ..._buildEquippedItem('front'), // Nytt fack som alltid ritas längst fram (över accessory)
       ],
     );
   }
 
+  List<Widget> _buildEquippedItem(String slotLayer) {
+    if (widget.equippedItems == null || widget.equippedItems!.isEmpty) {
+      return [];
+    }
+
+    final widgets = <Widget>[];
+
+    for (final itemId in widget.equippedItems!.values) {
+      final itemConfig = InventoryConfig.allItems.firstWhere(
+        (item) => item.id == itemId,
+        orElse: () => InventoryItem(
+          id: itemId,
+          slot: slotLayer,
+          assetPath: 'assets/images/items/$itemId.png',
+          name: 'Unknown',
+        ),
+      );
+
+      if (itemConfig.slot == slotLayer) {
+        widgets.add(
+          Positioned.fill(
+            child: Align(
+              alignment: itemConfig.offset,
+              child: FractionallySizedBox(
+                widthFactor: itemConfig.renderScale,
+                child: Image.asset(
+                  itemConfig.assetPath,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+    }
+
+    return widgets;
+  }
+
   String _currentSvgPath() {
     if (widget.characterId == CharacterId.loke) {
-      return 'assets/characters/loke/png/loke.png';
+      return 'assets/characters/loke/png/loke.png'; 
     }
     return AssetPaths.characterCompositeSvg(widget.characterId);
   }
@@ -330,7 +330,7 @@ class _GameCharacterState extends State<GameCharacter>
           rotation: 0.03 * math.sin(math.pi * 2 * eased),
         );
       case CharacterReaction.celebrate:
-        // 5-phase jump: anticipation → spring up → float → land → settle
+        // 5-phase jump: anticipation â†’ spring up â†’ float â†’ land â†’ settle
         final double jumpDy;
         final double jumpScale;
         final double jumpRotation;

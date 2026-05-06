@@ -24,6 +24,7 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/presentation/widgets/daily_challenge_card.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
+import 'package:siffersafari/features/inventory/presentation/widgets/wardrobe_dialog.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
@@ -344,60 +345,69 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  AppConstants.appName,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineLarge
-                                      ?.copyWith(
-                                        color: onPrimary,
-                                        fontWeight: FontWeight.w900,
+                          SizedBox(
+                            height: 120,
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Image.asset(
+                                  'assets/images/ui/img_logo_safari.png',
+                                  height: 120,
+                                  fit: BoxFit.contain,
+                                ),
+                                if (user != null)
+                                  Positioned(
+                                    right: 0,
+                                    child: IconButton(
+                                      tooltip: 'Föräldraläge',
+                                      onPressed: () {
+                                        unawaited(
+                                          ref
+                                              .read(appAnalyticsProvider)
+                                              .logEvent(
+                                                name: 'parent_mode_opened',
+                                                userId: user.userId,
+                                              ),
+                                        );
+                                        context.pushSmooth(
+                                            const ParentPinScreen(),);
+                                      },
+                                      iconSize: 56,
+                                      icon: Image.asset(
+                                        'assets/images/ui/ic_ui_padlock.png',
+                                        width: 48,
+                                        height: 48,
                                       ),
-                                ),
-                              ),
-                              if (user != null)
-                                IconButton(
-                                  tooltip: 'Föräldraläge',
-                                  onPressed: () {
-                                    unawaited(
-                                      ref.read(appAnalyticsProvider).logEvent(
-                                            name: 'parent_mode_opened',
-                                            userId: user.userId,
-                                          ),
-                                    );
-                                    context.pushSmooth(const ParentPinScreen());
-                                  },
-                                  icon: Image.asset(
-                                    'assets/images/ui/ic_ui_padlock.png',
-                                    width: 24,
-                                    height: 24,
+                                    ),
                                   ),
-                                ),
-                            ],
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: AppConstants.smallPadding),
                           PlayfulSectionHeading(
+                            center: true,
                             eyebrow: user != null
-                                ? 'Hej, ${user.name}! 👋'
-                                : 'Redo att spela?',
+                                ? 'Välkommen, ${user.name}! 👋'
+                                : 'Redo för safari?',
                             title: user != null
-                                ? 'Redo att spela?'
+                                ? 'Dags för äventyr!'
                                 : 'Börja spela',
                             subtitle:
                                 user == null ? 'Skapa en profil först.' : null,
                           ),
                           if (user != null) ...[
-                            const SizedBox(height: AppConstants.largePadding),
+                            const SizedBox(height: AppConstants.smallPadding),
                             Center(
                               child: SizedBox(
-                                height: isWideScreen ? 156 : 132,
+                                height: isWideScreen ? 210 : 190,
                                 child: GameCharacter(
                                   reaction: _mascotReaction,
                                   reactionNonce: _mascotReactionNonce,
-                                  height: isWideScreen ? 156 : 132,
+                                  height: isWideScreen ? 210 : 190,                                    equippedItems: user.equippedItems,                                  onTap: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (_) => const WardrobeDialog(),
+                                    );
+                                  },
                                 ),
                               ),
                             ),

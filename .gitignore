@@ -71,3 +71,6 @@ assets/images/themes/**/**/*_preview*.png
 # Signing keys (SECRET - never commit)
 android/upload-keystore.jks
 android/key.properties
+
+# Lokal överföringsmapp för inkommande filer
+_incoming/

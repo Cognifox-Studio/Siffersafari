@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/mascot_reaction_view.dart';
+import '../test_utils.dart';
 
 void main() {
+  setUp(() async {
+    await setupWidgetTestDependencies();
+  });
   testWidgets(
       '[Widget] MascotReactionView.withState renders the PNG runtime mascot', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: MascotReactionView.withState(
-            height: 120,
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: MascotReactionView.withState(
+              height: 120,
+            ),
           ),
         ),
       ),
@@ -32,11 +39,13 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
-          body: MascotReactionView.withState(
-            state: CharacterAnimationState.celebrate,
-            height: 120,
+      const ProviderScope(
+        child: MaterialApp(
+          home: Scaffold(
+            body: MascotReactionView.withState(
+              state: CharacterAnimationState.celebrate,
+              height: 120,
+            ),
           ),
         ),
       ),

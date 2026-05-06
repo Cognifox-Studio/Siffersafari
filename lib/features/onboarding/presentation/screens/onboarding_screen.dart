@@ -182,12 +182,12 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
 class _OnboardingCard extends StatelessWidget {
   const _OnboardingCard({
-    required this.icon,
+    required this.imageAsset,
     required this.title,
     required this.child,
   });
 
-  final IconData icon;
+  final String imageAsset;
   final String title;
   final Widget child;
 
@@ -204,10 +204,10 @@ class _OnboardingCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Icon(
-                icon,
-                size: AppConstants.minTouchTargetSize,
-                color: accentColor,
+              Image.asset(
+                imageAsset,
+                height: AppConstants.minTouchTargetSize *
+                    1.5, // Gör bilden lite större än en vanlig ikon
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
@@ -242,7 +242,7 @@ class _OnboardingGradePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _OnboardingCard(
-      icon: Icons.school,
+      imageAsset: 'assets/images/ui/img_school_cap.png',
       title: 'Årskurs',
       child: Column(
         mainAxisSize: MainAxisSize.min,

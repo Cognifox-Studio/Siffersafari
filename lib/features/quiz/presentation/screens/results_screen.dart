@@ -16,6 +16,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/level_up_event.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
@@ -353,6 +354,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 : CharacterReaction.idle,
             reactionNonce: _characterCelebrate ? 1 : 0,
             height: 112.h,
+            equippedItems: activeUser?.equippedItems,
           ),
         ),
         const SizedBox(height: AppConstants.defaultPadding),
@@ -379,7 +381,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             },
             child: SizedBox(
               height: 150.h,
-              child: Image.asset('assets/images/ui/ic_ui_star.png', width: 100.w, height: 100.w),
+              child: Image.asset(
+                'assets/images/ui/ic_ui_star.png',
+                width: 100.w,
+                height: 100.w,
+              ),
             ),
           ),
           const SizedBox(height: AppConstants.largePadding),
@@ -427,6 +433,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final actionColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        if (userState.newlyUnlockedItem != null) ...[
+          _ItemUnlockedBanner(item: userState.newlyUnlockedItem!),
+          const SizedBox(height: AppConstants.largePadding),
+        ],
         if (userState.lastLevelUp != null) ...[
           _LevelUpBanner(event: userState.lastLevelUp!),
           const SizedBox(height: AppConstants.largePadding),
@@ -1111,6 +1121,66 @@ class _HardestQuestion {
 
 // endregion
 
+class _ItemUnlockedBanner extends StatelessWidget {
+  const _ItemUnlockedBanner({required this.item});
+
+  final InventoryItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return PlayfulPanel(
+      hero: true,
+      highlightColor: scheme.tertiary,
+      child: Row(
+        children: [
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 800),
+            curve: Curves.elasticOut,
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: value,
+                child: child,
+              );
+            },
+            child: SizedBox(
+              width: 56,
+              height: 56,
+              child: Image.asset(
+                item.assetPath,
+                fit: BoxFit.contain,
+              ),
+            ),
+          ),
+          const SizedBox(width: AppConstants.defaultPadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Ny sak uppl�st!',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: scheme.onSurface,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Kolla in din nya ${item.name} i garderoben.',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _LevelUpBanner extends StatelessWidget {
   const _LevelUpBanner({required this.event});
 
@@ -1171,4 +1241,3 @@ class _LevelUpBanner extends StatelessWidget {
     );
   }
 }
-

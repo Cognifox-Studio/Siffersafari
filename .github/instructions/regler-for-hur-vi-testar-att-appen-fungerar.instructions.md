@@ -84,6 +84,9 @@ Undvik `tester.pump(const Duration(seconds: 5))` – använd `pumpFor` eller `pu
 - Använd `InMemoryLocalStorageRepository` istället för att mocka `LocalStorageRepository` – det är renare och täcker verklig lagringslogik.
 - Kör `await repository.clearAllData()` i testets `setUp` eller i testets inledning om du behöver rent state.
 
+## Selectors/Finders
+- Undvik `find.text('...')` för att hitta kritiska UI-komponenter om texten kan ändras eller saknar unicitet. Använd i första hand `find.byType(WidgetName)` eller `find.byKey(Key('...'))`. För rubriker och knappar kan `find.text` vara okej om copyn är stabil, men fall inte i fällan att textbaserade tester går sönder bara för att en copywriter ändrar till "Stäng" istället för "Avsluta".
+
 ## Testnamn
 
 ```dart
@@ -102,6 +105,7 @@ testWidgets('[Widget] SkärmNamn – flöde som testas', (tester) async { ... })
 Läs alltid `/memories/repo/testing.md` och `/memories/repo/test_standardization_2026-03-05.md` vid återkommande problem innan du gissar felet.
 
 - **ScreenUtil-kraschar**: uppstår om en widget som använder `.w`/`.h` pumpas utan `MathGameApp` eller `ScreenUtilInit`. Lägg till wrappern via Helper.
+- **ProviderScope saknas för ConsumerWidgets**: om en enskild widget pumpas i ett widget-test (utan `MathGameApp`) och den har konverterats till en Riverpod `ConsumerWidget`, måste den wrappas i en `ProviderScope`. Ofta krävs också anrop till `setupWidgetTestDependencies()` i `setUp` så att underliggande repository-providers faktiskt har data.
 - **`getIt` är inte resetad**: om ett test registrerar något utan att anropa `getIt.reset()` smittar det nästa test. `setupWidgetTestDependencies()` hanterar detta.
 - **Onboarding blockerar flödet**: kalla `skipOnboardingIfPresent` eller sätt `onboarding_done_<userId>` = true i repositoryt innan pumpning.
 - **Animationer avslutas inte**: använd `pumpFor(tester, AppConstants.mediumAnimationDuration + const Duration(milliseconds: 150))` efter att ha tryckt på knappar.

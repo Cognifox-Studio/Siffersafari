@@ -33,6 +33,8 @@ class UserProgress extends Equatable {
     this.masteryLevels = const {},
     this.operationDifficultySteps = const {},
     this.selectedCharacterId = 'loke',
+    this.unlockedItems = const [],
+    this.equippedItems = const {},
   });
 
   @HiveField(0)
@@ -105,6 +107,14 @@ class UserProgress extends Equatable {
   /// Defaults to 'loke' for all existing profiles.
   @HiveField(20, defaultValue: 'loke')
   final String selectedCharacterId;
+
+  /// List of IDs for unlocked inventory items (e.g. 'item_hat_safari').
+  @HiveField(21, defaultValue: <String>[])
+  final List<String> unlockedItems;
+
+  /// Map of equipped items by slot. Key: slot (e.g. 'head', 'hand'), Value: item slug.
+  @HiveField(22, defaultValue: <String, String>{})
+  final Map<String, String> equippedItems;
 
   static const int pointsPerLevel = 200;
 
@@ -183,6 +193,8 @@ class UserProgress extends Equatable {
     Map<String, double>? masteryLevels,
     Map<String, int>? operationDifficultySteps,
     String? selectedCharacterId,
+    List<String>? unlockedItems,
+    Map<String, String>? equippedItems,
   }) {
     return UserProgress(
       userId: userId ?? this.userId,
@@ -208,6 +220,8 @@ class UserProgress extends Equatable {
       operationDifficultySteps:
           operationDifficultySteps ?? this.operationDifficultySteps,
       selectedCharacterId: selectedCharacterId ?? this.selectedCharacterId,
+      unlockedItems: unlockedItems ?? this.unlockedItems,
+      equippedItems: equippedItems ?? this.equippedItems,
     );
   }
 
@@ -234,5 +248,7 @@ class UserProgress extends Equatable {
         masteryLevels,
         operationDifficultySteps,
         selectedCharacterId,
+        unlockedItems,
+        equippedItems,
       ];
 }

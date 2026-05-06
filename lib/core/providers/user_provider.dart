@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/level_up_event.dart';
 import 'package:siffersafari/domain/entities/quest.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
@@ -30,6 +31,7 @@ class UserState {
     this.lastLevelUp,
     this.questStatus,
     this.questNotice,
+    this.newlyUnlockedItem,
   });
 
   final UserProgress? activeUser;
@@ -41,6 +43,7 @@ class UserState {
   final LevelUpEvent? lastLevelUp;
   final QuestStatus? questStatus;
   final String? questNotice;
+  final InventoryItem? newlyUnlockedItem;
 
   static const Object _unset = Object();
 
@@ -54,6 +57,7 @@ class UserState {
     Object? lastLevelUp = _unset,
     QuestStatus? questStatus,
     Object? questNotice = _unset,
+    Object? newlyUnlockedItem = _unset,
   }) {
     return UserState(
       activeUser: activeUser ?? this.activeUser,
@@ -70,6 +74,9 @@ class UserState {
       questStatus: questStatus ?? this.questStatus,
       questNotice:
           questNotice == _unset ? this.questNotice : questNotice as String?,
+      newlyUnlockedItem: newlyUnlockedItem == _unset
+          ? this.newlyUnlockedItem
+          : newlyUnlockedItem as InventoryItem?,
     );
   }
 }
@@ -242,7 +249,7 @@ class UserNotifier extends StateNotifier<UserState> {
 
   void clearLastLevelUp() {
     if (state.lastLevelUp == null) return;
-    state = state.copyWith(lastLevelUp: null);
+    state = state.copyWith(lastLevelUp: null, newlyUnlockedItem: null);
   }
 
   void _syncAudioSettings(UserProgress user) {
@@ -343,6 +350,38 @@ class UserNotifier extends StateNotifier<UserState> {
     if (user == null) return;
     final updated = user.copyWith(selectedCharacterId: characterSlug);
     await saveUser(updated);
+  }
+
+  /// Unlocks an inventory item for the active user.
+  Future<void> unlockItem(String itemId) async {
+    final user = state.activeUser;
+    if (user == null || user.unlockedItems.contains(itemId)) return;
+
+    final updatedItems = List<String>.from(user.unlockedItems)..add(itemId);
+    final updatedUser = user.copyWith(unlockedItems: updatedItems);
+    await saveUser(updatedUser);
+  }
+
+  /// Equips an inventory item in a specific slot (e.g. 'head', 'hand') for the active user.
+  Future<void> equipItem(String slot, String itemId) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updatedEquipped = Map<String, String>.from(user.equippedItems);
+    updatedEquipped[slot] = itemId;
+    final updatedUser = user.copyWith(equippedItems: updatedEquipped);
+    await saveUser(updatedUser);
+  }
+
+  /// Unequips any item in the specified slot for the active user.
+  Future<void> unequipItem(String slot) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updatedEquipped = Map<String, String>.from(user.equippedItems);
+    updatedEquipped.remove(slot);
+    final updatedUser = user.copyWith(equippedItems: updatedEquipped);
+    await saveUser(updatedUser);
   }
 
   Future<void> applyQuizResult(QuizSession session) async {
@@ -477,9 +516,24 @@ class UserNotifier extends StateNotifier<UserState> {
       ),
     );
 
-    await _repository.saveUserProgress(updatedUser);
+    InventoryItem? newlyUnlockedItem;
+    var finalUnlockedItems = updatedUser.unlockedItems;
+
+    if (updatedUser.level > oldLevel) {
+      final lockedItems = InventoryConfig.allItems
+          .where((i) => !finalUnlockedItems.contains(i.id))
+          .toList();
+      if (lockedItems.isNotEmpty) {
+        newlyUnlockedItem = lockedItems.first;
+        finalUnlockedItems = [...finalUnlockedItems, newlyUnlockedItem.id];
+      }
+    }
+
+    final finalUser = updatedUser.copyWith(unlockedItems: finalUnlockedItems);
+
+    await _repository.saveUserProgress(finalUser);
     await loadUsers();
-    _syncAudioSettings(updatedUser);
+    _syncAudioSettings(finalUser);
 
     final resolvedQuestCompletion = questCompletion == null
         ? null
@@ -495,17 +549,18 @@ class UserNotifier extends StateNotifier<UserState> {
           );
 
     state = state.copyWith(
-      activeUser: updatedUser,
+      activeUser: finalUser,
       lastReward: reward,
       lastQuestCompletion: resolvedQuestCompletion,
-      lastLevelUp: updatedUser.level > oldLevel
+      lastLevelUp: finalUser.level > oldLevel
           ? LevelUpEvent(
               oldLevel: oldLevel,
-              newLevel: updatedUser.level,
-              newTitle: updatedUser.levelTitle,
+              newLevel: finalUser.level,
+              newTitle: finalUser.levelTitle,
             )
           : null,
       questStatus: questStatus,
+      newlyUnlockedItem: newlyUnlockedItem,
     );
   }
 

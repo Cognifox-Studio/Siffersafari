@@ -237,12 +237,14 @@ class PlayfulInfoChip extends StatelessWidget {
   const PlayfulInfoChip({
     required this.label,
     this.icon,
+    this.imageAsset,
     this.color,
     super.key,
   });
 
   final String label;
   final IconData? icon;
+  final String? imageAsset;
   final Color? color;
 
   @override
@@ -268,7 +270,10 @@ class PlayfulInfoChip extends StatelessWidget {
         runSpacing: AppConstants.microSpacing4,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          if (icon != null) Icon(icon, size: 16, color: chipColor),
+          if (imageAsset != null)
+            Image.asset(imageAsset!, width: 20, height: 20)
+          else if (icon != null)
+            Icon(icon, size: 16, color: chipColor),
           Text(
             label,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(

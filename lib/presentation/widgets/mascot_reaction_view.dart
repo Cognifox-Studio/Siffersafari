@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 
 import 'game_character.dart';
 
-class MascotReactionView extends StatelessWidget {
+class MascotReactionView extends ConsumerWidget {
   const MascotReactionView.withState({
     super.key,
     required this.height,
@@ -16,7 +18,9 @@ class MascotReactionView extends StatelessWidget {
   final BoxFit fit;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final activeUser = ref.watch(userProvider).activeUser;
+
     return SizedBox(
       height: height,
       child: GameCharacter(
@@ -24,6 +28,7 @@ class MascotReactionView extends StatelessWidget {
         fit: fit,
         reaction: _mapReaction(state),
         reactionNonce: state.index,
+        equippedItems: activeUser?.equippedItems,
       ),
     );
   }

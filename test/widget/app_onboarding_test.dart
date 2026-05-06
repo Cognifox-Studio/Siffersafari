@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -72,7 +71,7 @@ void main() {
       expect(find.text('Vad vill du räkna först?'), findsNothing);
 
       await tester.tap(find.text('Starta'));
-      await pumpUntilFound(tester, find.text(AppConstants.appName));
+      await pumpUntilFound(tester, find.byType(HomeScreen));
       await pumpFor(tester, const Duration(milliseconds: 600));
 
       await tester.pumpWidget(
@@ -149,17 +148,16 @@ void main() {
 
       await tester.tap(find.text('Starta'));
 
-      final homeTitle = find.text(AppConstants.appName);
       final finishSteps =
           (const Duration(seconds: 4).inMilliseconds / 50).ceil();
       for (var i = 0; i < finishSteps; i++) {
-        if (homeTitle.evaluate().isNotEmpty) break;
+        if (find.byType(HomeScreen).evaluate().isNotEmpty) break;
         await tester.pump(const Duration(milliseconds: 50));
       }
 
       await pumpFor(tester, const Duration(milliseconds: 600));
 
-      expect(homeTitle, findsOneWidget);
+      expect(find.byType(HomeScreen), findsOneWidget);
       expect(onboardingTitle, findsNothing);
       expect(repository.getAllowedOperationNames(userId), contains('addition'));
       expect(

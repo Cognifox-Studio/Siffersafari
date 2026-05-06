@@ -6,7 +6,7 @@
 
 ---
 
-## Nuläge (2026-05-05)
+## Nuläge (2026-05-06)
 
 **Version:** 1.3.6+14 (Mergad & Taggad, i Play Console Alpha)
 **Tester:** Alla 190 tester passerar ✅  
@@ -15,6 +15,13 @@
 **Release AAB:** Laddad till Google Play Console för stängt test (Alpha) ✅  
 
 ### Senaste leveranser
+
+**2026-05-06 – Hemskärm & Garderobens UI-logik**
+- **Hemskärmslayout (Home Screen):** Förenklad layout genom att centrera spelets logga och minimera onödigt vertikalt utrymme.
+- **Större Maskot:** Siffersafari-maskoten Loke gjordes väsentligt mycket större på hemskärmen (SizedBox höjd 190/210 i hemskärmen).
+- **Garderobsfunktion (WardrobeDialog):** Återställde och kopplade ihop garderoben med Home Screen via maskotens `onTap`. När man klickar på apan öppnas profilens inventarie-fönster (Wardrobe).
+- **Riverpod State Propagation:** Rättade ett data-flödesfel där Lokes karaktärsvy (`GameCharacter`) i hemskärmen inte uppdaterades när ny utrustning (till exempel hatten) tog på sig. Man tryckte in `user.equippedItems` till `GameCharacter()`.
+- **Clip.none för Stack:** Rättade problem med avklippta items, till exempel en hatt på huvudet, genom att lägga till `clipBehavior: Clip.none` på maskotens renderande `Stack`.
 
 **2026-05-05 – UI Assets & Instruktionssanering**
 - **Grafiska UI-ikoner:** Bytt ut Flutter standardikoner (även emojis) mot anpassade PNG-ikoner (ex. `ic_math_addition.png`, `img_avatar_animal.png`) i Home och Profile för att ge appen en mjukare trä/safari-känsla.
@@ -41,10 +48,10 @@
 
 ## Nästa steg (v1.4.1 Reward MVP)
 
-### Aktuell fas: Inventory & Wardrobe Logik
-- Vi har apan (Loke) och hans animation på plats.
-- Nästa tekniska bit är att bygga in Riverpod/Hive-logiken för inventory, så drömmarna om att byta hattar (Safari hat) faktiskt fungerar beständigt.
-- Belönings-MVP: Välja ett ställe där hatten ges/låses upp och läses av på karaktären i skärmen.
+### Aktuell fas: Reward MVP (Polering)
+- Vi har apan (Loke), inventory-modellen och wardrobe-dialogen i fungerande skick. `user.equippedItems` passas numera framgångsrikt till UI-skärmarna.
+- Belönings-MVP: Nästa steg är att polera upplåsnings-flödet och bekräfta hur items låses upp ordentligt genom spelets progression. All konfiguration finns redo under app_constants.dart (wardrobe items).
+- Vi bör eventuellt validera att eventuella nya wardrobe items inte buggar i andra vyer än Home Screen, ex. Quiz-slutet.
 
 ---
 

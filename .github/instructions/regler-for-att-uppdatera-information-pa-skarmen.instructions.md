@@ -23,5 +23,6 @@ applyTo: "lib/**/providers/**/*.dart, **/*_provider.dart, **/*_notifier.dart"
 
 ## State-kvalitet
 - Håll state immutabel och uppdatera via `copyWith` eller ny instans.
+- Använd alltid `Equatable` för state-klasser och säkerställ att *alla* dynamiska fält inkluderas i `props`. Om en lista eller map utelämnas misslyckas Riverpods uppdatering av UI.
 - Modellera fel, loading och submission-status uttryckligt i state i stället för att låta UI gissa.
 - Session-state i quiz, progression eller adaptiv svårighet måste mergas tillbaka till persistent state när flödet avslutas.

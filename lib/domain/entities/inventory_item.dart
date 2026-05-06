@@ -1,15 +1,21 @@
+import 'package:flutter/material.dart';
+
 class InventoryItem {
   const InventoryItem({
     required this.id,
     required this.slot,
     required this.assetPath,
     required this.name,
+    this.offset = Alignment.center,
+    this.renderScale = 0.5,
   });
 
   final String id;
   final String slot; // e.g. 'head', 'accessory'
   final String assetPath;
   final String name;
+  final Alignment offset;
+  final double renderScale;
 }
 
 class InventoryConfig {
@@ -20,50 +26,67 @@ class InventoryConfig {
       slot: 'head',
       assetPath: 'assets/images/items/item_hat_safari.png',
       name: 'Safarihatt',
+      offset: Alignment(0.0, -2.8),
+      renderScale: 0.85,
     ),
     InventoryItem(
       id: 'item_binoculars_safari',
       slot: 'accessory',
-      assetPath: 'assets/images/items/item_binoculars_safari.png',
+      assetPath: 'assets/images/items/item_binoculars_safari_nobg.png',
       name: 'Kikare',
+      offset: Alignment(1.6, 0.35),
+      renderScale: 0.4,
     ),
     InventoryItem(
       id: 'item_compass_safari',
       slot: 'accessory',
-      assetPath: 'assets/images/items/item_compass_safari.png',
+      assetPath: 'assets/images/items/item_compass_safari_nobg.png',
       name: 'Kompass',
+      offset: Alignment(0.0, 0.3),
+      renderScale: 0.35,
     ),
     InventoryItem(
       id: 'item_map_safari',
-      slot: 'accessory',
-      assetPath: 'assets/images/items/item_map_safari.png',
+      slot: 'front', // Map ritas överst med den nya front-slotten
+      assetPath: 'assets/images/items/item_map_safari_nobg.png', // Korrigerad till transparent
       name: 'Karta',
+      offset: Alignment(-1.35, 0.15), 
+      renderScale: 0.45, 
+    ),
+
+    InventoryItem(
+      id: 'item_shoes_safari',
+      slot: 'feet',
+      assetPath: 'assets/images/items/item_shoes_safari.png',
+      name: 'Safariskor',
+      offset: Alignment(0.0, 2.8),
+      renderScale: 0.65,
     ),
 
     // --- Wave 2: Pirate & Explorer ---
     InventoryItem(
       id: 'item_hat_pirate',
       slot: 'head',
-      assetPath: 'assets/images/items/item_hat_pirate.png',
+      assetPath: 'assets/images/items/item_hat_pirate_nobg.png',
       name: 'Pirathatt',
-    ),
-    InventoryItem(
-      id: 'item_shirt_explorer',
-      slot: 'body',
-      assetPath: 'assets/images/items/item_shirt_explorer.png',
-      name: 'Upptäckarskjorta',
+      offset: Alignment(0.0, -2.8), // Samma position som safarihatten
+      renderScale: 0.85, // Samma skala som safarihatten
     ),
     InventoryItem(
       id: 'item_glasses_nerd',
       slot: 'face',
-      assetPath: 'assets/images/items/item_glasses_nerd.png',
+      assetPath: 'assets/images/items/item_glasses_nerd_nobg.png',
       name: 'Smarta glasögon',
+      offset: Alignment(0.0, -0.8), // Flyttad upp mot ögonen
+      renderScale: 0.9, // Uppskalad för att täcka Lokes stora ögon
     ),
     InventoryItem(
       id: 'item_backpack_adventure',
-      slot: 'back',
-      assetPath: 'assets/images/items/item_backpack_adventure.png',
+      slot: 'accessory', // Byt från 'back' till 'accessory' så den ritas framför Loke
+      assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
       name: 'Äventyrsryggsäck',
+      offset: Alignment(-2.0, 1.4), // Knuffad ut till vänster för att hamna under utsträckta handen
+      renderScale: 0.6,
     ),
   ];
 }

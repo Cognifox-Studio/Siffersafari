@@ -14,6 +14,7 @@ applyTo: "lib/features/**/presentation/**/*.dart, lib/presentation/**/*.dart"
 ## Widgets och Riverpod i UI
 - Välj `ConsumerWidget` som standard. Byt till `ConsumerStatefulWidget` först när widgeten behöver controllers, animationer eller annan livscykelstyrd state.
 - Använd `ref.watch(...)` i `build()` och `ref.read(...)` i callbacks.
+- Om en view bygger upp `ref.watch`-state för att skicka vidare till leaf-widgets (components), *säkerställ* att alla relevanta datafält skickas explicit i sub-widgetens constructor (undvik "data dropping" där widgeten ser statisk ut för att en specifik prop aldrig skickades vidare).
 - Reagera på providerförändringar med `ref.listen(...)`, inte med `addPostFrameCallback` inuti `build()`.
 - Låt mindre leaf-widgets ta data och callbacks som parametrar när det gör dem enklare att återanvända och testa.
 
@@ -26,6 +27,7 @@ applyTo: "lib/features/**/presentation/**/*.dart, lib/presentation/**/*.dart"
 - Följ `AdaptiveLayoutInfo` och repoets breakpoints: compact `<600`, medium `>=600`, expanded `>=840`.
 - Använd `ScreenUtil` via `.w` och `.h` för skalade mått. Kör aldrig `ScreenUtil.init()` i enskilda widgets.
 - Undvik hårdkodade bredder och höjder som bryter på surfplatta eller liten mobil om flex, constraints eller layout-info räcker.
+- Om en widget ritar dekorativa element som sticker utanför sin ordinarie storlek (tex hattar på en karaktär), använd `clipBehavior: Clip.none` på relevanta `Stack`-komponenter.
 
 ## Barnvänlig UX och copy
 - Håll copy kort: ett verb och ett mål, till exempel "Spela nu" eller "Tryck på en prick".

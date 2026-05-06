@@ -22,6 +22,7 @@ Princip: senaste datum vinner vid konflikt.
 ## Historik (kort)
 
 ### 2026-05-05
+- **Avskaffad hardware slot-injektion (Garderoben):** Tidigare logik där föremål byttes ut utifrån kroppsdel (t.ex. bara en sak på huvudet) togs bort från både domän och UI. Man kan nu fritt equippa och rendera obegränsat antal föremål samtidigt. `GameCharacter` loopar utifrån Z-index istället för hårdkodade positioner. Oanvända skript relaterade till container-patching för Rive-maskotar städades även ut i samband med detta.
 - **Customization-systemet härdat:** `.github`-lagret för instructions, skills, agents och promptar sanerades så att stale referenser togs bort, relativa länkar pekar rätt och varje skill nu använder ett `name` som matchar sitt mappnamn. Detta låser discovery mot repoets faktiska filer i stället för gamla alias.
 
 ### 2026-05-03
