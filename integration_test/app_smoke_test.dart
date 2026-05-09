@@ -44,7 +44,7 @@ Future<void> _launchCleanApp(WidgetTester tester) async {
 
 Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   final activeStep = _activeOnboardingStep(tester);
-  final gradeTitle = find.text('Vilken årskurs kör du?');
+  final gradeTitle = find.text('Välj årskurs');
   final readingTitle = find.text('Kan barnet läsa?');
   final opsTitle = find.text('Vad vill du räkna först?');
 
@@ -289,7 +289,7 @@ void main() {
         () =>
             find.text('Hoppa över').evaluate().isNotEmpty ||
             find.text('Nu kör vi!').evaluate().isNotEmpty ||
-            find.text('Vilken årskurs kör du?').evaluate().isNotEmpty ||
+            find.text('Välj årskurs').evaluate().isNotEmpty ||
             find.text('Kan barnet läsa?').evaluate().isNotEmpty ||
             find.text('Vad vill du räkna först?').evaluate().isNotEmpty ||
             find

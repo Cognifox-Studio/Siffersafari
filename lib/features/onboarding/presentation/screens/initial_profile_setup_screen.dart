@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
@@ -92,19 +92,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppConstants.largePadding),
                         Text(
-                          'Välkommen!',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: mutedOnPrimary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AppConstants.microSpacing6),
-                        Text(
-                          'Jag heter ${AppConstants.mascotName}.',
+                          'VÃ¤lkommen!',
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -120,7 +108,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'Skapa en profil första gången så spelet kan spara poäng, nivå och anpassa svårighetsgrad.',
+                              'Skapa en profil fÃ¶rsta gÃ¥ngen sÃ¥ spelet kan spara poÃ¤ng, nivÃ¥ och anpassa svÃ¥righetsgrad.',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
@@ -159,7 +147,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppConstants.defaultPadding),
                         Text(
-                          'Du kan skapa fler profiler senare i Inställningar.',
+                          'Du kan skapa fler profiler senare i InstÃ¤llningar.',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: mutedOnPrimary,
@@ -180,7 +168,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                               height: 24,
                             ),
                             Text(
-                              'Redo för matte-äventyr!',
+                              'Redo fÃ¶r matte-Ã¤ventyr!',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium

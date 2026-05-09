@@ -741,6 +741,24 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                   width: 54,
                                   height: 54,
                                 ),
+                              )
+                            else if (node.sceneTag == 'monkey_rock')
+                              Positioned(
+                                bottom: 6,
+                                child: Image.asset(
+                                  'assets/images/story/map_monkey_rock.png',
+                                  width: 54,
+                                  height: 54,
+                                ),
+                              )
+                            else if (node.sceneTag == 'fors')
+                              Positioned(
+                                bottom: 6,
+                                child: Image.asset(
+                                  'assets/images/story/map_waterfall.png',
+                                  width: 54,
+                                  height: 54,
+                                ),
                               ),
 
                             // Node circle drawn via paint – label only here

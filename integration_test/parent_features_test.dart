@@ -54,7 +54,7 @@ Future<void> _launchCleanApp(WidgetTester tester) async {
 
 Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   final activeStep = _activeOnboardingStep(tester);
-  final gradeTitle = find.text('Vilken årskurs kör du?');
+  final gradeTitle = find.text('Välj årskurs');
   final readingTitle = find.text('Kan barnet läsa?');
 
   if (_isVisible(readingTitle)) {

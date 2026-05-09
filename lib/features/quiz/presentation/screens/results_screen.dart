@@ -26,6 +26,7 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/star_rating.dart';
@@ -349,6 +350,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         SizedBox(
           height: 112.h,
           child: GameCharacter(
+            characterId: activeUser?.selectedCharacterId == 'signe'
+                ? CharacterId.signe
+                : activeUser?.selectedCharacterId == 'astrid'
+                    ? CharacterId.astrid
+                    : CharacterId.loke,
             reaction: _characterCelebrate
                 ? CharacterReaction.celebrate
                 : CharacterReaction.idle,
@@ -731,7 +737,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   }
 
   String _mascotSays(String text) {
-    return '${AppConstants.mascotName}: $text';
+    final activeUser = ref.read(userProvider).activeUser;
+    String charName = AppConstants.mascotName;
+    if (activeUser != null && activeUser.selectedCharacterId.isNotEmpty) {
+      final id = activeUser.selectedCharacterId;
+      charName = id[0].toUpperCase() + id.substring(1);
+    }
+    return '$charName: $text';
   }
 
   int _calculateStars(double successRate) {

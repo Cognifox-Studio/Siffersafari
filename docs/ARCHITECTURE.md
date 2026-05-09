@@ -101,8 +101,8 @@ Repository-implementation for lokal lagring:
 ## Huvudfloden i produkten
 
 1. Barn valjer/skapar profil
-2. Home visar rekommenderad progression + storystatus + daglig utmaning (`DailyChallengeCard`)
-3. Quiz startas via `QuizNotifier.startSession(...)` (ev. med `isDailyChallenge: true`)
+2. Home visar aktuell profil, en rekommenderad/öppen svårighetsmeny (4 räknesätt), plus aktiv maskot. (All "extra" UI som dagliga uppdrag eller automatiska progression-genvägar har städats bort för barnens fokus)
+3. Quiz startas via `QuizNotifier.startSession(...)`
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback
    - poang/streak

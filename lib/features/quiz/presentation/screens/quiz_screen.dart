@@ -7,6 +7,7 @@ import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -72,6 +73,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   void _handleAnswerSelected(int answer) {
     if (_selectedAnswer != null) return;
+
+    ref.read(audioServiceProvider).playClickSound();
 
     setState(() {
       _selectedAnswer = answer;
@@ -412,8 +415,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final useTwoColumns = constraints.maxWidth >= 520 ||
-            (constraints.maxWidth >= 320 && constraints.maxHeight < 520);
         final buttonMinHeight = constraints.maxHeight < 360
             ? 56.0
             : AppConstants.answerButtonHeight;
@@ -435,21 +436,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             onPressed: () => _handleAnswerSelected(answer),
           );
 
-          if (!useTwoColumns) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: AppConstants.smallPadding.h),
-              child: button,
-            );
-          }
-
           final spacing = AppConstants.smallPadding.w;
           final itemWidth = (constraints.maxWidth - spacing) / 2;
           return SizedBox(width: itemWidth, child: button);
         }).toList(growable: false);
-
-        if (!useTwoColumns) {
-          return Column(children: children);
-        }
 
         return Wrap(
           spacing: AppConstants.smallPadding.w,

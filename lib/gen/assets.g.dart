@@ -2,6 +2,8 @@
 
 enum CharacterId {
   loke,
+  signe,
+  astrid,
 }
 
 enum UiEffectId {
@@ -15,12 +17,17 @@ final class AssetPaths {
     switch (id) {
       case CharacterId.loke:
         return 'assets/characters/loke/svg/loke_composite.svg';
+      case CharacterId.signe:
+      case CharacterId.astrid:
+        return ''; // Legacy fallback svgs dont exist for new chars
     }
   }
 
   static String? characterRive(CharacterId id) {
     switch (id) {
       case CharacterId.loke:
+      case CharacterId.signe:
+      case CharacterId.astrid:
         return null;
     }
   }

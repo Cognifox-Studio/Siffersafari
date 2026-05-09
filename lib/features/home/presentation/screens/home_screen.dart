@@ -15,22 +15,20 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
-import 'package:siffersafari/core/services/daily_challenge_service.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
-import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/features/daily_challenge/presentation/widgets/daily_challenge_card.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
-import 'package:siffersafari/features/inventory/presentation/widgets/wardrobe_dialog.dart';
+import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 import 'package:siffersafari/features/story/presentation/screens/story_map_screen.dart';
+import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
@@ -148,6 +146,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     required DifficultyLevel difficulty,
     bool isDailyChallenge = false,
   }) {
+    ref.read(audioServiceProvider).playClickSound();
+
     final user = ref.read(userProvider).activeUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -215,33 +215,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     context.pushSmooth(const QuizScreen());
   }
 
-  void _startDailyChallenge(
-    DailyChallenge challenge, {
-    String source = 'daily_card',
-  }) {
-    final user = ref.read(userProvider).activeUser;
-    if (user != null) {
-      unawaited(
-        ref.read(appAnalyticsProvider).logEvent(
-          name: 'daily_challenge_started',
-          userId: user.userId,
-          properties: {
-            'operation': challenge.operation.name,
-            'difficulty': challenge.difficulty.name,
-            'dateKey': challenge.dateKey,
-            'source': source,
-          },
-        ),
-      );
-    }
-
-    _startQuiz(
-      operationType: challenge.operation,
-      difficulty: challenge.difficulty,
-      isDailyChallenge: true,
-    );
-  }
-
   // endregion
 
   // region Main Build Method
@@ -279,12 +252,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       parentAllowedOperations: parentAllowedOps,
       gradeLevel: user?.gradeLevel,
     );
-    final dailyChallenge = user == null
-        ? null
-        : ref.watch(dailyChallengeServiceProvider).getTodaysChallengeForUser(
-              user: user,
-              allowedOperations: allowedOps,
-            );
     final isDailyChallengeCompleted = user == null
         ? false
         : ref.watch(dailyChallengeProvider(user.userId)).isCompleted;
@@ -292,16 +259,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         storyProgress != null &&
         userState.questStatus != null &&
         allowedOps.contains(userState.questStatus!.quest.operation);
-    final primaryPlayAction = user == null
-        ? null
-        : _buildPrimaryPlayAction(
-            user: user,
-            allowedOps: allowedOps,
-            hasStoryQuest: hasStoryQuest,
-            userState: userState,
-            dailyChallenge: dailyChallenge,
-            isDailyChallengeCompleted: isDailyChallengeCompleted,
-          );
 
     final operationCards = _buildOperationCards(context, allowedOps);
 
@@ -370,7 +327,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                               ),
                                         );
                                         context.pushSmooth(
-                                            const ParentPinScreen(),);
+                                          const ParentPinScreen(),
+                                        );
                                       },
                                       iconSize: 56,
                                       icon: Image.asset(
@@ -400,12 +358,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               child: SizedBox(
                                 height: isWideScreen ? 210 : 190,
                                 child: GameCharacter(
+                                  characterId:
+                                      user.selectedCharacterId == 'signe'
+                                          ? CharacterId.signe
+                                          : user.selectedCharacterId == 'astrid'
+                                              ? CharacterId.astrid
+                                              : CharacterId.loke,
                                   reaction: _mascotReaction,
                                   reactionNonce: _mascotReactionNonce,
-                                  height: isWideScreen ? 210 : 190,                                    equippedItems: user.equippedItems,                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (_) => const WardrobeDialog(),
+                                  height: isWideScreen ? 210 : 190,
+                                  equippedItems: user.equippedItems,
+                                  customItemOffsets: user.customItemOffsets,
+                                  interactiveItems: false,
+                                  onTap: () {
+                                    ref
+                                        .read(audioServiceProvider)
+                                        .playClickSound();
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (_) => const WardrobeScreen(),
+                                      ),
                                     );
                                   },
                                 ),
@@ -452,60 +424,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: AppConstants.largePadding),
-
-                    if (primaryPlayAction != null) ...[
-                      ConstrainedBox(
-                        constraints: isWideScreen
-                            ? const BoxConstraints(maxWidth: 800)
-                            : const BoxConstraints(),
-                        child: PlayfulPanel(
-                          key: const Key('primary_play_card'),
-                          hero: true,
-                          highlightColor: themeCfg.primaryActionColor,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              PlayfulSectionHeading(
-                                title: primaryPlayAction.title,
-                                trailing: Icon(
-                                  primaryPlayAction.icon,
-                                  color: themeCfg.primaryActionColor,
-                                  size: 26,
-                                ),
-                              ),
-                              if (primaryPlayAction.description.isNotEmpty) ...[
-                                const SizedBox(
-                                  height: AppConstants.smallPadding,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: PlayfulInfoChip(
-                                    label: primaryPlayAction.description,
-                                    color: themeCfg.primaryActionColor,
-                                  ),
-                                ),
-                              ],
-                              const SizedBox(
-                                height: AppConstants.defaultPadding,
-                              ),
-                              ElevatedButton.icon(
-                                key: const Key('primary_play_button'),
-                                onPressed: primaryPlayAction.onPressed,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: onPrimary,
-                                  foregroundColor: themeCfg.primaryActionColor,
-                                  minimumSize: const Size.fromHeight(60),
-                                ),
-                                icon: Icon(primaryPlayAction.icon),
-                                label: Text(primaryPlayAction.buttonLabel),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-
                     if (user != null) ...[
                       const SizedBox(height: AppConstants.largePadding),
                       Align(
@@ -549,19 +467,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ),
 
                     const SizedBox(height: AppConstants.largePadding),
-
-                    if (user != null)
-                      DailyChallengeCard(
-                        user: user,
-                        userId: user.userId,
-                        allowedOps: allowedOps,
-                        onPrimary: onPrimary,
-                        mutedOnPrimary: mutedOnPrimary,
-                        accentColor: accentColor,
-                        onStart: (challenge) {
-                          _startDailyChallenge(challenge);
-                        },
-                      ),
 
                     if (user != null)
                       const SizedBox(height: AppConstants.largePadding),
@@ -710,95 +615,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  _PrimaryPlayAction _buildPrimaryPlayAction({
-    required UserProgress user,
-    required Set<OperationType> allowedOps,
-    required bool hasStoryQuest,
-    required UserState userState,
-    required DailyChallenge? dailyChallenge,
-    required bool isDailyChallengeCompleted,
-  }) {
-    if (hasStoryQuest && userState.questStatus != null) {
-      final quest = userState.questStatus!.quest;
-      return _PrimaryPlayAction(
-        title: 'Fortsätt',
-        description: quest.operation.displayName,
-        buttonLabel: 'Fortsätt',
-        icon: Icons.explore_rounded,
-        onPressed: () => _startQuiz(
-          operationType: quest.operation,
-          difficulty: quest.difficulty,
-        ),
-      );
-    }
-
-    if (dailyChallenge != null && !isDailyChallengeCompleted) {
-      return _PrimaryPlayAction(
-        title: 'Dagens runda',
-        description: dailyChallenge.operation.displayName,
-        buttonLabel: 'Spela nu',
-        icon: Icons.flash_on_rounded,
-        onPressed: () => _startDailyChallenge(
-          dailyChallenge,
-          source: 'primary_play',
-        ),
-      );
-    }
-
-    final recommendedOperation = _preferredPrimaryOperation(
-      allowedOps: allowedOps,
-      preferredOperation: dailyChallenge?.operation,
-    );
-
-    return _PrimaryPlayAction(
-      title: 'Spela nu',
-      description: recommendedOperation.displayName,
-      buttonLabel: 'Spela nu',
-      icon: _iconForOperation(recommendedOperation),
-      onPressed: () => _startQuiz(
-        operationType: recommendedOperation,
-        difficulty: DifficultyLevel.easy,
-      ),
-    );
-  }
-
-  OperationType _preferredPrimaryOperation({
-    required Set<OperationType> allowedOps,
-    OperationType? preferredOperation,
-  }) {
-    if (preferredOperation != null && allowedOps.contains(preferredOperation)) {
-      return preferredOperation;
-    }
-
-    const fallbackOrder = <OperationType>[
-      OperationType.addition,
-      OperationType.subtraction,
-      OperationType.multiplication,
-      OperationType.division,
-    ];
-
-    for (final operation in fallbackOrder) {
-      if (allowedOps.contains(operation)) return operation;
-    }
-
-    return OperationType.addition;
-  }
-
-  IconData _iconForOperation(OperationType operation) {
-    switch (operation) {
-      case OperationType.addition:
-        return Icons.add_rounded;
-      case OperationType.subtraction:
-        return Icons.remove_rounded;
-      case OperationType.multiplication:
-        return Icons.close_rounded;
-      case OperationType.division:
-        return Icons.percent_rounded;
-      case OperationType.mixed:
-        return Icons.auto_awesome_rounded;
-    }
-  }
-
   Set<OperationType> _defaultAllowedOperations() {
     return {
       OperationType.addition,
@@ -850,20 +666,4 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // endregion
-}
-
-class _PrimaryPlayAction {
-  const _PrimaryPlayAction({
-    required this.title,
-    required this.description,
-    required this.buttonLabel,
-    required this.icon,
-    required this.onPressed,
-  });
-
-  final String title;
-  final String description;
-  final String buttonLabel;
-  final IconData icon;
-  final VoidCallback onPressed;
 }

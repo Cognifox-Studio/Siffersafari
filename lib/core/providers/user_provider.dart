@@ -230,9 +230,14 @@ class UserNotifier extends StateNotifier<UserState> {
       final label = user.gradeLevel != null
           ? 'Årskurs ${user.gradeLevel}'
           : user.ageGroup.displayName;
+
+      final charId = user.selectedCharacterId;
+      final charName = charId.isNotEmpty
+          ? charId[0].toUpperCase() + charId.substring(1)
+          : AppConstants.mascotName;
+
       state = state.copyWith(
-        questNotice:
-            '${AppConstants.mascotName} anpassade uppdraget till $label.',
+        questNotice: '$charName anpassade uppdraget till $label.',
       );
     }
   }
@@ -322,6 +327,7 @@ class UserNotifier extends StateNotifier<UserState> {
     required AgeGroup ageGroup,
     String avatarEmoji = '🧒',
     int? gradeLevel,
+    String selectedCharacterId = 'loke',
   }) async {
     final newUser = UserProgress(
       userId: userId,
@@ -329,6 +335,7 @@ class UserNotifier extends StateNotifier<UserState> {
       ageGroup: ageGroup,
       avatarEmoji: avatarEmoji,
       gradeLevel: gradeLevel,
+      selectedCharacterId: selectedCharacterId,
     );
 
     await saveUser(newUser);
@@ -381,6 +388,27 @@ class UserNotifier extends StateNotifier<UserState> {
     final updatedEquipped = Map<String, String>.from(user.equippedItems);
     updatedEquipped.remove(slot);
     final updatedUser = user.copyWith(equippedItems: updatedEquipped);
+    await saveUser(updatedUser);
+  }
+
+  /// Saves the custom drag-and-drop position and transformation for an item.
+  Future<void> setCustomItemOffset(String itemSlug, double dx, double dy,
+      {double scale = 1.0, double rotation = 0.0}) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updatedOffsets = Map<String, String>.from(user.customItemOffsets);
+    updatedOffsets[itemSlug] = '$dx,$dy,$scale,$rotation';
+    final updatedUser = user.copyWith(customItemOffsets: updatedOffsets);
+    await saveUser(updatedUser);
+  }
+
+  /// Clears all custom item offsets (resets to defaults).
+  Future<void> clearCustomItemOffsets() async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updatedUser = user.copyWith(customItemOffsets: const {});
     await saveUser(updatedUser);
   }
 

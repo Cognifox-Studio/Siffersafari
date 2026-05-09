@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 
@@ -25,6 +24,10 @@ class GameCharacter extends StatefulWidget {
     this.fit = BoxFit.contain,
     this.characterId = CharacterId.loke,
     this.equippedItems,
+    this.customItemOffsets,
+    this.onItemOffsetUpdated,
+    this.interactiveItems = false,
+    this.persistentReaction = false,
     this.onTap,
   });
 
@@ -39,6 +42,20 @@ class GameCharacter extends StatefulWidget {
   /// Equipped inventory items (key: slot, value: item slug)
   final Map<String, String>? equippedItems;
 
+  /// Custom offsets created by dragging. Key: item slug, Value: "dx,dy,scale,rotation" formatted string.
+  final Map<String, String>? customItemOffsets;
+
+  /// Callback when an item is dragged/scaled/rotated.
+  final void Function(
+          String itemSlug, double dx, double dy, double scale, double rotation)?
+      onItemOffsetUpdated;
+
+  /// If true, items can be dragged to change their position.
+  final bool interactiveItems;
+
+  /// If true, does not fall back to CharacterReaction.idle after playing a reaction animation.
+  final bool persistentReaction;
+
   /// Callback when the character is tapped.
   final VoidCallback? onTap;
 
@@ -52,6 +69,9 @@ class _GameCharacterState extends State<GameCharacter>
   late final AnimationController _bobController;
   CharacterReaction _fallbackReaction = CharacterReaction.idle;
   int _reactionToken = 0;
+  final Map<String, Offset> _dragOffsets = {};
+  final Map<String, double> _dragScales = {};
+  final Map<String, double> _dragRotations = {};
 
   @override
   void initState() {
@@ -143,6 +163,11 @@ class _GameCharacterState extends State<GameCharacter>
     _reactionController.forward(from: 0).whenCompleteOrCancel(() {
       if (!mounted) return;
       if (activeToken != _reactionToken) return;
+
+      if (widget.persistentReaction) {
+        return;
+      }
+
       setState(() {
         _fallbackReaction = CharacterReaction.idle;
       });
@@ -219,22 +244,12 @@ class _GameCharacterState extends State<GameCharacter>
   }
 
   Widget _currentAsset(BuildContext context) {
-    final assetPath = _currentSvgPath();
-    Widget characterAsset;
-
-    if (assetPath.endsWith('.png')) {
-      characterAsset = Image.asset(
-        assetPath,
-        fit: widget.fit,
-        errorBuilder: (context, error, stackTrace) => _iconFallback(context),
-      );
-    } else {
-      characterAsset = SvgPicture.asset(
-        assetPath,
-        fit: widget.fit,
-        placeholderBuilder: (context) => _iconFallback(context),
-      );
-    }
+    final assetPath = _currentPngPath();
+    final characterAsset = Image.asset(
+      assetPath,
+      fit: widget.fit,
+      errorBuilder: (context, error, stackTrace) => _iconFallback(context),
+    );
 
     if (widget.equippedItems == null || widget.equippedItems!.isEmpty) {
       return characterAsset;
@@ -250,9 +265,27 @@ class _GameCharacterState extends State<GameCharacter>
         ..._buildEquippedItem('face'),
         ..._buildEquippedItem('head'),
         ..._buildEquippedItem('accessory'),
-        ..._buildEquippedItem('front'), // Nytt fack som alltid ritas längst fram (över accessory)
+        ..._buildEquippedItem(
+          'front',
+        ), // Nytt fack som alltid ritas lÃ¤ngst fram (Ã¶ver accessory)
       ],
     );
+  }
+
+  ({double dx, double dy, double scaleModifier}) _getCharacterAdjustments(
+    CharacterId characterId,
+    String slot,
+  ) {
+    if (characterId == CharacterId.signe) {
+      if (slot == 'head' || slot == 'face') {
+        return (dx: 0.0, dy: 0.35, scaleModifier: 0.95);
+      }
+    } else if (characterId == CharacterId.astrid) {
+      if (slot == 'head' || slot == 'face') {
+        return (dx: 0.15, dy: 0.15, scaleModifier: 1.05);
+      }
+    }
+    return (dx: 0.0, dy: 0.0, scaleModifier: 1.0);
   }
 
   List<Widget> _buildEquippedItem(String slotLayer) {
@@ -274,16 +307,103 @@ class _GameCharacterState extends State<GameCharacter>
       );
 
       if (itemConfig.slot == slotLayer) {
+        final adjustments =
+            _getCharacterAdjustments(widget.characterId, slotLayer);
+
+        var baseDx = itemConfig.offset.x + adjustments.dx;
+        var baseDy = itemConfig.offset.y + adjustments.dy;
+        var baseScale = 1.0;
+        var baseRot = 0.0;
+
+        final currentReactionName = _fallbackReaction.name;
+        final poseSpecificKey = '${itemId}_$currentReactionName';
+        final lookupKey = (widget.customItemOffsets != null &&
+                widget.customItemOffsets!.containsKey(poseSpecificKey))
+            ? poseSpecificKey
+            : itemId;
+
+        if (widget.customItemOffsets != null &&
+            widget.customItemOffsets!.containsKey(lookupKey)) {
+          final parts = widget.customItemOffsets![lookupKey]!.split(',');
+          if (parts.length >= 2) {
+            baseDx = double.tryParse(parts[0]) ?? baseDx;
+            baseDy = double.tryParse(parts[1]) ?? baseDy;
+          }
+          if (parts.length >= 4) {
+            baseScale = double.tryParse(parts[2]) ?? baseScale;
+            baseRot = double.tryParse(parts[3]) ?? baseRot;
+          }
+        }
+
+        final dragOffset = _dragOffsets[itemId] ?? Offset.zero;
+        final dragScale = _dragScales[itemId] ?? 1.0;
+        final dragRot = _dragRotations[itemId] ?? 0.0;
+
+        // Clamp the local drag position to avoid losing items completely outside viewport (-5.0 to 5.0 alignment is a wide safe boundary)
+        final currentDx = (baseDx + dragOffset.dx).clamp(-5.0, 5.0);
+        final currentDy = (baseDy + dragOffset.dy).clamp(-5.0, 5.0);
+        final currentScale = (baseScale * dragScale).clamp(0.2, 3.0);
+        final currentRot = baseRot + dragRot;
+
+        final adjustedAlignment = Alignment(currentDx, currentDy);
+        final finalScale =
+            itemConfig.renderScale * adjustments.scaleModifier * currentScale;
+
+        Widget itemWidget = Transform.rotate(
+          angle: currentRot,
+          child: Image.asset(
+            itemConfig.assetPath,
+            fit: BoxFit.contain,
+          ),
+        );
+
+        if (widget.interactiveItems) {
+          itemWidget = GestureDetector(
+            onScaleUpdate: (details) {
+              final containerSize =
+                  context.size ?? Size(widget.height, widget.height);
+              setState(() {
+                final currentOffset = _dragOffsets[itemId] ?? Offset.zero;
+                // details.focalPointDelta ger rÃ¶relse sen gÃ¥ende frame
+                final dx = currentOffset.dx +
+                    (details.focalPointDelta.dx / (containerSize.width / 2));
+                final dy = currentOffset.dy +
+                    (details.focalPointDelta.dy / (containerSize.height / 2));
+                _dragOffsets[itemId] = Offset(dx, dy);
+
+                if (details.scale != 1.0) {
+                  _dragScales[itemId] = details.scale;
+                }
+                if (details.rotation != 0.0) {
+                  _dragRotations[itemId] = details.rotation;
+                }
+              });
+            },
+            onScaleEnd: (details) {
+              if (_dragOffsets.containsKey(itemId) ||
+                  _dragScales.containsKey(itemId) ||
+                  _dragRotations.containsKey(itemId)) {
+                final saveKey = '${itemId}_${_fallbackReaction.name}';
+                widget.onItemOffsetUpdated?.call(
+                    saveKey, currentDx, currentDy, currentScale, currentRot);
+                setState(() {
+                  _dragOffsets.remove(itemId);
+                  _dragScales.remove(itemId);
+                  _dragRotations.remove(itemId);
+                });
+              }
+            },
+            child: itemWidget,
+          );
+        }
+
         widgets.add(
           Positioned.fill(
             child: Align(
-              alignment: itemConfig.offset,
+              alignment: adjustedAlignment,
               child: FractionallySizedBox(
-                widthFactor: itemConfig.renderScale,
-                child: Image.asset(
-                  itemConfig.assetPath,
-                  fit: BoxFit.contain,
-                ),
+                widthFactor: finalScale,
+                child: itemWidget,
               ),
             ),
           ),
@@ -294,11 +414,35 @@ class _GameCharacterState extends State<GameCharacter>
     return widgets;
   }
 
-  String _currentSvgPath() {
-    if (widget.characterId == CharacterId.loke) {
-      return 'assets/characters/loke/png/loke.png'; 
+  String _currentPngPath() {
+    if (widget.characterId == CharacterId.signe) {
+      if (_fallbackReaction == CharacterReaction.celebrate ||
+          _fallbackReaction == CharacterReaction.answerCorrect) {
+        return 'assets/characters/signe/png/signe_cheer.png';
+      } else if (_fallbackReaction == CharacterReaction.answerWrong) {
+        return 'assets/characters/signe/png/signe_thinking.png';
+      }
+      return 'assets/characters/signe/png/signe_base.png';
     }
-    return AssetPaths.characterCompositeSvg(widget.characterId);
+
+    if (widget.characterId == CharacterId.astrid) {
+      if (_fallbackReaction == CharacterReaction.celebrate ||
+          _fallbackReaction == CharacterReaction.answerCorrect) {
+        return 'assets/characters/astrid/png/astrid_cheer.png';
+      } else if (_fallbackReaction == CharacterReaction.answerWrong) {
+        return 'assets/characters/astrid/png/astrid_thinking.png';
+      }
+      return 'assets/characters/astrid/png/astrid_base.png';
+    }
+
+    // Default to Loke
+    if (_fallbackReaction == CharacterReaction.celebrate ||
+        _fallbackReaction == CharacterReaction.answerCorrect) {
+      return 'assets/characters/loke/png/loke_cheer_streak.png';
+    } else if (_fallbackReaction == CharacterReaction.answerWrong) {
+      return 'assets/characters/loke/png/loke_think_struggle.png';
+    }
+    return 'assets/characters/loke/png/loke_base.png';
   }
 
   _FallbackPose _fallbackPoseFor(double t) {
@@ -330,7 +474,7 @@ class _GameCharacterState extends State<GameCharacter>
           rotation: 0.03 * math.sin(math.pi * 2 * eased),
         );
       case CharacterReaction.celebrate:
-        // 5-phase jump: anticipation â†’ spring up â†’ float â†’ land â†’ settle
+        // 5-phase jump: anticipation Ã¢â€ â€™ spring up Ã¢â€ â€™ float Ã¢â€ â€™ land Ã¢â€ â€™ settle
         final double jumpDy;
         final double jumpScale;
         final double jumpRotation;

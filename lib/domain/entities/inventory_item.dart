@@ -22,6 +22,14 @@ class InventoryConfig {
   static const List<InventoryItem> allItems = [
     // --- Wave 1: Safari ---
     InventoryItem(
+      id: 'item_safari_hat',
+      slot: 'head',
+      assetPath: 'assets/images/items/item_safari_hat.png',
+      name: 'Riktig Safarihatt',
+      offset: Alignment(0.0, -2.8),
+      renderScale: 0.85,
+    ),
+    InventoryItem(
       id: 'item_hat_safari',
       slot: 'head',
       assetPath: 'assets/images/items/item_hat_safari.png',
@@ -47,11 +55,12 @@ class InventoryConfig {
     ),
     InventoryItem(
       id: 'item_map_safari',
-      slot: 'front', // Map ritas överst med den nya front-slotten
-      assetPath: 'assets/images/items/item_map_safari_nobg.png', // Korrigerad till transparent
+      slot: 'front', // Map ritas Ã¶verst med den nya front-slotten
+      assetPath:
+          'assets/images/items/item_map_safari_nobg.png', // Korrigerad till transparent
       name: 'Karta',
-      offset: Alignment(-1.35, 0.15), 
-      renderScale: 0.45, 
+      offset: Alignment(-1.35, 0.15),
+      renderScale: 0.45,
     ),
 
     InventoryItem(
@@ -76,17 +85,29 @@ class InventoryConfig {
       id: 'item_glasses_nerd',
       slot: 'face',
       assetPath: 'assets/images/items/item_glasses_nerd_nobg.png',
-      name: 'Smarta glasögon',
-      offset: Alignment(0.0, -0.8), // Flyttad upp mot ögonen
-      renderScale: 0.9, // Uppskalad för att täcka Lokes stora ögon
+      name: 'Smarta glasÃ¶gon',
+      offset: Alignment(0.0, -0.8), // Flyttad upp mot Ã¶gonen
+      renderScale: 0.9, // Uppskalad fÃ¶r att tÃ¤cka Lokes stora Ã¶gon
     ),
     InventoryItem(
       id: 'item_backpack_adventure',
-      slot: 'accessory', // Byt från 'back' till 'accessory' så den ritas framför Loke
+      slot:
+          'accessory', // Byt frÃ¥n 'back' till 'accessory' sÃ¥ den ritas framfÃ¶r Loke
       assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
-      name: 'Äventyrsryggsäck',
-      offset: Alignment(-2.0, 1.4), // Knuffad ut till vänster för att hamna under utsträckta handen
+      name: 'Ã„ventyrsryggsÃ¤ck',
+      offset: Alignment(-2.0,
+          1.4,), // Knuffad ut till vÃ¤nster fÃ¶r att hamna under utstrÃ¤ckta handen
       renderScale: 0.6,
+    ),
+    // --- Nyutvecklad grafik ---
+    InventoryItem(
+      id: 'item_camera_safari',
+      slot: 'accessory',
+      assetPath: 'assets/images/items/item_camera_safari_nobg.png',
+      name: 'Safariskamera',
+      offset: Alignment(1.4, 0.45), // Placerad nÃ¤ra handen/magen
+      renderScale: 0.45,
     ),
   ];
 }
+

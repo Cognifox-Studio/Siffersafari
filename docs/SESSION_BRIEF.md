@@ -6,15 +6,20 @@
 
 ---
 
-## Nuläge (2026-05-06)
+## Nuläge (2026-05-09)
 
-**Version:** 1.3.6+14 (Mergad & Taggad, i Play Console Alpha)
+**Version:** 1.4.0+15
 **Tester:** Alla 190 tester passerar ✅  
 **flutter analyze:** 0 fel ✅  
 **Integration smoke:** 3/3 passed (FULL_SMOKE=false) ✅  
-**Release AAB:** Laddad till Google Play Console för stängt test (Alpha) ✅  
 
 ### Senaste leveranser
+
+**2026-05-09 – UI-förenkling av Hemskärm & Quiz**
+- **Quiz:** Tog bort onödig hjälpinformation ("Hur mycket blir det?", "Läs och räkna") från frågekortet.
+- **Svarsalternativ:** Tog bort extra-etiketter ("Tryck", "Valt", "Svar") under siffran. Tvingade fram en 2x2 grid (istället för kolumn på små skärmar) så användaren aldrig behöver scrolla för att se alla svarsalternativ.
+- **Hemskärm:** Tog bort "Fortsätt" (Primary Play Action) som dök upp högst upp på Hemskärmen baserat på story progress eller daily challenge.
+- **Daily Challenge:** Tog helt bort "Dagens runda" från Hemskärmen. Fokus på hemskärmen är nu endast "Spela" via de fyra räknesätten (Grid) samt maskoten och profilen. UI:t är extremt avskalat.
 
 **2026-05-06 – Hemskärm & Garderobens UI-logik**
 - **Hemskärmslayout (Home Screen):** Förenklad layout genom att centrera spelets logga och minimera onödigt vertikalt utrymme.

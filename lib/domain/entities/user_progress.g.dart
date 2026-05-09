@@ -48,13 +48,15 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
           fields[21] == null ? [] : (fields[21] as List).cast<String>(),
       equippedItems:
           fields[22] == null ? {} : (fields[22] as Map).cast<String, String>(),
+      customItemOffsets:
+          fields[23] == null ? {} : (fields[23] as Map).cast<String, String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, UserProgress obj) {
     writer
-      ..writeByte(23)
+      ..writeByte(24)
       ..writeByte(0)
       ..write(obj.userId)
       ..writeByte(1)
@@ -100,7 +102,9 @@ class UserProgressAdapter extends TypeAdapter<UserProgress> {
       ..writeByte(21)
       ..write(obj.unlockedItems)
       ..writeByte(22)
-      ..write(obj.equippedItems);
+      ..write(obj.equippedItems)
+      ..writeByte(23)
+      ..write(obj.customItemOffsets);
   }
 
   @override

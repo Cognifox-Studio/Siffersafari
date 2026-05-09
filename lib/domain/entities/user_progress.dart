@@ -35,6 +35,7 @@ class UserProgress extends Equatable {
     this.selectedCharacterId = 'loke',
     this.unlockedItems = const [],
     this.equippedItems = const {},
+    this.customItemOffsets = const {},
   });
 
   @HiveField(0)
@@ -116,6 +117,10 @@ class UserProgress extends Equatable {
   @HiveField(22, defaultValue: <String, String>{})
   final Map<String, String> equippedItems;
 
+  /// Custom dragged offsets for items. Key: item slug, Value: "dx,dy" string.
+  @HiveField(23, defaultValue: <String, String>{})
+  final Map<String, String> customItemOffsets;
+
   static const int pointsPerLevel = 200;
 
   static const List<String> levelTitles = [
@@ -195,6 +200,7 @@ class UserProgress extends Equatable {
     String? selectedCharacterId,
     List<String>? unlockedItems,
     Map<String, String>? equippedItems,
+    Map<String, String>? customItemOffsets,
   }) {
     return UserProgress(
       userId: userId ?? this.userId,
@@ -222,6 +228,7 @@ class UserProgress extends Equatable {
       selectedCharacterId: selectedCharacterId ?? this.selectedCharacterId,
       unlockedItems: unlockedItems ?? this.unlockedItems,
       equippedItems: equippedItems ?? this.equippedItems,
+      customItemOffsets: customItemOffsets ?? this.customItemOffsets,
     );
   }
 
@@ -250,5 +257,6 @@ class UserProgress extends Equatable {
         selectedCharacterId,
         unlockedItems,
         equippedItems,
+        customItemOffsets,
       ];
 }

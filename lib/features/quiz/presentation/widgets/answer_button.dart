@@ -101,25 +101,20 @@ class _AnswerButtonState extends State<AnswerButton>
     final resolvedMinHeight =
         widget.minHeight ?? AppConstants.answerButtonHeight;
     final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
-    final ultraCompact = resolvedMinHeight <= 52;
     Color backgroundColor;
     Color textColor;
-    String caption;
 
     if (widget.isCorrect != null) {
       // After answer is submitted
       if (widget.isCorrect!) {
         backgroundColor = AppColors.correctAnswer;
         textColor = scheme.onPrimary;
-        caption = 'Rätt';
       } else if (widget.isSelected) {
         backgroundColor = AppColors.wrongAnswer;
         textColor = scheme.onPrimary;
-        caption = 'Fel';
       } else {
         backgroundColor = widget.disabledBackgroundColor ?? scheme.surface;
         textColor = widget.idleTextColor ?? scheme.onSurface;
-        caption = 'Svar';
       }
     } else {
       // Before answer is submitted
@@ -130,7 +125,6 @@ class _AnswerButtonState extends State<AnswerButton>
       textColor = widget.isSelected
           ? scheme.onPrimary
           : (widget.idleTextColor ?? scheme.onSurface);
-      caption = widget.isSelected ? 'Valt' : 'Tryck';
     }
 
     final isEnabled = widget.isCorrect == null;
@@ -230,23 +224,6 @@ class _AnswerButtonState extends State<AnswerButton>
                         ?.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  SizedBox(
-                    height: (ultraCompact
-                            ? AppConstants.microSpacing2
-                            : AppConstants.microSpacing4)
-                        .h,
-                  ),
-                  Text(
-                    caption,
-                    style: (compact
-                            ? Theme.of(context).textTheme.labelMedium
-                            : Theme.of(context).textTheme.labelLarge)
-                        ?.copyWith(
-                      color: textColor.withValues(alpha: 0.88),
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.3,
                     ),
                   ),
                 ],

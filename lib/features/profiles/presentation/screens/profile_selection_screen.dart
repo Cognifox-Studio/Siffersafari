@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
@@ -76,6 +77,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
                       name: u.name,
                       avatarEmoji: u.avatarEmoji,
                       onTap: () async {
+                        ref.read(audioServiceProvider).playClickSound();
                         await ref.read(userProvider.notifier).selectUser(
                               u.userId,
                             );

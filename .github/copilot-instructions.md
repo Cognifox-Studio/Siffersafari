@@ -122,6 +122,7 @@ Följ rätt instruktion när motsvarande filtyp eller arbetsyta berörs:
 - Historiska docs och artifacts kan vara stale. Kontrollera alltid mot `docs/ARCHITECTURE.md` och aktuell kod.
 - Anta inte längre SVG-first mascot-runtime. Den aktiva maskotvägen är PNG-first med Flutter-animationer ovanpå.
 - Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till `UserProgress` när quizet avslutas.
+- Vid parsningslogik/formatering (t.ex. SRS-nycklar): packa data med formatversion (t.ex. `v2|`) stället för regex-gissningar på varierande display-text.
 
 ## Sessionskontinuitet
 

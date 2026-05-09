@@ -8,9 +8,10 @@ uppdaterad: 2026-05-05
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-05)
+## Gällande nuläge (2026-05-09)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
+- Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
 - Animation:
   - Procedurgenererade transformationer på enkla PNG-bilder prioriteras över komplicerad cut-out layout med SVG för mascots. Rive och Lottie är slopade.
@@ -20,6 +21,9 @@ Princip: senaste datum vinner vid konflikt.
 - Copilot-customizations i `.github/` ska vara repoanknutna, länka vidare till docs i stället för att duplicera innehåll, och använda skill-namn som matchar respektive mappnamn.
 
 ## Historik (kort)
+
+### 2026-05-09
+- **Avskalad Hemskärm & Quiz-vy:** "Dagens runda" och "Fortsätt" (Primary Action Card) togs bort helt från hemskärmen för att göra appen mer barnfokuserad, utan distractande moment. Quiz-knapparna bantades ner till renodlade grid-siffror (ingen helper-text under).
 
 ### 2026-05-05
 - **Avskaffad hardware slot-injektion (Garderoben):** Tidigare logik där föremål byttes ut utifrån kroppsdel (t.ex. bara en sak på huvudet) togs bort från både domän och UI. Man kan nu fritt equippa och rendera obegränsat antal föremål samtidigt. `GameCharacter` loopar utifrån Z-index istället för hårdkodade positioner. Oanvända skript relaterade till container-patching för Rive-maskotar städades även ut i samband med detta.

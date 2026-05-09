@@ -1499,6 +1499,8 @@ class _CharacterPickerTile extends ConsumerWidget {
 
   static const _characters = [
     ('loke', 'Loke'),
+    ('signe', 'Signe'),
+    ('astrid', 'Astrid'),
   ];
 
   @override

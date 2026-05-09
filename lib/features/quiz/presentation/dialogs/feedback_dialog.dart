@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/services/feedback_service.dart';
+import 'package:siffersafari/gen/assets.g.dart';
+import 'package:siffersafari/presentation/widgets/game_character.dart';
 
-class FeedbackDialog extends StatefulWidget {
+class FeedbackDialog extends ConsumerStatefulWidget {
   const FeedbackDialog({
     required this.feedback,
     required this.onContinue,
@@ -23,14 +27,20 @@ class FeedbackDialog extends StatefulWidget {
   final Color? messageTextColor;
 
   @override
-  State<FeedbackDialog> createState() => _FeedbackDialogState();
+  ConsumerState<FeedbackDialog> createState() => _FeedbackDialogState();
 }
 
-class _FeedbackDialogState extends State<FeedbackDialog> {
+class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
   bool _announced = false;
 
-  String _mascotTitle(String title) {
-    const prefix = '${AppConstants.mascotName}: ';
+  String _getCharacterName(String? characterId) {
+    if (characterId == null || characterId.isEmpty)
+      return AppConstants.mascotName;
+    return characterId[0].toUpperCase() + characterId.substring(1);
+  }
+
+  String _mascotTitle(String title, String? characterId) {
+    final prefix = '${_getCharacterName(characterId)}: ';
     if (title.startsWith(prefix)) return title;
     return '$prefix$title';
   }
@@ -50,11 +60,12 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
     _announced = true;
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      final activeUser = ref.read(userProvider).activeUser;
       final direction = Directionality.of(context);
       final feedback = widget.feedback;
       SemanticsService.sendAnnouncement(
         View.of(context),
-        '${_mascotTitle(feedback.title)}. ${feedback.message}',
+        '${_mascotTitle(feedback.title, activeUser?.selectedCharacterId)}. ${feedback.message}',
         direction,
       );
     });
@@ -62,6 +73,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final activeUser = ref.watch(userProvider).activeUser;
     final isCorrect = widget.feedback.isCorrect;
     const correctColor = AppColors.correctAnswer;
     final scheme = Theme.of(context).colorScheme;
@@ -85,7 +97,8 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
           borderRadius: BorderRadius.circular(AppConstants.borderRadius * 2),
         );
 
-    final title = _mascotTitle(widget.feedback.title);
+    final title =
+        _mascotTitle(widget.feedback.title, activeUser?.selectedCharacterId);
 
     final comboMultiplier = widget.feedback.comboMultiplier;
     final showComboBadge = comboMultiplier >= 1.5;
@@ -129,25 +142,27 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
             ],
             ExcludeSemantics(
               child: Container(
-                width: (AppConstants.feedbackDialogIconSize + 16).sp,
-                height: (AppConstants.feedbackDialogIconSize + 16).sp,
-                decoration: BoxDecoration(
-                  color: mainColor.withValues(alpha: AppOpacities.hudBorder),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: mainColor.withValues(
-                      alpha: AppOpacities.highlightStrong,
-                    ),
-                  ),
-                ),
+                height: 120.h,
                 alignment: Alignment.center,
-                child: Icon(
-                  isCorrect
-                      ? Icons.check_rounded
-                      : Icons.psychology_alt_rounded,
-                  color: mainColor,
-                  size: AppConstants.feedbackDialogIconSize.sp,
-                ),
+                child: activeUser != null
+                    ? GameCharacter(
+                        characterId: CharacterId.values.firstWhere(
+                          (e) => e.name == activeUser.selectedCharacterId,
+                          orElse: () => CharacterId.loke,
+                        ),
+                        equippedItems: activeUser.equippedItems,
+                        reaction: isCorrect
+                            ? CharacterReaction.celebrate
+                            : CharacterReaction.answerWrong,
+                        height: 120.h,
+                      )
+                    : Icon(
+                        isCorrect
+                            ? Icons.check_rounded
+                            : Icons.psychology_alt_rounded,
+                        color: mainColor,
+                        size: AppConstants.feedbackDialogIconSize.sp,
+                      ),
               ),
             ),
 
