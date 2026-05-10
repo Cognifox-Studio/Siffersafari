@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/gen/assets.g.dart';
@@ -58,11 +58,11 @@ class _SandboxScreenState extends State<SandboxScreen> {
                 padding: const EdgeInsets.all(16),
                 children: [
                   const Text('Välj föremål att testa',
-                      style: TextStyle(color: Colors.white, fontSize: 18)),
+                      style: TextStyle(color: Colors.white, fontSize: 18),),
                   const SizedBox(height: 16),
                   ListTile(
                     title: const Text('Rensa alla',
-                        style: TextStyle(color: Colors.redAccent)),
+                        style: TextStyle(color: Colors.redAccent),),
                     leading: const Icon(Icons.clear, color: Colors.redAccent),
                     onTap: () => setState(() => selectedItemIds.clear()),
                   ),
@@ -70,7 +70,7 @@ class _SandboxScreenState extends State<SandboxScreen> {
                   ...InventoryConfig.allItems.map((item) {
                     return CheckboxListTile(
                       title: Text('${item.name} (${item.slot})',
-                          style: const TextStyle(color: Colors.white)),
+                          style: const TextStyle(color: Colors.white),),
                       value: selectedItemIds.contains(item.id),
                       activeColor: Colors.greenAccent,
                       checkColor: Colors.black,
@@ -88,11 +88,11 @@ class _SandboxScreenState extends State<SandboxScreen> {
                   const SizedBox(height: 32),
                   const Text('Så här gör du:',
                       style: TextStyle(
-                          color: Colors.yellow, fontWeight: FontWeight.bold)),
+                          color: Colors.yellow, fontWeight: FontWeight.bold,),),
                   const SizedBox(height: 8),
                   const Text(
                       '1. Håll det här fönstret öppet.\n2. Ändra renderScale och offset i inventory_item.dart i VS Code.\n3. Spara filen (Ctrl+S)\n4. Klart! Bilden uppdateras i realtid.',
-                      style: TextStyle(color: Colors.white70)),
+                      style: TextStyle(color: Colors.white70),),
                 ],
               ),
             ),

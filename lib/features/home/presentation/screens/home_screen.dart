@@ -408,6 +408,25 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   ),
                               ],
                             ),
+                            const SizedBox(height: AppConstants.largePadding),
+                            ElevatedButton.icon(
+                              key: const Key('primary_play_button'),
+                              onPressed: () {
+                                _startQuiz(
+                                  operationType: allowedOps.isNotEmpty
+                                      ? allowedOps.first
+                                      : OperationType.multiplication,
+                                  difficulty: DifficultyLevel.easy,
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: onPrimary,
+                                foregroundColor: themeCfg.primaryActionColor,
+                                minimumSize: const Size.fromHeight(60),
+                              ),
+                              icon: const Icon(Icons.play_arrow_rounded, size: 32),
+                              label: const Text('Spela nu', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                            ),
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),
                             ElevatedButton(

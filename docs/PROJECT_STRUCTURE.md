@@ -66,7 +66,7 @@ Byggartefakter som inte ar kallkod:
 - Feature-agd UI ligger i featuremappen i stallet for `lib/presentation/widgets/`.
 - `lib/presentation/widgets/` ar reserverad for verkligt delad UI.
 
-## Viktiga skarmar (med faktisk sÃ¶kvÃ¤g)
+## Viktiga skarmar (med faktisk sökväg)
 
 - `lib/app/bootstrap/presentation/startup_splash_gate.dart`
 - `lib/app/bootstrap/presentation/startup_flow_gate.dart`
@@ -85,33 +85,33 @@ Byggartefakter som inte ar kallkod:
 
 ## Providers (exempel)
 
-**State providers (fÃ¶r presentation-lagret):**
-- `userProvider` â€“ UserState och UserNotifier
-- `quizProvider` â€“ QuizState och QuizNotifier
-- `dailyChallengeProvider` (family, per userId) â€“ DailyChallengeState och DailyChallengeNotifier
-- `storyProgressProvider` â€“ StoryProgress berÃ¤knad frÃ¥n quest-status
-- `parentSettingsProvider` â€“ ParentSettings
+**State providers (för presentation-lagret):**
+- `userProvider` – UserState och UserNotifier
+- `quizProvider` – QuizState och QuizNotifier
+- `dailyChallengeProvider` (family, per userId) – DailyChallengeState och DailyChallengeNotifier
+- `storyProgressProvider` – StoryProgress beräknad från quest-status
+- `parentSettingsProvider` – ParentSettings
 
 **Settings providers:**
-- `wordProblemsEnabledProvider` â€“ toggle fÃ¶r textuppgifter
-- `missingNumberEnabledProvider` â€“ toggle fÃ¶r missing-number varianter
-- `spacedRepetitionEnabledProvider` â€“ toggle fÃ¶r spaced repetition
+- `wordProblemsEnabledProvider` – toggle för textuppgifter
+- `missingNumberEnabledProvider` – toggle för missing-number varianter
+- `spacedRepetitionEnabledProvider` – toggle för spaced repetition
 
-**Service providers (anvÃ¤nds via DI):**
-- `appAnalyticsProvider` â€“ AppAnalyticsService
-- `appThemeProvider` â€“ AppTheme
-- `audioServiceProvider` â€“ AudioService
-- `adaptiveDifficultyServiceProvider` â€“ AdaptiveDifficultyService
-- `feedbackServiceProvider` â€“ FeedbackService
-- `achievementServiceProvider` â€“ AchievementService
-- `dailyChallengeServiceProvider` â€“ DailyChallengeService
-- `questionGeneratorServiceProvider` â€“ QuestionGeneratorService
-- `questProgressionServiceProvider` â€“ QuestProgressionService
-- `storyProgressionServiceProvider` â€“ StoryProgressionService
-- `parentPinServiceProvider` â€“ ParentPinService
-- `dataExportServiceProvider` â€“ DataExportService
-- `spacedRepetitionServiceProvider` â€“ SpacedRepetitionService
-- `localStorageRepositoryProvider` â€“ LocalStorageRepository
+**Service providers (används via DI):**
+- `appAnalyticsProvider` – AppAnalyticsService
+- `appThemeProvider` – AppTheme
+- `audioServiceProvider` – AudioService
+- `adaptiveDifficultyServiceProvider` – AdaptiveDifficultyService
+- `feedbackServiceProvider` – FeedbackService
+- `achievementServiceProvider` – AchievementService
+- `dailyChallengeServiceProvider` – DailyChallengeService
+- `questionGeneratorServiceProvider` – QuestionGeneratorService
+- `questProgressionServiceProvider` – QuestProgressionService
+- `storyProgressionServiceProvider` – StoryProgressionService
+- `parentPinServiceProvider` – ParentPinService
+- `dataExportServiceProvider` – DataExportService
+- `spacedRepetitionServiceProvider` – SpacedRepetitionService
+- `localStorageRepositoryProvider` – LocalStorageRepository
 
 ## test/
 

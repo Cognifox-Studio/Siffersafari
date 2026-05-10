@@ -23,7 +23,7 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-02)
 
 ## Namngivningsbaseline
 
-- Tekniska filnamn ar engelska och anvÃ¤nder `snake_case.dart`.
+- Tekniska filnamn ar engelska och använder `snake_case.dart`.
 - Feature-agd UI ligger i `lib/features/<feature>/presentation/widgets/`.
 - `lib/presentation/widgets/` innehaller bara delad UI och app-shell-komponenter.
 
@@ -50,7 +50,7 @@ UI-lagret ar feature-first:
 - historiska `lib/presentation/screens/` och `lib/presentation/dialogs/` ar avvecklade och ska inte anvandas for ny UI
 - `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
 
-Viktiga skarmar (med faktisk sokvÃ¤g):
+Viktiga skarmar (med faktisk sokväg):
 - `app/bootstrap/presentation/startup_splash_gate.dart`
 - `app/bootstrap/presentation/startup_flow_gate.dart`
 - `features/onboarding/presentation/screens/onboarding_screen.dart`
@@ -106,7 +106,7 @@ Repository-implementation for lokal lagring:
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback
    - poang/streak
-   - combo-multiplikator (1.5Ã— vid 3+ streak, 2.0Ã— vid 5+ streak) via `_comboMultiplierForStreak(...)`
+   - combo-multiplikator (1.5x vid 3+ streak, 2.0x vid 5+ streak) via `_comboMultiplierForStreak(...)`
    - adaptiv difficulty step per raknesatt
    - spaced repetition-review per fraga nar funktionen ar aktiverad
    - lokal analytics-event

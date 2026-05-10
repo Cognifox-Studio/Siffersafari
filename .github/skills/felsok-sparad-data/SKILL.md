@@ -22,8 +22,7 @@ Eftersom appen är 100% offline-first sparas allt i Hive. Ibland kan data bli ko
    - *Metod B (Ad-hoc Test):* Skapa ett tillfälligt test i `test/debug_hive_state_test.dart` där isolerad data skapas, sparas och läses ut, för att bevisa om felet ligger i hur `dynamic`-data parsas (typ-validering).
 3. **Analysera Datan:**
    - Kolla om obligatoriska nycklar saknas.
-   - Kontrollera exakt datatyp (särskilt viktigt för siffror och listor som kommer från Hive).
-   - Jämför skillnaden mellan vad appen förväntar sig (typade modeller) och vad den råa `dynamic`-strukturen från disk ger.
+   - Kontrollera exakt datatyp (särskilt viktigt för siffror och listor som kommer från Hive).   - Vid korrupta `equippedItems`, tänk på att föremål kan ha prefixerade nycklar baserat på poser (ex. `answerWrong_<item_id>`). Normal/idle saknar prefix.   - Jämför skillnaden mellan vad appen förväntar sig (typade modeller) och vad den råa `dynamic`-strukturen från disk ger.
 4. **Rapportera & Föreslå Lösning (på Svenska!):** 
    - Ge användaren en kort, koncis sammanfattning av vad som är fel. Undvik att dumpa 100 rader JSON.
    - Åberopa instruktionen `.github/instructions/regler-for-att-spara-saker-permanent-i-telefonen.instructions.md` och skriv koden som säkert parsar datan.

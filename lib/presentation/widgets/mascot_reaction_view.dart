@@ -41,7 +41,7 @@ class MascotReactionView extends ConsumerWidget {
         interactiveItems: interactiveItems,
         onItemOffsetUpdated: (itemSlug, dx, dy, scale, rot) {
           ref.read(userProvider.notifier).setCustomItemOffset(itemSlug, dx, dy,
-              scale: scale, rotation: rot);
+              scale: scale, rotation: rot,);
         },
       ),
     );

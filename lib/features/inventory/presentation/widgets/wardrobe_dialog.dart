@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
@@ -53,7 +54,7 @@ class WardrobeDialog extends ConsumerWidget {
                   itemCount: InventoryConfig.allItems.length,
                   itemBuilder: (context, index) {
                     final item = InventoryConfig.allItems[index];
-                    final isUnlocked = unlockedItems.contains(item.id);
+                    final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
                     // Om nyckeln eller värdet i the map är det specifika föremålet, är det utrustat
                     final isEquipped = equippedItems.values.contains(item.id);
 

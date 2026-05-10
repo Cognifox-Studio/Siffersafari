@@ -34,8 +34,9 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
   bool _announced = false;
 
   String _getCharacterName(String? characterId) {
-    if (characterId == null || characterId.isEmpty)
+    if (characterId == null || characterId.isEmpty) {
       return AppConstants.mascotName;
+    }
     return characterId[0].toUpperCase() + characterId.substring(1);
   }
 
@@ -151,6 +152,7 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
                           orElse: () => CharacterId.loke,
                         ),
                         equippedItems: activeUser.equippedItems,
+                        customItemOffsets: activeUser.customItemOffsets,
                         reaction: isCorrect
                             ? CharacterReaction.celebrate
                             : CharacterReaction.answerWrong,

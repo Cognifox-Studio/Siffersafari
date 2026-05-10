@@ -392,14 +392,24 @@ class UserNotifier extends StateNotifier<UserState> {
   }
 
   /// Saves the custom drag-and-drop position and transformation for an item.
-  Future<void> setCustomItemOffset(String itemSlug, double dx, double dy,
-      {double scale = 1.0, double rotation = 0.0}) async {
+  Future<void> setCustomItemOffset(
+    String itemSlug,
+    double dx,
+    double dy, {
+    double scale = 1.0,
+    double rotation = 0.0,
+  }) async {
     final user = state.activeUser;
     if (user == null) return;
 
     final updatedOffsets = Map<String, String>.from(user.customItemOffsets);
-    updatedOffsets[itemSlug] = '$dx,$dy,$scale,$rotation';
+    updatedOffsets[itemSlug] = 'p,$dx,$dy,$scale,$rotation';
     final updatedUser = user.copyWith(customItemOffsets: updatedOffsets);
+
+    // Optimistisk uppdatering: uppdatera state direkt så UI inte snäpper
+    // tillbaka innan den långsamma async-kedjan i saveUser hinner färdigt.
+    state = state.copyWith(activeUser: updatedUser);
+
     await saveUser(updatedUser);
   }
 

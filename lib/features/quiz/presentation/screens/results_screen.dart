@@ -361,6 +361,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             reactionNonce: _characterCelebrate ? 1 : 0,
             height: 112.h,
             equippedItems: activeUser?.equippedItems,
+            customItemOffsets: activeUser?.customItemOffsets,
           ),
         ),
         const SizedBox(height: AppConstants.defaultPadding),

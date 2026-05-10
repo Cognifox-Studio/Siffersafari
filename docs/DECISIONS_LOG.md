@@ -22,6 +22,10 @@ Princip: senaste datum vinner vid konflikt.
 
 ## Historik (kort)
 
+### 2026-05-10
+- **Pose-specifikt inventory och fallback-keys:** Utrustning kan nu konfigureras per pose (CharacterReaction) i Garderoben och ritas ut därefter. Datapersistensen löstes genom att låta den aktuella posens namn fungera som prefix i `equippedItems`-nyckeln (ex. `answerWrong_<item_id>`). "Vanlig" (idle) har inget prefix, vilket säkerställde fullständig bakåtkompatibilitet för redan befintliga spara-filer och profiler.
+- **Dolda vyer kräver prop-drilling:** All rendering av GameCharacter flyttades från lokala mock-ups till att kräva global persistens per pose (via attribut som `customItemOffsets`). 
+
 ### 2026-05-09
 - **Avskalad Hemskärm & Quiz-vy:** "Dagens runda" och "Fortsätt" (Primary Action Card) togs bort helt från hemskärmen för att göra appen mer barnfokuserad, utan distractande moment. Quiz-knapparna bantades ner till renodlade grid-siffror (ingen helper-text under).
 

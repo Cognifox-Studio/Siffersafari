@@ -92,7 +92,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppConstants.largePadding),
                         Text(
-                          'VÃ¤lkommen!',
+                          'Välkommen!',
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -108,7 +108,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'Skapa en profil fÃ¶rsta gÃ¥ngen sÃ¥ spelet kan spara poÃ¤ng, nivÃ¥ och anpassa svÃ¥righetsgrad.',
+                              'Skapa en profil första gången så spelet kan spara poäng, nivå och anpassa svårighetsgrad.',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
@@ -147,7 +147,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppConstants.defaultPadding),
                         Text(
-                          'Du kan skapa fler profiler senare i InstÃ¤llningar.',
+                          'Du kan skapa fler profiler senare i Inställningar.',
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: mutedOnPrimary,
@@ -168,7 +168,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                               height: 24,
                             ),
                             Text(
-                              'Redo fÃ¶r matte-Ã¤ventyr!',
+                              'Redo för matte-äventyr!',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium

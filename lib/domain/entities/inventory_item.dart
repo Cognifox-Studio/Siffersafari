@@ -55,7 +55,7 @@ class InventoryConfig {
     ),
     InventoryItem(
       id: 'item_map_safari',
-      slot: 'front', // Map ritas Ã¶verst med den nya front-slotten
+      slot: 'front', // Map ritas överst med den nya front-slotten
       assetPath:
           'assets/images/items/item_map_safari_nobg.png', // Korrigerad till transparent
       name: 'Karta',
@@ -85,18 +85,18 @@ class InventoryConfig {
       id: 'item_glasses_nerd',
       slot: 'face',
       assetPath: 'assets/images/items/item_glasses_nerd_nobg.png',
-      name: 'Smarta glasÃ¶gon',
-      offset: Alignment(0.0, -0.8), // Flyttad upp mot Ã¶gonen
-      renderScale: 0.9, // Uppskalad fÃ¶r att tÃ¤cka Lokes stora Ã¶gon
+      name: 'Smarta glasögon',
+      offset: Alignment(0.0, -0.8), // Flyttad upp mot ögonen
+      renderScale: 0.9, // Uppskalad för att täcka Lokes stora ögon
     ),
     InventoryItem(
       id: 'item_backpack_adventure',
       slot:
-          'accessory', // Byt frÃ¥n 'back' till 'accessory' sÃ¥ den ritas framfÃ¶r Loke
+          'accessory', // Byt från 'back' till 'accessory' så den ritas framför Loke
       assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
-      name: 'Ã„ventyrsryggsÃ¤ck',
+      name: 'Äventyrsryggsäck',
       offset: Alignment(-2.0,
-          1.4,), // Knuffad ut till vÃ¤nster fÃ¶r att hamna under utstrÃ¤ckta handen
+          1.4,), // Knuffad ut till vänster för att hamna under utsträckta handen
       renderScale: 0.6,
     ),
     // --- Nyutvecklad grafik ---
@@ -105,7 +105,7 @@ class InventoryConfig {
       slot: 'accessory',
       assetPath: 'assets/images/items/item_camera_safari_nobg.png',
       name: 'Safariskamera',
-      offset: Alignment(1.4, 0.45), // Placerad nÃ¤ra handen/magen
+      offset: Alignment(1.4, 0.45), // Placerad nära handen/magen
       renderScale: 0.45,
     ),
   ];

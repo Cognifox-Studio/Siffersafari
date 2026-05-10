@@ -39,7 +39,8 @@ class ParentDashboardScreen extends ConsumerWidget {
             onPressed: () {
               context.pushSmooth(const SettingsScreen());
             },
-            icon: const Icon(Icons.settings),
+            icon: Image.asset('assets/images/ui/ic_ui_settings.png',
+                width: 28, height: 28,),
           ),
           IconButton(
             tooltip: 'Byt PIN',

@@ -219,11 +219,12 @@ class _AnswerButtonState extends State<AnswerButton>
                   Text(
                     widget.answer.toString(),
                     style: (compact
-                            ? Theme.of(context).textTheme.titleLarge
-                            : Theme.of(context).textTheme.headlineMedium)
+                            ? Theme.of(context).textTheme.headlineSmall
+                            : Theme.of(context).textTheme.displaySmall)
                         ?.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.w900,
+                      fontSize: compact ? 32 : 44,
                     ),
                   ),
                 ],

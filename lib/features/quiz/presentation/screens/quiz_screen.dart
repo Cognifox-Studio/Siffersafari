@@ -317,9 +317,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             ),
             child: Align(
               alignment: Alignment.topCenter,
-              child: SingleChildScrollView(
-                child: _buildAnswerButtons(context, question),
-              ),
+              child: _buildAnswerButtons(context, question),
             ),
           ),
         ),
@@ -392,9 +390,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                     right: AppConstants.defaultPadding.w,
                     bottom: AppConstants.defaultPadding.h,
                   ),
-                  child: SingleChildScrollView(
-                    child: _buildAnswerButtons(context, question),
-                  ),
+                  child: _buildAnswerButtons(context, question),
                 ),
               ),
             ],
@@ -415,9 +411,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        final buttonMinHeight = constraints.maxHeight < 360
-            ? 56.0
-            : AppConstants.answerButtonHeight;
+        final double availableHeight = constraints.maxHeight;
+        final double spacingH = AppConstants.smallPadding.h;
+        // Två rader
+        final double calculatedHeight =
+            ((availableHeight - spacingH) / 2).clamp(
+          constraints.maxHeight < 360 ? 56.0 : AppConstants.answerButtonHeight,
+          100.0,
+        );
 
         final children = options.map((answer) {
           final isSelected = _selectedAnswer == answer;
@@ -432,13 +433,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             idleBackgroundColor: idleButtonColor,
             idleTextColor: onPrimary,
             disabledBackgroundColor: buttonDisabledColor,
-            minHeight: buttonMinHeight,
+            minHeight: calculatedHeight,
             onPressed: () => _handleAnswerSelected(answer),
           );
 
           final spacing = AppConstants.smallPadding.w;
           final itemWidth = (constraints.maxWidth - spacing) / 2;
-          return SizedBox(width: itemWidth, child: button);
+          return SizedBox(
+              width: itemWidth, height: calculatedHeight, child: button,);
         }).toList(growable: false);
 
         return Wrap(

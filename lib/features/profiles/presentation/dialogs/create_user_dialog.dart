@@ -126,12 +126,12 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
                   final char = _characters[index];
                   final isSelected = char.id == _selectedCharacter.id;
 
-                  final handleTap = () {
+                  void handleTap() {
                     setState(() {
                       _selectedCharacter = char;
                       _reactionNonce++;
                     });
-                  };
+                  }
 
                   return GestureDetector(
                     onTap: handleTap,

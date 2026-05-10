@@ -176,6 +176,13 @@ class _ProfileAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final avatars = [
+      'assets/images/ui/img_avatar_animal.png',
+      'assets/images/ui/img_avatar_elephant.png',
+      'assets/images/ui/img_avatar_zebra.png',
+    ];
+    final avatarAsset = avatars[avatarEmoji.hashCode % avatars.length];
+
     return Container(
       width: 84,
       height: 84,
@@ -190,7 +197,7 @@ class _ProfileAvatar extends StatelessWidget {
       alignment: Alignment.center,
       child: ClipOval(
         child: Image.asset(
-          'assets/images/ui/img_avatar_animal.png',
+          avatarAsset,
           width: 84,
           height: 84,
           fit: BoxFit.cover,
