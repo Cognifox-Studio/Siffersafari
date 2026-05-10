@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+﻿import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -11,7 +11,7 @@ import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
 import '../../test_utils.dart';
 
 void main() {
-  group('[Unit] Quiz progression – Edge cases', () {
+  group('[Unit] Quiz progression â€“ Edge cases', () {
     test(
         'Unit (QuizNotifier): startSession resets in-progress underlag and purges legacy entries',
         () async {
@@ -75,7 +75,7 @@ void main() {
 
       await pumpEventQueue();
 
-      expect(repo.quizHistory[inProgressId]!['totalQuestions'], 1);
+      expect(repo.quizHistory[inProgressId]!['totalQuestions'], 10);
       expect(repo.quizHistory[inProgressId]!['correctAnswers'], 1);
       expect(repo.quizHistory[inProgressId]!['isComplete'], isFalse);
       expect(repo.quizHistory[inProgressId]!['successRate'], 1.0);
@@ -193,3 +193,4 @@ void main() {
     });
   });
 }
+

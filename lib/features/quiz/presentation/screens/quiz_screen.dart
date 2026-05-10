@@ -1,6 +1,7 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
@@ -67,6 +68,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           },
         ),
       );
+      if (user != null) {
+        ref.read(quizProvider.notifier).cancelSession(user.userId);
+      }
     }
     Navigator.of(context).pop();
   }
@@ -75,6 +79,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     if (_selectedAnswer != null) return;
 
     ref.read(audioServiceProvider).playClickSound();
+    HapticFeedback.lightImpact();
 
     setState(() {
       _selectedAnswer = answer;
@@ -156,6 +161,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             !_feedbackDialogVisible) {
           _feedbackDialogVisible = true;
 
+          if (feedback.isCorrect) {
+            HapticFeedback.mediumImpact();
+          } else {
+            HapticFeedback.heavyImpact();
+          }
+
           final currentSession = ref.read(quizProvider).session;
           final isLastQuestion = currentSession != null &&
               currentSession.currentQuestionIndex >=
@@ -167,7 +178,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             builder: (_) => FeedbackDialog(
               feedback: feedback,
               onContinue: _handleNextQuestion,
-              continueLabel: isLastQuestion ? 'Se resultat' : 'Nästa',
+              continueLabel: isLastQuestion ? 'Se resultat' : 'NÃ¤sta',
               continueButtonColor: primaryActionColor,
               dialogBackgroundColor: cardColor,
               messageTextColor: mutedTextColor,
@@ -194,11 +205,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     return ThemedBackgroundScaffold(
       appBar: AppBar(
         title: Text(
-          'Fråga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
+          'FrÃ¥ga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
           style: TextStyle(color: onPrimary),
         ),
         leading: IconButton(
-          tooltip: 'Stäng quiz',
+          tooltip: 'StÃ¤ng quiz',
           icon: Icon(Icons.close, color: onPrimary),
           onPressed: _handleClose,
         ),
@@ -413,7 +424,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
         final double spacingH = AppConstants.smallPadding.h;
-        // Två rader
+        // TvÃ¥ rader
         final double calculatedHeight =
             ((availableHeight - spacingH) / 2).clamp(
           constraints.maxHeight < 360 ? 56.0 : AppConstants.answerButtonHeight,
@@ -440,7 +451,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           final spacing = AppConstants.smallPadding.w;
           final itemWidth = (constraints.maxWidth - spacing) / 2;
           return SizedBox(
-              width: itemWidth, height: calculatedHeight, child: button,);
+            width: itemWidth,
+            height: calculatedHeight,
+            child: button,
+          );
         }).toList(growable: false);
 
         return Wrap(
@@ -452,3 +466,4 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     );
   }
 }
+

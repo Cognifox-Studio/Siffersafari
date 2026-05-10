@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,6 +13,7 @@ import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/constants/learning_constants.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/quiz_session.dart';
+import '../../domain/entities/quiz_session_json.dart';
 import '../../domain/enums/age_group.dart';
 import '../../domain/enums/difficulty_level.dart';
 import '../../domain/enums/operation_type.dart';
@@ -269,23 +270,26 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return;
     }
 
-    final now = DateTime.now();
-    final start = session.startTime ?? now;
-    final end = session.endTime ?? now;
-
-    final rate = answered == 0 ? 0.0 : (session.correctAnswers / answered);
-
-    _writeSessionInfo(
+    final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
-      operationType: session.operationType,
-      difficulty: session.difficulty,
-      correctAnswers: session.correctAnswers,
-      totalQuestions: answered, // For in-progress, total means answered so far.
-      successRate: rate,
-      points: session.totalPoints,
-      start: start,
-      end: end,
+      operationTypeName: session.operationType.name,
     );
+
+    // Clean up any legacy in-progress entries
+    unawaited(
+      _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: session.operationType.name,
+        exceptSessionId: inProgressId,
+      ),
+    );
+
+    final sessionMap = session.toJson();
+    sessionMap['sessionId'] = inProgressId;
+    sessionMap['userId'] = userId;
+    sessionMap['isComplete'] = false;
+
+    unawaited(_repository.saveQuizSession(sessionMap));
   }
 
   void _resetInProgressUnderlag({
@@ -433,7 +437,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
   }
 
-  /// Returns due SRS keys filtered to the session’s operation type.
+  /// Returns due SRS keys filtered to the sessionâ€™s operation type.
   /// For [OperationType.mixed] sessions, all due keys are included.
   /// Capped at [max(1, totalQuestions ~/ 3)] to avoid flooding the session.
   List<String> _getDueKeysForSession(
@@ -448,8 +452,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
     final filtered = allDue.where((key) {
       if (sessionOpType == OperationType.mixed) return true;
-      // v2-format: "v2|{opName}|..." — extract opName from segment [1]
-      // legacy format: "{opName}|..." — extract opName from segment [0]
+      // v2-format: "v2|{opName}|..." â€” extract opName from segment [1]
+      // legacy format: "{opName}|..." â€” extract opName from segment [0]
       final isV2 = key.startsWith('v2|');
       final opName = isV2
           ? key.split('|').elementAtOrNull(1) ?? ''
@@ -548,6 +552,31 @@ class QuizNotifier extends StateNotifier<QuizState> {
       reviewState: reviewState,
       isDailyChallenge: isDailyChallenge,
       pendingDueKeys: remainingDueKeys,
+    );
+  }
+
+  void resumeSession({
+    required String userId,
+    required Map<String, dynamic> sessionMap,
+  }) {
+    debugPrint('[QuizNotifier] resumeSession: userId=$userId');
+
+    final session = QuizSessionJson.fromJson(sessionMap);
+    
+    _prepareInProgressStorage(
+      userId: userId,
+      operationType: session.operationType,
+      difficulty: session.difficulty,
+    );
+
+    final reviewState = _loadInitialReviewState(userId);
+
+    _activateSessionState(
+      userId: userId,
+      session: session,
+      steps: session.difficultyStepsByOperation,
+      reviewState: reviewState,
+      isDailyChallenge: false,
     );
   }
 
@@ -788,6 +817,16 @@ class QuizNotifier extends StateNotifier<QuizState> {
     }
   }
 
+  void cancelSession(String userId) {
+    final session = state.session;
+    if (session == null) return;
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: session.operationType.name,
+    );
+    unawaited(_repository.deleteQuizSession(inProgressId));
+  }
+
   void advanceToNextQuestion() {
     final session = state.session;
     if (session == null) return;
@@ -901,3 +940,4 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
 });
 
 // endregion
+

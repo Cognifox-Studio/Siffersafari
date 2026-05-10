@@ -20,15 +20,14 @@ import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
+import 'package:siffersafari/features/home/presentation/widgets/camp_scene_view.dart';
 import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
-import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 import 'package:siffersafari/features/story/presentation/screens/story_map_screen.dart';
-import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
@@ -354,34 +353,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           if (user != null) ...[
                             const SizedBox(height: AppConstants.smallPadding),
-                            Center(
-                              child: SizedBox(
-                                height: isWideScreen ? 210 : 190,
-                                child: GameCharacter(
-                                  characterId:
-                                      user.selectedCharacterId == 'signe'
-                                          ? CharacterId.signe
-                                          : user.selectedCharacterId == 'astrid'
-                                              ? CharacterId.astrid
-                                              : CharacterId.loke,
-                                  reaction: _mascotReaction,
-                                  reactionNonce: _mascotReactionNonce,
-                                  height: isWideScreen ? 210 : 190,
-                                  equippedItems: user.equippedItems,
-                                  customItemOffsets: user.customItemOffsets,
-                                  interactiveItems: false,
-                                  onTap: () {
-                                    ref
-                                        .read(audioServiceProvider)
-                                        .playClickSound();
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (_) => const WardrobeScreen(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
+                            CampSceneView(
+                              mascotReaction: _mascotReaction,
+                              mascotReactionNonce: _mascotReactionNonce,
+                              isWideScreen: isWideScreen,
                             ),
                             const SizedBox(height: AppConstants.defaultPadding),
                             Wrap(

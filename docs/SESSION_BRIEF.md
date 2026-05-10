@@ -15,6 +15,12 @@
 
 ### Senaste leveranser
 
+**2026-05-10 – Haptik, Confetti, Resume Quiz och Camp-grund**
+- **Camp-grund:** Introducerade `CampSceneView` som en dedikerad bas på hemskärmen.
+- **Resume Quiz:** Löst imperativt genom att kolla om session state finns, i stället för att införa ny formaliserad flow-state.
+- **Belöningar:** Lagt till haptisk feedback och Confetti-effekter (partiklarsystem) för lyckade quiz-slut.
+- **Prestandaoptimering:** Åtgärdade prestandaläckage genom att införa `cacheHeight` för avatarrenderaren (`GameCharacter`).
+
 **2026-05-09 – UI-förenkling av Hemskärm & Quiz**
 - **Quiz:** Tog bort onödig hjälpinformation ("Hur mycket blir det?", "Läs och räkna") från frågekortet.
 - **Svarsalternativ:** Tog bort extra-etiketter ("Tryck", "Valt", "Svar") under siffran. Tvingade fram en 2x2 grid (istället för kolumn på små skärmar) så användaren aldrig behöver scrolla för att se alla svarsalternativ.

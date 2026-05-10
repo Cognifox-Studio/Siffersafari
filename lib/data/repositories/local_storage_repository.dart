@@ -88,6 +88,26 @@ class LocalStorageRepository {
     }
   }
 
+  /// Get an in-progress quiz session for the user, if one exists
+  Map<String, dynamic>? getQuizSession(String userId) {
+    try {
+      final keys = _quizHistoryBox.keys;
+      for (final key in keys) {
+        final value = _quizHistoryBox.get(key);
+        final session = _validateQuizSession(value);
+        if (session != null && session['userId'] == userId && session['isComplete'] == false) {
+          // Additional check: Does it have 'questions'? Since old sessions didn't save state.
+          if (session.containsKey('questions')) {
+            return session;
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('[LocalStorage] getQuizSession failed: $e');
+    }
+    return null;
+  }
+
   Future<void> deleteQuizSession(String sessionId) async {
     debugPrint('[LocalStorage] deleteQuizSession: sessionId=$sessionId');
     try {

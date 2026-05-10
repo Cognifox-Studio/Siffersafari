@@ -79,6 +79,8 @@ Använd repo-skillen i stället för att improvisera när uppgiften matchar någ
 - Hive-diagnostik: `.github/skills/felsok-sparad-data/SKILL.md`
 - Difficulty mix audit: `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md`
 - Android-emulator och Pixel_6: `.github/skills/felsok-android-emulatorn/SKILL.md`
+- Test-timeouts och Flutter-animationer: `.github/skills/hantera-flutter-test-animationer/SKILL.md`
+- Mocka offline-quiz och state: `.github/skills/mocka-temporar-offline-session/SKILL.md`
 - Dokumentation: `.github/skills/uppdatera-dokumentationen/SKILL.md`
 - Analytics-kontrakt: `.github/skills/faststall-spelar-statistik/SKILL.md`
 - UI-extraktion eller logikflytt: `.github/skills/bryt-ut-delade-visuella-komponenter/SKILL.md`, `.github/skills/flytta-ut-logik-fran-ui/SKILL.md`

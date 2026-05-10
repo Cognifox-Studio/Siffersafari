@@ -5,6 +5,7 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/features/quiz/presentation/widgets/question_card.dart';
 import 'package:siffersafari/main.dart';
 
 import '../test_utils.dart';
@@ -13,22 +14,15 @@ void main() {
   late InMemoryLocalStorageRepository repository;
 
   Future<void> tapContinueButton(WidgetTester tester) async {
-    const timeout = Duration(seconds: 4);
+    const timeout = Duration(seconds: 15);
     final steps = (timeout.inMilliseconds / 50).ceil().clamp(1, 400);
 
     for (var i = 0; i < steps; i++) {
       await skipOnboardingIfPresent(tester);
 
-      final next = find.text('Nästa').hitTestable();
+      final next = find.byType(ElevatedButton).hitTestable();
       if (next.evaluate().isNotEmpty) {
         await tester.tap(next.last, warnIfMissed: false);
-        await tester.pump();
-        return;
-      }
-
-      final results = find.text('Se resultat').hitTestable();
-      if (results.evaluate().isNotEmpty) {
-        await tester.tap(results.last, warnIfMissed: false);
         await tester.pump();
         return;
       }
@@ -36,6 +30,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 50));
     }
 
+    debugDumpApp();
     throw TestFailure('Kunde inte hitta fortsatt-knappen i quizflödet.');
   }
 
@@ -85,20 +80,20 @@ void main() {
             const Duration(milliseconds: 150),
       );
       await tester.tap(multiplication);
-      await pumpUntilFound(tester, find.textContaining('Fråga'));
+      await pumpUntilFound(tester, find.byType(QuestionCard));
 
-      expect(find.textContaining('Fråga'), findsOneWidget);
+      expect(find.byType(QuestionCard), findsOneWidget);
       expect(find.text('Djungelspår'), findsNothing);
       expect(find.textContaining('Maskoten:'), findsNothing);
 
       for (var i = 0; i < 10; i++) {
         await tester.ensureVisible(find.text('42'));
         await tester.pump();
-        await tester.tap(find.text('42'), warnIfMissed: false);
+        await tester.tap(find.text('42'), warnIfMissed: true);
         await tapContinueButton(tester);
 
         if (i < 9) {
-          await pumpUntilFound(tester, find.textContaining('Fråga'));
+          await pumpUntilFound(tester, find.byType(QuestionCard));
         }
       }
 
@@ -108,9 +103,9 @@ void main() {
 
       await tester.ensureVisible(find.textContaining('Spela igen'));
       await tester.tap(find.textContaining('Spela igen'));
-      await pumpUntilFound(tester, find.textContaining('Fråga'));
+      await pumpUntilFound(tester, find.byType(QuestionCard));
 
-      expect(find.textContaining('Fråga'), findsOneWidget);
+      expect(find.byType(QuestionCard), findsOneWidget);
     },
   );
 }

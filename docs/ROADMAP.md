@@ -53,10 +53,10 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- Säkerställ att befintliga lokala funnel-events räcker för att mäta effekt av v1.4.
-- Lås vilka delar av quiz-sessionen som redan persisteras och vilka som fortfarande bara lever i runtime-state.
-- Identifiera exakt vilka knappar och feedbackytor som ska få haptik, ljud och animation.
-- Skapa en enkel releasechecklista för Pixel 6: starta quiz, svara rätt/fel, avsluta quiz, återvänd till hem, byt profil om relevant.
+- [x] Säkerställ att befintliga lokala funnel-events räcker för att mäta effekt av v1.4.
+- [x] Lås vilka delar av quiz-sessionen som redan persisteras och vilka som fortfarande bara lever i runtime-state.
+- [x] Identifiera exakt vilka knappar och feedbackytor som ska få haptik, ljud och animation.
+- [x] Skapa en enkel releasechecklista för Pixel 6: starta quiz, svara rätt/fel, avsluta quiz, återvänd till hem, byt profil om relevant.
 
 **Så går vi tillväga:**
 
@@ -71,9 +71,9 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Klart när:**
 
-- Baslinjen för mätetal är känd.
-- QA-checklistan finns.
-- Vi vet exakt vad v1.4.0 ska ändra och inte ändra.
+- [x] Baslinjen för mätetal är känd.
+- [x] QA-checklistan finns.
+- [x] Vi vet exakt vad v1.4.0 ska ändra och inte ändra.
 
 ---
 
@@ -86,10 +86,10 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- Haptisk feedback för rätt/fel och utvalda klick.
-- Enkla mikroanimationer på knappar och feedbackytor.
-- Tydligare ljudseparering mellan klick/SFX och längre celebration-ljud.
-- Visuell belöning i liten skala, till exempel konfetti eller pop-overlay.
+- [x] Haptisk feedback för rätt/fel och utvalda klick.
+- [x] Enkla mikroanimationer på knappar och feedbackytor.
+- [x] Tydligare ljudseparering mellan klick/SFX och längre celebration-ljud.
+- [x] Visuell belöning i liten skala, till exempel konfetti eller pop-overlay.
 
 **Så går vi tillväga:**
 
@@ -114,9 +114,9 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Klart när:**
 
-- Barnet märker tydligt skillnad i respons på rätt/fel svar.
-- Inga visuella eller ljudmässiga regressioner i huvudflödet.
-- Pixel 6-körning känns stabil utan märkbar jank.
+- [x] Barnet märker tydligt skillnad i respons på rätt/fel svar.
+- [x] Inga visuella eller ljudmässiga regressioner i huvudflödet.
+- [x] Pixel 6-körning känns stabil utan märkbar jank.
 
 ---
 
@@ -129,17 +129,17 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- En första unlockbar hattkategori.
+- [x] En första unlockbar hattkategori.
 - [x] Ett enkelt inventory-flöde för avatar-items (Z-index-stacking)
 - [x] Ett belöningsdialogsteg efter tydlig progression
 
 **Så går vi tillväga:**
 
-1. Behåll `LevelUpEvent` som signal om progression, inte som bärare av allt reward-data.
-2. Inför ett separat reward-steg som avgör vad som låses upp.
-3. Bygg bara ett slot-baserat system först, till exempel `hat_layer` för vår Loke-PNG maskot.
-4. Låt första inventory-versionen bara stödja få, tydliga item-typer.
-5. Bygg UI för att byta hatt på en enda plats, helst där spelaren redan förväntar sig belöningar eller profiluttryck.
+1. [x] Behåll `LevelUpEvent` som signal om progression, inte som bärare av allt reward-data.
+2. [x] Inför ett separat reward-steg som avgör vad som låses upp.
+3. [x] Bygg bara ett slot-baserat system först, till exempel `hat_layer` för vår Loke-PNG maskot.
+4. [x] Låt första inventory-versionen bara stödja få, tydliga item-typer.
+5. [x] Bygg UI för att byta hatt på en enda plats, helst där spelaren redan förväntar sig belöningar eller profiluttryck.
 
 **Best way enligt extern vägledning:**
 
@@ -154,9 +154,9 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Klart när:**
 
-- Minst en hatt kan låsas upp, sparas, väljas och återläsas korrekt.
-- Reward-dialogen känns som en tydlig, positiv förstärkning.
-- Ingen datakorruption eller tappad state vid appstängning.
+- [x] Minst en hatt kan låsas upp, sparas, väljas och återläsas korrekt.
+- [x] Reward-dialogen känns som en tydlig, positiv förstärkning.
+- [x] Ingen datakorruption eller tappad state vid appstängning.
 
 ---
 
@@ -169,10 +169,10 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- Flera barnprofiler offline.
-- Tydligt scoped state per profil.
-- Resume av quiz där det är rimligt och tryggt.
-- Spaced Repetition v2 och ett första â€œDagens träningslägerâ€.
+- [x] Flera barnprofiler offline.
+- [x] Tydligt scoped state per profil.
+- [x] Resume av quiz där det är rimligt och tryggt.
+- [x] Spaced Repetition v2 och ett första â€œDagens träningslägerâ€.
 
 **Så går vi tillväga:**
 
@@ -197,8 +197,8 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Klart när:**
 
-- Minst två profiler kan användas lokalt utan att deras state blandas ihop.
-- Ett påbörjat quiz kan återupptas utan dubbelräkning eller fel merge mot persistent user state.
+- [x] Minst två profiler kan användas lokalt utan att deras state blandas ihop.
+- [x] Ett påbörjat quiz kan återupptas utan dubbelräkning eller fel merge mot persistent user state.
 - SRS-v2 kan presentera due-frågor utan att bryta huvudgeneratorn.
 
 ---
@@ -212,8 +212,8 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- En ny camp-bakgrund eller camp-scen som ersätter dagens platta startsida.
-- Ett första datadrivet lager för placerbara eller synliga upplåsningar.
+- [x] En ny camp-bakgrund eller camp-scen som ersätter dagens platta startsida.
+- [x] Ett första datadrivet lager för placerbara eller synliga upplåsningar.
 - En mycket liten mängd möbler/dekorationer.
 
 **Så går vi tillväga:**

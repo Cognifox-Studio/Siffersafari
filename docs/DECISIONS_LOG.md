@@ -8,7 +8,7 @@ uppdaterad: 2026-05-05
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-09)
+## Gällande nuläge (2026-05-10)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
@@ -23,6 +23,9 @@ Princip: senaste datum vinner vid konflikt.
 ## Historik (kort)
 
 ### 2026-05-10
+- **Camp-scen layout:** Camp-scenen introducerades som en dedikerad widget (`CampSceneView`), direkt inbäddad i `HomeScreen`.
+- **Resume Quiz Flow:** Implementerades implicit (genom att kolla om aktivt session state finns) istället för att lägga till en ny explicit flow-state, vilket minskar komplexiteten i navigeringen.
+- **Prestandafix för GameCharacter:** För att motverka performance-läckage vid frekvent omritning av asset-lager (som uppstår när flera stora bilder ritas fram och tillbaka) sattes `cacheHeight` (och/eller width) vid rendingen.
 - **Pose-specifikt inventory och fallback-keys:** Utrustning kan nu konfigureras per pose (CharacterReaction) i Garderoben och ritas ut därefter. Datapersistensen löstes genom att låta den aktuella posens namn fungera som prefix i `equippedItems`-nyckeln (ex. `answerWrong_<item_id>`). "Vanlig" (idle) har inget prefix, vilket säkerställde fullständig bakåtkompatibilitet för redan befintliga spara-filer och profiler.
 - **Dolda vyer kräver prop-drilling:** All rendering av GameCharacter flyttades från lokala mock-ups till att kräva global persistens per pose (via attribut som `customItemOffsets`). 
 

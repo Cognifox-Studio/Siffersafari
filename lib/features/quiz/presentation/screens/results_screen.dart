@@ -27,6 +27,7 @@ import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/gen/assets.g.dart';
+import 'package:siffersafari/presentation/widgets/confetti_overlay.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/star_rating.dart';
@@ -49,6 +50,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     with TickerProviderStateMixin {
   bool _applied = false;
   bool _characterCelebrate = false;
+  bool _showConfetti = false;
   Timer? _celebrateTimer;
   late final AnimationController _entranceController;
   late final Animation<Offset> _heroSlide;
@@ -231,7 +233,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         ref.read(audioServiceProvider).playCelebrationSound();
         // Delay character jump until entrance + stars animation finishes.
         _celebrateTimer = Timer(const Duration(milliseconds: 900), () {
-          if (mounted) setState(() => _characterCelebrate = true);
+          if (mounted) {
+            setState(() {
+              _characterCelebrate = true;
+              _showConfetti = true;
+            });
+          }
         });
       }
 
@@ -529,10 +536,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       ],
     );
 
-    return ThemedBackgroundScaffold(
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final layout = AdaptiveLayoutInfo.fromConstraints(constraints);
+    return ConfettiOverlay(
+      animate: _showConfetti,
+      child: ThemedBackgroundScaffold(
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            final layout = AdaptiveLayoutInfo.fromConstraints(constraints);
           final maxContentWidth = layout.contentMaxWidth;
           final isWideScreen = !layout.isCompactWidth;
           final useTwoColumnResults = layout.isExpandedWidth;
@@ -601,6 +610,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           );
         },
       ),
+    ),
     );
   }
 
