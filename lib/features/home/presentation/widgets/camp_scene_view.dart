@@ -92,18 +92,15 @@ class CampSceneView extends ConsumerWidget {
           // Character
           Positioned(
             bottom: 10,
-            child: GestureDetector(
-              onTap: () => _openWardrobe(context, ref),
-              behavior: HitTestBehavior.opaque,
-              child: SizedBox(
-                height: height * 0.75, // Scale mascot slightly within camp
-                child: GameCharacter(
-                  characterId: characterId,
-                  reaction: mascotReaction,
-                  reactionNonce: mascotReactionNonce,
-                  height: height * 0.75,
-                  equippedItems: user?.equippedItems ?? const {},
-                ),
+            child: SizedBox(
+              height: height * 0.75, // Scale mascot slightly within camp
+              child: GameCharacter(
+                characterId: characterId,
+                reaction: mascotReaction,
+                reactionNonce: mascotReactionNonce,
+                height: height * 0.75,
+                equippedItems: user?.equippedItems ?? const {},
+                onTap: () => _openWardrobe(context, ref),
               ),
             ),
           ),
