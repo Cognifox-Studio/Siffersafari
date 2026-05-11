@@ -39,7 +39,6 @@ Senast uppdaterad: 2026-05-11.
 - `ROADMAP.md` – Prioriterad release- och genomförandeplan
 - `DECISIONS_LOG.md` – Beslutslogg och varför
 - `RIVERPOD_PATTERNS.md` – Provider-mönster och resonemang
-- `NAMING_STRUCTURE_REFACTOR_PLAN.md` – Historisk migrationsplan och naming-principer
 - `lore/` – Bakgrundshistorier och spelets lore (t.ex. [Loke](lore/loke.md), [Signe](lore/signe.md), [Astrid](lore/astrid.md))
 
 ### Övrigt

@@ -12,9 +12,10 @@ Utgå från dessa källor först:
 - `docs/SESSION_BRIEF.md`
 - `docs/ARCHITECTURE.md`
 - `docs/PROJECT_STRUCTURE.md`
-- `docs/NAMING_STRUCTURE_REFACTOR_PLAN.md`
 - `.github/copilot-instructions.md`
 - `test/unit/audits/naming_structure_audit_test.dart`
+
+Använd historiska planer bara som sekundär bakgrund om de levande facit-filerna uttryckligen pekar dit.
 
 Identify:
 - outdated or unused Dart files

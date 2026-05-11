@@ -68,7 +68,6 @@ String _relativePath(String absolutePath) {
 }
 
 const _excludedPaths = {
-  'docs/NAMING_STRUCTURE_REFACTOR_PLAN.md',
   'test/unit/audits/naming_structure_audit_test.dart',
 };
 
