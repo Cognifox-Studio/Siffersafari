@@ -1,12 +1,18 @@
 <!--
 typ: explanation
 syfte: Historisk migrationsplan och naming-principer for namn- och strukturstadning.
-uppdaterad: 2026-04-18
+uppdaterad: 2026-05-11
 -->
 
 # Naming & Structure Refactor Plan
 
-Status: Våg 1-5 är implementerade. Våg 6 är delvis implementerad genom docssync och audit-guard. Historiska pathar i vågbeskrivningarna nedan finns kvar som migrationshistorik.
+Status: Detta dokument är i första hand historik. Huvudvågorna är genomförda och kvarvarande pathar nedan finns främst som migrationsspår.
+
+Använd dessa som levande facit i stället för denna plan när du arbetar i dagens repo:
+
+- `docs/PROJECT_STRUCTURE.md` för faktisk struktur
+- `docs/ARCHITECTURE.md` för nulägesarkitektur
+- `test/unit/audits/naming_structure_audit_test.dart` för aktiva guardrails mot pensionerade pathar och namn
 
 ## Syfte
 

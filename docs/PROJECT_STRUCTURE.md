@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Faktisk mapp- och filstruktur
-uppdaterad: 2026-05-02
+uppdaterad: 2026-05-11
 -->
 # Project Structure (As-Is)
 
-Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-02).
+Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-11).
 
 ## Root
 
@@ -25,6 +25,7 @@ Byggartefakter som inte ar kallkod:
 ## lib/
 
 - `main.dart`: entrypoint + bootstrap
+- `wardrobe_preview.dart`: lokal previewyta för att justera inventory-rendering mot `GameCharacter`
 - `core/`
   - `config/`: difficulty och feature-konfiguration
   - `constants/`: nycklar, IDs, UI-konstanter
@@ -59,6 +60,7 @@ Byggartefakter som inte ar kallkod:
 - `presentation/`
   - `widgets/`: ateranvandbara UI-komponenter: `game_character.dart`, `mascot_reaction_view.dart`, `progress_indicator_bar.dart`, `star_rating.dart`, `themed_background_scaffold.dart`
   - historiska `screens/` och `dialogs/` finns inte langre; ny UI ligger i `lib/features/**/presentation/**`
+  - `inventory/` finns som featuremapp i repo:t men saknar i nuläget aktiv widgetfil i workspace; garderobsflödet ska inte beskrivas som kanonisk feature-UI förrän en verklig fil finns där
 
 ## Namngivningsbaseline
 
@@ -147,10 +149,20 @@ Exempel:
 
 ## .github/
 
-- `workflows/flutter.yml` CI analyze + test
+- `AGENTS.md` snabb routingyta för repoets anpassade agenter
+- `agents/` repo-specifika agenter som `Beast Mode`, `Plan` och `Customization Maintainer`
+- `instructions/` smala arbetsregler kopplade till filtyper och kodområden
+- `prompts/` workspace-prompter för audit, routing och QA-slice
+- `skills/` repo-specifika arbetsflöden för QA, docs, release, COPPA och assets
+- `hooks/` lätta guardrails för customization-arbete
+- `workflows/ci.yaml` PR-core-smoke samt full smoke + audit på huvudgrenen
+- `workflows/flutter.yml` grundläggande analyze + test
+- `workflows/android-smoke.yml` Android-smoke för APK-flödet
 - `workflows/build.yml` release build + release upload
+- `workflows/play-closed-beta.yml` Play closed beta-flöde
+- `workflows/privacy-policy-pages.yml` publicering av privacy policy-sidor
 - `workflows/release-guard.yml` release sanity + storlekskontroll
-- `instructions/` och `prompts/` for team/Copilot-stod
+- `workflows/release.yml` release-workflow för Flutter-bygge
 
 ## Namngivning (faktiskt anvand i repo)
 

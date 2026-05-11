@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-05-01
+uppdaterad: 2026-05-11
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-01.
+Senast uppdaterad: 2026-05-11.
 
 ## Naming-baseline
 
@@ -45,7 +45,7 @@ Senast uppdaterad: 2026-05-01.
 ### Övrigt
 - `PRIVACY_POLICY.md` – Policy (källtext för publik privacy policy-sida)
 - `PARENTS_TEACHERS_GUIDE.md` – Guide för föräldrar/lärare
-- `SESSION_BRIEF.md` – Historisk logg
+- `SESSION_BRIEF.md` – Aktuellt läge, senaste leveranser och nästa steg
 
 ---
 Om information krockar mellan filer, använd dessa som facit (i ordning):

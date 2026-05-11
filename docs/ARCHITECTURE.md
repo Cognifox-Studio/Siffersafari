@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-05-03
+uppdaterad: 2026-05-11
 -->
 # Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-02).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-11).
 
 ## Snabboversikt
 
@@ -147,9 +147,14 @@ Aktiva testlager:
 - integration: smoke, parent features, PIN recovery, screenshots
 
 CI/workflows:
+- `.github/workflows/ci.yaml`: core smoke på PR samt full smoke + audit på huvudgrenen
 - `.github/workflows/flutter.yml`: analyze + test
+- `.github/workflows/android-smoke.yml`: Android-smoke för APK/device-flöden
 - `.github/workflows/build.yml`: release build + signering + GitHub Release
+- `.github/workflows/play-closed-beta.yml`: closed beta-publicering mot Play-flödet
+- `.github/workflows/privacy-policy-pages.yml`: publicering av statiska privacy policy-sidor
 - `.github/workflows/release-guard.yml`: snabb releasevalidering + APK size guard
+- `.github/workflows/release.yml`: release-orienterat Flutter-bygge
 
 ## Kanda tekniska noteringar
 

@@ -67,6 +67,8 @@ Arbetsstandard:
 3. Kör fokuserade tester för berörd yta; eskalera till full testsvit bara när riskytan kräver det.
 4. Kör Pixel_6 sync/install när ändringen är UI-, asset-, navigation- eller Android-specifik.
 5. Lämna inte nya analyze- eller testfel efter dig.
+6. Vid web- eller browser-bunden validering: dela den öppna sidan med agenten i VS Code Integrated Browser när browser tools finns tillgängliga, i stället för att bara beskriva UI:t i text.
+7. Vid längre agentpass: undvik att explicit lägga till `#todo` eller kräva todo-verktyget när VS Code kan använda background todo agent, så att den token-snålare vägen inte blockeras i onödan.
 
 ## Skills och routing
 

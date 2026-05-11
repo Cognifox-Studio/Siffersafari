@@ -1,10 +1,20 @@
 ---
 name: "workspace-cleanup-plan"
-description: "Analyze the current Flutter workspace and produce a safe, detailed cleanup and refactor plan"
-agent: "agent"
+description: "Analysera Siffersafaris workspace och returnera en säker cleanup- och refaktorplan som utgår från faktisk kod, docs och aktiva audit-guards"
+argument-hint: "Valfritt: begränsa planen till ett scope som docs, .github, feature-struktur, legacy paths eller assets"
+agent: "Plan"
 ---
 
-Analyze my entire workspace (this Flutter project) and produce a detailed cleanup and refactor plan.
+Analysera detta Siffersafari-repo och ta fram en säker cleanup- och refaktorplan utan att göra några ändringar.
+
+Utgå från dessa källor först:
+
+- `docs/SESSION_BRIEF.md`
+- `docs/ARCHITECTURE.md`
+- `docs/PROJECT_STRUCTURE.md`
+- `docs/NAMING_STRUCTURE_REFACTOR_PLAN.md`
+- `.github/copilot-instructions.md`
+- `test/unit/audits/naming_structure_audit_test.dart`
 
 Identify:
 - outdated or unused Dart files
@@ -28,5 +38,8 @@ Then propose:
 
 Important:
 - DO NOT make any changes yet.
+- Prefer the smallest safe plan over a broad rewrite.
+- Treat `docs/ARCHITECTURE.md` and `docs/PROJECT_STRUCTURE.md` as facit over older historical plans.
+- Separate active files from historical or retired files before proposing deletions.
 - First show me the full plan for review.
-- The plan must be safe, reversible, and Flutter-compatible.
+- The plan must be safe, reversible, Flutter-compatible and repo-specific.

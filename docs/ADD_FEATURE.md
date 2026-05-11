@@ -2,6 +2,8 @@
 
 Denna guide visar **steg-för-steg** hur du lägger till en ny feature i Siffersafari.
 
+Repoets aktuella standard är feature-first. Ny UI ska normalt hamna under `lib/features/<feature>/presentation/...`, medan `lib/presentation/widgets/` bara används för verkligt delad UI.
+
 
 
 ---
@@ -39,7 +41,8 @@ lib/domain/enums/difficulty_level.dart          → Lägg till/ändra svårighet
 lib/core/config/difficulty_config.dart          → Regler: ranges/steps/poäng
 lib/core/services/question_generator_service.dart → Generering av frågor per svårighet
 lib/domain/services/adaptive_difficulty_service.dart → Progression/logik
-lib/presentation/…                              → UI (om svårighet visas)
+lib/features/<feature>/presentation/...         → Featureägd UI (om svårighet visas)
+lib/presentation/widgets/...                    → Endast om samma UI delas av flera features
 test/unit/logic/…                               → Uppdatera/lägg till unit tests
 ```
 
@@ -86,7 +89,11 @@ Obs: Denna logik används ofta från Riverpod-notifiers i `lib/core/providers/`.
 
 ### Steg 4: Uppdatera UI (vid behov)
 
-Om du behöver visa en ny eller ändrad svårighetsgrad i UI, sök efter `DifficultyLevel` i `lib/presentation/` och uppdatera de ställen där svårighetens label/rendering sker.
+Om du behöver visa en ny eller ändrad svårighetsgrad i UI:
+
+- börja i den feature som äger flödet, till exempel `lib/features/home/presentation/` eller `lib/features/quiz/presentation/`
+- använd `lib/presentation/widgets/` bara om samma widget verkligen delas av flera features
+- uppdatera även relevanta providers eller config-filer om UI:t läser härledd state därifrån
 
 ---
 
@@ -118,6 +125,8 @@ flutter test
 
 ## 4. QA Phase
 
+Följ repoets minsta rimliga QA-slice i stället för att alltid hoppa direkt till full svit. Se även `docs/ARCHITECTURE.md`, `.github/copilot-instructions.md` och `.github/skills/testa-att-appen-fungerar/SKILL.md`.
+
 ### 4.1 Static Analysis
 
 ```bash
@@ -132,7 +141,14 @@ Om linters-fel dyker upp:
 dart fix --apply
 ```
 
-### 4.2 Full Test Suite
+### 4.2 Riktad testning först
+
+```bash
+# Exempel: kör den smalaste relevanta testfilen först
+flutter test test/unit/logic/adaptive_difficulty_test.dart
+```
+
+### 4.3 Full Test Suite
 
 ```bash
 flutter test
@@ -140,7 +156,7 @@ flutter test
 
 **Förväntat:** Alla tester passerar.
 
-### 4.3 Manual Smoke Test
+### 4.4 Manual Smoke Test
 
 Starta appen på emulator och testa manuellt:
 
@@ -219,13 +235,13 @@ Se [DEPLOY_ANDROID.md](DEPLOY_ANDROID.md) för full process.
 Kort:
 ```bash
 # Uppdatera version i pubspec.yaml
-version: 1.3.1+9  # Var 1.3.0+8 innan
+version: 1.4.1+16  # Exempel, välj nästa riktiga version
 
 # Commit
 git commit -m "chore: bump version to 1.3.1"
 
-# Build release APK
-flutter build apk --release
+# Build release AAB
+flutter build aab --release
 
 # Upload to Play Store
 # (google play console UI)
