@@ -32,7 +32,7 @@ Länka hellre till dessa dokument än att duplicera innehåll i nya customizatio
 - Nya skills ska ha `name` som matchar mappnamn och en konkret `description` med tydliga triggerord.
 - Lägg smala regler i `.github/instructions/` eller `.github/skills/` i stället för att svälla centralfilen.
 - Behåll "link, don't embed": länka till `docs/README.md`, `docs/ARCHITECTURE.md` och `docs/SESSION_BRIEF.md` när detaljer redan finns där.
-- Använd `.github/prompts/customization-audit-pass.prompt.md` för en snabb audit och `.github/hooks/customization-path-guard.json` som lättviktsvarning vid customization-arbete.
+- Använd `.github/prompts/customization-audit-pass.prompt.md` för en snabb audit, `.github/hooks/customization-path-guard.json` som lättviktsvarning vid customization-arbete och `.github/hooks/customization-reference-check.json` för att fånga brutna interna referenser i ändrade `.github`-filer.
 
 ## Före kodändring
 
@@ -144,9 +144,12 @@ Standardrutin:
 ## Workspace-prompter
 
 - `.github/prompts/customization-audit-pass.prompt.md` för att auditera `.github` och få en kort prioriterad åtgärdslista.
+- `.github/prompts/night-cleanup-audit.prompt.md` för ett långt read-only nattpass som lämnar en granskningsrapport utan kodändringar.
+- `.github/prompts/night-low-risk-apply.prompt.md` för låg-risk-cleanup över natten med batchvis verifiering och ocommittat slutläge.
 - `.github/prompts/repo-start-routing.prompt.md` för att välja rätt agent, skill och minsta QA-slice vid arbetets start.
 - `.github/prompts/repo-qa-slice.prompt.md` för att välja och köra minsta tillräckliga QA-slice för aktuell diff eller riskyta.
 
 ## Hooks
 
 - `.github/hooks/customization-path-guard.json` lägger in en kort hygiene-varning när en prompt ser ut att gälla nya eller ändrade chat-customizations.
+- `.github/hooks/customization-reference-check.json` varnar när ändrade `.github`-filer ser ut att peka på interna paths som inte längre finns.

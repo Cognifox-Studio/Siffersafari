@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "windows": "powershell -NoProfile -Command \"$stdinJson = [Console]::In.ReadToEnd(); if ($stdinJson -notmatch '(?i)(\\.github[/\\\\]|copilot-instructions|AGENTS\\.md|customization|skills/|prompts/|agents/|instructions/|hooks/)') { exit 0 }; $tracked = @(git diff --name-only -- .github 2>$null); $staged = @(git diff --cached --name-only -- .github 2>$null); $untracked = @(git ls-files --others --exclude-standard -- .github 2>$null); $changed = @($tracked + $staged + $untracked | Where-Object { $_ -and $_ -match '\\.(md|json)$' } | Sort-Object -Unique); if (-not $changed -or $changed.Count -eq 0) { exit 0 }; $root = (Get-Location).Path; $repoPrefixes = @('.github/','docs/','lib/','test/','assets/','scripts/','android/','site/','integration_test/','artifacts/'); $broken = New-Object System.Collections.Generic.List[string]; function Test-CustomizationPath([string]$source,[string]$candidate,[string]$baseDir){ if ([string]::IsNullOrWhiteSpace($candidate)) { return }; $c = $candidate.Trim(); if ($c -match '^(https?:|mailto:|vscode:|#)') { return }; if ($c -match '[*{}<>]') { return }; $c = ($c -split '#')[0]; if ([string]::IsNullOrWhiteSpace($c)) { return }; $target = $null; if ($c -match '^(\\.\\.?[/\\\\])') { $target = [System.IO.Path]::GetFullPath((Join-Path $baseDir $c)) } elseif (($repoPrefixes | Where-Object { $c.StartsWith($_) }).Count -gt 0) { $target = Join-Path $root $c }; if ($null -eq $target) { return }; if (-not (Test-Path -LiteralPath $target)) { $broken.Add(('{0} -> {1}' -f $source, $candidate)) } }; foreach ($rel in $changed) { $full = Join-Path $root $rel; if (-not (Test-Path -LiteralPath $full)) { continue }; $content = Get-Content -Raw -LiteralPath $full; $baseDir = Split-Path -Parent $full; foreach ($m in [regex]::Matches($content, '\\[[^\\]]+\\]\\(([^)]+)\\)')) { Test-CustomizationPath $rel $m.Groups[1].Value $baseDir }; foreach ($m in [regex]::Matches($content, '`([^`]+)`')) { $v = $m.Groups[1].Value; if ($v -match '[/\\\\]' -and $v -match '(\\.(md|json|dart|ya?ml|ps1|html|js|png|jpg|jpeg|svg)|/)$') { Test-CustomizationPath $rel $v $baseDir } } }; $unique = @($broken | Sort-Object -Unique); if ($unique.Count -gt 0) { $sample = ($unique | Select-Object -First 5) -join '; '; @{ continue = $true; systemMessage = ('Customization reference check: mojliga brutna interna referenser i andrade .github-filer: ' + $sample + '. Verifiera relativa lankar fran filens mapp och uppdatera stale paths.') } | ConvertTo-Json -Compress }\"",
+        "linux": "sh -lc 'cat >/dev/null; exit 0'",
+        "osx": "sh -lc 'cat >/dev/null; exit 0'",
+        "timeout": 10
+      }
+    ]
+  }
+}
