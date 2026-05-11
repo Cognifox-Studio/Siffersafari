@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
-import 'package:siffersafari/features/inventory/presentation/widgets/wardrobe_dialog.dart';
+import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 
@@ -22,9 +22,10 @@ class CampSceneView extends ConsumerWidget {
   void _openWardrobe(BuildContext context, WidgetRef ref) {
     final user = ref.read(userProvider).activeUser;
     if (user != null) {
-      showDialog(
-        context: context,
-        builder: (context) => const WardrobeDialog(),
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const WardrobeScreen(),
+        ),
       );
     }
   }
@@ -39,10 +40,10 @@ class CampSceneView extends ConsumerWidget {
             : CharacterId.loke;
 
     final theme = Theme.of(context);
-    
+
     // The height of the camp scene.
     final height = isWideScreen ? 280.0 : 250.0;
-    
+
     return Container(
       height: height,
       width: double.infinity,
@@ -76,12 +77,13 @@ class CampSceneView extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           // Data-driven layer for placeable items (placeholder for future furniture)
           const Positioned(
             bottom: 20,
             left: 30,
-            child: _CampItemPlaceholder(icon: Icons.fireplace, label: 'Lägereld'),
+            child:
+                _CampItemPlaceholder(icon: Icons.fireplace, label: 'Lägereld'),
           ),
           const Positioned(
             bottom: 20,
@@ -100,6 +102,7 @@ class CampSceneView extends ConsumerWidget {
                 reactionNonce: mascotReactionNonce,
                 height: height * 0.75,
                 equippedItems: user?.equippedItems ?? const {},
+                customItemOffsets: user?.customItemOffsets ?? const {},
                 onTap: () => _openWardrobe(context, ref),
               ),
             ),

@@ -6,6 +6,7 @@ import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/main.dart';
+import 'package:siffersafari/presentation/widgets/game_character.dart';
 
 import '../test_utils.dart';
 
@@ -171,6 +172,55 @@ void main() {
       );
 
       expect(find.byKey(const Key('primary_play_button')), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    '[Widget] App home – skickar custom item offsets till maskoten',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'offset-user';
+      const savedOffsets = {
+        'item_safari_hat_idle': 'n,0.0,-0.42,1.0,0.0',
+      };
+      const user = UserProgress(
+        userId: userId,
+        name: 'Lova',
+        ageGroup: AgeGroup.middle,
+        equippedItems: {
+          'head': 'item_safari_hat',
+        },
+        customItemOffsets: savedOffsets,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('primary_play_button')),
+      );
+
+      final mascot = tester.widget<GameCharacter>(find.byType(GameCharacter));
+
+      expect(mascot.equippedItems, containsPair('head', 'item_safari_hat'));
+      expect(
+        mascot.customItemOffsets,
+        containsPair('item_safari_hat_idle', 'n,0.0,-0.42,1.0,0.0'),
+      );
     },
   );
 

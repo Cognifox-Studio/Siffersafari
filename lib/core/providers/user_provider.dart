@@ -403,7 +403,7 @@ class UserNotifier extends StateNotifier<UserState> {
     if (user == null) return;
 
     final updatedOffsets = Map<String, String>.from(user.customItemOffsets);
-    updatedOffsets[itemSlug] = 'p,$dx,$dy,$scale,$rotation';
+    updatedOffsets[itemSlug] = 'n,$dx,$dy,$scale,$rotation';
     final updatedUser = user.copyWith(customItemOffsets: updatedOffsets);
 
     // Optimistisk uppdatering: uppdatera state direkt så UI inte snäpper

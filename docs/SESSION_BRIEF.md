@@ -6,7 +6,7 @@
 
 ---
 
-## Nuläge (2026-05-09)
+## Nuläge (2026-05-11)
 
 **Version:** 1.4.0+15
 **Tester:** Alla 190 tester passerar ✅  
@@ -14,6 +14,18 @@
 **Integration smoke:** 3/3 passed (FULL_SMOKE=false) ✅  
 
 ### Senaste leveranser
+
+**2026-05-11 – Garderob: stabiliserad rendering, state-propagation och hit-testing**
+- **Sparade item-positioner över vyer:** Fixade att hemskärmen tappade bort `customItemOffsets` till `GameCharacter`, vilket gjorde att placerade föremål visades rätt i garderoben men föll tillbaka till default-position på Home.
+- **Tap på maskoten i garderoben:** Fixade att ett vanligt tryck på Loke kunde trigga `userTap`-pose utan faktisk callback. I garderoben, där `persistentReaction` används, gjorde det att utrustningen såg ut att försvinna tills posen byttes tillbaka.
+- **Träffsäker draglogik:** Bytte från grov generell hit-area till item-specifika elliptiska hit-shapes i `GameCharacter`, med särskild åtstramning för glasögon och andra överlappande föremål.
+- **Regressionsskydd:** Lade riktade widgettester för wardrobe-beteenden samt ett nytt audit-test som verifierar att alla aktiva wardrobe-items i inventory-listan har explicit hit-shape-täckning.
+
+**2026-05-11 – UI Rendering Fix Wardrobe**
+- **Garderobsfönster:** Löste ett problem där garderoben (`WardrobeDialog`) bara visade en svart skärm (men inga visuella fel från Flutter) på grund av en `hasSize` / `IntrinsicWidth` layout-krasch i bakgrunden. Dialog-widgeten misslyckades med att mäta raden med knappar. Fixades genom att införa `Wrap` för knappar, `shrinkWrap: true` på inre scroll-vyer och gränsen `ConstrainedBox(maxWidth: 400)` runt allting. Dialogen syns nu som den ska på enheten.
+
+**2026-05-11 – Init-audit av utvecklarytan**
+- **Docs och customizations:** Synkade utvecklarlagret mot faktisk appstruktur. `docs/README.md` beskriver nu `SESSION_BRIEF.md` som aktuellt läge i stället för historisk logg, `docs/PROJECT_STRUCTURE.md` och `docs/ADD_FEATURE.md` följer feature-first-strukturen bättre, och `.github`-ytan är tydligare dokumenterad utan pensionerade prompts.
 
 **2026-05-10 – Haptik, Confetti, Resume Quiz och Camp-grund**
 - **Camp-grund:** Introducerade `CampSceneView` som en dedikerad bas på hemskärmen.
@@ -59,10 +71,11 @@
 
 ## Nästa steg (v1.4.1 Reward MVP)
 
-### Aktuell fas: Reward MVP (Polering)
-- Vi har apan (Loke), inventory-modellen och wardrobe-dialogen i fungerande skick. `user.equippedItems` passas numera framgångsrikt till UI-skärmarna.
-- Belönings-MVP: Nästa steg är att polera upplåsnings-flödet och bekräfta hur items låses upp ordentligt genom spelets progression. All konfiguration finns redo under app_constants.dart (wardrobe items).
-- Vi bör eventuellt validera att eventuella nya wardrobe items inte buggar i andra vyer än Home Screen, ex. Quiz-slutet.
+### Aktuell fas: Reward MVP (Polering & Verifiering av UI)
+- Vi har apan (Loke), inventory-modellen och nu fungerar även renderingen av själva garderobsmenyn (ett kritiskt fel där rutan visades som en svart skärm är nu åtgärdat med layout constraints).
+- **Direkta nästa steg:** Garderobens huvudflöde för utrustning, placering och träffytor är nu stabiliserat. Nästa steg är att fintrimma känslan per item vid behov och fortsätta validera att nya wardrobe-items får explicit hit-shape och korrekt propagation till alla vyer.
+- Belönings-MVP: Därefter ska vi validera belöningslådan under spelets gång och att utrustning låses upp korrekt (systemet finns under app_constants.dart och progression-handlers).
+- Vi bör eventuellt validera att ny utrustning ritas upp korrekt (och inte klipps av i kanterna) i andra vyer än Home Screen, ex. Quiz-slutet och camp-vyn.
 
 ---
 

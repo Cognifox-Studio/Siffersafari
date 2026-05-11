@@ -74,8 +74,9 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.only(
-                  top: AppConstants.smallPadding,
-                  bottom: AppConstants.defaultPadding,),
+                top: AppConstants.smallPadding,
+                bottom: AppConstants.defaultPadding,
+              ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -85,7 +86,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     isSelected: _selectedReaction == CharacterReaction.idle,
                     onTap: () {
                       setState(
-                          () => _selectedReaction = CharacterReaction.idle,);
+                        () => _selectedReaction = CharacterReaction.idle,
+                      );
                       ref.read(audioServiceProvider).playClickSound();
                     },
                   ),
@@ -144,7 +146,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             child: PlayfulPanel(
                               backgroundColor: themeCfg.cardColor,
                               padding: const EdgeInsets.all(
-                                  AppConstants.defaultPadding,),
+                                AppConstants.defaultPadding,
+                              ),
                               child: _buildGrid(
                                 context,
                                 unlockedItems,
@@ -179,7 +182,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                           child: PlayfulPanel(
                             backgroundColor: themeCfg.cardColor,
                             padding: const EdgeInsets.all(
-                                AppConstants.defaultPadding,),
+                              AppConstants.defaultPadding,
+                            ),
                             child: _buildGrid(
                               context,
                               unlockedItems,
@@ -223,6 +227,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
           customItemOffsets: activeUser.customItemOffsets,
           interactiveItems: true,
           onItemOffsetUpdated: (itemSlug, dx, dy, scale, rot) {
+            ref.read(audioServiceProvider).playClickSound();
             ref.read(userProvider.notifier).setCustomItemOffset(
                   itemSlug,
                   dx,

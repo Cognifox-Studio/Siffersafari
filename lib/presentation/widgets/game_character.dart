@@ -229,6 +229,7 @@ class _GameCharacterState extends State<GameCharacter>
     if (!widget.interactiveItems) {
       return SizedBox(
         height: widget.height,
+        width: widget.height,
         child: _buildAnimatedCharacterSurface(widget.height),
       );
     }
@@ -246,10 +247,92 @@ class _GameCharacterState extends State<GameCharacter>
 
   Widget _buildAnimatedCharacterSurface(double canvasSize) {
     return GestureDetector(
-      onTap: () {
-        _playFallbackReaction(CharacterReaction.userTap);
-        widget.onTap?.call();
-      },
+      behavior: HitTestBehavior.opaque,
+      onTap: widget.onTap == null
+          ? null
+          : () {
+              _playFallbackReaction(CharacterReaction.userTap);
+              widget.onTap?.call();
+            },
+      onScaleStart: !widget.interactiveItems
+          ? null
+          : (details) {
+              setState(() {
+                _activeItemId = _pickInteractiveItem(
+                  details.localFocalPoint,
+                  canvasSize,
+                );
+              });
+            },
+      onScaleUpdate: !widget.interactiveItems
+          ? null
+          : (details) {
+              final id = _activeItemId;
+              if (id == null) return;
+              setState(() {
+                final prev = _dragOffsets[id] ?? Offset.zero;
+                final savedDx = _getItemSavedDx(id);
+                final savedDy = _getItemSavedDy(id);
+                final savedScale = _getItemSavedScale(id);
+                final rawOffset = Offset(
+                  savedDx + prev.dx + details.focalPointDelta.dx,
+                  savedDy + prev.dy + details.focalPointDelta.dy,
+                );
+
+                if (details.pointerCount > 1) {
+                  _dragScales[id] = details.scale;
+                  _dragRotations[id] = details.rotation;
+                }
+                final dragScale = _dragScales[id] ?? 1.0;
+
+                final clampedOffset = _getClampedItemOffset(
+                  id,
+                  rawOffset,
+                  currentScale: (savedScale * dragScale).clamp(0.1, 10.0),
+                );
+                _dragOffsets[id] = Offset(
+                  clampedOffset.dx - savedDx,
+                  clampedOffset.dy - savedDy,
+                );
+              });
+            },
+      onScaleEnd: !widget.interactiveItems
+          ? null
+          : (details) {
+              final id = _activeItemId;
+              if (id == null) return;
+              final savedDx = _getItemSavedDx(id);
+              final savedDy = _getItemSavedDy(id);
+              final savedScale = _getItemSavedScale(id);
+              final savedRot = _getItemSavedRot(id);
+              final drag = _dragOffsets[id] ?? Offset.zero;
+              final ds = _dragScales[id] ?? 1.0;
+              final dr = _dragRotations[id] ?? 0.0;
+              final finalScale = (savedScale * ds).clamp(0.1, 10.0);
+              final finalRot = savedRot + dr;
+              final clampedOffset = _getClampedItemOffset(
+                id,
+                Offset(savedDx + drag.dx, savedDy + drag.dy),
+                currentScale: finalScale,
+              );
+              final finalDx = clampedOffset.dx;
+              final finalDy = clampedOffset.dy;
+
+              final normDx = finalDx / widget.height;
+              final normDy = finalDy / widget.height;
+
+              final saveKey = '${id}_${_fallbackReaction.name}';
+              widget.onItemOffsetUpdated
+                  ?.call(saveKey, normDx, normDy, finalScale, finalRot);
+              setState(() {
+                _activeItemId = null;
+                _optimisticOffsets[saveKey] =
+                    'n,$normDx,$normDy,$finalScale,$finalRot';
+                _dragOffsets.remove(id);
+                _dragScales.remove(id);
+                _dragRotations.remove(id);
+              });
+            },
       child: AnimatedBuilder(
         animation: Listenable.merge([_reactionController, _bobController]),
         builder: (context, child) {
@@ -281,19 +364,21 @@ class _GameCharacterState extends State<GameCharacter>
   }
 
   Map<String, String> get _currentPoseEquippedItems {
-    if (widget.equippedItems == null || widget.equippedItems!.isEmpty) return {};
-    
-    final poseName = _fallbackReaction.name;
+    if (widget.equippedItems == null || widget.equippedItems!.isEmpty) {
+      return {};
+    }
+
+    final poseNames = _currentPoseLookupNames;
     final Map<String, String> items = {};
-    
+
     for (final entry in widget.equippedItems!.entries) {
       final key = entry.key;
       final val = entry.value;
-      
-      if (key.startsWith('${poseName}_')) {
+
+      if (poseNames.any((poseName) => key.startsWith('${poseName}_'))) {
         items[key] = val;
-      } else if (!key.contains('_')) { 
-        if (poseName == 'idle') {
+      } else if (!key.contains('_')) {
+        if (poseNames.contains('idle')) {
           items[key] = val;
         }
       }
@@ -301,13 +386,20 @@ class _GameCharacterState extends State<GameCharacter>
     return items;
   }
 
+  List<String> get _currentPoseLookupNames {
+    switch (_fallbackReaction) {
+      case CharacterReaction.answerCorrect:
+        return const ['answerCorrect', 'celebrate'];
+      case CharacterReaction.celebrate:
+        return const ['celebrate', 'answerCorrect'];
+      default:
+        return [_fallbackReaction.name];
+    }
+  }
+
   Widget _currentAsset(BuildContext context, double canvasSize) {
     final assetPath = _currentPngPath();
-    final characterOriginOffset = Offset(
-      0,
-      _getInteractiveCharacterBaseDy(canvasSize),
-    );
-    
+
     final pixelRatio = MediaQuery.devicePixelRatioOf(context);
     final cacheHeight = (widget.height * pixelRatio).toInt();
 
@@ -319,10 +411,6 @@ class _GameCharacterState extends State<GameCharacter>
         cacheHeight: cacheHeight,
         errorBuilder: (context, error, stackTrace) => _iconFallback(context),
       ),
-    );
-    final positionedCharacterAsset = Transform.translate(
-      offset: characterOriginOffset,
-      child: characterAsset,
     );
 
     final currentEquipped = _currentPoseEquippedItems;
@@ -336,7 +424,7 @@ class _GameCharacterState extends State<GameCharacter>
         child: Stack(
           alignment: Alignment.center,
           clipBehavior: Clip.none,
-          children: [positionedCharacterAsset],
+          children: [characterAsset],
         ),
       );
     }
@@ -347,96 +435,18 @@ class _GameCharacterState extends State<GameCharacter>
         alignment: Alignment.center,
         clipBehavior: Clip.none,
         children: [
-            ..._buildEquippedItem(context, 'back', canvasSize),
-            positionedCharacterAsset,
-            ..._buildEquippedItem(context, 'body', canvasSize),
-            ..._buildEquippedItem(context, 'face', canvasSize),
-            ..._buildEquippedItem(context, 'head', canvasSize),
-            ..._buildEquippedItem(context, 'accessory', canvasSize),
-            ..._buildEquippedItem(context, 'front', canvasSize),
-          ],
-        ),
-      );
-
-    if (!widget.interactiveItems) {
-      return stack;
-    }
-
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onScaleStart: (details) {
-        setState(() {
-          _activeItemId = _pickInteractiveItem(
-            details.localFocalPoint,
-            canvasSize,
-          );
-        });
-      },
-      onScaleUpdate: (details) {
-        final id = _activeItemId;
-        if (id == null) return;
-        setState(() {
-          final prev = _dragOffsets[id] ?? Offset.zero;
-          final savedDx = _getItemSavedDx(id);
-          final savedDy = _getItemSavedDy(id);
-          final savedScale = _getItemSavedScale(id);
-          final rawOffset = Offset(
-            savedDx + prev.dx + details.focalPointDelta.dx,
-            savedDy + prev.dy + details.focalPointDelta.dy,
-          );
-
-          if (details.pointerCount > 1) {
-            _dragScales[id] = details.scale;
-            _dragRotations[id] = details.rotation;
-          }
-          final dragScale = _dragScales[id] ?? 1.0;
-
-          final clampedOffset = _getClampedItemOffset(
-            id,
-            rawOffset,
-            canvasSize,
-            currentScale: (savedScale * dragScale).clamp(0.1, 10.0),
-          );
-          _dragOffsets[id] = Offset(
-            clampedOffset.dx - savedDx,
-            clampedOffset.dy - savedDy,
-          );
-        });
-      },
-      onScaleEnd: (details) {
-        final id = _activeItemId;
-        if (id == null) return;
-        final savedDx = _getItemSavedDx(id);
-        final savedDy = _getItemSavedDy(id);
-        final savedScale = _getItemSavedScale(id);
-        final savedRot = _getItemSavedRot(id);
-        final drag = _dragOffsets[id] ?? Offset.zero;
-        final ds = _dragScales[id] ?? 1.0;
-        final dr = _dragRotations[id] ?? 0.0;
-        final finalScale = (savedScale * ds).clamp(0.1, 10.0);
-        final finalRot = savedRot + dr;
-        final clampedOffset = _getClampedItemOffset(
-          id,
-          Offset(savedDx + drag.dx, savedDy + drag.dy),
-          canvasSize,
-          currentScale: finalScale,
-        );
-        final finalDx = clampedOffset.dx;
-        final finalDy = clampedOffset.dy;
-        final saveKey = '${id}_${_fallbackReaction.name}';
-        widget.onItemOffsetUpdated
-            ?.call(saveKey, finalDx, finalDy, finalScale, finalRot);
-        setState(() {
-          _activeItemId = null;
-          _optimisticOffsets[saveKey] =
-              'p,$finalDx,$finalDy,$finalScale,$finalRot';
-          _dragOffsets.remove(id);
-          _dragScales.remove(id);
-          _dragRotations.remove(id);
-        });
-      },
-      child: stack,
+          ..._buildEquippedItem(context, 'back', canvasSize),
+          characterAsset,
+          ..._buildEquippedItem(context, 'body', canvasSize),
+          ..._buildEquippedItem(context, 'face', canvasSize),
+          ..._buildEquippedItem(context, 'head', canvasSize),
+          ..._buildEquippedItem(context, 'accessory', canvasSize),
+          ..._buildEquippedItem(context, 'front', canvasSize),
+        ],
+      ),
     );
+
+    return stack;
   }
 
   double _resolveInteractiveCanvasSize(BoxConstraints constraints) {
@@ -451,12 +461,6 @@ class _GameCharacterState extends State<GameCharacter>
     return math.max(widget.height, availableSide);
   }
 
-  double _getInteractiveCharacterBaseDy(double canvasSize) {
-    if (!widget.interactiveItems) return 0;
-
-    return math.min(widget.height * 0.36, canvasSize * 0.22);
-  }
-
   Offset _getCharacterCanvasCenter(double canvasSize) {
     return Offset(
       canvasSize / 2,
@@ -466,23 +470,118 @@ class _GameCharacterState extends State<GameCharacter>
 
   String? _pickInteractiveItem(Offset localPosition, double canvasSize) {
     final itemIds = _layeredEquippedItemIds().toList(growable: false);
-    final canvasCenter = _getCharacterCanvasCenter(canvasSize);
+    String? bestItemId;
+    double? bestScore;
 
     for (final itemId in itemIds.reversed) {
-      final pixelOffset = _getItemPixelOffset(itemId, canvasSize);
-      final itemCenter = Offset(
-        canvasCenter.dx + pixelOffset.dx,
-        canvasCenter.dy +
-            pixelOffset.dy +
-            _getInteractiveCharacterBaseDy(canvasSize),
+      final score = _getInteractiveItemHitScore(
+        itemId,
+        localPosition,
+        canvasSize,
       );
-      final distance = (localPosition - itemCenter).distance;
-      if (distance <= _getItemHitRadius(itemId)) {
-        return itemId;
+      if (score == null) {
+        continue;
+      }
+
+      if (bestScore == null || score < bestScore) {
+        bestScore = score;
+        bestItemId = itemId;
       }
     }
 
-    return null;
+    return bestItemId;
+  }
+
+  double? _getInteractiveItemHitScore(
+    String itemId,
+    Offset localPosition,
+    double canvasSize,
+  ) {
+    final itemConfig = _getItemConfig(itemId, '');
+    final adjustments = _getCharacterAdjustments(
+      widget.characterId,
+      itemConfig.slot,
+    );
+    final layoutScale = itemConfig.renderScale * adjustments.scaleModifier;
+    final saved = _getItemSaved(itemId);
+    final currentScale =
+        (saved['scale']! * (_dragScales[itemId] ?? 1.0)).clamp(0.1, 10.0);
+    final currentRotation = saved['rot']! + (_dragRotations[itemId] ?? 0.0);
+    final itemExtent = layoutScale * widget.height * currentScale;
+    final hitShape = _getInteractiveHitShape(itemId, itemConfig.slot);
+
+    final extraTouchPadding = math.max(
+      widget.height * 0.02,
+      itemExtent * hitShape.paddingFactor,
+    );
+    final hitHalfWidth =
+        itemExtent * 0.5 * hitShape.widthFactor + extraTouchPadding;
+    final hitHalfHeight =
+        itemExtent * 0.5 * hitShape.heightFactor + extraTouchPadding;
+
+    final canvasCenter = _getCharacterCanvasCenter(canvasSize);
+    final pixelOffset = _getItemPixelOffset(itemId, canvasSize);
+    final itemCenter = Offset(
+      canvasCenter.dx + pixelOffset.dx,
+      canvasCenter.dy + pixelOffset.dy,
+    );
+
+    final relative = localPosition - itemCenter;
+    final sinAngle = math.sin(-currentRotation);
+    final cosAngle = math.cos(-currentRotation);
+    final unrotated = Offset(
+      relative.dx * cosAngle - relative.dy * sinAngle,
+      relative.dx * sinAngle + relative.dy * cosAngle,
+    );
+
+    final normalizedX = unrotated.dx.abs() / hitHalfWidth;
+    final normalizedY = unrotated.dy.abs() / hitHalfHeight;
+    final ellipseScore = normalizedX * normalizedX + normalizedY * normalizedY;
+
+    if (ellipseScore > 1.0) {
+      return null;
+    }
+
+    return ellipseScore;
+  }
+
+  ({
+    double widthFactor,
+    double heightFactor,
+    double paddingFactor,
+  }) _getInteractiveHitShape(String itemId, String slot) {
+    switch (itemId) {
+      case 'item_glasses_nerd':
+        return (widthFactor: 0.68, heightFactor: 0.24, paddingFactor: 0.015);
+      case 'item_safari_hat':
+      case 'item_hat_safari':
+      case 'item_hat_pirate':
+        return (widthFactor: 0.9, heightFactor: 0.46, paddingFactor: 0.02);
+      case 'item_binoculars_safari':
+        return (widthFactor: 0.72, heightFactor: 0.42, paddingFactor: 0.02);
+      case 'item_compass_safari':
+        return (widthFactor: 0.6, heightFactor: 0.6, paddingFactor: 0.02);
+      case 'item_map_safari':
+        return (widthFactor: 0.84, heightFactor: 0.62, paddingFactor: 0.02);
+      case 'item_camera_safari':
+        return (widthFactor: 0.72, heightFactor: 0.58, paddingFactor: 0.02);
+      case 'item_backpack_adventure':
+        return (widthFactor: 0.72, heightFactor: 0.78, paddingFactor: 0.02);
+      case 'item_shoes_safari':
+        return (widthFactor: 0.78, heightFactor: 0.4, paddingFactor: 0.02);
+    }
+
+    switch (slot) {
+      case 'face':
+        return (widthFactor: 0.7, heightFactor: 0.3, paddingFactor: 0.02);
+      case 'head':
+        return (widthFactor: 0.88, heightFactor: 0.48, paddingFactor: 0.02);
+      case 'front':
+      case 'accessory':
+        return (widthFactor: 0.72, heightFactor: 0.62, paddingFactor: 0.02);
+      default:
+        return (widthFactor: 0.78, heightFactor: 0.78, paddingFactor: 0.02);
+    }
   }
 
   Iterable<String> _layeredEquippedItemIds() sync* {
@@ -503,20 +602,18 @@ class _GameCharacterState extends State<GameCharacter>
 
   Offset _getClampedItemOffset(
     String itemId,
-    Offset rawOffset,
-    double canvasSize, {
+    Offset rawOffset, {
     double? currentScale,
   }) {
     final overflowAllowance =
         _getItemHitRadius(itemId, currentScale: currentScale) * 0.8;
-    final horizontalReach = canvasSize / 2 + overflowAllowance;
-    final verticalBias = _getInteractiveCharacterBaseDy(canvasSize);
-    final upwardReach = canvasSize / 2 + verticalBias + overflowAllowance;
-    final downwardReach = canvasSize / 2 - verticalBias + overflowAllowance;
+    final halfCharacterExtent = widget.height / 2;
+    final horizontalReach = halfCharacterExtent + overflowAllowance;
+    final verticalReach = halfCharacterExtent + overflowAllowance;
 
     return Offset(
       rawOffset.dx.clamp(-horizontalReach, horizontalReach).toDouble(),
-      rawOffset.dy.clamp(-upwardReach, downwardReach).toDouble(),
+      rawOffset.dy.clamp(-verticalReach, verticalReach).toDouble(),
     );
   }
 
@@ -579,23 +676,49 @@ class _GameCharacterState extends State<GameCharacter>
     var dy = (config.offset.y + adjustments.dy) * alignmentFactor;
     var scale = 1.0;
     var rot = 0.0;
-    final poseKey = '${itemId}_${_fallbackReaction.name}';
     final idleKey = '${itemId}_idle';
-    
+
     String lookupKey = itemId;
-    if (widget.customItemOffsets?.containsKey(poseKey) == true || _optimisticOffsets.containsKey(poseKey)) {
-      lookupKey = poseKey;
-    } else if (widget.customItemOffsets?.containsKey(idleKey) == true || _optimisticOffsets.containsKey(idleKey)) {
+    for (final poseName in _currentPoseLookupNames) {
+      final poseKey = '${itemId}_$poseName';
+      if (widget.customItemOffsets?.containsKey(poseKey) == true ||
+          _optimisticOffsets.containsKey(poseKey)) {
+        lookupKey = poseKey;
+        break;
+      }
+    }
+
+    if (lookupKey == itemId &&
+        (widget.customItemOffsets?.containsKey(idleKey) == true ||
+            _optimisticOffsets.containsKey(idleKey))) {
       lookupKey = idleKey;
     }
 
-    final stored = _optimisticOffsets[lookupKey] ?? widget.customItemOffsets?[lookupKey];
+    final stored =
+        _optimisticOffsets[lookupKey] ?? widget.customItemOffsets?[lookupKey];
     if (stored != null) {
-      if (stored.startsWith('p,')) {
+      if (stored.startsWith('n,')) {
         final parts = stored.substring(2).split(',');
         if (parts.length >= 2) {
-          dx = double.tryParse(parts[0]) ?? dx;
-          dy = double.tryParse(parts[1]) ?? dy;
+          final nx = double.tryParse(parts[0]);
+          final ny = double.tryParse(parts[1]);
+          // Standard-koordinaterna vi utgår ifrån (Alignment-baserade) bör inte skrivas över rakt av,
+          // drag-koordinaterna måste räknas UTIFRÅN dem ELLER så sparar vi den exakta positionen.
+          // Eftersom nyckeln "dx/dy" är slutgiltig render-offset sätter vi den i förhållande till widget.height
+          if (nx != null) dx = nx * widget.height;
+          if (ny != null) dy = ny * widget.height;
+        }
+        if (parts.length >= 4) {
+          scale = double.tryParse(parts[2]) ?? scale;
+          rot = double.tryParse(parts[3]) ?? rot;
+        }
+      } else if (stored.startsWith('p,')) {
+        final parts = stored.substring(2).split(',');
+        if (parts.length >= 2) {
+          final px = double.tryParse(parts[0]);
+          final py = double.tryParse(parts[1]);
+          if (px != null) dx = (px / 200.0) * widget.height;
+          if (py != null) dy = (py / 200.0) * widget.height;
         }
         if (parts.length >= 4) {
           scale = double.tryParse(parts[2]) ?? scale;
@@ -628,12 +751,15 @@ class _GameCharacterState extends State<GameCharacter>
     return _getClampedItemOffset(
       itemId,
       Offset(saved['dx']! + drag.dx, saved['dy']! + drag.dy),
-      canvasSize,
       currentScale: currentScale,
     );
   }
 
-  List<Widget> _buildEquippedItem(BuildContext context, String slotLayer, double canvasSize) {
+  List<Widget> _buildEquippedItem(
+    BuildContext context,
+    String slotLayer,
+    double canvasSize,
+  ) {
     final currentEquipped = _currentPoseEquippedItems;
     if (currentEquipped.isEmpty) {
       return [];
@@ -657,14 +783,18 @@ class _GameCharacterState extends State<GameCharacter>
       final currentRot = saved['rot']! + dr;
       final currentOffset = _getItemPixelOffset(itemId, canvasSize);
       final currentDx = currentOffset.dx;
-      final currentDy =
-          currentOffset.dy + _getInteractiveCharacterBaseDy(canvasSize);
+      final currentDy = currentOffset.dy;
 
       final pixelRatio = MediaQuery.devicePixelRatioOf(context);
-      final cacheHeight = (widget.height * pixelRatio * itemConfig.renderScale * adjustments.scaleModifier).toInt().clamp(20, 1000);
+      final cacheHeight = (widget.height *
+              pixelRatio *
+              itemConfig.renderScale *
+              adjustments.scaleModifier)
+          .toInt()
+          .clamp(20, 1000);
 
       Widget itemWidget = Image.asset(
-        itemConfig.assetPath, 
+        itemConfig.assetPath,
         fit: BoxFit.contain,
         cacheHeight: cacheHeight,
       );
@@ -861,4 +991,3 @@ class _FallbackPose {
   final double dy;
   final double opacity;
 }
-
