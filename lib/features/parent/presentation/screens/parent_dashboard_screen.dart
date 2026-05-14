@@ -10,6 +10,7 @@ import 'package:siffersafari/core/providers/missing_number_settings_provider.dar
 import 'package:siffersafari/core/providers/parent_settings_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/spaced_repetition_settings_provider.dart';
+import 'package:siffersafari/core/providers/tts_enabled_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -39,8 +40,11 @@ class ParentDashboardScreen extends ConsumerWidget {
             onPressed: () {
               context.pushSmooth(const SettingsScreen());
             },
-            icon: Image.asset('assets/images/ui/ic_ui_settings.png',
-                width: 28, height: 28,),
+            icon: Image.asset(
+              'assets/images/ui/ic_ui_settings.png',
+              width: 28,
+              height: 28,
+            ),
           ),
           IconButton(
             tooltip: 'Byt PIN',
@@ -101,18 +105,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      ref.read(parentSettingsProvider.notifier).ensureLoaded(widget.userId);
       ref.read(appAnalyticsProvider).logEvent(name: 'parent_mode_opened');
-    });
-  }
-
-  @override
-  void didUpdateWidget(covariant _DashboardBody oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.userId == widget.userId) return;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ref.read(parentSettingsProvider.notifier).ensureLoaded(widget.userId);
     });
   }
 
@@ -184,9 +177,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 : 'Det är lite kämpigt just nu. Kortare pass kan hjälpa.';
     final weakestAreas = _computeWeakestAreas(user.masteryLevels);
 
-    final settingsNotifier = ref.read(parentSettingsProvider.notifier);
-    final allowedOps =
-        ref.watch(parentSettingsProvider)[userId] ?? _defaultAllowedOps();
+    final settingsNotifier = ref.read(parentSettingsProvider(userId).notifier);
+    final allowedOps = ref.watch(parentSettingsProvider(userId));
 
     final wordProblemsEnabled = ref.watch(wordProblemsEnabledProvider(userId));
     final wordProblemsNotifier =
@@ -201,6 +193,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         ref.watch(spacedRepetitionEnabledProvider(userId));
     final spacedRepetitionNotifier =
         ref.read(spacedRepetitionEnabledProvider(userId).notifier);
+
+    final ttsEnabled = ref.watch(ttsEnabledProvider(userId));
+    final ttsNotifier = ref.read(ttsEnabledProvider(userId).notifier);
 
     final overviewCard = _Card(
       child: Column(
@@ -485,6 +480,42 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             },
           ),
           const Divider(height: 1),
+          SwitchListTile(
+            title: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'Uppläsning',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: mutedOnPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                  ),
+                ),
+                infoButton(
+                  title: 'Uppläsning',
+                  message:
+                      'När den här är på kan barnet läsa upp frågan och få kort '
+                      'feedback uppläst i quiz.\n\n'
+                      'Det använder mobilens inbyggda talmotor och kräver inget nät.',
+                ),
+              ],
+            ),
+            subtitle: Text(
+              'Fråga och kort feedback i quiz',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: subtleOnPrimary,
+                  ),
+            ),
+            value: ttsEnabled,
+            activeThumbColor: accentColor,
+            activeTrackColor:
+                accentColor.withValues(alpha: AppOpacities.highlightStrong),
+            onChanged: (value) {
+              ttsNotifier.setEnabled(value);
+            },
+          ),
+          const Divider(height: 1),
           _CharacterPickerTile(userId: userId),
           const Divider(height: 1),
           Padding(
@@ -526,11 +557,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
               ),
               onChanged: (!isOn || canTurnOff)
                   ? (value) {
-                      settingsNotifier.setOperationAllowed(
-                        userId,
-                        op,
-                        value,
-                      );
+                      settingsNotifier.setOperationAllowed(op, value);
                     }
                   : null,
             );
@@ -798,10 +825,6 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final difficulty = parts[1];
 
     return '${_prettyEnumLabel(operation)} • ${_prettyEnumLabel(difficulty)}';
-  }
-
-  Set<OperationType> _defaultAllowedOps() {
-    return _baseOps().toSet();
   }
 
   List<OperationType> _baseOps() {

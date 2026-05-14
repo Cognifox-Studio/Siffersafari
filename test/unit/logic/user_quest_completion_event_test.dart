@@ -3,8 +3,10 @@ import 'package:mocktail/mocktail.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
+import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
@@ -150,6 +152,55 @@ void main() {
       expect(updatedUser, isNotNull);
       expect(updatedUser!.operationDifficultySteps['multiplication'], 6);
       expect(updatedUser.operationDifficultySteps['addition'], 4);
+    });
+
+    test('låser upp nästa reward-item vid level up och persisterar det',
+        () async {
+      await notifier.saveUser(
+        notifier.state.activeUser!.copyWith(
+          totalQuizzesTaken: 1,
+          totalPoints: UserProgress.pointsPerLevel - 40,
+        ),
+      );
+
+      const question = Question(
+        id: 'q_reward',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 4,
+        operand2: 5,
+        correctAnswer: 9,
+        wrongAnswers: [8, 10, 11],
+        explanation: '4 + 5 = 9',
+      );
+
+      const session = QuizSession(
+        sessionId: 's_reward',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [question],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 40,
+        answers: {'q_reward': 9},
+      );
+
+      await notifier.applyQuizResult(session);
+
+      final unlockedItemId = InventoryConfig.levelUnlockOrderIds.first;
+
+      expect(notifier.state.lastLevelUp, isNotNull);
+      expect(notifier.state.newlyUnlockedItem?.id, unlockedItemId);
+      expect(
+        notifier.state.activeUser?.unlockedItems,
+        contains(unlockedItemId),
+      );
+      expect(
+        repository.getUserProgress('u1')?.unlockedItems,
+        contains(unlockedItemId),
+      );
     });
   });
 }

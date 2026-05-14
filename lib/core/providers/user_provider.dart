@@ -48,19 +48,20 @@ class UserState {
   static const Object _unset = Object();
 
   UserState copyWith({
-    UserProgress? activeUser,
+    Object? activeUser = _unset,
     List<UserProgress>? allUsers,
     bool? isLoading,
     String? errorMessage,
     AchievementReward? lastReward,
     Object? lastQuestCompletion = _unset,
     Object? lastLevelUp = _unset,
-    QuestStatus? questStatus,
+    Object? questStatus = _unset,
     Object? questNotice = _unset,
     Object? newlyUnlockedItem = _unset,
   }) {
     return UserState(
-      activeUser: activeUser ?? this.activeUser,
+      activeUser:
+          activeUser == _unset ? this.activeUser : activeUser as UserProgress?,
       allUsers: allUsers ?? this.allUsers,
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
@@ -71,7 +72,9 @@ class UserState {
       lastLevelUp: lastLevelUp == _unset
           ? this.lastLevelUp
           : lastLevelUp as LevelUpEvent?,
-      questStatus: questStatus ?? this.questStatus,
+      questStatus: questStatus == _unset
+          ? this.questStatus
+          : questStatus as QuestStatus?,
       questNotice:
           questNotice == _unset ? this.questNotice : questNotice as String?,
       newlyUnlockedItem: newlyUnlockedItem == _unset
@@ -350,6 +353,40 @@ class UserNotifier extends StateNotifier<UserState> {
     state = state.copyWith(activeUser: user);
   }
 
+  Future<void> deleteUser(String userId) async {
+    final currentActiveUserId =
+        state.activeUser?.userId ?? _repository.getActiveUserId();
+
+    await _repository.deleteUserData(userId);
+
+    if (currentActiveUserId == userId) {
+      final remainingUsers = _repository.getAllUserProfiles();
+      if (remainingUsers.isEmpty) {
+        await _repository.clearActiveUserId();
+      } else {
+        await _repository.setActiveUserId(remainingUsers.first.userId);
+      }
+    }
+
+    await loadUsers();
+  }
+
+  Future<void> clearAllData() async {
+    await _repository.clearAllData();
+    state = state.copyWith(
+      activeUser: null,
+      allUsers: const [],
+      isLoading: false,
+      errorMessage: null,
+      lastReward: null,
+      lastQuestCompletion: null,
+      lastLevelUp: null,
+      questStatus: null,
+      questNotice: null,
+      newlyUnlockedItem: null,
+    );
+  }
+
   /// Persist the selected character slug (e.g. 'loke')
   /// for the currently active user.
   Future<void> setCharacter(String characterSlug) async {
@@ -558,11 +595,8 @@ class UserNotifier extends StateNotifier<UserState> {
     var finalUnlockedItems = updatedUser.unlockedItems;
 
     if (updatedUser.level > oldLevel) {
-      final lockedItems = InventoryConfig.allItems
-          .where((i) => !finalUnlockedItems.contains(i.id))
-          .toList();
-      if (lockedItems.isNotEmpty) {
-        newlyUnlockedItem = lockedItems.first;
+      newlyUnlockedItem = InventoryConfig.nextLevelUnlock(finalUnlockedItems);
+      if (newlyUnlockedItem != null) {
         finalUnlockedItems = [...finalUnlockedItems, newlyUnlockedItem.id];
       }
     }

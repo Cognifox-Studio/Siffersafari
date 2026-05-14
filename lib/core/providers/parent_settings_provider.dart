@@ -11,32 +11,28 @@ const _baseOperations = <OperationType>[
   OperationType.division,
 ];
 
+Set<OperationType> _defaultAllowedOperations() => _baseOperations.toSet();
+
 /// Manages parent-controlled settings: per-user allowed math operations.
 ///
-/// Caches allowed operations for each user and persists changes to local storage.
-/// Prevents empty sets (ensures at least one operation is always allowed).
-/// Automatically loads settings on demand via [ensureLoaded].
-class ParentSettingsNotifier
-    extends StateNotifier<Map<String, Set<OperationType>>> {
-  ParentSettingsNotifier(this._repository) : super(const {});
+/// Uses a stable [userId] family key so each profile gets isolated provider
+/// state and persisted settings.
+class ParentSettingsNotifier extends StateNotifier<Set<OperationType>> {
+  ParentSettingsNotifier(this._repository, this._userId)
+      : super(
+          _readAllowedOperations(repository: _repository, userId: _userId),
+        );
 
   final LocalStorageRepository _repository;
+  final String _userId;
 
-  Set<OperationType> allowedOperationsFor(String userId) {
-    return state[userId] ?? _baseOperations.toSet();
-  }
-
-  void ensureLoaded(String userId) {
-    if (state.containsKey(userId)) return;
-    loadAllowedOperations(userId);
-  }
-
-  void loadAllowedOperations(
-    String userId, {
+  static Set<OperationType> _readAllowedOperations({
+    required LocalStorageRepository repository,
+    required String userId,
     Set<OperationType>? defaultOperations,
   }) {
-    final rawList = _repository.getAllowedOperationNames(userId);
-    final fallback = defaultOperations ?? _baseOperations.toSet();
+    final rawList = repository.getAllowedOperationNames(userId);
+    final fallback = defaultOperations ?? _defaultAllowedOperations();
 
     var ops = rawList
         .map(_operationFromName)
@@ -48,68 +44,52 @@ class ParentSettingsNotifier
       ops = fallback;
     }
 
-    state = {
-      ...state,
-      userId: ops,
-    };
+    return ops;
   }
 
-  OperationType? _operationFromName(String name) {
+  static OperationType? _operationFromName(String name) {
     if (name.isEmpty) return null;
     return OperationType.values.asNameMap()[name];
   }
 
   Future<void> setOperationAllowed(
-    String userId,
     OperationType operation,
     bool allowed,
   ) async {
-    final current = allowedOperationsFor(userId);
-    if (current.contains(operation) == allowed) return;
+    if (state.contains(operation) == allowed) return;
 
     final updated = allowed
-        ? {...current, operation}
-        : current.where((op) => op != operation).toSet();
+        ? {...state, operation}
+        : state.where((op) => op != operation).toSet();
 
     if (updated.isEmpty) {
       // Never allow an empty set; keep current.
       return;
     }
 
-    state = {
-      ...state,
-      userId: updated,
-    };
+    state = updated;
 
     await _repository.setAllowedOperationNames(
-      userId,
+      _userId,
       updated.map((op) => op.name).toList(growable: false),
     );
   }
 
-  Future<void> setAllowedOperations(
-    String userId,
-    Set<OperationType> ops,
-  ) async {
+  Future<void> setAllowedOperations(Set<OperationType> ops) async {
     final sanitized = ops.where(_baseOperations.contains).toSet();
     if (sanitized.isEmpty) return;
 
-    state = {
-      ...state,
-      userId: sanitized,
-    };
+    state = sanitized;
 
     await _repository.setAllowedOperationNames(
-      userId,
+      _userId,
       sanitized.map((op) => op.name).toList(growable: false),
     );
   }
 }
 
-final parentSettingsProvider = StateNotifierProvider<ParentSettingsNotifier,
-    Map<String, Set<OperationType>>>(
-  (ref) {
-    final repository = ref.watch(localStorageRepositoryProvider);
-    return ParentSettingsNotifier(repository);
-  },
-);
+final parentSettingsProvider = StateNotifierProvider.family<
+    ParentSettingsNotifier, Set<OperationType>, String>((ref, userId) {
+  final repository = ref.watch(localStorageRepositoryProvider);
+  return ParentSettingsNotifier(repository, userId);
+});

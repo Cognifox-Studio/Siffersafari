@@ -95,6 +95,15 @@ class StoryMapScreen extends ConsumerWidget {
                   mutedOnPrimary: mutedOnPrimary,
                   onContinue: () => Navigator.of(context).maybePop(),
                 ),
+                if (story.nextBiome != null) ...[
+                  const SizedBox(height: AppConstants.defaultPadding),
+                  _LockedBiomeTeaser(
+                    biome: story.nextBiome!,
+                    accentColor: scheme.secondary,
+                    onPrimary: onPrimary,
+                    mutedOnPrimary: mutedOnPrimary,
+                  ),
+                ],
                 const SizedBox(height: AppConstants.defaultPadding),
                 PlayfulPanel(
                   backgroundColor:
@@ -233,6 +242,12 @@ class _MapHeroCard extends StatelessWidget {
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
+              if (story.nextBiome != null)
+                _NextBiomeHeaderChip(
+                  biomeName: story.nextBiome!.name,
+                  onPrimary: onPrimary,
+                  mutedOnPrimary: mutedOnPrimary,
+                ),
             ],
           ),
           const SizedBox(height: AppConstants.defaultPadding),
@@ -301,6 +316,64 @@ class _HeaderChip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _NextBiomeHeaderChip extends StatelessWidget {
+  const _NextBiomeHeaderChip({
+    required this.biomeName,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+  });
+
+  final String biomeName;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('story_map_next_biome_chip'),
+      padding: const EdgeInsets.all(AppConstants.smallPadding),
+      decoration: BoxDecoration(
+        color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(
+          color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.lock_outline_rounded,
+            size: 18,
+            color: mutedOnPrimary,
+          ),
+          const SizedBox(width: AppConstants.microSpacing6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sen',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: mutedOnPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: AppConstants.microSpacing4),
+              Text(
+                biomeName,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -421,6 +494,16 @@ class _NearbyStopsPanel extends StatelessWidget {
           if (node != visibleNodes.last)
             const SizedBox(height: AppConstants.smallPadding),
         ],
+        if (story.nextBiome != null) ...[
+          const SizedBox(height: AppConstants.smallPadding),
+          _LockedBiomePreviewCard(
+            biome: story.nextBiome!,
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            subtleOnPrimary: subtleOnPrimary,
+          ),
+        ],
       ],
     );
   }
@@ -438,6 +521,188 @@ class _NearbyStopsPanel extends StatelessWidget {
     final start = (currentIndex - 1).clamp(0, nodes.length - safeWindow);
     final end = (start + safeWindow).clamp(0, nodes.length);
     return nodes.sublist(start, end);
+  }
+}
+
+class _LockedBiomeTeaser extends StatelessWidget {
+  const _LockedBiomeTeaser({
+    required this.biome,
+    required this.accentColor,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+  });
+
+  final StoryBiomePreview biome;
+  final Color accentColor;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    return PlayfulPanel(
+      key: const Key('story_map_locked_biome_teaser'),
+      highlightColor: accentColor,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.nightlight_round,
+              color: accentColor,
+            ),
+          ),
+          const SizedBox(width: AppConstants.defaultPadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Senare',
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  biome.name,
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  biome.tagline,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppConstants.smallPadding),
+          Container(
+            key: const Key('story_map_locked_biome_chip'),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppConstants.smallPadding,
+              vertical: AppConstants.microSpacing6,
+            ),
+            decoration: BoxDecoration(
+              color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+              ),
+            ),
+            child: Text(
+              'Låst',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LockedBiomePreviewCard extends StatelessWidget {
+  const _LockedBiomePreviewCard({
+    required this.biome,
+    required this.accentColor,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+    required this.subtleOnPrimary,
+  });
+
+  final StoryBiomePreview biome;
+  final Color accentColor;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+  final Color subtleOnPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('story_map_locked_biome_preview'),
+      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      decoration: BoxDecoration(
+        color: onPrimary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(
+          color: mutedOnPrimary.withValues(alpha: 0.45),
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: accentColor.withValues(alpha: 0.16),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.landscape_rounded, color: accentColor),
+          ),
+          const SizedBox(width: AppConstants.defaultPadding),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  biome.previewPrefix,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  biome.previewTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.smallPadding),
+                Text(
+                  biome.previewBody,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: subtleOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: AppConstants.smallPadding),
+          _StatusChip(
+            label: 'Låst',
+            color: mutedOnPrimary.withValues(alpha: 0.65),
+            onPrimary: onPrimary,
+          ),
+        ],
+      ),
+    );
   }
 }
 

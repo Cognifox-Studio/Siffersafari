@@ -10,7 +10,10 @@ import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
+import 'package:siffersafari/core/providers/text_to_speech_service_provider.dart';
+import 'package:siffersafari/core/providers/tts_enabled_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/services/text_to_speech_service.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/question.dart';
@@ -34,6 +37,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   DateTime? _questionStartTime;
   int? _selectedAnswer;
   bool _feedbackDialogVisible = false;
+  late final TextToSpeechService _textToSpeechService;
   // Memoized answer options keyed by question id to prevent reshuffle on rebuild.
   String? _cachedQuestionId;
   List<int>? _cachedOptions;
@@ -49,10 +53,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   @override
   void initState() {
     super.initState();
+    _textToSpeechService = ref.read(textToSpeechServiceProvider);
     _questionStartTime = DateTime.now();
   }
 
+  @override
+  void dispose() {
+    unawaited(_textToSpeechService.stop());
+    super.dispose();
+  }
+
   void _handleClose() {
+    unawaited(_textToSpeechService.stop());
     final quizState = ref.read(quizProvider);
     final session = quizState.session;
     final user = ref.read(userProvider).activeUser;
@@ -78,6 +90,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   void _handleAnswerSelected(int answer) {
     if (_selectedAnswer != null) return;
 
+    unawaited(_textToSpeechService.stop());
     ref.read(audioServiceProvider).playClickSound();
     HapticFeedback.lightImpact();
 
@@ -103,6 +116,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   void _handleNextQuestion() {
+    unawaited(_textToSpeechService.stop());
     final quizState = ref.read(quizProvider);
     final session = quizState.session;
 
@@ -129,6 +143,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   Widget build(BuildContext context) {
     final quizState = ref.watch(quizProvider);
     final session = quizState.session;
+    final activeUser = ref.watch(userProvider).activeUser;
+    final ttsEnabled = activeUser != null
+        ? ref.watch(ttsEnabledProvider(activeUser.userId))
+        : false;
 
     final themeCfg = ref.watch(appThemeConfigProvider);
     final scheme = Theme.of(context).colorScheme;
@@ -171,6 +189,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           final isLastQuestion = currentSession != null &&
               currentSession.currentQuestionIndex >=
                   currentSession.totalQuestions - 1;
+
+          if (ttsEnabled) {
+            unawaited(
+              _textToSpeechService.speakFeedback(
+                _feedbackAnnouncement(feedback),
+              ),
+            );
+          }
 
           showDialog(
             context: context,
@@ -240,6 +266,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       cardBorderColor: cardBorderColor,
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
+                      ttsEnabled: ttsEnabled,
                       onPrimary: onPrimary,
                       layout: layout,
                     )
@@ -256,6 +283,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       cardBorderColor: cardBorderColor,
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
+                      ttsEnabled: ttsEnabled,
                       onPrimary: onPrimary,
                       layout: layout,
                     ),
@@ -279,6 +307,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color cardBorderColor,
     required Color lightTextColor,
     required Color mutedTextColor,
+    required bool ttsEnabled,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
   }) {
@@ -299,6 +328,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
+        if (ttsEnabled)
+          Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding.w),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildSpeakButton(context, question),
+            ),
+          ),
         SizedBox(height: AppConstants.smallPadding.h),
         Expanded(
           flex: questionFlex,
@@ -349,6 +387,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color cardBorderColor,
     required Color lightTextColor,
     required Color mutedTextColor,
+    required bool ttsEnabled,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
   }) {
@@ -366,6 +405,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
+        if (ttsEnabled)
+          Padding(
+            padding: EdgeInsets.only(
+              left: AppConstants.defaultPadding.w,
+              right: AppConstants.defaultPadding.w,
+              bottom: AppConstants.smallPadding.h,
+            ),
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _buildSpeakButton(context, question),
+            ),
+          ),
         Expanded(
           child: Row(
             children: [
@@ -465,5 +516,35 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       },
     );
   }
-}
 
+  Widget _buildSpeakButton(BuildContext context, Question question) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+
+    return FilledButton.tonalIcon(
+      key: const Key('quiz_tts_button'),
+      onPressed: () {
+        unawaited(
+          _textToSpeechService.speakQuestion(question.displayQuestionText),
+        );
+      },
+      icon: const Icon(Icons.volume_up_rounded),
+      label: const Text('Läs upp'),
+      style: FilledButton.styleFrom(
+        foregroundColor: onPrimary,
+        visualDensity: VisualDensity.compact,
+      ),
+    );
+  }
+
+  String _feedbackAnnouncement(dynamic feedback) {
+    final title = (feedback.title as String).trim();
+    final parts = (feedback.message as String)
+        .split('\n')
+        .map((line) => line.trim())
+        .where((line) => line.isNotEmpty)
+        .take(2)
+        .toList(growable: false);
+
+    return [title, ...parts].join('. ');
+  }
+}

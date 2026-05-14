@@ -16,6 +16,78 @@ class SettingsScreen extends ConsumerWidget {
 
   static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+  Future<void> _confirmDeleteProfile(
+    BuildContext context,
+    WidgetRef ref,
+    String userId,
+    String userName,
+  ) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text('Radera $userName?'),
+        content: const Text(
+          'Detta tar bort profilen, quiz och inställningar permanent.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Avbryt'),
+          ),
+          TextButton(
+            key: const Key('confirm_delete_profile_button'),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await ref.read(userProvider.notifier).deleteUser(userId);
+              if (!context.mounted) return;
+
+              final hasUsers = ref.read(userProvider).allUsers.isNotEmpty;
+              if (!hasUsers) {
+                Navigator.of(context).maybePop();
+              }
+            },
+            child: Text(
+              'Radera',
+              style: TextStyle(color: Colors.red.shade400),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmClearAllData(BuildContext context, WidgetRef ref) async {
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Radera all data?'),
+        content: const Text(
+          'Detta tar bort alla profiler, quiz-resultat och inställningar. '
+          'Denna åtgärd kan inte ångras.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Avbryt'),
+          ),
+          TextButton(
+            key: const Key('confirm_clear_all_data_button'),
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await ref.read(userProvider.notifier).clearAllData();
+              if (!context.mounted) return;
+              Navigator.of(context).maybePop();
+            },
+            child: Text(
+              'Radera',
+              style: TextStyle(color: Colors.red.shade400),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final userState = ref.watch(userProvider);
@@ -253,6 +325,39 @@ class SettingsScreen extends ConsumerWidget {
                                     );
                               },
                             ),
+                            const Divider(height: 1),
+                            ListTile(
+                              key: const Key('delete_profile_button'),
+                              title: Text(
+                                'Radera profil',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      color: Colors.red.shade400,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              subtitle: Text(
+                                'Ta bort ${user.name} permanent',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: subtleOnPrimary,
+                                    ),
+                              ),
+                              leading: Icon(
+                                Icons.person_remove_outlined,
+                                color: Colors.red.shade400,
+                              ),
+                              onTap: () => _confirmDeleteProfile(
+                                context,
+                                ref,
+                                user.userId,
+                                user.name,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -315,6 +420,7 @@ class SettingsScreen extends ConsumerWidget {
                             ),
                             const Divider(height: 1),
                             ListTile(
+                              key: const Key('clear_all_data_button'),
                               title: Text(
                                 'Radera all data',
                                 style: Theme.of(context)
@@ -337,38 +443,7 @@ class SettingsScreen extends ConsumerWidget {
                                 Icons.delete_outline,
                                 color: Colors.red.shade400,
                               ),
-                              onTap: () {
-                                showDialog<void>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                    title: const Text('Radera all data?'),
-                                    content: const Text(
-                                      'Detta tar bort alla profiler, quiz-resultat och inställningar. '
-                                      'Denna åtgärd kan inte ångras.',
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text('Avbryt'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: Text(
-                                          'Radera',
-                                          style: TextStyle(
-                                            color: Colors.red.shade400,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                              onTap: () => _confirmClearAllData(context, ref),
                             ),
                           ],
                         ),

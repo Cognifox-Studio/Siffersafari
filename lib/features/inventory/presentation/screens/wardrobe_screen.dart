@@ -248,15 +248,17 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     AppThemeConfig themeCfg,
     CharacterReaction pose,
   ) {
+    final wardrobeItems = InventoryConfig.wardrobeItems;
+
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 100,
         crossAxisSpacing: AppConstants.smallPadding,
         mainAxisSpacing: AppConstants.smallPadding,
       ),
-      itemCount: InventoryConfig.allItems.length,
+      itemCount: wardrobeItems.length,
       itemBuilder: (context, index) {
-        final item = InventoryConfig.allItems[index];
+        final item = wardrobeItems[index];
         final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
 
         final poseKey = '${pose.name}_${item.id}';

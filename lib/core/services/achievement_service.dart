@@ -1,6 +1,28 @@
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+
 import '../constants/app_constants.dart';
+
+class AchievementDefinition {
+  const AchievementDefinition({
+    required this.id,
+    required this.displayName,
+    required this.albumLabel,
+    required this.emoji,
+  });
+
+  final String id;
+  final String displayName;
+  final String albumLabel;
+  final String emoji;
+
+  static const unknown = AchievementDefinition(
+    id: 'unknown_achievement',
+    displayName: 'Okänd prestation',
+    albumLabel: 'Märke',
+    emoji: '❔',
+  );
+}
 
 class AchievementReward {
   const AchievementReward({
@@ -20,6 +42,41 @@ class AchievementReward {
 /// against defined achievement criteria. Tracks bonus points when new
 /// achievements are unlocked.
 class AchievementService {
+  static const List<AchievementDefinition> _definitions = [
+    AchievementDefinition(
+      id: AppConstants.firstQuizAchievement,
+      displayName: 'Första quizet',
+      albumLabel: 'Första',
+      emoji: '🧭',
+    ),
+    AchievementDefinition(
+      id: AppConstants.perfectScoreAchievement,
+      displayName: 'Perfekt resultat',
+      albumLabel: 'Perfekt',
+      emoji: '⭐',
+    ),
+    AchievementDefinition(
+      id: AppConstants.master100Achievement,
+      displayName: 'Mästare 100',
+      albumLabel: '100 rätt',
+      emoji: '💯',
+    ),
+    AchievementDefinition(
+      id: AppConstants.streak7Achievement,
+      displayName: '7-dagars streak',
+      albumLabel: '7 dagar',
+      emoji: '🔥',
+    ),
+    AchievementDefinition(
+      id: AppConstants.streak30Achievement,
+      displayName: '30-dagars streak',
+      albumLabel: '30 dagar',
+      emoji: '👑',
+    ),
+  ];
+
+  List<AchievementDefinition> get albumEntries => _definitions;
+
   AchievementReward evaluate({
     required UserProgress user,
     required QuizSession session,
@@ -58,21 +115,26 @@ class AchievementService {
     );
   }
 
-  String getDisplayName(String achievementId) {
-    switch (achievementId) {
-      case AppConstants.firstQuizAchievement:
-        return 'Första quizet';
-      case AppConstants.perfectScoreAchievement:
-        return 'Perfekt resultat';
-      case AppConstants.master100Achievement:
-        return 'Mästare 100';
-      case AppConstants.streak7Achievement:
-        return '7-dagars streak';
-      case AppConstants.streak30Achievement:
-        return '30-dagars streak';
-      default:
-        return 'Okänd prestation';
+  AchievementDefinition getDefinition(String achievementId) {
+    for (final definition in _definitions) {
+      if (definition.id == achievementId) {
+        return definition;
+      }
     }
+
+    return AchievementDefinition.unknown;
+  }
+
+  String getDisplayName(String achievementId) {
+    return getDefinition(achievementId).displayName;
+  }
+
+  String getAlbumLabel(String achievementId) {
+    return getDefinition(achievementId).albumLabel;
+  }
+
+  String getBadgeEmoji(String achievementId) {
+    return getDefinition(achievementId).emoji;
   }
 
   bool _shouldUnlockFirstQuiz(UserProgress user) {

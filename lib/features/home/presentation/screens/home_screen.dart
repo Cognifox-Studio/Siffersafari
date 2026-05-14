@@ -17,10 +17,12 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
+import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/widgets/camp_scene_view.dart';
+import 'package:siffersafari/features/home/presentation/widgets/home_badge_album.dart';
 import 'package:siffersafari/features/home/presentation/widgets/home_story_progress_card.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/onboarding_screen.dart';
 import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
@@ -43,7 +45,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
-  String? _loadedAllowedOpsForUserId;
   String? _checkedOnboardingForUserId;
   String? _loadedReviewSummaryForUserId;
   String _appVersionLabel = '...';
@@ -79,11 +80,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _checkUserData(String userId) {
-    if (_loadedAllowedOpsForUserId != userId) {
-      _loadedAllowedOpsForUserId = userId;
-      ref.read(parentSettingsProvider.notifier).loadAllowedOperations(userId);
-    }
-
     if (_loadedReviewSummaryForUserId != userId) {
       _loadedReviewSummaryForUserId = userId;
       ref.read(quizProvider.notifier).hydrateReviewSummaryForUser(userId);
@@ -139,6 +135,33 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   // endregion
 
   // region _startQuiz Method
+
+  void _startOrResumePrimaryQuiz({
+    required UserProgress user,
+    required Set<OperationType> allowedOps,
+  }) {
+    final didResume =
+        ref.read(quizProvider.notifier).resumeLatestSessionForUser(
+              userId: user.userId,
+            );
+
+    if (didResume) {
+      ref.read(audioServiceProvider).playClickSound();
+      setState(() {
+        _mascotReaction = CharacterReaction.screenChange;
+        _mascotReactionNonce++;
+      });
+      context.pushSmooth(const QuizScreen());
+      return;
+    }
+
+    _startQuiz(
+      operationType: allowedOps.isNotEmpty
+          ? allowedOps.first
+          : OperationType.multiplication,
+      difficulty: DifficultyLevel.easy,
+    );
+  }
 
   void _startQuiz({
     required OperationType operationType,
@@ -229,6 +252,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final userState = ref.watch(userProvider);
     final user = userState.activeUser;
+    final quizState = ref.watch(quizProvider);
     final storyProgress = ref.watch(storyProgressProvider);
 
     final themeCfg = ref.watch(appThemeConfigProvider);
@@ -244,13 +268,23 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     final parentAllowedOps = user == null
         ? _defaultAllowedOperations()
-        : (ref.watch(parentSettingsProvider)[user.userId] ??
-            _defaultAllowedOperations());
+        : ref.watch(parentSettingsProvider(user.userId));
 
     final allowedOps = DifficultyConfig.effectiveAllowedOperations(
       parentAllowedOperations: parentAllowedOps,
       gradeLevel: user?.gradeLevel,
     );
+    final hasPersistedInProgressSession = user == null
+        ? false
+        : ref
+                .read(localStorageRepositoryProvider)
+                .getQuizSession(user.userId) !=
+            null;
+    final hasActiveInMemorySession = user != null &&
+        quizState.userId == user.userId &&
+        quizState.session != null;
+    final hasResumableSession =
+        hasActiveInMemorySession || hasPersistedInProgressSession;
     final isDailyChallengeCompleted = user == null
         ? false
         : ref.watch(dailyChallengeProvider(user.userId)).isCompleted;
@@ -387,11 +421,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ElevatedButton.icon(
                               key: const Key('primary_play_button'),
                               onPressed: () {
-                                _startQuiz(
-                                  operationType: allowedOps.isNotEmpty
-                                      ? allowedOps.first
-                                      : OperationType.multiplication,
-                                  difficulty: DifficultyLevel.easy,
+                                _startOrResumePrimaryQuiz(
+                                  user: user,
+                                  allowedOps: allowedOps,
                                 );
                               },
                               style: ElevatedButton.styleFrom(
@@ -399,9 +431,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 foregroundColor: themeCfg.primaryActionColor,
                                 minimumSize: const Size.fromHeight(60),
                               ),
-                              icon: const Icon(Icons.play_arrow_rounded, size: 32),
-                              label: const Text('Spela nu', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                              icon: Icon(
+                                hasResumableSession
+                                    ? Icons.play_circle_fill_rounded
+                                    : Icons.play_arrow_rounded,
+                                size: 32,
+                              ),
+                              label: Text(
+                                hasResumableSession ? 'Fortsätt' : 'Spela nu',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
+                            const SizedBox(height: AppConstants.defaultPadding),
+                            HomeBadgeAlbum(achievementIds: user.achievements),
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),
                             ElevatedButton(

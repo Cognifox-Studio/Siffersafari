@@ -214,7 +214,7 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 - [x] En ny camp-bakgrund eller camp-scen som ersätter dagens platta startsida.
 - [x] Ett första datadrivet lager för placerbara eller synliga upplåsningar.
-- En mycket liten mängd möbler/dekorationer.
+- [x] En mycket liten mängd möbler/dekorationer via en enkel camp-yta med cabin, campfire och de första synliga upplåsningarna.
 
 **Så går vi tillväga:**
 
@@ -249,8 +249,8 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 **Vad som ingår:**
 
-- Ett första pet-slot.
-- Ett enkelt klistermärkesalbum eller badge-flöde.
+- [x] Ett första pet-slot.
+- [x] Ett enkelt klistermärkesalbum eller badge-flöde.
 
 **Så går vi tillväga:**
 
@@ -269,40 +269,9 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 ---
 
-## v1.7.0 – Första minspelet
+## v1.7.0 – Pedagogiska hjälpmedel
 
-**När:** Efter att metaspel och inventory inte längre skapar regressionsarbete.  
-**Tidsfönster:** 2–4 veckor.
-
-**Produktmål:** Bryta upp quizformatet med exakt ett minispel som stärker retention eller repetition.
-
-**Vad som ingår:**
-
-- Ett minispel, inte flera.
-- Egen results-loop.
-- Merge tillbaka till samma profil- och progressionssystem som quiz använder.
-
-**Så går vi tillväga:**
-
-1. Välj minispel utifrån verkligt behov i mätetalen, inte bara idéstyrka.
-2. Bygg det som en egen feature med minsta möjliga koppling till resten.
-3. Återanvänd existerande difficulty- och feedbacklogik när det är rimligt.
-4. Lägg till lokala analytics för start, completion och abandon även här.
-
-**Förebygg problem:**
-
-- Bygg inte fyra minispel samtidigt.
-- Undvik specialfall i `QuizNotifier` om minspelet egentligen förtjänar ett eget notifier-flöde.
-
-**Klart när:**
-
-- Ett minispel kan spelas, slutföras och spara tillbaka relevant progression utan specialtrassel i resten av appen.
-
----
-
-## v1.7.1 – Pedagogiska hjälpmedel
-
-**När:** Efter första minspelet eller tidigare om data visar tydliga fastkörningar i quiz.  
+**När:** Efter v1.6.1 eller tidigare om data visar tydliga fastkörningar i quiz.  
 **Tidsfönster:** 1–2 veckor.
 
 **Produktmål:** Ge barnet hjälp när det behövs, utan att förstöra tempo eller självförtroende.
@@ -311,6 +280,12 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 - Tipp-kort eller korta förklaringar.
 - Tallinje eller annan visuell stödmodell för de operationer där barnet ofta fastnar.
+
+**Status nu:**
+
+- [x] Första hjälpen är landad i quiz-feedbacken för addition och subtraktion.
+- [x] En enkel tallinje visas i samma feedbackdialog när hjälpen triggas.
+- [x] Multiplikation och division använder nu samma feedbackväg via grupperad visuell hjälp.
 
 **Så går vi tillväga:**
 
@@ -339,8 +314,13 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 - Ny biome i Story Map.
 - Fler camp-objekt och polish.
-- Ytterligare ett minispel om det första verkligen fungerar.
 - Ett strikt valfritt experimentspår som lokal, generisk leaderboard.
+
+**Status nu:**
+
+- [x] Campet visar fler reward-props och en enkel samlingssignal på hemvyn.
+- [x] Storykartan visar nu en första låst biome-preview i flera små UI-slices.
+- [x] Nästa biome byggs nu centralt i `StoryProgressionService` och konsumeras av både hemkort och storykarta utan ny persistens.
 
 **Regel för experiment i denna fas:**
 
@@ -355,12 +335,18 @@ Ett steg får gå vidare till implementation när detta är sant:
 
 Vi ska skilja på sådant som är rimligt att planera och sådant som ännu är research.
 
-### Planerad leverans: Offline-TTS för tillgänglighet
+### Första leverans landad: Offline-TTS för tillgänglighet
 
-**När:** Tidigast efter att v1.7.x är stabil och vi vet att kärnloopen håller.  
+**När:** Tidigast efter att v1.7.0 är stabil och vi vet att kärnloopen håller.  
 **Tidsfönster:** 1 vecka spike + 1–2 veckor produktifiering.
 
 **Varför:** TTS är ett tydligt tillgänglighetslyft och passar offline-first bättre än många andra â€œAIâ€-spår.
+
+**Status nu:**
+
+- [x] Android-slice landad med `flutter_tts` och manifeststöd för TTS-service.
+- [x] Funktionen ligger bakom en profilscopad inställning i Föräldraläge.
+- [x] Quizet kan läsa upp fråga via knapp och kort feedback automatiskt i samma flöde.
 
 **Så går vi tillväga:**
 
@@ -406,7 +392,6 @@ Detta ska uttryckligen inte prioriteras i den här planen:
 - leaderboard som kärnfeature
 - ny mascot-runtime utanför SVG-first-spåret
 - stora ML-funktioner i kärnflödet innan vi har löst offline- och size-frågor
-- flera minispel samtidigt
 
 ---
 
@@ -420,10 +405,9 @@ För ett litet team är detta den rekommenderade ordningen:
 4. **v1.5.0**: 2–3 veckor
 5. **v1.6.0**: 2–3 veckor
 6. **v1.6.1**: 1–2 veckor
-7. **v1.7.0**: 2–4 veckor
-8. **v1.7.1**: 1–2 veckor
-9. **v1.8–v1.9**: delas upp i små releaser efter mätetal
-10. **v2.0+**: TTS som planerat spår, handskrift som separat research-spår
+7. **v1.7.0**: 1–2 veckor
+8. **v1.8–v1.9**: delas upp i små releaser efter mätetal
+9. **v2.0+**: första TTS-slice landad, handskrift fortsatt separat research-spår
 
 Det här betyder i praktiken att det viktigaste under de närmaste 6–10 veckorna är: `juice -> reward-MVP -> profiler/resume/SRS`.
 

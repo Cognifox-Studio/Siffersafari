@@ -1,8 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/core/di/injection.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
+import 'package:siffersafari/core/services/text_to_speech_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
@@ -16,6 +18,9 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 
 /// Mock implementation of AudioService using Mocktail
 class MockAudioService extends Mock implements AudioService {}
+
+/// Mock implementation of TextToSpeechService using Mocktail
+class MockTextToSpeechService extends Mock implements TextToSpeechService {}
 
 // ============================================================================
 // IN-MEMORY STORAGE REPOSITORY
@@ -63,6 +68,45 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
   }
 
   @override
+  Future<void> deleteQuizHistoryForUser(String userId) async {
+    final keys = _quizHistory.keys.toList(growable: false);
+    for (final key in keys) {
+      final session = _quizHistory[key];
+      if (session == null || session['userId'] == userId) {
+        _quizHistory.remove(key);
+      }
+    }
+  }
+
+  @override
+  Map<String, dynamic>? getQuizSession(
+    String userId, {
+    String? operationTypeName,
+  }) {
+    final candidates = _quizHistory.values.where((session) {
+      if (session['userId'] != userId) return false;
+      if (session['isComplete'] != false) return false;
+      if (operationTypeName != null &&
+          session['operationType'] != operationTypeName) {
+        return false;
+      }
+      return session.containsKey('questions');
+    }).toList(growable: false);
+
+    if (candidates.isEmpty) return null;
+
+    candidates.sort((a, b) {
+      final dateA = DateTime.tryParse(a['startTime'] as String? ?? '') ??
+          DateTime.fromMillisecondsSinceEpoch(0);
+      final dateB = DateTime.tryParse(b['startTime'] as String? ?? '') ??
+          DateTime.fromMillisecondsSinceEpoch(0);
+      return dateB.compareTo(dateA);
+    });
+
+    return candidates.first;
+  }
+
+  @override
   Future<void> purgeInProgressQuizSessions({
     required String userId,
     required String operationTypeName,
@@ -87,9 +131,13 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
 
   @override
   List<Map<String, dynamic>> getQuizHistory(String userId, {int? limit}) {
-    final allSessions = _quizHistory.values
-        .where((session) => session['userId'] == userId)
-        .toList();
+    final allSessions = _quizHistory.values.where((session) {
+      if (session['userId'] != userId) return false;
+      if (session['isComplete'] == false && !session.containsKey('questions')) {
+        return false;
+      }
+      return true;
+    }).toList();
 
     allSessions.sort((a, b) {
       final dateA = DateTime.parse(a['startTime'] as String);
@@ -113,6 +161,32 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
   @override
   Future<void> deleteSetting(String key) async {
     _settings.remove(key);
+  }
+
+  @override
+  Future<void> deleteUserScopedSettings(String userId) async {
+    for (final key in SettingsKeys.userScopedExactKeys(userId)) {
+      _settings.remove(key);
+    }
+
+    final keys = _settings.keys.toList(growable: false);
+    for (final key in keys) {
+      if (SettingsKeys.userScopedKeyPrefixes(userId)
+          .any((prefix) => key.startsWith(prefix))) {
+        _settings.remove(key);
+      }
+    }
+  }
+
+  @override
+  Future<void> deleteUserData(String userId) async {
+    await deleteUserProgress(userId);
+    await deleteQuizHistoryForUser(userId);
+    await deleteUserScopedSettings(userId);
+
+    if (getActiveUserId() == userId) {
+      await clearActiveUserId();
+    }
   }
 
   @override
@@ -247,6 +321,12 @@ Future<InMemoryLocalStorageRepository> setupWidgetTestDependencies() async {
   when(() => audio.playMusic()).thenAnswer((_) async {});
   when(() => audio.stopMusic()).thenAnswer((_) async {});
   getIt.registerSingleton<AudioService>(audio);
+
+  final tts = MockTextToSpeechService();
+  when(() => tts.speakQuestion(any())).thenAnswer((_) async {});
+  when(() => tts.speakFeedback(any())).thenAnswer((_) async {});
+  when(() => tts.stop()).thenAnswer((_) async {});
+  getIt.registerSingleton<TextToSpeechService>(tts);
 
   getIt.registerSingleton<QuestionGeneratorService>(
     FakeQuestionGeneratorService(),

@@ -1,6 +1,6 @@
 ﻿# Services API (As-Is)
 
-Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-05-01).
+Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-05-14).
 
 ## Oversikt
 
@@ -60,6 +60,17 @@ Ansvar:
 Anvands av:
 - quizflow, results, home
 
+### TextToSpeechService
+Fil: `lib/core/services/text_to_speech_service.dart`
+
+Ansvar:
+- lasa upp fraga och kort feedback via enhetens TTS-motor
+- konfigurera svensk talhastighet och röst defensivt utan att blockera UI
+- stoppa pågående upplasning nar quizet stangs eller byter steg
+
+Anvands av:
+- `QuizScreen`
+
 ### AchievementService
 Fil: `lib/core/services/achievement_service.dart`
 
@@ -89,9 +100,14 @@ Ansvar:
 - mappa quest-status till UI-fardig storymodell
 - satta node states (completed/current/upcoming)
 - skapa chapter/landmark metadata
+- ge `storyProgressProvider` ett read-only underlag for hemvyn och storykartan
+
+Avgransning:
+- bygger nu `nextBiome` som read-only previewdata for hemvyn och storykartan, men skriver ingen ny progression eller persistens
 
 Anvands av:
 - `storyProgressProvider`
+- indirekt av `StoryMapScreen` och `HomeStoryProgressCard` via `storyProgressProvider`
 
 ## Domain services
 
@@ -111,11 +127,13 @@ Fil: `lib/domain/services/feedback_service.dart`
 Ansvar:
 - skapa `FeedbackResult` efter varje svar
 - inkludera poang/snabbbonus/streak, alderanpassad text och `comboMultiplier`
+- lägga till kort pedagogisk hjälp for alla fyra raknesatten vid fel svar eller langsam korrekt losning
+- bära strukturerad `FeedbackNumberLine` for addition/subtraktion och `FeedbackGroupModel` for multiplikation/division
 - `comboMultiplier` sätts av `QuizNotifier._comboMultiplierForStreak(...)`: 1.0 normalt, 1.5× vid 3+ streak, 2.0× vid 5+ streak
 
 Anvands av:
 - `QuizNotifier.submitAnswer(...)`
-- `FeedbackDialog` (visar orange badge vid multiplier ≥ 1.5)
+- `FeedbackDialog` (visar combo-badge vid multiplier ≥ 1.5 samt eventuell tallinje/grupperad hjalp)
 
 ### ParentPinService
 Fil: `lib/domain/services/parent_pin_service.dart`
@@ -194,7 +212,19 @@ Ansvar:
 - hantera quiz-sessions (`startSession`, `submitAnswer`, `nextQuestion`)
 - beräkna combo-multiplikator via `_comboMultiplierForStreak`: 1.0 normalt, 1.5× vid 3+ streak, 2.0× vid 5+ streak
 - in-progress persistens och defensiv validering
+- skicka `responseTime` vidare till `FeedbackService` så att pedagogiska tips kan triggas i rätt fall
 - integration med AdaptiveDifficultyService, FeedbackService, SpacedRepetitionService
+
+### TtsEnabledNotifier
+Fil: `lib/core/providers/tts_enabled_provider.dart`
+
+Ansvar:
+- lasa och spara profilscopad upplasningsinstalling i Hive
+- exponera enkel on/off-state till UI-lagret
+
+Anvands av:
+- `ParentDashboardScreen`
+- `QuizScreen`
 
 ### UserNotifier
 Fil: `lib/core/providers/user_provider.dart`

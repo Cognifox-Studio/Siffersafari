@@ -105,19 +105,6 @@ Future<bool> _completeOnboardingStepIfVisible(WidgetTester tester) async {
   return false;
 }
 
-Future<void> _drainUiAnimations(WidgetTester tester) async {
-  await tester.idle();
-  await it.settle(tester, _kSettleMedium);
-}
-
-Future<void> _cleanupAfterTest(WidgetTester tester) async {
-  // Replace the app tree to dispose active controllers/tickers before invariant checks.
-  await tester.idle();
-  await tester.pumpWidget(const SizedBox.shrink());
-  await tester.pump();
-  await _drainUiAnimations(tester);
-}
-
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -125,7 +112,7 @@ void main() {
     'Integration (smoke): skapa användare vid behov och starta quiz',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
 
@@ -167,7 +154,7 @@ void main() {
           }
 
           // If we're in Quiz, close it.
-          if (find.textContaining('Fråga ').evaluate().isNotEmpty) {
+          if (it.looksLikeQuizScreen(tester)) {
             final close = find.byIcon(Icons.close);
             if (close.evaluate().isNotEmpty) {
               await it.tap(tester, close);
@@ -256,7 +243,7 @@ void main() {
       await it.waitFor(
         tester,
         'quiz question visible',
-        () => find.textContaining('Fråga ').evaluate().isNotEmpty,
+        () => it.looksLikeQuizScreen(tester),
         timeout: const Duration(seconds: 12),
       );
 
@@ -280,7 +267,7 @@ void main() {
     'Smoke: app startar och hittar huvudskärm',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
       await it.waitFor(
@@ -319,7 +306,7 @@ void main() {
     'Smoke: öppna inställningar och gå tillbaka',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
       await it.waitFor(
@@ -460,7 +447,7 @@ void main() {
     'Smoke: hemvyn visar spelkort efter profilskapande',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
 
@@ -493,7 +480,7 @@ void main() {
     'Smoke: profile switcher kan öppnas',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
       await it.waitFor(

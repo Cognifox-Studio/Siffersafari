@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-05-11
+uppdaterad: 2026-05-14
 -->
 # Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-11).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-14).
 
 ## Snabboversikt
 
@@ -24,7 +24,7 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-11)
 ## Namngivningsbaseline
 
 - Tekniska filnamn ar engelska och använder `snake_case.dart`.
-- Feature-agd UI ligger i `lib/features/<feature>/presentation/widgets/`.
+- Feature-agd UI ligger i `lib/features/<feature>/presentation/`.
 - `lib/presentation/widgets/` innehaller bara delad UI och app-shell-komponenter.
 
 ## Startup och bootstrap
@@ -66,6 +66,9 @@ Viktiga skarmar (med faktisk sokväg):
 - `features/parent/presentation/screens/pin_recovery_screen.dart`
 - `features/parent/presentation/screens/parent_dashboard_screen.dart`
 
+Aktuell UI-notering:
+- `StoryMapScreen` och `HomeStoryProgressCard` konsumerar read-only `storyProgressProvider`, där `StoryProgressionService` nu bygger `nextBiome` centralt. Ingen ny story-persistens eller ny provider används för det spåret.
+
 ### core/
 
 Teknisk app-logik, providers, tema och utilities.
@@ -73,9 +76,11 @@ Teknisk app-logik, providers, tema och utilities.
 Viktiga delar:
 - `core/di/injection.dart`
 - `core/providers/quiz_provider.dart`
+- `core/providers/tts_enabled_provider.dart`
 - `core/providers/user_provider.dart`
 - `core/services/question_generator_service.dart`
 - `core/services/audio_service.dart`
+- `core/services/text_to_speech_service.dart`
 - `core/services/achievement_service.dart`
 - `core/services/quest_progression_service.dart`
 - `core/services/story_progression_service.dart`
@@ -109,6 +114,7 @@ Repository-implementation for lokal lagring:
    - combo-multiplikator (1.5x vid 3+ streak, 2.0x vid 5+ streak) via `_comboMultiplierForStreak(...)`
    - adaptiv difficulty step per raknesatt
    - spaced repetition-review per fraga nar funktionen ar aktiverad
+   - pedagogisk feedback via `FeedbackService`, inklusive tallinje för addition/subtraktion och grupperad hjälp för multiplikation/division
    - lokal analytics-event
    - in-progress persistens
 5. Resultat visas i `ResultsScreen`
@@ -119,13 +125,17 @@ Repository-implementation for lokal lagring:
    - quest/story progression
    - permanent quizhistorik
 
+Quiz-UI-notering:
+- `QuizScreen` kan nu läsa upp fråga och kort feedback via `TextToSpeechService` när profilens uppläsning är aktiverad i Föräldraläge.
+- `FeedbackDialog` renderar nu både den vanliga feedbacktexten och eventuell strukturerad `numberLine` eller `groupModel` från `FeedbackResult`. Hjälpen ligger kvar i samma feedbackväg, inte i ett separat coachnings- eller övningssystem.
+
 ## Parent mode (sakerhet och styrning)
 
 - PIN verifiering via BCrypt-hash i `ParentPinService`
 - lockout efter 5 felaktiga forsok (5 minuter)
 - security question-baserad recovery
 - dashboard med statistik, export och lokala foraldrainstallningar
-- manuella installningar for t.ex. raknesatt, textuppgifter, missing numbers, spaced repetition och difficulty step
+- manuella installningar for t.ex. raknesatt, textuppgifter, missing numbers, spaced repetition, upplasning och difficulty step
 
 ## Persistensmodell
 
@@ -154,7 +164,6 @@ CI/workflows:
 - `.github/workflows/play-closed-beta.yml`: closed beta-publicering mot Play-flödet
 - `.github/workflows/privacy-policy-pages.yml`: publicering av statiska privacy policy-sidor
 - `.github/workflows/release-guard.yml`: snabb releasevalidering + APK size guard
-- `.github/workflows/release.yml`: release-orienterat Flutter-bygge
 
 ## Kanda tekniska noteringar
 

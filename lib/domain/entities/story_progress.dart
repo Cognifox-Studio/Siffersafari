@@ -46,6 +46,30 @@ class StoryNode extends Equatable {
       ];
 }
 
+class StoryBiomePreview extends Equatable {
+  const StoryBiomePreview({
+    required this.name,
+    required this.tagline,
+    required this.previewPrefix,
+    required this.previewBody,
+  });
+
+  final String name;
+  final String tagline;
+  final String previewPrefix;
+  final String previewBody;
+
+  String get previewTitle => '$name väntar.';
+
+  @override
+  List<Object?> get props => [
+        name,
+        tagline,
+        previewPrefix,
+        previewBody,
+      ];
+}
+
 class StoryProgress extends Equatable {
   const StoryProgress({
     required this.worldTitle,
@@ -58,6 +82,7 @@ class StoryProgress extends Equatable {
     required this.totalNodes,
     required this.currentNodeIndex,
     required this.nodes,
+    this.nextBiome,
     this.notice,
   });
 
@@ -71,6 +96,7 @@ class StoryProgress extends Equatable {
   final int totalNodes;
   final int currentNodeIndex;
   final List<StoryNode> nodes;
+  final StoryBiomePreview? nextBiome;
   final String? notice;
 
   StoryNode? get currentNode {
@@ -92,6 +118,7 @@ class StoryProgress extends Equatable {
         totalNodes,
         currentNodeIndex,
         nodes,
+        nextBiome,
         notice,
       ];
 }

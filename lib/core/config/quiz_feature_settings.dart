@@ -111,4 +111,30 @@ final class QuizFeatureSettings {
       enabled,
     );
   }
+
+  static bool readTextToSpeechEnabled({
+    required LocalStorageRepository repository,
+    required String userId,
+  }) {
+    try {
+      final raw = repository.getSetting(
+        SettingsKeys.textToSpeechEnabled(userId),
+        defaultValue: AppFeatures.textToSpeechEnabled,
+      );
+      return raw is bool ? raw : AppFeatures.textToSpeechEnabled;
+    } catch (_) {
+      return AppFeatures.textToSpeechEnabled;
+    }
+  }
+
+  static Future<void> saveTextToSpeechEnabled({
+    required LocalStorageRepository repository,
+    required String userId,
+    required bool enabled,
+  }) {
+    return repository.saveSetting(
+      SettingsKeys.textToSpeechEnabled(userId),
+      enabled,
+    );
+  }
 }

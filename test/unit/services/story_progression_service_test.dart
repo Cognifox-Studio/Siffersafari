@@ -1,13 +1,32 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/services/story_progression_service.dart';
+import 'package:siffersafari/domain/entities/quest.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/difficulty_level.dart';
+import 'package:siffersafari/domain/enums/operation_type.dart';
 
 void main() {
   group('[Unit] StoryProgressionService', () {
     const questService = QuestProgressionService();
     const storyService = StoryProgressionService();
+
+    const easyQuest = QuestDefinition(
+      id: 'quest_bridge',
+      title: 'Laga bron',
+      description: 'Räkna rätt och gå vidare.',
+      difficulty: DifficultyLevel.easy,
+      operation: OperationType.addition,
+    );
+
+    const secondQuest = QuestDefinition(
+      id: 'quest_finish',
+      title: 'Sista bron',
+      description: 'Nu är du framme.',
+      difficulty: DifficultyLevel.medium,
+      operation: OperationType.multiplication,
+    );
 
     test('bygger jungle-progress från första questen', () {
       const user = UserProgress(
@@ -66,6 +85,37 @@ void main() {
       expect(story.nodes[0].state.name, 'completed');
       expect(story.nodes[1].state.name, 'completed');
       expect(story.nodes[2].state.name, 'current');
+    });
+
+    test('ger nästa biome för pågående easy-kapitel', () {
+      final progress = storyService.createStoryProgress(
+        path: const [easyQuest, easyQuest],
+        currentStatus: const QuestStatus(
+          quest: easyQuest,
+          masteryRate: 0.25,
+          progress: 0.25,
+          isCompleted: false,
+        ),
+        completedQuestIds: const <String>{},
+      );
+
+      expect(progress.nextBiome?.name, 'Nattskogen');
+      expect(progress.nextBiome?.previewPrefix, 'Efter djungeln');
+    });
+
+    test('ger ingen nästa biome när sista noden redan är aktiv', () {
+      final progress = storyService.createStoryProgress(
+        path: const [easyQuest, secondQuest],
+        currentStatus: const QuestStatus(
+          quest: secondQuest,
+          masteryRate: 1.0,
+          progress: 1.0,
+          isCompleted: false,
+        ),
+        completedQuestIds: const {'quest_bridge'},
+      );
+
+      expect(progress.nextBiome, isNull);
     });
   });
 }

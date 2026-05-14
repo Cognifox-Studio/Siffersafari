@@ -80,6 +80,7 @@ class _GameCharacterState extends State<GameCharacter>
 
   late final AnimationController _reactionController;
   late final AnimationController _bobController;
+  late final bool _isTestBinding;
   CharacterReaction _fallbackReaction = CharacterReaction.idle;
   int _reactionToken = 0;
   // Under aktiv gest: vilket item dras just nu
@@ -93,6 +94,7 @@ class _GameCharacterState extends State<GameCharacter>
   @override
   void initState() {
     super.initState();
+    _isTestBinding = _detectTestBinding();
     _reactionController = AnimationController(
       vsync: this,
       duration: _fallbackDurationFor(CharacterReaction.idle),
@@ -100,7 +102,10 @@ class _GameCharacterState extends State<GameCharacter>
     _bobController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
-    )..repeat();
+    );
+    if (!_isTestBinding) {
+      _bobController.repeat();
+    }
     _primeFallbackReaction();
   }
 
@@ -109,7 +114,7 @@ class _GameCharacterState extends State<GameCharacter>
     _reactionToken++;
     _reactionController.stop(canceled: true);
     _reactionController.dispose();
-    _bobController.stop();
+    _bobController.stop(canceled: true);
     _bobController.dispose();
     super.dispose();
   }
@@ -135,7 +140,9 @@ class _GameCharacterState extends State<GameCharacter>
     _bobController.stop();
 
     if (_fallbackReaction == CharacterReaction.run) {
-      _reactionController.repeat();
+      if (!_isTestBinding) {
+        _reactionController.repeat();
+      }
       return;
     }
 
@@ -144,7 +151,9 @@ class _GameCharacterState extends State<GameCharacter>
       setState(() {
         _fallbackReaction = CharacterReaction.idle;
       });
-      if (!_bobController.isAnimating) _bobController.repeat();
+      if (!_isTestBinding && !_bobController.isAnimating) {
+        _bobController.repeat();
+      }
     });
   }
 
@@ -162,7 +171,9 @@ class _GameCharacterState extends State<GameCharacter>
       }
       _reactionController.stop(canceled: true);
       _reactionController.value = 0;
-      if (!_bobController.isAnimating) _bobController.repeat();
+      if (!_isTestBinding && !_bobController.isAnimating) {
+        _bobController.repeat();
+      }
       return;
     }
 
@@ -178,7 +189,9 @@ class _GameCharacterState extends State<GameCharacter>
     _reactionController.duration = _fallbackDurationFor(reaction);
 
     if (reaction == CharacterReaction.run) {
-      _reactionController.repeat();
+      if (!_isTestBinding) {
+        _reactionController.repeat();
+      }
       return;
     }
 
@@ -193,8 +206,18 @@ class _GameCharacterState extends State<GameCharacter>
       setState(() {
         _fallbackReaction = CharacterReaction.idle;
       });
-      if (!_bobController.isAnimating) _bobController.repeat();
+      if (!_isTestBinding && !_bobController.isAnimating) {
+        _bobController.repeat();
+      }
     });
+  }
+
+  bool _detectTestBinding() {
+    final bindingType = WidgetsBinding.instance.runtimeType.toString();
+    return bindingType.contains('TestWidgets') ||
+        bindingType.contains('AutomatedTestWidgets') ||
+        bindingType.contains('LiveTestWidgets') ||
+        bindingType.contains('IntegrationTestWidgets');
   }
 
   Duration _fallbackDurationFor(CharacterReaction reaction) {

@@ -26,4 +26,7 @@ class AppFeatures {
 
   /// Enables spaced repetition scheduling and due-review surfacing.
   static const bool spacedRepetitionEnabled = true;
+
+  /// Enables quiz narration via on-device text-to-speech.
+  static const bool textToSpeechEnabled = false;
 }

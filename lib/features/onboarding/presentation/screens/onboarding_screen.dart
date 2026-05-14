@@ -99,8 +99,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       }
     }
 
-    await ref.read(parentSettingsProvider.notifier).setAllowedOperations(
-          widget.userId,
+    await ref
+        .read(parentSettingsProvider(widget.userId).notifier)
+        .setAllowedOperations(
           _defaultAllowedOperationsFor(effectiveGrade),
         );
 

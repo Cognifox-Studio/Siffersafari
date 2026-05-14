@@ -85,6 +85,29 @@ void main() {
       expect(firstQuestion.correctAnswer, 28);
     });
 
+    test('migrerar legacy SRS-nycklar till v2 i lagrad schedule', () async {
+      await seedSchedules([
+        (key: 'multiplication|4 × 7 = ?', daysAgo: 1),
+      ]);
+
+      notifier.startSession(
+        userId: userId,
+        ageGroup: AgeGroup.young,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+      );
+      await pumpEventQueue();
+
+      final raw = repository.getSetting(
+        SettingsKeys.spacedRepetitionSchedules(userId),
+      ) as List<dynamic>;
+      final entry = Map<String, dynamic>.from(raw.single as Map);
+      const expectedKey = 'v2|multiplication|4|7|28|4 × 7 = ?';
+
+      expect(entry['key'], expectedKey);
+      expect(entry['questionId'], expectedKey);
+    });
+
     test('cap:ar pendingDueKeys till totalQuestions ~/ 3', () async {
       // young = 8 frågor, cap = 8 ~/ 3 = 2 → så pendingDueKeys ska bli
       // (2 - 1) = 1 efter att första due-nyckeln konsumerats.
@@ -188,6 +211,205 @@ void main() {
       final secondQuestion = session.questions[1];
       expect(secondQuestion.operationType, OperationType.multiplication);
       expect(secondQuestion.correctAnswer, 20); // 4 × 5
+    });
+
+    test(
+        'resume bevarar pendingDueKeys så nästa fråga fortfarande kan vara due',
+        () async {
+      final audio = MockAudioService();
+      when(() => audio.playCorrectSound()).thenAnswer((_) async {});
+      when(() => audio.playWrongSound()).thenAnswer((_) async {});
+      when(() => audio.playCelebrationSound()).thenAnswer((_) async {});
+
+      final firstNotifier = QuizNotifier(
+        FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repository,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
+      );
+      addTearDown(firstNotifier.dispose);
+
+      await seedSchedules([
+        (key: 'multiplication|2 × 3 = ?', daysAgo: 1),
+        (key: 'multiplication|4 × 5 = ?', daysAgo: 1),
+      ]);
+
+      firstNotifier.startSession(
+        userId: userId,
+        ageGroup: AgeGroup.young,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+      );
+      await pumpEventQueue();
+
+      expect(firstNotifier.state.pendingDueKeys, hasLength(1));
+
+      final resumedNotifier = QuizNotifier(
+        FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repository,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
+      );
+      addTearDown(resumedNotifier.dispose);
+
+      final didResume = resumedNotifier.resumeLatestSessionForUser(
+        userId: userId,
+        operationTypeName: OperationType.multiplication.name,
+      );
+
+      expect(didResume, isTrue);
+      expect(resumedNotifier.state.pendingDueKeys, hasLength(1));
+
+      resumedNotifier.advanceToNextQuestion();
+
+      final resumedSession = resumedNotifier.state.session;
+      expect(resumedSession, isNotNull);
+      expect(resumedSession!.questions.length, greaterThanOrEqualTo(2));
+      expect(resumedSession.questions[1].correctAnswer, 20);
+    });
+
+    test('frågeväxling persisterar due-fråga och tom pending-kö för resume',
+        () async {
+      final audio = MockAudioService();
+      when(() => audio.playCorrectSound()).thenAnswer((_) async {});
+      when(() => audio.playWrongSound()).thenAnswer((_) async {});
+      when(() => audio.playCelebrationSound()).thenAnswer((_) async {});
+
+      final firstNotifier = QuizNotifier(
+        FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repository,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
+      );
+      addTearDown(firstNotifier.dispose);
+
+      await seedSchedules([
+        (key: 'multiplication|2 × 3 = ?', daysAgo: 1),
+        (key: 'multiplication|4 × 5 = ?', daysAgo: 1),
+      ]);
+
+      firstNotifier.startSession(
+        userId: userId,
+        ageGroup: AgeGroup.young,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+      );
+
+      firstNotifier.submitAnswer(
+        answer: 6,
+        responseTime: const Duration(seconds: 1),
+        ageGroup: AgeGroup.young,
+      );
+      await pumpEventQueue();
+
+      firstNotifier.advanceToNextQuestion();
+      await pumpEventQueue();
+
+      expect(firstNotifier.state.pendingDueKeys, isEmpty);
+      expect(firstNotifier.state.session?.currentQuestionIndex, 1);
+      expect(firstNotifier.state.session?.currentQuestion?.correctAnswer, 20);
+
+      final resumedNotifier = QuizNotifier(
+        FakeQuestionGeneratorService(),
+        FeedbackService(),
+        audio,
+        repository,
+        adaptiveDifficultyService: AdaptiveDifficultyService(),
+        spacedRepetitionService: SpacedRepetitionService(),
+      );
+      addTearDown(resumedNotifier.dispose);
+
+      final didResume = resumedNotifier.resumeLatestSessionForUser(
+        userId: userId,
+        operationTypeName: OperationType.multiplication.name,
+      );
+
+      expect(didResume, isTrue);
+      expect(resumedNotifier.state.pendingDueKeys, isEmpty);
+      expect(resumedNotifier.state.session?.currentQuestionIndex, 1);
+      expect(resumedNotifier.state.session?.currentQuestion?.correctAnswer, 20);
+    });
+
+    test('startCustomSession injicerar due-frågor även i replay-flödet',
+        () async {
+      final generator = QuestionGeneratorService();
+      await seedSchedules([
+        (key: 'multiplication|2 × 3 = ?', daysAgo: 1),
+        (key: 'multiplication|4 × 5 = ?', daysAgo: 1),
+      ]);
+
+      final replayQuestions = <String>[
+        'multiplication|8 × 8 = ?',
+        'multiplication|9 × 9 = ?',
+        'multiplication|7 × 6 = ?',
+        'multiplication|3 × 9 = ?',
+        'multiplication|5 × 6 = ?',
+        'multiplication|7 × 7 = ?',
+      ].map((key) {
+        return generator.tryGenerateFromSrsKey(key, DifficultyLevel.easy)!;
+      }).toList(growable: false);
+
+      notifier.startCustomSession(
+        userId: userId,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+        questions: replayQuestions,
+        ageGroup: AgeGroup.young,
+      );
+
+      final session = notifier.state.session;
+      expect(session, isNotNull);
+      expect(session!.totalQuestions, replayQuestions.length);
+      expect(session.questions.first.correctAnswer, 6);
+      expect(notifier.state.pendingDueKeys, hasLength(1));
+
+      for (var i = 0; i < replayQuestions.length - 1; i++) {
+        notifier.advanceToNextQuestion();
+      }
+
+      final finalSession = notifier.state.session;
+      expect(finalSession, isNotNull);
+      expect(finalSession!.questions.length, replayQuestions.length);
+      expect(finalSession.currentQuestionIndex, replayQuestions.length - 1);
+      expect(finalSession.currentQuestion?.correctAnswer, 20);
+      expect(notifier.state.pendingDueKeys, isEmpty);
+    });
+
+    test('nya review schedules sparas alltid med v2-nycklar', () async {
+      await seedSchedules([
+        (key: 'multiplication|4 × 7 = ?', daysAgo: 1),
+      ]);
+
+      notifier.startSession(
+        userId: userId,
+        ageGroup: AgeGroup.young,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.easy,
+      );
+
+      final session = notifier.state.session;
+      expect(session, isNotNull);
+
+      notifier.submitAnswer(
+        answer: session!.currentQuestion!.correctAnswer,
+        responseTime: const Duration(seconds: 1),
+        ageGroup: AgeGroup.young,
+      );
+      await pumpEventQueue();
+
+      final raw = repository.getSetting(
+        SettingsKeys.spacedRepetitionSchedules(userId),
+      ) as List<dynamic>;
+      final entry = Map<String, dynamic>.from(raw.single as Map);
+
+      expect(entry['key'], startsWith('v2|multiplication|4|7|28|'));
+      expect(entry['questionId'], entry['key']);
     });
   });
 }

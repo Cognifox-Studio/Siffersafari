@@ -1,14 +1,14 @@
 ﻿<!--
 typ: explanation
 syfte: Historik, varför vi gjort vissa arkitekturval
-uppdaterad: 2026-05-05
+uppdaterad: 2026-05-14
 -->
 # Beslut och antaganden (Siffersafari)
 
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-10)
+## Gällande nuläge (2026-05-14)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
@@ -18,9 +18,23 @@ Princip: senaste datum vinner vid konflikt.
 - Responsiv layout styrs av tillganglig bredd (compact < 600, medium >= 600, expanded >= 840).
 - Quizens adaptiva svarighetsmodell ar hybrid (micro + macro + cooldown) och persisteras per raknesatt.
 - Distribution och uppdateringar for produktappen sker via Google Play. Inget OTA- eller in-app update-flode ar en aktiv del av produktens nulage.
+- Pedagogisk quizhjälp ligger i den befintliga feedbackdialogen och använder små, strukturerade visuella stöd i stället för ett separat hjälpsystem.
+- Nästa-biome-signalen ägs nu av `StoryProgressionService` och `StoryProgress.nextBiome` i stället för duplicerad, hårdkodad copy i hem- och story-UI.
+- Quizhjälpen täcker nu alla fyra räknesätten i samma feedbackväg: tallinje för addition/subtraktion och grupperad hjälp för multiplikation/division.
+- On-device TTS är profilscopad, föräldrastyrd och läser upp fråga/kort feedback utan att blockera UI eller kräva nät.
+- Tidiga v1.8-slices för camp och storykarta hålls i presentationslagret tills tydligare produktnytta motiverar ny progression, nya providers eller nya assets.
 - Copilot-customizations i `.github/` ska vara repoanknutna, länka vidare till docs i stället för att duplicera innehåll, och använda skill-namn som matchar respektive mappnamn.
 
 ## Historik (kort)
+
+### 2026-05-14
+- **Nästa biome centraliserades i read-only storydata:** När samma biome-signal började synas både på hemkortet och i storykartan flyttades den till `StoryProgressionService` som `nextBiome` i `StoryProgress`. Det minskar UI-duplicering utan att öppna ny persistens eller progression.
+- **Quizhjälpen breddas utan nytt system:** Multiplikation och division lades till i samma `FeedbackService`/`FeedbackDialog`-väg i form av grupperad hjälp, i stället för att skapa ett separat coachnings- eller övningssystem för fler räknesätt.
+- **TTS bakom föräldraläge och per profil:** Första uppläsningsslicen landades som en profilscopad inställning i Föräldraläge med on-device TTS i quizet. Det håller tillgänglighetsstödet offline-first och gör funktionen lätt att stänga av per barn.
+
+### 2026-05-13
+- **v1.8 hålls presentation-first:** Campets fortsatta polish och storykartans första biome-preview byggdes med små UI-slices i befintliga widgets i stället för att öppna ny progression, nya providers eller nya assetkrav direkt. Det håller risken låg medan vi provar vilken världsbyggnad som faktiskt ger produktnytta.
+- **Quizhjälpen stannar i feedbackvägen:** Den första pedagogiska hjälpen för addition och subtraktion lades i `FeedbackDialog` och `FeedbackService` i stället för i ett separat övnings- eller coachningssystem. Det gör hjälpen lätt att rulla ut i små, verifierbara steg.
 
 ### 2026-05-10
 - **Camp-scen layout:** Camp-scenen introducerades som en dedikerad widget (`CampSceneView`), direkt inbäddad i `HomeScreen`.

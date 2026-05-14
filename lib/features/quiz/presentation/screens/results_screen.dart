@@ -22,7 +22,6 @@ import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
-import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
@@ -542,75 +541,75 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         body: LayoutBuilder(
           builder: (context, constraints) {
             final layout = AdaptiveLayoutInfo.fromConstraints(constraints);
-          final maxContentWidth = layout.contentMaxWidth;
-          final isWideScreen = !layout.isCompactWidth;
-          final useTwoColumnResults = layout.isExpandedWidth;
+            final maxContentWidth = layout.contentMaxWidth;
+            final isWideScreen = !layout.isCompactWidth;
+            final useTwoColumnResults = layout.isExpandedWidth;
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: isWideScreen
-                      ? BoxConstraints(maxWidth: maxContentWidth)
-                      : const BoxConstraints(),
-                  child: useTwoColumnResults
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                  right: AppConstants.defaultPadding,
-                                ),
-                                child: FadeTransition(
-                                  opacity: _heroOpacity,
-                                  child: SlideTransition(
-                                    position: _heroSlide,
-                                    child: summaryHero,
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: isWideScreen
+                        ? BoxConstraints(maxWidth: maxContentWidth)
+                        : const BoxConstraints(),
+                    child: useTwoColumnResults
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                    right: AppConstants.defaultPadding,
+                                  ),
+                                  child: FadeTransition(
+                                    opacity: _heroOpacity,
+                                    child: SlideTransition(
+                                      position: _heroSlide,
+                                      child: summaryHero,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: FadeTransition(
+                              Expanded(
+                                child: FadeTransition(
+                                  opacity: _actionsOpacity,
+                                  child: SlideTransition(
+                                    position: _actionsSlide,
+                                    child: actionColumn,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FadeTransition(
+                                opacity: _heroOpacity,
+                                child: SlideTransition(
+                                  position: _heroSlide,
+                                  child: summaryHero,
+                                ),
+                              ),
+                              const SizedBox(height: AppConstants.largePadding),
+                              FadeTransition(
                                 opacity: _actionsOpacity,
                                 child: SlideTransition(
                                   position: _actionsSlide,
                                   child: actionColumn,
                                 ),
                               ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FadeTransition(
-                              opacity: _heroOpacity,
-                              child: SlideTransition(
-                                position: _heroSlide,
-                                child: summaryHero,
-                              ),
-                            ),
-                            const SizedBox(height: AppConstants.largePadding),
-                            FadeTransition(
-                              opacity: _actionsOpacity,
-                              child: SlideTransition(
-                                position: _actionsSlide,
-                                child: actionColumn,
-                              ),
-                            ),
-                          ],
-                        ),
+                            ],
+                          ),
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
-    ),
     );
   }
 
@@ -627,15 +626,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
   }
 
-  Set<OperationType> _defaultAllowedOperations() {
-    return {
-      OperationType.addition,
-      OperationType.subtraction,
-      OperationType.multiplication,
-      OperationType.division,
-    };
-  }
-
   void _startRoundFromResults({
     required QuizSession session,
     required List<_HardestQuestion> hardest,
@@ -650,8 +640,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       return;
     }
 
-    final allowedOps = ref.read(parentSettingsProvider)[user.userId] ??
-        _defaultAllowedOperations();
+    final allowedOps = ref.read(parentSettingsProvider(user.userId));
     if (!allowedOps.contains(session.operationType)) {
       _goHomeFromResults();
       return;

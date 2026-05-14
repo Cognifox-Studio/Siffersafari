@@ -8,6 +8,7 @@ class InventoryItem {
     required this.name,
     this.offset = Alignment.center,
     this.renderScale = 0.5,
+    this.showInWardrobe = true,
   });
 
   final String id;
@@ -16,6 +17,7 @@ class InventoryItem {
   final String name;
   final Alignment offset;
   final double renderScale;
+  final bool showInWardrobe;
 }
 
 class InventoryConfig {
@@ -95,8 +97,10 @@ class InventoryConfig {
           'accessory', // Byt från 'back' till 'accessory' så den ritas framför Loke
       assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
       name: 'Äventyrsryggsäck',
-      offset: Alignment(-2.0,
-          1.4,), // Knuffad ut till vänster för att hamna under utsträckta handen
+      offset: Alignment(
+        -2.0,
+        1.4,
+      ), // Knuffad ut till vänster för att hamna under utsträckta handen
       renderScale: 0.6,
     ),
     // --- Nyutvecklad grafik ---
@@ -108,6 +112,65 @@ class InventoryConfig {
       offset: Alignment(1.4, 0.45), // Placerad nära handen/magen
       renderScale: 0.45,
     ),
+    InventoryItem(
+      id: 'item_pet_zebra_companion',
+      slot: 'pet',
+      assetPath: 'assets/images/ui/img_avatar_zebra.png',
+      name: 'Zebravän',
+      renderScale: 0.8,
+      showInWardrobe: false,
+    ),
   ];
-}
 
+  // Keep reward progression independent from render/grid ordering.
+  static const List<String> levelUnlockOrderIds = [
+    'item_safari_hat',
+    'item_hat_safari',
+    'item_binoculars_safari',
+    'item_compass_safari',
+    'item_map_safari',
+    'item_shoes_safari',
+    'item_hat_pirate',
+    'item_glasses_nerd',
+    'item_backpack_adventure',
+    'item_camera_safari',
+    'item_pet_zebra_companion',
+  ];
+
+  static final Map<String, InventoryItem> _itemsById = {
+    for (final item in allItems) item.id: item,
+  };
+
+  static final List<InventoryItem> wardrobeItems = allItems
+      .where((item) => item.showInWardrobe)
+      .toList(growable: false);
+
+  static InventoryItem? nextLevelUnlock(Iterable<String> unlockedItemIds) {
+    final unlocked = unlockedItemIds.toSet();
+
+    for (final itemId in levelUnlockOrderIds) {
+      if (!unlocked.contains(itemId)) {
+        return _itemsById[itemId];
+      }
+    }
+
+    return null;
+  }
+
+  static InventoryItem? firstUnlockedCampCompanion(
+    Iterable<String> unlockedItemIds,
+  ) {
+    final unlocked = unlockedItemIds.toSet();
+
+    for (final itemId in levelUnlockOrderIds) {
+      if (!unlocked.contains(itemId)) continue;
+
+      final item = _itemsById[itemId];
+      if (item != null && item.slot == 'pet') {
+        return item;
+      }
+    }
+
+    return null;
+  }
+}

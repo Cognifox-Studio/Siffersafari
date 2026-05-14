@@ -31,6 +31,9 @@ class SettingsKeys {
   static String spacedRepetitionEnabled(String userId) =>
       'spaced_repetition_enabled_$userId';
 
+  static String textToSpeechEnabled(String userId) =>
+      'text_to_speech_enabled_$userId';
+
   static const String analyticsEvents = 'analytics_events';
 
   /// Key for tracking daily challenge completion.
@@ -42,4 +45,21 @@ class SettingsKeys {
   /// Stores a map with 'streak' (int) and 'lastDate' (YYYY-MM-DD string).
   static String dailyChallengeStreak(String userId) =>
       'daily_challenge_streak_$userId';
+
+  static List<String> userScopedExactKeys(String userId) => [
+        onboardingDone(userId),
+        allowedOperations(userId),
+        questCurrent(userId),
+        questCompleted(userId),
+        wordProblemsEnabled(userId),
+        missingNumberEnabled(userId),
+        spacedRepetitionSchedules(userId),
+        spacedRepetitionEnabled(userId),
+        textToSpeechEnabled(userId),
+        dailyChallengeStreak(userId),
+      ];
+
+  static List<String> userScopedKeyPrefixes(String userId) => [
+        'daily_challenge_${userId}_',
+      ];
 }

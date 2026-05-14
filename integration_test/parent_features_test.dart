@@ -26,19 +26,6 @@ String? _activeOnboardingStep(WidgetTester tester) {
 
 bool _isVisible(Finder finder) => finder.hitTestable().evaluate().isNotEmpty;
 
-Future<void> _drainUiAnimations(WidgetTester tester) async {
-  await tester.idle();
-  await it.settle(tester, _kSettleMedium);
-}
-
-Future<void> _cleanupAfterTest(WidgetTester tester) async {
-  // Dispose active controllers/tickers before invariant checks.
-  await tester.idle();
-  await tester.pumpWidget(const SizedBox.shrink());
-  await tester.pump();
-  await _drainUiAnimations(tester);
-}
-
 Future<void> _launchCleanApp(WidgetTester tester) async {
   await app.main();
   await it.settle(tester, _kSettleLong);
@@ -141,7 +128,7 @@ void main() {
     'Integration (Parent): skapa PIN och öppna föräldradashboard',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await app.main();
       await it.settle(tester, const Duration(milliseconds: 600));
@@ -215,7 +202,7 @@ void main() {
     'Integration (Profil): skapa ny profil och byt profil',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await app.main();
       await it.settle(tester, const Duration(milliseconds: 600));
@@ -296,7 +283,7 @@ void main() {
     'Integration (OTA): kontrollera release från föräldradashboard',
     (tester) async {
       addTearDown(() async {
-        await _cleanupAfterTest(tester);
+        await it.cleanupAfterTest(tester);
       });
       await _launchCleanApp(tester);
       await _ensureHomeVisible(tester);

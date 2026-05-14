@@ -18,6 +18,7 @@ import 'domain/enums/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final isTestBinding = _isRunningUnderTestBinding();
 
   // Global felhantering för Flutter-ramverket
   FlutterError.onError = (FlutterErrorDetails details) {
@@ -26,10 +27,7 @@ Future<void> main() async {
       'An animation is still running even after the widget tree was disposed.',
     );
 
-    if (isKnownTestTeardownAnimationWarning) {
-      debugPrint(
-        'Flutter warning (test teardown): animation callback still active after dispose.',
-      );
+    if (isKnownTestTeardownAnimationWarning && isTestBinding) {
       return;
     }
 
@@ -76,6 +74,14 @@ Future<void> main() async {
       ),
     ),
   );
+}
+
+bool _isRunningUnderTestBinding() {
+  final bindingType = WidgetsBinding.instance.runtimeType.toString();
+  return bindingType.contains('TestWidgets') ||
+      bindingType.contains('AutomatedTestWidgets') ||
+      bindingType.contains('LiveTestWidgets') ||
+      bindingType.contains('IntegrationTestWidgets');
 }
 
 Future<String?> _initializeAsync() async {

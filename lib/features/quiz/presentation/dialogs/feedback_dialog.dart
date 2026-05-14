@@ -221,9 +221,25 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
                       SizedBox(height: AppConstants.defaultPadding.h),
                       ..._buildExtraLines(
                         context,
-                        lines.sublist(2, 3),
+                        lines.sublist(2),
                         defaultColor: widget.messageTextColor ?? mutedOnSurface,
                         accentColor: isCorrect ? correctColor : incorrectAccent,
+                      ),
+                    ],
+                    if (widget.feedback.numberLine != null) ...[
+                      SizedBox(height: AppConstants.defaultPadding.h),
+                      _FeedbackNumberLineView(
+                        numberLine: widget.feedback.numberLine!,
+                        accentColor: isCorrect ? correctColor : incorrectAccent,
+                        textColor: onSurface,
+                      ),
+                    ],
+                    if (widget.feedback.groupModel != null) ...[
+                      SizedBox(height: AppConstants.defaultPadding.h),
+                      _FeedbackGroupModelView(
+                        groupModel: widget.feedback.groupModel!,
+                        accentColor: isCorrect ? correctColor : incorrectAccent,
+                        textColor: onSurface,
                       ),
                     ],
                   ],
@@ -287,5 +303,265 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
     }
 
     return widgets;
+  }
+}
+
+class _FeedbackNumberLineView extends StatelessWidget {
+  const _FeedbackNumberLineView({
+    required this.numberLine,
+    required this.accentColor,
+    required this.textColor,
+  });
+
+  final FeedbackNumberLine numberLine;
+  final Color accentColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final startAlignment =
+        numberLine.startOnLeft ? Alignment.centerLeft : Alignment.centerRight;
+    final semanticsLabel = numberLine.isSubtraction
+        ? 'Tallinje. Start ${numberLine.start}. Räkna tillbaka ${numberLine.jump} steg till ${numberLine.end}.'
+        : 'Tallinje. Start ${numberLine.start}. Räkna fram ${numberLine.jump} steg till ${numberLine.end}.';
+
+    return Semantics(
+      label: semanticsLabel,
+      child: ExcludeSemantics(
+        child: SizedBox(
+          key: const Key('feedback_number_line'),
+          width: 220.w,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: AppConstants.smallPadding.w,
+                  vertical: AppConstants.microSpacing6.h,
+                ),
+                decoration: BoxDecoration(
+                  color: accentColor.withValues(alpha: 0.12),
+                  borderRadius:
+                      BorderRadius.circular(AppConstants.borderRadius),
+                  border: Border.all(
+                    color: accentColor.withValues(alpha: 0.34),
+                  ),
+                ),
+                child: Text(
+                  numberLine.jumpLabel,
+                  key: const Key('feedback_number_line_jump'),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: accentColor,
+                        fontWeight: FontWeight.w900,
+                      ),
+                ),
+              ),
+              SizedBox(height: AppConstants.smallPadding.h),
+              SizedBox(
+                height: 54.h,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Align(
+                      alignment: startAlignment,
+                      child: Container(
+                        key: const Key('feedback_number_line_start_chip'),
+                        margin: EdgeInsets.symmetric(horizontal: 6.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AppConstants.microSpacing6.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.14),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          'Start',
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                    color: accentColor,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 18.w,
+                      right: 18.w,
+                      top: 18.h,
+                      child: Container(
+                        height: 4.h,
+                        decoration: BoxDecoration(
+                          color: accentColor.withValues(alpha: 0.72),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 10.w,
+                      top: 12.h,
+                      child: _NumberLineDot(
+                        color: numberLine.startOnLeft
+                            ? accentColor
+                            : accentColor.withValues(alpha: 0.42),
+                      ),
+                    ),
+                    Positioned(
+                      right: 10.w,
+                      top: 12.h,
+                      child: _NumberLineDot(
+                        color: numberLine.startOnLeft
+                            ? accentColor.withValues(alpha: 0.42)
+                            : accentColor,
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: 30.h,
+                      child: SizedBox(
+                        width: 46.w,
+                        child: Text(
+                          '${numberLine.leftValue}',
+                          textAlign: TextAlign.center,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      right: 0,
+                      top: 30.h,
+                      child: SizedBox(
+                        width: 46.w,
+                        child: Text(
+                          '${numberLine.rightValue}',
+                          textAlign: TextAlign.center,
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NumberLineDot extends StatelessWidget {
+  const _NumberLineDot({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 16.w,
+      height: 16.w,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.7),
+          width: 2,
+        ),
+      ),
+    );
+  }
+}
+
+class _FeedbackGroupModelView extends StatelessWidget {
+  const _FeedbackGroupModelView({
+    required this.groupModel,
+    required this.accentColor,
+    required this.textColor,
+  });
+
+  final FeedbackGroupModel groupModel;
+  final Color accentColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: groupModel.semanticsLabel,
+      child: ExcludeSemantics(
+        child: Container(
+          key: const Key('feedback_group_model'),
+          width: double.infinity,
+          padding: EdgeInsets.all(AppConstants.defaultPadding.w),
+          decoration: BoxDecoration(
+            color: accentColor.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+            border: Border.all(
+              color: accentColor.withValues(alpha: 0.28),
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                groupModel.summaryLabel,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: accentColor,
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+              SizedBox(height: AppConstants.smallPadding.h),
+              Wrap(
+                alignment: WrapAlignment.center,
+                spacing: AppConstants.smallPadding.w,
+                runSpacing: AppConstants.smallPadding.h,
+                children: List<Widget>.generate(
+                  groupModel.groupCount,
+                  (index) => Container(
+                    key: Key('feedback_group_chip_$index'),
+                    width: 52.w,
+                    height: 52.w,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
+                        color: accentColor.withValues(alpha: 0.24),
+                      ),
+                    ),
+                    child: Text(
+                      '${groupModel.groupValue}',
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: textColor,
+                            fontWeight: FontWeight.w900,
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: AppConstants.smallPadding.h),
+              Text(
+                groupModel.isDivision
+                    ? 'Tillsammans ${groupModel.totalValue}'
+                    : 'Tillsammans ${groupModel.totalValue}',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

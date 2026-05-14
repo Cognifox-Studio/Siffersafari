@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 String _describe(FinderBase finder) {
@@ -25,6 +26,30 @@ Future<void> settle(
   }
 }
 
+Future<void> drainUiAnimations(
+  WidgetTester tester, {
+  Duration step = const Duration(milliseconds: 50),
+  int maxSteps = 40,
+}) async {
+  for (var i = 0; i < maxSteps; i++) {
+    await tester.idle();
+    await tester.pump(step);
+
+    final hasScheduledFrame = tester.binding.hasScheduledFrame;
+    final transientCallbacks = SchedulerBinding.instance.transientCallbackCount;
+
+    if (!hasScheduledFrame && transientCallbacks == 0) {
+      return;
+    }
+  }
+}
+
+Future<void> cleanupAfterTest(WidgetTester tester) async {
+  await tester.idle();
+  await tester.pumpWidget(const SizedBox.shrink());
+  await drainUiAnimations(tester, maxSteps: 60);
+}
+
 List<String> visibleTexts(WidgetTester tester) {
   final texts = tester
       .widgetList<Text>(find.byType(Text))
@@ -36,6 +61,29 @@ List<String> visibleTexts(WidgetTester tester) {
       .toList();
   texts.sort();
   return texts;
+}
+
+bool looksLikeQuizScreen(WidgetTester tester) {
+  final hasCloseButton = find.byIcon(Icons.close).evaluate().isNotEmpty;
+  if (!hasCloseButton) return false;
+
+  var hasQuestionCounter = false;
+  var hasQuestionPrompt = false;
+  final counterPattern = RegExp(r'\d+/\d+');
+
+  for (final widget in tester.widgetList<Text>(find.byType(Text))) {
+    final text = widget.data?.trim() ?? widget.textSpan?.toPlainText().trim();
+    if (text == null || text.isEmpty) continue;
+
+    if (counterPattern.hasMatch(text)) {
+      hasQuestionCounter = true;
+    }
+    if (text.contains('?')) {
+      hasQuestionPrompt = true;
+    }
+  }
+
+  return hasQuestionCounter && hasQuestionPrompt;
 }
 
 /// Tries to tap something hittable.

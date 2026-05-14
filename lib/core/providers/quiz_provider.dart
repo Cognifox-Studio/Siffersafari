@@ -141,12 +141,50 @@ class QuizNotifier extends StateNotifier<QuizState> {
   final SpacedRepetitionService _spacedRepetitionService;
   final _uuid = const Uuid();
 
+  String _packedReviewKey({
+    required OperationType operationType,
+    required int operand1,
+    required int operand2,
+    required int correctAnswer,
+    required String displayQuestionText,
+  }) {
+    return 'v2|${operationType.name}|$operand1|$operand2|$correctAnswer|$displayQuestionText';
+  }
+
   String _reviewKeyForQuestion(Question question) {
-    // Question IDs are per-session UUIDs, so use a stable content key instead.
-    if (question.promptText != null) {
-      return 'v2|${question.operationType.name}|${question.operand1}|${question.operand2}|${question.correctAnswer}|${question.displayQuestionText}';
-    }
-    return '${question.operationType.name}|${question.displayQuestionText}';
+    // Question IDs are per-session UUIDs, so use a stable packed content key
+    // on disk instead of display-text parsing.
+    return _packedReviewKey(
+      operationType: question.operationType,
+      operand1: question.operand1,
+      operand2: question.operand2,
+      correctAnswer: question.correctAnswer,
+      displayQuestionText: question.displayQuestionText,
+    );
+  }
+
+  String _normalizeStoredReviewKey(String key) {
+    if (key.isEmpty || key.startsWith('v2|')) return key;
+
+    final parsed = _questionGenerator.tryGenerateFromSrsKey(
+      key,
+      DifficultyLevel.easy,
+    );
+    if (parsed == null) return key;
+
+    return _reviewKeyForQuestion(parsed);
+  }
+
+  String _canonicalStoredReviewKey({
+    required String key,
+    required String questionId,
+  }) {
+    final normalizedKey = _normalizeStoredReviewKey(key);
+    final normalizedQuestionId = _normalizeStoredReviewKey(questionId);
+
+    if (normalizedQuestionId.startsWith('v2|')) return normalizedQuestionId;
+    if (normalizedKey.startsWith('v2|')) return normalizedKey;
+    return normalizedQuestionId;
   }
 
   Map<String, ReviewSchedule> _loadReviewSchedules(String userId) {
@@ -164,6 +202,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     if (raw is! List) return const <String, ReviewSchedule>{};
 
     final map = <String, ReviewSchedule>{};
+    var migratedAny = false;
     for (final item in raw) {
       if (item is! Map) continue;
       final entry = Map<String, dynamic>.from(item);
@@ -179,12 +218,32 @@ class QuizNotifier extends StateNotifier<QuizState> {
       if (nextReviewDate == null) continue;
       if (intervalDays is! int || consecutiveCorrect is! int) continue;
 
-      map[key] = ReviewSchedule(
+      final canonicalKey = _canonicalStoredReviewKey(
+        key: key,
         questionId: questionId,
+      );
+      if (canonicalKey != key || canonicalKey != questionId) {
+        migratedAny = true;
+      }
+
+      final schedule = ReviewSchedule(
+        questionId: canonicalKey,
         nextReviewDate: nextReviewDate,
         intervalDays: intervalDays,
         consecutiveCorrect: consecutiveCorrect,
       );
+
+      final existing = map[canonicalKey];
+      if (existing == null ||
+          nextReviewDate.isAfter(existing.nextReviewDate) ||
+          (nextReviewDate.isAtSameMomentAs(existing.nextReviewDate) &&
+              consecutiveCorrect >= existing.consecutiveCorrect)) {
+        map[canonicalKey] = schedule;
+      }
+    }
+
+    if (migratedAny) {
+      unawaited(_saveReviewSchedules(userId, map));
     }
 
     return map;
@@ -198,7 +257,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
         .map(
           (entry) => {
             'key': entry.key,
-            'questionId': entry.value.questionId,
+            'questionId': entry.key,
             'nextReviewDate': entry.value.nextReviewDate.toIso8601String(),
             'intervalDays': entry.value.intervalDays,
             'consecutiveCorrect': entry.value.consecutiveCorrect,
@@ -257,13 +316,14 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void _persistInProgressSession({
     required String userId,
     required QuizSession session,
+    bool persistEvenWithoutAnswers = false,
   }) {
     debugPrint(
       '[QuizNotifier] _persistInProgressSession: '
       'userId=$userId, operationType=${session.operationType.name}',
     );
     final answered = session.correctAnswers + session.wrongAnswers;
-    if (answered <= 0) {
+    if (answered <= 0 && !persistEvenWithoutAnswers) {
       debugPrint(
         '[QuizNotifier] _persistInProgressSession: no answers yet, skipping',
       );
@@ -288,6 +348,14 @@ class QuizNotifier extends StateNotifier<QuizState> {
     sessionMap['sessionId'] = inProgressId;
     sessionMap['userId'] = userId;
     sessionMap['isComplete'] = false;
+    sessionMap['pendingDueKeys'] = List<String>.from(state.pendingDueKeys);
+    if (answered <= 0) {
+      sessionMap['totalQuestions'] = 0;
+      sessionMap['correctAnswers'] = 0;
+      sessionMap['wrongAnswers'] = 0;
+      sessionMap['successRate'] = 0.0;
+      sessionMap['totalPoints'] = 0;
+    }
 
     unawaited(_repository.saveQuizSession(sessionMap));
   }
@@ -435,6 +503,12 @@ class QuizNotifier extends StateNotifier<QuizState> {
       pendingDueKeys: List<String>.unmodifiable(pendingDueKeys),
       isDailyChallenge: isDailyChallenge,
     );
+
+    _persistInProgressSession(
+      userId: userId,
+      session: session,
+      persistEvenWithoutAnswers: true,
+    );
   }
 
   /// Returns due SRS keys filtered to the sessionâ€™s operation type.
@@ -453,7 +527,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final filtered = allDue.where((key) {
       if (sessionOpType == OperationType.mixed) return true;
       // v2-format: "v2|{opName}|..." â€” extract opName from segment [1]
-      // legacy format: "{opName}|..." â€” extract opName from segment [0]
+      // legacy format remains supported while old storage migrates forward.
       final isV2 = key.startsWith('v2|');
       final opName = isV2
           ? key.split('|').elementAtOrNull(1) ?? ''
@@ -465,6 +539,71 @@ class QuizNotifier extends StateNotifier<QuizState> {
     if (filtered.isEmpty) return const [];
     final cap = (totalQuestions ~/ 3).clamp(1, filtered.length);
     return filtered.take(cap).toList();
+  }
+
+  List<String> _readPendingDueKeys(Map<String, dynamic> sessionMap) {
+    final raw = sessionMap['pendingDueKeys'];
+    if (raw is! List) return const <String>[];
+
+    return raw
+        .whereType<String>()
+        .where((key) => key.isNotEmpty)
+        .toList(growable: false);
+  }
+
+  ({List<Question> initialQuestions, List<String> pendingDueKeys})
+      _buildCustomSessionQuestionPlan({
+    required List<Question> questions,
+    required DifficultyLevel difficulty,
+    required OperationType operationType,
+    required Map<String, ReviewSchedule> schedules,
+    required DateTime now,
+  }) {
+    final dueKeys = _getDueKeysForSession(
+      schedules,
+      operationType,
+      questions.length,
+      now,
+    );
+    if (dueKeys.isEmpty) {
+      return (
+        initialQuestions: List<Question>.unmodifiable(questions),
+        pendingDueKeys: const <String>[],
+      );
+    }
+
+    Question? firstDueQuestion;
+    final remainingDueKeys = <String>[];
+
+    for (final key in dueKeys) {
+      final parsed = _questionGenerator.tryGenerateFromSrsKey(key, difficulty);
+      if (parsed == null) continue;
+
+      if (firstDueQuestion == null) {
+        firstDueQuestion = parsed;
+      } else {
+        remainingDueKeys.add(key);
+      }
+    }
+
+    if (firstDueQuestion == null) {
+      return (
+        initialQuestions: List<Question>.unmodifiable(questions),
+        pendingDueKeys: const <String>[],
+      );
+    }
+
+    final totalDueCount = 1 + remainingDueKeys.length;
+    final retainedCustomCount =
+        questions.length > totalDueCount ? questions.length - totalDueCount : 0;
+
+    return (
+      initialQuestions: List<Question>.unmodifiable([
+        firstDueQuestion,
+        ...questions.take(retainedCustomCount),
+      ]),
+      pendingDueKeys: List<String>.unmodifiable(remainingDueKeys),
+    );
   }
 
   void startSession({
@@ -562,7 +701,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     debugPrint('[QuizNotifier] resumeSession: userId=$userId');
 
     final session = QuizSessionJson.fromJson(sessionMap);
-    
+
     _prepareInProgressStorage(
       userId: userId,
       operationType: session.operationType,
@@ -577,7 +716,24 @@ class QuizNotifier extends StateNotifier<QuizState> {
       steps: session.difficultyStepsByOperation,
       reviewState: reviewState,
       isDailyChallenge: false,
+      pendingDueKeys: _readPendingDueKeys(sessionMap),
     );
+  }
+
+  bool resumeLatestSessionForUser({
+    required String userId,
+    String? operationTypeName,
+  }) {
+    final sessionMap = _repository.getQuizSession(
+      userId,
+      operationTypeName: operationTypeName,
+    );
+    if (sessionMap == null) {
+      return false;
+    }
+
+    resumeSession(userId: userId, sessionMap: sessionMap);
+    return true;
   }
 
   void startCustomSession({
@@ -623,13 +779,23 @@ class QuizNotifier extends StateNotifier<QuizState> {
           ),
     );
 
+    final reviewState = _loadInitialReviewState(userId);
+
+    final questionPlan = _buildCustomSessionQuestionPlan(
+      questions: questions,
+      difficulty: difficulty,
+      operationType: operationType,
+      schedules: reviewState.schedules,
+      now: DateTime.now(),
+    );
+
     final session = QuizSession(
       sessionId: _uuid.v4(),
       ageGroup: ageGroup,
       gradeLevel: gradeLevel,
       operationType: operationType,
       difficulty: difficulty,
-      questions: questions,
+      questions: questionPlan.initialQuestions,
       targetQuestionCount: questions.length,
       wordProblemsEnabled: featureFlags.wordProblemsEnabled,
       missingNumberEnabled: featureFlags.missingNumberEnabled,
@@ -637,14 +803,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
       startTime: DateTime.now(),
     );
 
-    final reviewState = _loadInitialReviewState(userId);
-
     _activateSessionState(
       userId: userId,
       session: session,
       steps: steps,
       reviewState: reviewState,
       isDailyChallenge: false,
+      pendingDueKeys: questionPlan.pendingDueKeys,
     );
   }
 
@@ -752,6 +917,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       pointsEarned: pointsEarned,
       gotSpeedBonus: gotSpeedBonus,
       correctStreak: isCorrect ? newStreak : previousStreak,
+      responseTime: responseTime,
       comboMultiplier: comboMultiplier,
     );
 
@@ -820,11 +986,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void cancelSession(String userId) {
     final session = state.session;
     if (session == null) return;
-    final inProgressId = _repository.inProgressQuizSessionId(
+    _persistInProgressSession(
       userId: userId,
-      operationTypeName: session.operationType.name,
+      session: session,
+      persistEvenWithoutAnswers: true,
     );
-    unawaited(_repository.deleteQuizSession(inProgressId));
   }
 
   void advanceToNextQuestion() {
@@ -880,6 +1046,15 @@ class QuizNotifier extends StateNotifier<QuizState> {
       feedback: null,
       pendingDueKeys: newPendingDueKeys,
     );
+
+    final userId = state.userId;
+    if (userId != null && userId.isNotEmpty) {
+      _persistInProgressSession(
+        userId: userId,
+        session: updatedSession,
+        persistEvenWithoutAnswers: true,
+      );
+    }
   }
 
   void clearFeedback() {
@@ -940,4 +1115,3 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
 });
 
 // endregion
-

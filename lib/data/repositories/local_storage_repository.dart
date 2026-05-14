@@ -74,6 +74,31 @@ class LocalStorageRepository {
     await _userProgressBox.delete(userId);
   }
 
+  Future<void> deleteUserScopedSettings(String userId) async {
+    for (final key in SettingsKeys.userScopedExactKeys(userId)) {
+      await _settingsBox.delete(key);
+    }
+
+    final keys = _settingsBox.keys.toList(growable: false);
+    for (final rawKey in keys) {
+      final key = rawKey.toString();
+      if (SettingsKeys.userScopedKeyPrefixes(userId)
+          .any((prefix) => key.startsWith(prefix))) {
+        await _settingsBox.delete(rawKey);
+      }
+    }
+  }
+
+  Future<void> deleteUserData(String userId) async {
+    await deleteUserProgress(userId);
+    await deleteQuizHistoryForUser(userId);
+    await deleteUserScopedSettings(userId);
+
+    if (getActiveUserId() == userId) {
+      await clearActiveUserId();
+    }
+  }
+
   /// Save a quiz session to history
   Future<void> saveQuizSession(Map<String, dynamic> session) async {
     final sessionId = session['sessionId'] as String;
@@ -89,19 +114,36 @@ class LocalStorageRepository {
   }
 
   /// Get an in-progress quiz session for the user, if one exists
-  Map<String, dynamic>? getQuizSession(String userId) {
+  Map<String, dynamic>? getQuizSession(
+    String userId, {
+    String? operationTypeName,
+  }) {
     try {
+      final candidates = <Map<String, dynamic>>[];
+
       final keys = _quizHistoryBox.keys;
       for (final key in keys) {
         final value = _quizHistoryBox.get(key);
         final session = _validateQuizSession(value);
-        if (session != null && session['userId'] == userId && session['isComplete'] == false) {
-          // Additional check: Does it have 'questions'? Since old sessions didn't save state.
-          if (session.containsKey('questions')) {
-            return session;
-          }
+        if (session == null) continue;
+        if (session['userId'] != userId) continue;
+        if (session['isComplete'] != false) continue;
+        if (operationTypeName != null &&
+            session['operationType'] != operationTypeName) {
+          continue;
         }
+
+        // Additional check: Does it have 'questions'? Since old sessions didn't save state.
+        if (!session.containsKey('questions')) continue;
+
+        candidates.add(session);
       }
+
+      if (candidates.isEmpty) return null;
+
+      candidates
+          .sort((a, b) => _sessionStartTime(b).compareTo(_sessionStartTime(a)));
+      return candidates.first;
     } catch (e) {
       debugPrint('[LocalStorage] getQuizSession failed: $e');
     }
@@ -173,6 +215,14 @@ class LocalStorageRepository {
       final session = _validateQuizSession(value);
       if (session == null) continue;
       if (session['userId'] != userId) continue;
+
+      // Complete lightweight history records are intentional, but old
+      // in-progress placeholders without question state should not affect
+      // parent summaries or benchmark calculations.
+      if (session['isComplete'] == false && !session.containsKey('questions')) {
+        continue;
+      }
+
       allSessions.add(session);
     }
 

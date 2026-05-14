@@ -5,6 +5,21 @@ import 'package:siffersafari/domain/enums/difficulty_level.dart';
 class StoryProgressionService {
   const StoryProgressionService();
 
+  static const _upcomingBiomes = <DifficultyLevel, StoryBiomePreview>{
+    DifficultyLevel.easy: StoryBiomePreview(
+      name: 'Nattskogen',
+      tagline: 'Spela fler stopp först.',
+      previewPrefix: 'Efter djungeln',
+      previewBody: 'Fler stopp först.',
+    ),
+    DifficultyLevel.medium: StoryBiomePreview(
+      name: 'Stjärnöknen',
+      tagline: 'Fortsätt genom skymningen först.',
+      previewPrefix: 'Efter natten',
+      previewBody: 'Fler stopp först.',
+    ),
+  };
+
   static const _landmarks = <_LandmarkData>[
     _LandmarkData(
       'Startlägret',
@@ -172,8 +187,23 @@ class StoryProgressionService {
       totalNodes: effectivePath.length,
       currentNodeIndex: currentNodeIndex,
       nodes: nodes,
+      nextBiome: _nextBiomeFor(
+        difficulty: currentStatus.quest.difficulty,
+        isFinalNode: currentNodeIndex >= effectivePath.length - 1,
+      ),
       notice: notice,
     );
+  }
+
+  StoryBiomePreview? _nextBiomeFor({
+    required DifficultyLevel difficulty,
+    required bool isFinalNode,
+  }) {
+    if (isFinalNode) {
+      return null;
+    }
+
+    return _upcomingBiomes[difficulty];
   }
 
   String _chapterTitleFor(DifficultyLevel difficulty) {

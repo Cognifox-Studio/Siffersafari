@@ -5,6 +5,7 @@ import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
+import 'package:siffersafari/core/services/text_to_speech_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -75,12 +76,14 @@ Future<void> initializeDependencies({
   // Register services
   _registerLazy<QuestionGeneratorService>(() => QuestionGeneratorService());
   _registerLazy<AudioService>(() => AudioService());
+  _registerLazy<TextToSpeechService>(() => TextToSpeechService());
   _registerLazy<AdaptiveDifficultyService>(() => AdaptiveDifficultyService());
   _registerLazy<QuestProgressionService>(() => const QuestProgressionService());
   _registerLazy<FeedbackService>(() => FeedbackService());
   _registerLazy<AchievementService>(() => AchievementService());
   _registerLazy<ParentPinService>(
-      () => ParentPinService(getIt<LocalStorageRepository>()),);
+    () => ParentPinService(getIt<LocalStorageRepository>()),
+  );
 
   if (total != null) {
     total.stop();
@@ -105,15 +108,21 @@ Future<void> _initializeHive({required bool openQuizHistoryBox}) async {
   // Open boxes concurrently
   final openFutures = <Future<void>>[
     _perfAsync(
-        "Hive.openBox('user_progress')", () => Hive.openBox('user_progress'),),
+      "Hive.openBox('user_progress')",
+      () => Hive.openBox('user_progress'),
+    ),
     _perfAsync("Hive.openBox('settings')", () => Hive.openBox('settings')),
     if (openQuizHistoryBox)
       _perfAsync(
-          "Hive.openBox('quiz_history')", () => Hive.openBox('quiz_history'),),
+        "Hive.openBox('quiz_history')",
+        () => Hive.openBox('quiz_history'),
+      ),
   ];
 
   await _perfAsync(
-      'Hive.openBox(all required)', () => Future.wait(openFutures),);
+    'Hive.openBox(all required)',
+    () => Future.wait(openFutures),
+  );
 }
 
 void _registerHiveAdapter<T>(TypeAdapter<T> adapter) {

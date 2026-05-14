@@ -92,5 +92,28 @@ void main() {
         isNot(contains(AppConstants.streak30Achievement)),
       );
     });
+
+    test('exponerar badgealbum i stabil ordning', () {
+      final entries = service.albumEntries;
+
+      expect(
+        entries.map((entry) => entry.id),
+        orderedEquals(const [
+          AppConstants.firstQuizAchievement,
+          AppConstants.perfectScoreAchievement,
+          AppConstants.master100Achievement,
+          AppConstants.streak7Achievement,
+          AppConstants.streak30Achievement,
+        ]),
+      );
+      expect(
+        service.getAlbumLabel(AppConstants.master100Achievement),
+        '100 rätt',
+      );
+      expect(
+        service.getBadgeEmoji(AppConstants.firstQuizAchievement),
+        '🧭',
+      );
+    });
   });
 }

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
-import 'package:siffersafari/domain/enums/operation_type.dart';
 
 import '../config/difficulty_config.dart';
 import '../services/story_progression_service.dart';
@@ -20,13 +19,7 @@ final storyProgressProvider = Provider<StoryProgress?>((ref) {
   final questStatus = userState.questStatus;
   if (user == null || questStatus == null) return null;
 
-  final parentAllowedOps = ref.watch(parentSettingsProvider)[user.userId] ??
-      const <OperationType>{
-        OperationType.addition,
-        OperationType.subtraction,
-        OperationType.multiplication,
-        OperationType.division,
-      };
+  final parentAllowedOps = ref.watch(parentSettingsProvider(user.userId));
 
   final allowedOps = DifficultyConfig.effectiveAllowedOperations(
     parentAllowedOperations: parentAllowedOps,

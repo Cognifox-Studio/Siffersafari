@@ -89,6 +89,12 @@ class HomeStoryProgressCard extends StatelessWidget {
                     onPrimary: onPrimary,
                     mutedOnPrimary: mutedOnPrimary,
                   ),
+                if (story.nextBiome != null)
+                  _LockedBiomeChip(
+                    biomeName: story.nextBiome!.name,
+                    onPrimary: onPrimary,
+                    mutedOnPrimary: mutedOnPrimary,
+                  ),
               ],
             ),
             const SizedBox(height: AppConstants.defaultPadding),
@@ -343,6 +349,64 @@ class _InfoChip extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _LockedBiomeChip extends StatelessWidget {
+  const _LockedBiomeChip({
+    required this.biomeName,
+    required this.onPrimary,
+    required this.mutedOnPrimary,
+  });
+
+  final String biomeName;
+  final Color onPrimary;
+  final Color mutedOnPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: const Key('home_story_next_biome_chip'),
+      padding: const EdgeInsets.all(AppConstants.smallPadding),
+      decoration: BoxDecoration(
+        color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+        borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+        border: Border.all(
+          color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.lock_outline_rounded,
+            size: 18,
+            color: mutedOnPrimary,
+          ),
+          const SizedBox(width: AppConstants.microSpacing6),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Sen',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: mutedOnPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              const SizedBox(height: AppConstants.microSpacing4),
+              Text(
+                biomeName,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

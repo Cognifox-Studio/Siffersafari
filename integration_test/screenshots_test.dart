@@ -12,6 +12,10 @@ void main() {
   testWidgets(
     'Integration (screenshots): ta skärmdumpar av alla huvudvyer',
     (tester) async {
+      addTearDown(() async {
+        await it.cleanupAfterTest(tester);
+      });
+
       Future<void> waitFor(
         String label,
         bool Function() condition, {
@@ -499,7 +503,7 @@ void main() {
           chosenOperation,
           after: const Duration(seconds: 1),
         );
-        if (find.textContaining('Fråga ').evaluate().isNotEmpty) {
+        if (it.looksLikeQuizScreen(tester)) {
           await shot('quiz_question_1');
 
           // Answer first question to show feedback dialog.
