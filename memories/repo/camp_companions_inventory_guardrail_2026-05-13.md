@@ -1,0 +1,4 @@
+- Camp-only companions kan återanvända InventoryConfig och unlockedItems utan nytt persistensspår, men `InventoryConfig.allItems` är kopplad både till explicit reward-ordning och tester som auditerar wardrobe/GameCharacter.
+- Lägg därför camp-pets som vanliga inventory-items i `allItems` + `levelUnlockOrderIds`, men markera dem med `showInWardrobe: false` och håll deras `slot` utanför GameCharacters aktiva slotLayers så att wardrobe-UI och hit-shape-audits inte bryts.
+- Låt CampSceneView läsa första upplåsta pet via inventory-ordningen i stället för att skapa separat pet-state.
+- När campets vanliga reward-props utökas måste `_visibleCampRewards(...)` filtrera bort `slot == 'pet'`, annars kan samma följeslagare visas både i pet-slotten och som vanligt podium-objekt.

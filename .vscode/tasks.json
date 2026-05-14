@@ -72,6 +72,32 @@
       }
     },
     {
+      "label": "Project Map: Watch",
+      "type": "shell",
+      "command": "dart",
+      "args": ["run", "scripts/generate_project_map.dart", "--watch"],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
+      "label": "Project Map: Build Once",
+      "type": "shell",
+      "command": "dart",
+      "args": ["run", "scripts/generate_project_map.dart"],
+      "group": "build",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    },
+    {
       "label": "QA: Analyze",
       "type": "shell",
       "command": "flutter",
@@ -179,7 +205,7 @@
       }
     },
     {
-      "label": "Assets: Verify Git Changes (pre-commit check)",
+      "label": "Repo: Verify Git Changes (pre-commit check)",
       "type": "shell",
       "command": "powershell",
       "args": [

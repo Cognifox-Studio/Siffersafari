@@ -6,38 +6,31 @@ Denna mapp innehåller bildresurser för appen.
 
 ```
 images/
-├── app_icon/           # Källbilder för app-ikon
-│   └── icon_source.png
+├── app_icon/           # Källbilder för app-ikon och Play Console-varianter
 ├── brand/              # Branding (t.ex. Cognifox-logga)
-│   └── cognifox_logo.png
-├── themes/
-│   ├── space/          # Rymdtema-bilder
-│   │   ├── background.png
-│   │   ├── character.png
-│   │   └── quest_hero.png
-│   └── jungle/         # Djungeltema-bilder
-│       ├── background.png
-│       ├── character.png
-│       └── quest_hero.png
-└── generated/          # Tillfälliga genererade bilder (ej för permanent asset-användning)
+├── themes/             # Temabakgrunder och temakaraktärer
+│   ├── jungle/
+│   └── space/
+├── story/              # Story map-ikoner och miljöbilder
+├── ui/                 # UI-ikoner, avatarer och produktbilder
+├── items/              # Inventory- och belöningsföremål
+├── characters/         # Reserverad för rena karaktärsbilder vid behov
+└── generated/          # Tillfälliga genererade bilder
 ```
 
 ## Filer som används direkt i appen
 
-- `themes/jungle/background.png`
-- `themes/jungle/quest_hero.png`
-- `themes/jungle/character.png`
-- `themes/space/background.png`
-- `themes/space/quest_hero.png`
-- `themes/space/character.png`
-- `brand/cognifox_logo.png`
-- `app_icon/icon_source.png`
+- `themes/` innehåller aktiva temaassets som `background.png`, `character.png` och `quest_hero.png`.
+- `story/` innehåller story map-bilder som `cabin.png` och `campfire.png`.
+- `ui/` innehåller produkt-UI som avatarer, logga, matteikoner och belöningsbilder.
+- `items/` innehåller inventory- och outfitföremål som används i garderob och belöningar.
+- `brand/` och `app_icon/` innehåller branding- och releasebilder.
 
 ## Bildformat:
 
-- **PNG** för transparens (ikoner, element)
-- **JPEG** för bakgrunder utan transparens
-- **SVG** för skalerbara ikoner (om möjligt)
+- **PNG** är standardformatet i denna mapp.
+- Behåll produktionsassets som rasterbilder om inte en dokumenterad pipeline säger något annat.
+- Lägg inte ny aktiv runtime på SVG-, Lottie- eller Rive-spår här utan att först uppdatera repo-dokumentationen.
 
 ## Bildstorlekar:
 
@@ -47,9 +40,7 @@ images/
 
 ## Karaktärer och animation
 
-Denna mapp innehåller statiska bildassets. När en karaktär ska animeras i appen ska animationen i stället ligga som Lottie-fil under `assets/animations/`.
-
-Se även `docs/CHARACTER_ANIMATIONS.md`.
+Denna mapp innehåller statiska bildassets. I produkt-UI används PNG-first för karaktärer och Flutter-styrda procedurrörelser i kod, inte en separat animationsmapp med runtimefiler.
 
 ## Optimering:
 

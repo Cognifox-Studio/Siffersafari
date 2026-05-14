@@ -6,12 +6,7 @@ on:
       track:
         description: "Play track (exempel: beta, qa, internal)"
         required: true
-        type: choice
-        options:
-          - internal
-          - alpha
-          - beta
-          - production
+        type: string
         default: "beta"
       run_tests:
         description: "Kor flutter test test innan build"
@@ -29,6 +24,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Validate Play track
+        run: |
+          TRACK="${{ inputs.track }}"
+          if [ -z "$TRACK" ]; then
+            echo "Track must not be empty"
+            exit 1
+          fi
+          if [ "$TRACK" = "production" ]; then
+            echo "Use a dedicated production workflow instead of Play Closed Beta"
+            exit 1
+          fi
 
       - name: Set up Java
         uses: actions/setup-java@v4

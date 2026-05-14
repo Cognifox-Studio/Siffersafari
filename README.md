@@ -96,78 +96,38 @@ flutter build apk --release
 - Riverpod för state management
 - Hive för lokal persistens
 - audioplayers för ljud
-- SVG-först för automatiserade karaktärsassets, med Rive som valfritt extra lager
-- Lottie för UI-effekter (konfetti, stjärnor, pulser)
+- PNG-first mascot-runtime med Flutter-styrda proceduranimationer
+- Anpassade PNG-assets för UI, avatarer och karaktärer
 - flutter_screenutil för responsiv skalning
 
-### AI-driven Asset Pipeline ⚡
+### Repoautomation
 
-All visuell grafik genereras via kod – ingen handritning krävs:
+Vanliga hjälpskript i repot:
 
-- **SVG-delar:** `dart run scripts/generate_mascot_svg_parts.dart` → 12 SVG parts
-- **Lottie UI-effekter:** `dart run scripts/generate_lottie_effects.dart` → 4 JSON animations
-- **Rive Blueprint:** `dart run scripts/generate_rive_blueprint.dart` → valfri rigging guide
-- **Mascot Composite SVG:** `dart run scripts/generate_mascot_composite.dart` → komplett karaktär-SVG
+- `powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync` – bygg, installera och starta appen deterministiskt på `Pixel_6`
+- `dart run scripts/generate_project_map.dart --watch` – bygg den lokala projektkartan, se [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md)
+- `powershell -ExecutionPolicy Bypass -File scripts/extract_integration_screenshots.ps1` – hämta ut integrationstestskärmbilder
+- `dart run scripts/generate_android_launcher_icons.dart` – regenerera Android launcher-ikoner
+- `dart run scripts/generate_sfx_wav.dart` – generera eller uppdatera lokala ljudeffekter
 
-Kör alla med ett kommando:
-```bash
-# Via VS Code Task (rekommenderat)
-Tasks → Run Task → "Assets: Generate All (SVG + Lottie + Rive Blueprint)"
-
-# Eller via terminal
-dart run scripts/generate_mascot_svg_parts.dart
-dart run scripts/generate_mascot_composite.dart
-dart run scripts/generate_lottie_effects.dart
-dart run scripts/generate_rive_blueprint.dart
-```
-
-**Fördelar:**
-- Konsekvent stil via JSON-specs
-- Git-vänlig versionhantering
-- Snabb iteration (sekunder istället för timmar)
-- Ingen handritning
-
-Se [docs/AI_ASSET_PIPELINE.md](docs/AI_ASSET_PIPELINE.md) för komplett guide.
-
-For completely automated character creation from a short brief:
-
-```bash
-python tools/create_character.py --name "Mira" --brief "space explorer with teal jacket and gold backpack"
-```
-
-The command creates specs, segmented SVG assets, a composite runtime SVG, optional Rive blueprint files, updates `specs/*.yaml`, and refreshes manifest/codegen so no manual asset registration is required.
-
-For safe regeneration of an existing character from its current config:
-
-```bash
-python tools/refresh_character.py --slug loke
-```
-
-This command preserves the existing animation spec, refreshes the visual spec and SVG outputs, rebuilds blueprint/guide files, and reruns manifest/codegen.
-
-### Animation Pipeline
-
-Karaktärspipelinen är hybrid:
-
-- Karaktärsrigg/specs under `assets/characters/mascot/`
-- UI-effekter under `assets/ui/lottie/`
-- Flutter/SVG-baserad mascot-widget för automatiserad feedback i quiz/home/results, med valfri Rive-opt-in senare
-
-Projektet följer en tydlig lagerindelning:
+Projektet följer en hybrid lagerindelning:
 
 ```text
 lib/
+├── app/
+├── features/
+├── presentation/
+├── core/
 ├── domain/
 ├── data/
-├── presentation/
-└── core/
+└── ...
 ```
 
 Mer detaljer finns i:
 
-- [docs/AI_ASSET_PIPELINE.md](docs/AI_ASSET_PIPELINE.md) ← AI asset generation
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
+- [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md)
 - [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md)
 
 ## Dokumentation

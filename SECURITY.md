@@ -8,9 +8,13 @@ Aktiv utvecklingsgren:
 
 ## Reporting a Vulnerability
 
-Rapportera säkerhetsproblem privat via en GitHub Issue med etiketten `security` och skriv endast en kort sammanfattning offentligt.
+Rapportera säkerhetsproblem via repoets GitHub Security-sida:
 
-För känsliga detaljer, kontakta maintainer direkt och inkludera:
+- https://github.com/Cognifox-Studio/Siffersafari/security
+
+Lägg inte känsliga detaljer i en vanlig offentlig issue. Om problemet inte innehåller känsliga detaljer kan du i stället öppna en vanlig buggrapport och hålla beskrivningen kort.
+
+När du rapporterar, inkludera gärna:
 
 - Hur sårbarheten kan reproduceras
 - Påverkan/risk

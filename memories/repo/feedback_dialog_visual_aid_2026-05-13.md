@@ -1,0 +1,4 @@
+- FeedbackDialog visade tidigare bara den första extra raden (`lines.sublist(2, 3)`), vilket kunde dölja nya pedagogiska tips som hamnade längre ner i feedback-meddelandet.
+- För små pedagogiska stöd i quizet fungerar det bättre att låta `FeedbackResult` bära strukturerad UI-data (t.ex. `FeedbackNumberLine`) och samtidigt rendera alla extra rader i dialogen.
+- När samma tallinje ska återanvändas för flera räknesätt är det säkrare att bära `operationType` i `FeedbackNumberLine` och låta dialogen markera vilken sida som är start. Då blir subtraktion visuellt "räkna tillbaka" utan ett nytt widgetsysten per operation.
+- Den minsta säkra QA-slicen för sådana ändringar är: riktat enhetstest för `FeedbackService` + ett widgettest för `FeedbackDialog` + riktad analyze, och Pixel_6 sync när stödet är synligt i quiz-UI.

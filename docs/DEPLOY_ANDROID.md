@@ -22,7 +22,7 @@ Gör så här för att släppa en ny version:
    git tag v1.3.4
    git push origin v1.3.4
    ```
-4. Pipelinen (`.github/workflows/release.yml`) sätter automatiskt upp Keystore (via GitHub Secrets), analyserar koden, kör alla tester, bygger Android release apk (`app-release.apk`) och laddar upp detta till *GitHub Releases*.
+4. Pipelinen (`.github/workflows/build.yml`) sätter automatiskt upp Keystore (via GitHub Secrets), kör analyze, bygger signerad Android release apk (`app-release.apk`) och laddar upp den till *GitHub Releases*.
 
 ---
 

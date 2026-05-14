@@ -24,7 +24,7 @@ Arbetsordning:
    - `Plan` för analys, riskbedömning eller avgränsning
    - `Beast Mode` för implementation och QA
    - `UI Reviewer` för ren UI-granskning
-   - `Release Manager` för release- eller Play Console-arbete
+   - `release-manager` för release- eller Play Console-arbete
 4. Föreslå relevant repo-skill om uppgiften matchar en befintlig skill.
 5. Välj minsta rimliga QA-slice för uppgiften redan från start.
 

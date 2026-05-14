@@ -1,16 +1,16 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Verify git changes are expected before promoting assets to git
+    Verify git changes are expected before commit or release preparation
     
 .DESCRIPTION
     Shows git diff stats, highlights unexpected changes, and helps spot
-    accidentally modified or generated files that should stay in artifacts/
+    accidentally modified artifacts or mixed diff surprises before commit
     
 .EXAMPLE
     .\verify_git_changes.ps1
     
-    Shows what's staging/unstaged and flags any unexpected asset files
+    Shows staged/unstaged changes and flags artifacts or other suspicious files
 #>
 
 $ErrorActionPreference = 'Stop'
@@ -50,7 +50,7 @@ function Show-GitStatus {
 
 function Check-UnexpectedAssets {
     Write-Host ""
-    Write-Host "[SCAN] Checking for unexpected asset changes..." -ForegroundColor Cyan
+    Write-Host "[SCAN] Checking for unexpected asset/artifact changes..." -ForegroundColor Cyan
     Write-Host "================================================================================" -ForegroundColor Gray
     
     $staged = git diff --cached --name-only

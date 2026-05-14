@@ -16,37 +16,25 @@ test/
 │   └── widgets/
 ├── test_utils.dart                # Shared helpers/mocks for widget tests
 ├── unit/                          # Unit tests
-│   ├── logic/                     # Business logic
-│   │   ├── adaptive_difficulty_test.dart
-│   │   ├── curriculum_logic_coverage_test.dart
-│   │   ├── difficulty_config_operations_test.dart
-│   │   ├── difficulty_config_grade_test.dart
-│   │   ├── difficulty_config_ranges_test.dart
-│   │   ├── difficulty_config_helpers_test.dart
-│   │   ├── quiz_progression_edge_cases_test.dart
-│   │   └── spaced_repetition_test.dart
-│   ├── services/                  # Service layer
-│   │   ├── achievement_service_test.dart
-│   │   ├── parent_pin_service_test.dart
-│   │   └── quest_progression_service_test.dart
-│   └── audits/                    # Verification/audit tests
-│       ├── mix_distribution_audit_test.dart
-│       └── offline_only_audit_test.dart
-└── widget/                        # Widget tests
-   ├── accessibility_widgets_test.dart
-   ├── app_home_test.dart
-   ├── app_onboarding_test.dart
-   ├── app_parent_mode_test.dart
-   ├── app_quiz_flow_test.dart
-   └── app_results_test.dart
+│   ├── audits/                    # Verification and audit tests
+│   ├── core/                      # Core app and provider-focused unit tests
+│   ├── logic/                     # Business logic and progression rules
+│   ├── services/                  # Service layer and repository-adjacent tests
+│   └── assets/                    # Asset- och fixture-relaterade enhetstester
+└── widget/                        # Widget- och flödestester
+   ├── app_*.dart
+   ├── daily_challenge_card_test.dart
+   ├── game_character_test.dart
+   └── mascot_reaction_view_test.dart
 ```
 
 ### Directory Purposes
 
 - **`test/unit/logic/`** – Tests for core game mechanics, difficulty progression, and quiz flow logic
-- **`test/unit/services/`** – Tests for business services (storage, achievements, parent features, offline sync, etc.)
-- **`test/unit/audits/`** – Verification tests that validate system invariants (accessibility compliance, question distribution, offline functionality)
-- **`test/widget/`** – Integration tests for user flows and UI behavior
+- **`test/unit/core/`** – Tests for central providers, config, bootstrap-near logic, and shared app state
+- **`test/unit/services/`** – Tests for business services, persistence-adjacent logic, achievements, parent features, and offline flows
+- **`test/unit/audits/`** – Verification tests that validate system invariants, question distribution, offline behavior, and repo-specific guards
+- **`test/widget/`** – Widget- och användarflödestester; end-to-end smoke ligger i `integration_test/`
 
 ## Test Naming Convention
 
@@ -158,14 +146,13 @@ When adding new tests:
    - Use descriptive test names
 
 4. **Use mocks and fixtures:**
-   - Common mocks in each test file (don't share unless reused 3+ times)
+   - Prefer shared helpers and mocks via `test/test_utils.dart` när samma setup återkommer
    - Keep setup code at top of file
 
 ## Test Quality Standards
 
 - All tests must pass before committing: `flutter test`
 - All tests must be deterministic (no flakiness)
-- Aim for >80% code coverage on core game logic
 - Tests should document expected behavior (act as executable specs)
 
 ## Troubleshooting

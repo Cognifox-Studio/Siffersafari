@@ -13,7 +13,7 @@ Senast uppdaterad: 2026-05-11.
 ## Naming-baseline
 
 - Tekniska filnamn ska vara engelska och använda `snake_case`.
-- Feature-ägd UI ska ligga under `lib/features/<feature>/presentation/widgets/`.
+- Feature-ägd UI ska ligga under `lib/features/<feature>/presentation/`.
 - `lib/presentation/widgets/` är reserverad för verkligt delad UI och app-shell-komponenter.
 
 ## Diátaxis-typer och index

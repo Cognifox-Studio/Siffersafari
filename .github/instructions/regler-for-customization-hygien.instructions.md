@@ -1,7 +1,7 @@
 ---
 name: "Customization-hygien"
-description: "Use when editing chat customization files under .github such as AGENTS.md, copilot-instructions, skills, prompts or agent files. Covers minimalism, path hygiene, trigger wording and link-first maintenance."
-applyTo: ".github/{AGENTS.md,copilot-instructions.md,agents/**/*.md,prompts/**/*.md,instructions/**/*.md,skills/**/SKILL.md,hooks/**/*.json}"
+description: "Use when editing chat customization files under .github such as AGENTS.md, copilot-instructions, skills, prompts, hooks or agent files. Covers minimalism, path hygiene, trigger wording and link-first maintenance."
+applyTo: ".github/{AGENTS.md,copilot-instructions.md,agents/**/*.md,prompts/**/*.md,instructions/**/*.md,skills/**/SKILL.md,hooks/**/*.json,hooks/**/*.ps1}"
 ---
 
 # Regler för customization-hygien
@@ -22,6 +22,7 @@ applyTo: ".github/{AGENTS.md,copilot-instructions.md,agents/**/*.md,prompts/**/*
 
 ## Path- och verklighetskontroll
 - Kontrollera att alla nämnda filer, scripts och relative paths faktiskt finns.
+- Om hook-logik flyttas mellan `.json` och `.ps1` under `.github/hooks/`, håll instruktioner och referenskontroller i sync med båda filtyperna.
 - Kontrollera påståenden mot aktuell kod och aktuella docs, inte mot historiska customization-filer.
 - Om äldre namn eller workflow-spår tas bort: rensa även promptar, skills och instruktioner som fortfarande refererar till dem.
 

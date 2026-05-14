@@ -150,11 +150,11 @@ Exempel:
 ## .github/
 
 - `AGENTS.md` snabb routingyta för repoets anpassade agenter
-- `agents/` repo-specifika agenter som `Beast Mode`, `Plan` och `Customization Maintainer`
+- `agents/` repo-specifika agenter som `Beast Mode`, `Plan`, `Customization Maintainer`, `UI Reviewer` och `release-manager`
 - `instructions/` smala arbetsregler kopplade till filtyper och kodområden
 - `prompts/` workspace-prompter för audit, routing och QA-slice
 - `skills/` repo-specifika arbetsflöden för QA, docs, release, COPPA och assets
-- `hooks/` lätta guardrails för customization-arbete
+- `hooks/` lätta guardrails för customization-arbete via hookdefinitioner och små PowerShell-skript
 - `workflows/ci.yaml` PR-core-smoke samt full smoke + audit på huvudgrenen
 - `workflows/flutter.yml` grundläggande analyze + test
 - `workflows/android-smoke.yml` Android-smoke för APK-flödet
@@ -162,7 +162,6 @@ Exempel:
 - `workflows/play-closed-beta.yml` Play closed beta-flöde
 - `workflows/privacy-policy-pages.yml` publicering av privacy policy-sidor
 - `workflows/release-guard.yml` release sanity + storlekskontroll
-- `workflows/release.yml` release-workflow för Flutter-bygge
 
 ## Namngivning (faktiskt anvand i repo)
 
