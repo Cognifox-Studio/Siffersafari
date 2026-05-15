@@ -49,6 +49,7 @@ Iterable<File> _collectAuditFiles() sync* {
     if (_excludedPaths.contains(relativePath)) continue;
     if (relativePath.startsWith('build/')) continue;
     if (relativePath.startsWith('.dart_tool/')) continue;
+    if (relativePath.startsWith('artifacts/')) continue;
 
     final extensionIndex = relativePath.lastIndexOf('.');
     if (extensionIndex == -1) continue;
