@@ -243,6 +243,26 @@
         color: rgba(255, 249, 240, 0.76);
       }
 
+      .hero-trust-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      .trust-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 14px;
+        border-radius: 999px;
+        background: rgba(255, 249, 240, 0.12);
+        border: 1px solid rgba(255, 249, 240, 0.16);
+        color: #fff9f0;
+        font-size: 0.92rem;
+        font-weight: 800;
+      }
+
       .hero-panel {
         position: relative;
         display: grid;
@@ -415,6 +435,35 @@
         background: linear-gradient(135deg, rgba(255, 228, 189, 0.72), rgba(255, 250, 240, 0.92));
       }
 
+      .closing-cta {
+        background: linear-gradient(135deg, rgba(255, 224, 173, 0.74), rgba(255, 250, 240, 0.96));
+        border: 1px solid rgba(242, 141, 53, 0.24);
+      }
+
+      .closing-cta-grid {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+      }
+
+      .closing-cta-copy {
+        max-width: 58ch;
+      }
+
+      .closing-cta-copy p {
+        margin: 12px 0 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .closing-cta-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
       .quote strong {
         display: block;
         margin-bottom: 8px;
@@ -486,14 +535,18 @@
 
         .nav,
         .cta-row,
-        .footer-links {
+        .footer-links,
+        .closing-cta-actions,
+        .hero-trust-row {
           width: 100%;
         }
 
         .nav a,
         .cta,
         .cta-secondary,
-        .link-pill {
+        .link-pill,
+        .closing-cta-actions .cta,
+        .closing-cta-actions .link-pill {
           width: 100%;
         }
       }
@@ -507,10 +560,10 @@
           <span>Siffersafari</span>
         </a>
         <nav class="nav" aria-label="Snabblänkar">
+          <a href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk">Ladda ner</a>
           <a href="#funktioner">Funktioner</a>
           <a href="#bilder">Skärmbilder</a>
           <a href="./privacy-policy/">Privacy Policy</a>
-          <a href="./project-map/">Projektkarta</a>
         </nav>
       </div>
     </header>
@@ -519,19 +572,25 @@
       <div class="shell hero-card">
         <div class="hero-grid">
           <section>
-            <div class="eyebrow">Matte som känns som ett spel</div>
-            <h1>Få barnet att vilja öppna matteappen igen.</h1>
+            <div class="eyebrow">Android-app för barn som vill spela vidare</div>
+            <h1>Matte som känns roligare att komma tillbaka till.</h1>
             <p class="hero-copy">
-              Siffersafari gör matteträningen lätt att starta och lätt att fortsätta.
+              Siffersafari är byggd för korta pass som faktiskt blir av.
               Barnet möts av quiz, belöningar och storykarta i ett tydligt flöde,
-              medan vuxna behåller kontrollen över innehåll, statistik och uppläsning i ett PIN-skyddat läge.
+              medan vuxna enkelt styr innehåll, statistik och uppläsning i ett PIN-skyddat läge.
             </p>
             <div class="cta-row">
               <a
                 class="cta"
                 href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"
               >
-                Ladda ner och prova
+                Hämta Android-appen
+              </a>
+              <a
+                class="cta-secondary"
+                href="#bilder"
+              >
+                Se hur appen ser ut
               </a>
               <a
                 class="cta-secondary"
@@ -539,44 +598,42 @@
               >
                 Se alla versioner
               </a>
-              <a
-                class="cta-secondary"
-                href="https://github.com/Cognifox-Studio/Siffersafari"
-              >
-                Utforska på GitHub
-              </a>
             </div>
             <p class="hero-note">
-              Ingen inloggning. Ingen molnsync. Bara öppna appen och börja.
+              Testa direkt via APK. Ingen inloggning och ingen uppstart med konto.
             </p>
+            <div class="hero-trust-row" aria-label="Viktiga fördelar">
+              <span class="trust-chip">Fungerar offline</span>
+              <span class="trust-chip">Flera barnprofiler</span>
+              <span class="trust-chip">PIN-skyddat föräldraläge</span>
+            </div>
           </section>
 
           <aside class="hero-panel">
             <article class="stat-card">
-              <div class="stat-label">Varför den känns lätt att använda</div>
-              <div class="stat-value">Snabb start för barnet. Tydlig kontroll för vuxna.</div>
+              <div class="stat-label">Det som gör skillnad direkt</div>
+              <div class="stat-value">Börja snabbt, fortsätt enkelt och se framsteg utan stök.</div>
               <div class="stat-copy">
-                Appen kan fortsätta där barnet slutade, visa framsteg tydligare,
-                ge enkel quizhjälp och läsa upp fråga eller kort feedback direkt på enheten.
+                Fortsätt-knapp, tydligare belöningar, storykarta, quizhjälp och uppläsning gör att appen känns färdig att använda från första testet.
               </div>
             </article>
 
             <div class="panel-grid">
               <article class="mini-card">
-                <strong>Flera profiler</strong>
-                <span>Varje barn får sin egen utveckling, sina egna val och sitt eget sparade läge.</span>
+                <strong>Snabb att återvända till</strong>
+                <span>Barnet kan fortsätta där det slutade i stället för att börja om varje gång.</span>
               </article>
               <article class="mini-card">
-                <strong>Föräldraläge</strong>
-                <span>Vuxna styr räknesätt, ser statistik och slår på uppläsning bakom PIN.</span>
+                <strong>Mer än bara rätt eller fel</strong>
+                <span>Belöningar, story och enkel hjälp gör att träningen känns mer levande.</span>
               </article>
               <article class="mini-card">
-                <strong>Offline-first</strong>
-                <span>Resultat, belöningar och framsteg ligger kvar lokalt på enheten.</span>
+                <strong>Trygg för vuxna</strong>
+                <span>Räknesätt, statistik och stöd ligger bakom ett enkelt PIN-skyddat läge.</span>
               </article>
               <article class="mini-card">
-                <strong>Android redo</strong>
-                <span>Senaste APK går att ladda ner direkt och testas utan extra konto-flöden.</span>
+                <strong>Redo att provas nu</strong>
+                <span>Senaste APK går att ladda ner direkt från GitHub Releases.</span>
               </article>
             </div>
           </aside>
@@ -589,9 +646,9 @@
         <div class="section-card">
           <div class="section-head">
             <div>
-              <h2>Byggd för att bli använd ofta</h2>
+              <h2>Varför familjer lättare säger ja till den</h2>
               <p>
-                Varje del är tänkt att göra träningen snabb att starta, lätt att förstå och enkel att komma tillbaka till.
+                Appen är byggd för att kännas lätt att starta, lätt att förstå och lätt att plocka upp igen nästa dag.
               </p>
             </div>
             <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/blob/main/README.md">Läs mer i README</a>
@@ -600,25 +657,25 @@
           <div class="feature-grid">
             <article class="feature">
               <div class="feature-badge">🎯</div>
-              <h3>Lagom svårt direkt</h3>
+              <h3>Börja på rätt nivå</h3>
               <p>
-                Uppgifterna anpassas efter hur det går, så att barnet oftare möter rätt nivå utan att fastna i för lätta eller för svåra pass.
+                Uppgifterna anpassas efter hur det går, så att barnet snabbare hamnar på en nivå som känns lagom.
               </p>
             </article>
 
             <article class="feature">
               <div class="feature-badge">🧭</div>
-              <h3>Framsteg som syns</h3>
+              <h3>Få framsteg att kännas</h3>
               <p>
-                Camp, märken, garderob och storykarta ger barnet en tydlig känsla av att något faktiskt händer mellan quizpassen.
+                Camp, märken, garderob och storykarta ger barnet en tydlig känsla av att varje pass leder vidare.
               </p>
             </article>
 
             <article class="feature">
               <div class="feature-badge">🔐</div>
-              <h3>Kontroll utan stök</h3>
+              <h3>Stöd utan extra stök</h3>
               <p>
-                Vuxna väljer innehåll per profil och kan snabbt slå på mer stöd när barnet behöver lite extra hjälp.
+                Vuxna kan snabbt slå på mer stöd per profil utan att öppna stora eller tekniska inställningsflöden.
               </p>
             </article>
           </div>
@@ -629,9 +686,9 @@
         <div class="section-card">
           <div class="section-head">
             <div>
-              <h2>Så ser upplevelsen ut</h2>
+              <h2>Så känns appen i handen</h2>
               <p>
-                Tre skärmar som visar hur appen guidar barnet från start till quiz och vidare mot nästa mål.
+                Tre vyer som visar hur barnet går från snabb start till fokuserat quiz och vidare mot nästa mål.
               </p>
             </div>
             <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk">Testa APK</a>
@@ -645,7 +702,7 @@
               >
               <div class="shot-copy">
                 <strong>Hemskärm</strong>
-                <span>En tydlig startsida med stor spelknapp och snabb väg tillbaka in i nästa pass.</span>
+                <span>Stor spelknapp, tydlig riktning och snabb väg tillbaka in i nästa mattepass.</span>
               </div>
             </a>
 
@@ -656,7 +713,7 @@
               >
               <div class="shot-copy">
                 <strong>Quiz</strong>
-                <span>En ren quizvy där barnet kan hålla fokus och få hjälp utan att tappa tempo.</span>
+                <span>En lugn quizvy där barnet kan hålla fokus och få hjälp utan att tappa fart.</span>
               </div>
             </a>
 
@@ -667,17 +724,39 @@
               >
               <div class="shot-copy">
                 <strong>Storykarta</strong>
-                <span>Storykartan visar nästa steg och gör det lättare att känna att övningen leder någonstans.</span>
+                <span>Storykartan visar nästa steg och gör det lättare att känna att träningen leder vidare.</span>
               </div>
             </a>
           </div>
 
           <aside class="quote">
-            <strong>Trygg att använda</strong>
+            <strong>Trygg att testa hemma direkt</strong>
             <p>
               Ingen inloggning, inga annonser och ingen extern spårning av barnets speldata.
             </p>
           </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card closing-cta">
+          <div class="closing-cta-grid">
+            <div class="closing-cta-copy">
+              <h2>Redo att prova Siffersafari?</h2>
+              <p>
+                Ladda ner senaste APK och testa appen på Android. Det går snabbt att komma igång och du ser direkt hur flödet känns i praktiken.
+              </p>
+            </div>
+            <div class="closing-cta-actions">
+              <a
+                class="cta"
+                href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"
+              >
+                Hämta APK
+              </a>
+              <a class="link-pill" href="./privacy-policy/">Läs om integritet</a>
+            </div>
+          </div>
         </div>
       </section>
     </div>
@@ -687,7 +766,7 @@
         <div>Siffersafari på GitHub Pages</div>
         <div class="footer-links">
           <a class="link-pill" href="./privacy-policy/">Privacy Policy</a>
-          <a class="link-pill" href="./project-map/">Projektkarta</a>
+          <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari">GitHub</a>
           <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/releases">Releases</a>
         </div>
       </div>
