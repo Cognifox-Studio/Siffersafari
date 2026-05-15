@@ -8,7 +8,7 @@
 
 ## Nuläge (2026-05-14)
 
-**Version:** 1.4.1+16
+**Version:** 1.4.1+17
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
 **flutter analyze:** Global analyze passerar utan issues ✅  
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
