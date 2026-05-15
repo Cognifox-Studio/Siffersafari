@@ -1,13 +1,696 @@
 <!doctype html>
-<html lang="en">
+<html lang="sv">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=./privacy-policy/">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="Siffersafari är ett offline-first mattespel för barn med adaptiv träning, flera barnprofiler och PIN-skyddat föräldraläge."
+    >
     <title>Siffersafari</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f0df;
+        --bg-deep: #1f4f43;
+        --surface: rgba(255, 251, 244, 0.86);
+        --surface-strong: #fffaf0;
+        --text: #20312b;
+        --muted: #5c6f68;
+        --line: rgba(32, 49, 43, 0.12);
+        --accent: #f28d35;
+        --accent-deep: #c76317;
+        --accent-soft: #ffe4bd;
+        --forest: #2c7a5d;
+        --forest-deep: #1f5f48;
+        --shadow: 0 20px 60px rgba(31, 49, 43, 0.14);
+        --radius-xl: 32px;
+        --radius-lg: 24px;
+        --radius-md: 18px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Trebuchet MS", "Gill Sans", "Avenir Next", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(242, 141, 53, 0.18), transparent 28%),
+          radial-gradient(circle at 85% 20%, rgba(44, 122, 93, 0.16), transparent 25%),
+          linear-gradient(180deg, #fff6e8 0%, var(--bg) 45%, #f1ead7 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      img {
+        display: block;
+        max-width: 100%;
+      }
+
+      .shell {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      .topbar {
+        padding: 22px 0 10px;
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .brand {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+        font-weight: 900;
+        letter-spacing: 0.02em;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, var(--accent) 0%, #ffd36c 100%);
+        color: #fff;
+        box-shadow: 0 12px 24px rgba(242, 141, 53, 0.28);
+        font-size: 22px;
+      }
+
+      .nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .nav a,
+      .link-pill {
+        padding: 10px 14px;
+        border-radius: 999px;
+        text-decoration: none;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(32, 49, 43, 0.08);
+        color: var(--muted);
+        font-size: 0.96rem;
+        font-weight: 700;
+        backdrop-filter: blur(8px);
+      }
+
+      .hero {
+        position: relative;
+        padding: 18px 0 54px;
+      }
+
+      .hero-card {
+        overflow: hidden;
+        position: relative;
+        border-radius: var(--radius-xl);
+        padding: 32px;
+        background:
+          linear-gradient(135deg, rgba(31, 95, 72, 0.98) 0%, rgba(44, 122, 93, 0.96) 50%, rgba(70, 153, 108, 0.96) 100%);
+        color: #fff9f0;
+        box-shadow: var(--shadow);
+      }
+
+      .hero-card::before,
+      .hero-card::after {
+        content: "";
+        position: absolute;
+        border-radius: 999px;
+        pointer-events: none;
+      }
+
+      .hero-card::before {
+        width: 280px;
+        height: 280px;
+        top: -110px;
+        right: -70px;
+        background: rgba(255, 222, 163, 0.18);
+      }
+
+      .hero-card::after {
+        width: 220px;
+        height: 220px;
+        bottom: -110px;
+        left: -60px;
+        background: rgba(255, 161, 66, 0.16);
+      }
+
+      .hero-grid {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+        gap: 28px;
+        align-items: center;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 249, 240, 0.12);
+        border: 1px solid rgba(255, 249, 240, 0.14);
+        font-size: 0.84rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        line-height: 1.02;
+        font-family: Georgia, "Palatino Linotype", serif;
+      }
+
+      .hero h1 {
+        margin-top: 18px;
+        font-size: clamp(2.6rem, 6vw, 5rem);
+        max-width: 10ch;
+      }
+
+      .hero-copy {
+        margin-top: 18px;
+        max-width: 58ch;
+        color: rgba(255, 249, 240, 0.9);
+        font-size: 1.08rem;
+        line-height: 1.7;
+      }
+
+      .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .cta,
+      .cta-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 50px;
+        padding: 0 20px;
+        border-radius: 999px;
+        font-weight: 900;
+        text-decoration: none;
+        transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+
+      .cta:hover,
+      .cta-secondary:hover,
+      .shot:hover,
+      .nav a:hover,
+      .link-pill:hover {
+        transform: translateY(-2px);
+      }
+
+      .cta {
+        background: linear-gradient(135deg, #ffd87f 0%, var(--accent) 100%);
+        color: #492100;
+        box-shadow: 0 14px 30px rgba(242, 141, 53, 0.28);
+      }
+
+      .cta-secondary {
+        background: rgba(255, 249, 240, 0.12);
+        border: 1px solid rgba(255, 249, 240, 0.16);
+        color: #fff9f0;
+      }
+
+      .hero-note {
+        margin-top: 16px;
+        font-size: 0.95rem;
+        color: rgba(255, 249, 240, 0.76);
+      }
+
+      .hero-panel {
+        position: relative;
+        display: grid;
+        gap: 14px;
+      }
+
+      .stat-card,
+      .mini-card,
+      .section-card,
+      .shot,
+      .quote {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        backdrop-filter: blur(8px);
+        box-shadow: var(--shadow);
+      }
+
+      .stat-card {
+        padding: 18px;
+        border-radius: var(--radius-lg);
+        color: var(--text);
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.88rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .stat-value {
+        margin-top: 8px;
+        font-size: clamp(1.5rem, 3vw, 2.2rem);
+        font-weight: 900;
+      }
+
+      .stat-copy {
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .panel-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .mini-card {
+        padding: 16px;
+        border-radius: 20px;
+        color: var(--text);
+      }
+
+      .mini-card strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 1rem;
+      }
+
+      .mini-card span {
+        color: var(--muted);
+        line-height: 1.55;
+        font-size: 0.95rem;
+      }
+
+      .content {
+        padding-bottom: 56px;
+      }
+
+      .section {
+        margin-top: 28px;
+      }
+
+      .section-card {
+        border-radius: var(--radius-xl);
+        padding: 28px;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 18px;
+        margin-bottom: 22px;
+      }
+
+      .section-head p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        max-width: 60ch;
+        line-height: 1.7;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .feature {
+        padding: 18px;
+        border-radius: var(--radius-md);
+        background: var(--surface-strong);
+        border: 1px solid rgba(32, 49, 43, 0.08);
+      }
+
+      .feature-badge {
+        width: 44px;
+        height: 44px;
+        display: grid;
+        place-items: center;
+        border-radius: 14px;
+        background: linear-gradient(135deg, rgba(242, 141, 53, 0.14), rgba(44, 122, 93, 0.14));
+        font-size: 22px;
+      }
+
+      .feature h3 {
+        margin-top: 16px;
+        font-size: 1.3rem;
+      }
+
+      .feature p {
+        margin: 10px 0 0;
+        color: var(--muted);
+        line-height: 1.65;
+      }
+
+      .shots-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .shot {
+        overflow: hidden;
+        border-radius: 26px;
+        text-decoration: none;
+        color: var(--text);
+      }
+
+      .shot img {
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+        width: 100%;
+        background: linear-gradient(180deg, #ecf3ef 0%, #dfe7e0 100%);
+      }
+
+      .shot-copy {
+        padding: 16px;
+      }
+
+      .shot-copy strong {
+        display: block;
+        font-size: 1.04rem;
+      }
+
+      .shot-copy span {
+        display: block;
+        margin-top: 8px;
+        color: var(--muted);
+        line-height: 1.55;
+      }
+
+      .quote {
+        margin-top: 18px;
+        border-radius: 26px;
+        padding: 20px 22px;
+        background: linear-gradient(135deg, rgba(255, 228, 189, 0.72), rgba(255, 250, 240, 0.92));
+      }
+
+      .quote strong {
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .quote p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .footer {
+        padding: 18px 0 48px;
+        color: var(--muted);
+      }
+
+      .footer-inner {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 0 0;
+      }
+
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      @media (max-width: 980px) {
+        .hero-grid,
+        .feature-grid,
+        .shots-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .panel-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .section-head,
+        .topbar-inner,
+        .footer-inner {
+          align-items: start;
+          flex-direction: column;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 20px, 1180px);
+        }
+
+        .hero-card,
+        .section-card {
+          padding: 22px;
+          border-radius: 24px;
+        }
+
+        .panel-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero h1 {
+          max-width: 12ch;
+        }
+
+        .nav,
+        .cta-row,
+        .footer-links {
+          width: 100%;
+        }
+
+        .nav a,
+        .cta,
+        .cta-secondary,
+        .link-pill {
+          width: 100%;
+        }
+      }
+    </style>
   </head>
   <body>
-    <p>Redirecting to the privacy policy...</p>
-    <p><a href="./privacy-policy/">Open the privacy policy</a></p>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="./">
+          <span class="brand-mark">∑</span>
+          <span>Siffersafari</span>
+        </a>
+        <nav class="nav" aria-label="Snabblänkar">
+          <a href="#funktioner">Funktioner</a>
+          <a href="#bilder">Bilder</a>
+          <a href="./privacy-policy/">Privacy Policy</a>
+          <a href="./project-map/">Project Map</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="hero">
+      <div class="shell hero-card">
+        <div class="hero-grid">
+          <section>
+            <div class="eyebrow">Offline-first matteapp för barn</div>
+            <h1>Spela, räkna och fortsätt där ni slutade.</h1>
+            <p class="hero-copy">
+              Siffersafari gör daglig matteträning enkel på samma Android-enhet.
+              Barnet får ett tydligt spel-flöde med quiz, resultat och storykarta,
+              medan vuxna styr innehåll och tillgänglighet i ett PIN-skyddat läge.
+            </p>
+            <div class="cta-row">
+              <a
+                class="cta"
+                href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"
+              >
+                Ladda ner senaste APK
+              </a>
+              <a
+                class="cta-secondary"
+                href="https://github.com/Cognifox-Studio/Siffersafari/releases"
+              >
+                Se releases
+              </a>
+              <a
+                class="cta-secondary"
+                href="https://github.com/Cognifox-Studio/Siffersafari"
+              >
+                Öppna repo
+              </a>
+            </div>
+            <p class="hero-note">
+              Android-first, flera barnprofiler, lokalt sparad progression och inget krav på konto eller molnsync.
+            </p>
+          </section>
+
+          <aside class="hero-panel">
+            <article class="stat-card">
+              <div class="stat-label">Vad som är landat nu</div>
+              <div class="stat-value">Resume, camp, story, quizhjälp och TTS</div>
+              <div class="stat-copy">
+                Appen stödjer nu tydligare fortsätt-flöde, samlarspår på hemvyn,
+                nästa-biome-preview, pedagogisk hjälp i quiz och första offline-TTS-slicen.
+              </div>
+            </article>
+
+            <div class="panel-grid">
+              <article class="mini-card">
+                <strong>Flera profiler</strong>
+                <span>Varje barn har egen progression, egna inställningar och eget resume-spår.</span>
+              </article>
+              <article class="mini-card">
+                <strong>Föräldraläge</strong>
+                <span>PIN-skyddad dashboard för räknesätt, statistik, uppläsning och andra val.</span>
+              </article>
+              <article class="mini-card">
+                <strong>Offline-first</strong>
+                <span>Quizhistorik, rewards och progression sparas lokalt på enheten via Hive.</span>
+              </article>
+              <article class="mini-card">
+                <strong>Android redo</strong>
+                <span>Bygg-, release- och APK-flödet är anpassat för direkt installation från GitHub Releases.</span>
+              </article>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <div class="shell content">
+      <section class="section" id="funktioner">
+        <div class="section-card">
+          <div class="section-head">
+            <div>
+              <h2>Det här märks i appen</h2>
+              <p>
+                Fokus ligger på en tydlig barnloop och få, pålitliga vuxenval i stället för stora moln- eller konto-flöden.
+              </p>
+            </div>
+            <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/blob/main/README.md">Läs mer i README</a>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature">
+              <div class="feature-badge">🎯</div>
+              <h3>Adaptiv träning</h3>
+              <p>
+                Frågorna justeras efter prestation så att tempot hålls lagom utmanande i stället för statiskt.
+              </p>
+            </article>
+
+            <article class="feature">
+              <div class="feature-badge">🧭</div>
+              <h3>Story och belöningar</h3>
+              <p>
+                Camp, märken, inventory och storykarta gör progressionen mer synlig utan att bryta quizets enkelhet.
+              </p>
+            </article>
+
+            <article class="feature">
+              <div class="feature-badge">🔐</div>
+              <h3>Vuxenkontroll</h3>
+              <p>
+                Föräldraläget styr räknesätt, återhämtning och uppläsning per profil bakom PIN-skydd.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="bilder">
+        <div class="section-card">
+          <div class="section-head">
+            <div>
+              <h2>Nuvarande appvy</h2>
+              <p>
+                Exempel från den aktuella Android-versionen: hemvy, quizflöde och storykarta.
+              </p>
+            </div>
+            <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk">Testa APK</a>
+          </div>
+
+          <div class="shots-grid">
+            <a class="shot" href="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/home_raw.png">
+              <img
+                src="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/home_raw.png"
+                alt="Siffersafaris hemvy med spelkort och camp"
+              >
+              <div class="shot-copy">
+                <strong>Hemskärm</strong>
+                <span>Primär CTA, camp, märken och snabb väg in i nästa quizpass.</span>
+              </div>
+            </a>
+
+            <a class="shot" href="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/quiz_question_raw.png">
+              <img
+                src="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/quiz_question_raw.png"
+                alt="Quizvy med fråga och svarsalternativ"
+              >
+              <div class="shot-copy">
+                <strong>Quiz</strong>
+                <span>Tydlig fråga, låg friktion och stöd för pedagogisk feedback när barnet fastnar.</span>
+              </div>
+            </a>
+
+            <a class="shot" href="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/story_map_ready_check.png">
+              <img
+                src="https://raw.githubusercontent.com/Cognifox-Studio/Siffersafari/main/artifacts/play_console_raw/story_map_ready_check.png"
+                alt="Storykarta med nästa biome-preview"
+              >
+              <div class="shot-copy">
+                <strong>Storykarta</strong>
+                <span>Nästa biome syns tydligare och gör det lättare att förstå vad som väntar sen.</span>
+              </div>
+            </a>
+          </div>
+
+          <aside class="quote">
+            <strong>Integritet först</strong>
+            <p>
+              Kärnflödet fungerar utan konto, utan annonser och utan att barnets data skickas till externa servrar.
+            </p>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <div class="shell footer-inner">
+        <div>Siffersafari på GitHub Pages</div>
+        <div class="footer-links">
+          <a class="link-pill" href="./privacy-policy/">Privacy Policy</a>
+          <a class="link-pill" href="./project-map/">Project Map</a>
+          <a class="link-pill" href="https://github.com/Cognifox-Studio/Siffersafari/releases">Releases</a>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
