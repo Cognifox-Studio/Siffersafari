@@ -64,7 +64,7 @@ void main() {
         AppConstants.mediumAnimationDuration +
             const Duration(milliseconds: 150),
       );
-      await tester.tap(multiplication);
+      await tapInteractiveDescendant(tester, multiplication);
       await pumpUntilFound(tester, find.byType(QuestionCard));
 
       final speakButton = find.byKey(const Key('quiz_tts_button'));

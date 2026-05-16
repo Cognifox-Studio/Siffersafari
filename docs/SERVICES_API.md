@@ -1,6 +1,6 @@
 ﻿# Services API (As-Is)
 
-Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-05-14).
+Detta dokument beskriver de centrala tjansterna i aktuell implementation (uppdaterad 2026-05-16).
 
 ## Oversikt
 
@@ -88,6 +88,8 @@ Ansvar:
 - bygga quest-path utifran grade/age
 - ge current status och next quest
 - filtrera path pa tillatna operationer
+- normalisera synlig kartlangd till 10 stopp for easy-only-path och 30 stopp nar medium ar med
+- fylla for kort filtrerad path deterministiskt med sena delstopp (`__del_N`) sa att next-quest-resolution och kartlangd forblir stabila
 
 Anvands av:
 - `UserNotifier`
@@ -100,6 +102,7 @@ Ansvar:
 - mappa quest-status till UI-fardig storymodell
 - satta node states (completed/current/upcoming)
 - skapa chapter/landmark metadata
+- skapa tillrackligt med objective beats och landmarks for de langre 10/30-stoppskartorna
 - ge `storyProgressProvider` ett read-only underlag for hemvyn och storykartan
 
 Avgransning:

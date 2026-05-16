@@ -108,7 +108,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'Skapa en profil första gången så spelet kan spara poäng, nivå och anpassa svårighetsgrad.',
+                              'Skapa en profil. Sedan kör vi.',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
@@ -144,41 +144,6 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        Text(
-                          'Du kan skapa fler profiler senare i Inställningar.',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: mutedOnPrimary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AppConstants.defaultPadding),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: AppConstants.smallPadding,
-                          runSpacing: AppConstants.microSpacing6,
-                          children: [
-                            Image.asset(
-                              'assets/images/ui/ic_ui_star.png',
-                              width: 24,
-                              height: 24,
-                            ),
-                            Text(
-                              'Redo för matte-äventyr!',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(
-                                    color: mutedOnPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
                         ),
                       ],
                     ),

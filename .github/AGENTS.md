@@ -11,8 +11,12 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 ## Snabbstart
 
 - Om scopet är oklart: kör `.github/prompts/repo-start-routing.prompt.md` först.
+- Om ett analyze-, test-, emulator- eller buildfel precis klistrats in: kör `.github/prompts/qa-failure-router.prompt.md` först.
+- Om ett bygg-, test- eller appfel uppstår: kör `.github/prompts/felsok.prompt.md` först.
 - Om v1.5.0 resume- eller persistensscopet ska auditeras: kör `.github/prompts/resume-v150-persistence-audit.prompt.md`.
-- Om uppgiften bara gäller `.github/`: välj `Customization Maintainer` och använd gärna `.github/skills/granska-github-customizations/SKILL.md`.
+- Om uppgiften bara gäller `.github/`: välj `Customization Maintainer` och använd gärna `.github/prompts/customization-audit-pass.prompt.md` eller `.github/skills/granska-github-customizations/SKILL.md`.
+- Om en read-only cleanup-audit behövs: kör `.github/prompts/night-cleanup-audit.prompt.md`.
+- Inför demo, handoff eller releasebedömning: kör `.github/prompts/release-go-no-go.prompt.md`.
 - Om användaren ber om verifiering eller du har en blandad diff: använd `.github/prompts/repo-qa-slice.prompt.md` eller relevant QA-skill direkt.
 
 ## Snabb routing
@@ -26,12 +30,30 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 
 ## Vanliga skills
 
+### QA och felsökning
+
 - `.github/skills/testa-att-appen-fungerar/SKILL.md` för repo-standardiserad QA.
-- `.github/skills/testa-att-quiz-sparas-ratt/SKILL.md` för resume, replay, session och resultat-merge.
-- `.github/skills/granska-legacy-hive-format/SKILL.md` för evidensbaserad audit innan legacy-format eller fallback-parsning städas bort.
+- `.github/skills/laga-kraschande-tester/SKILL.md` när widget- eller integrationstester timeoutar eller tappar synk.
+- `.github/skills/hantera-flutter-test-animationer/SKILL.md` för animationstester, teardown-varningar och testrelaterade encoding-problem.
+- `.github/skills/testa-innan-vi-sparar/SKILL.md` för en liten pre-commit-verifiering.
 - `.github/skills/felsok-android-emulatorn/SKILL.md` för Pixel_6-, adb- och stale APK-problem.
-- `.github/skills/uppdatera-dokumentationen/SKILL.md` när docs måste spegla verkligheten exakt.
+- `.github/skills/testa-att-quiz-sparas-ratt/SKILL.md` för resume, replay, session och resultat-merge.
+- `.github/skills/mocka-temporar-offline-session/SKILL.md` när offline- eller quizpersistensflöden behöver mockas i test.
+
+### Arkitektur och refaktor
+
+- `.github/skills/flytta-ut-logik-fran-ui/SKILL.md` när widgets bär för mycket logik eller sidoeffekter.
+- `.github/skills/bryt-ut-delade-visuella-komponenter/SKILL.md` när feature-UI behöver brytas ut eller delas säkert.
+- `.github/skills/validera-formular-och-input/SKILL.md` för formulär, `TextEditingController`, validering och submit-flöden.
+
+### Audit och specialspår
+
 - `.github/skills/granska-github-customizations/SKILL.md` för path-, trigger- och dupliceringsaudit i `.github/`.
+- `.github/skills/uppdatera-dokumentationen/SKILL.md` när docs måste spegla verkligheten exakt.
+- `.github/skills/granska-legacy-hive-format/SKILL.md` för evidensbaserad audit innan legacy-format eller fallback-parsning städas bort.
+- `.github/skills/verifiera-coppa-regler/SKILL.md` för policy-, tracking- och barnsäkera compliancekontroller.
+- `.github/skills/kolla-om-appen-ar-redo-att-slappas/SKILL.md` för release readiness.
+- Övriga nischspår finns under `.github/skills/`, till exempel assets, analytics, UX-copy och difficulty-audits.
 
 ## QA-genväg
 

@@ -79,7 +79,7 @@ void main() {
         AppConstants.mediumAnimationDuration +
             const Duration(milliseconds: 150),
       );
-      await tester.tap(multiplication);
+      await tapInteractiveDescendant(tester, multiplication);
       await pumpUntilFound(tester, find.byType(QuestionCard));
 
       expect(find.byType(QuestionCard), findsOneWidget);

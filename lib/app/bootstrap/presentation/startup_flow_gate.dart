@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/onboarding/presentation/screens/initial_profile_setup_screen.dart';
 import 'package:siffersafari/features/profiles/presentation/screens/profile_selection_screen.dart';
@@ -58,7 +59,7 @@ class _StartupFlowGateState extends ConsumerState<StartupFlowGate> {
     final userState = ref.watch(userProvider);
     final allUsers = userState.allUsers;
 
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final mutedOnPrimary = Theme.of(context)
         .colorScheme
         .onPrimary
@@ -71,7 +72,7 @@ class _StartupFlowGateState extends ConsumerState<StartupFlowGate> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              CircularProgressIndicator(color: themeCfg.accentColor),
+              CircularProgressIndicator(color: themeColors.accentColor),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(
                 'Startar…',

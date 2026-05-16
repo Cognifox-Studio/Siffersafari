@@ -121,6 +121,56 @@ class StoryProgressionService {
       'Den sista bron leder rakt mot målet.',
       'bro',
     ),
+    _LandmarkData(
+      'Repstigen',
+      'Fler rep hänger mellan träden längre fram.',
+      'bro',
+    ),
+    _LandmarkData(
+      'Bärgläntan',
+      'Små bär visar vägen genom den gröna gläntan.',
+      'frukt',
+    ),
+    _LandmarkData(
+      'Ritlägret',
+      'Nya markeringar på kartan hjälper expeditionen.',
+      'karta',
+    ),
+    _LandmarkData(
+      'Stenringen',
+      'Gamla stenar ligger i en ring mitt på stigen.',
+      'tempel',
+    ),
+    _LandmarkData(
+      'Nattbrunnen',
+      'Mörkt vatten glittrar mellan rötterna.',
+      'fors',
+    ),
+    _LandmarkData(
+      'Fågeltoppen',
+      'Högt uppe i träden hörs nya ledtrådar.',
+      'skog',
+    ),
+    _LandmarkData(
+      'Skymningslägret',
+      'Expeditionen pausar och planerar nästa etapp.',
+      'koja',
+    ),
+    _LandmarkData(
+      'Solporten',
+      'En ljus port visar vägen mot nästa stora mål.',
+      'soltempel',
+    ),
+    _LandmarkData(
+      'Månlägret',
+      'Ett lugnt nattläger samlar kraft inför slutspurten.',
+      'koja',
+    ),
+    _LandmarkData(
+      'Gryningsporten',
+      'Det sista valvet öppnar vägen mot nästa värld.',
+      'port',
+    ),
   ];
 
   StoryProgress createStoryProgress({
@@ -254,6 +304,30 @@ class StoryProgressionService {
       const _StoryBeat(
         title: 'Uppdrag: Vidare mot templet',
         body: 'Bron håller. Nu går vi mot nästa delmål.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Tänd lägerelden',
+        body: 'Vi behöver ljus för att läsa de nya spåren.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Fyll vattenflaskor',
+        body: 'Räkna rätt så hinner gruppen vidare i värmen.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Läs kartbiten',
+        body: 'Fler rätt visar var stigen fortsätter.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Håll tempot',
+        body: 'Vi är nära nästa delmål. Fortsätt framåt.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Skydda fynden',
+        body: 'Sortera utrustningen så att inget tappas bort.',
+      ),
+      const _StoryBeat(
+        title: 'Uppdrag: Nå solporten',
+        body: 'Sista stegen i kapitlet leder mot nästa biome.',
       ),
     ];
 

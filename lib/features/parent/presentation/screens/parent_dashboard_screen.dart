@@ -67,7 +67,7 @@ class ParentDashboardScreen extends ConsumerWidget {
               child: user == null
                   ? Center(
                       child: Text(
-                        'Ingen aktiv användare',
+                        'Ingen aktiv profil',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: mutedOnPrimary,

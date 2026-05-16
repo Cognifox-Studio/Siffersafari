@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
@@ -15,6 +14,7 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
@@ -47,7 +47,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _checkedOnboardingForUserId;
   String? _loadedReviewSummaryForUserId;
-  String _appVersionLabel = '...';
   bool _onboardingPushInFlight = false;
   CharacterReaction _mascotReaction = CharacterReaction.idle;
   int _mascotReactionNonce = 0;
@@ -55,7 +54,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _loadAppVersion();
     // Load existing users and start background music
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final notifier = ref.read(userProvider.notifier);
@@ -109,25 +107,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         if (mounted) {
           _onboardingPushInFlight = false;
         }
-      });
-    }
-  }
-
-  Future<void> _loadAppVersion() async {
-    try {
-      final packageInfo = await PackageInfo.fromPlatform();
-      final versionLabel = packageInfo.buildNumber.isEmpty
-          ? packageInfo.version
-          : '${packageInfo.version}+${packageInfo.buildNumber}';
-
-      if (!mounted) return;
-      setState(() {
-        _appVersionLabel = versionLabel;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _appVersionLabel = 'okänd';
       });
     }
   }
@@ -259,12 +238,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final backgroundAsset = themeCfg.backgroundAsset;
     final questHeroAsset = themeCfg.questHeroAsset;
     final characterAsset = themeCfg.characterAsset;
-    final accentColor = themeCfg.accentColor;
+    final themeColors = context.appThemeColors;
+    final accentColor = themeColors.accentColor;
 
     final scheme = Theme.of(context).colorScheme;
     final onPrimary = scheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-    final faintOnPrimary = onPrimary.withValues(alpha: AppOpacities.faintText);
 
     final parentAllowedOps = user == null
         ? _defaultAllowedOperations()
@@ -407,13 +386,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   PlayfulInfoChip(
                                     label: 'Uppdrag',
                                     icon: Icons.explore_rounded,
-                                    color: themeCfg.secondaryActionColor,
+                                    color: themeColors.secondaryActionColor,
                                   ),
                                 if (isDailyChallengeCompleted)
                                   PlayfulInfoChip(
                                     label: 'Dagens runda klar',
                                     icon: Icons.check_circle_rounded,
-                                    color: themeCfg.progressCompletedColor,
+                                    color: themeColors.progressCompletedColor,
                                   ),
                               ],
                             ),
@@ -428,7 +407,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: onPrimary,
-                                foregroundColor: themeCfg.primaryActionColor,
+                                foregroundColor: themeColors.primaryActionColor,
                                 minimumSize: const Size.fromHeight(60),
                               ),
                               icon: Icon(
@@ -445,8 +424,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: AppConstants.defaultPadding),
-                            HomeBadgeAlbum(achievementIds: user.achievements),
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),
                             ElevatedButton(
@@ -468,7 +445,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          '🎮 Mer spel',
+                          'Välj räknesätt',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     color: onPrimary,
@@ -479,36 +456,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     ],
 
                     const SizedBox(height: AppConstants.defaultPadding),
-
-                    if (hasStoryQuest)
-                      HomeStoryProgressCard(
-                        story: storyProgress,
-                        heroAsset: questHeroAsset,
-                        backgroundAsset: backgroundAsset,
-                        characterAsset: characterAsset,
-                        primaryActionColor: themeCfg.primaryActionColor,
-                        secondaryActionColor: themeCfg.secondaryActionColor,
-                        accentColor: accentColor,
-                        onPrimary: onPrimary,
-                        mutedOnPrimary: mutedOnPrimary,
-                        faintOnPrimary: onPrimary.withValues(
-                          alpha: AppOpacities.faintText,
-                        ),
-                        cacheWidth: questHeroCacheWidth,
-                        cacheHeight: questHeroCacheHeight,
-                        onStartQuest: () => _startQuiz(
-                          operationType: userState.questStatus!.quest.operation,
-                          difficulty: userState.questStatus!.quest.difficulty,
-                        ),
-                        onOpenMap: () => context.pushSmooth(
-                          const StoryMapScreen(),
-                        ),
-                      ),
-
-                    const SizedBox(height: AppConstants.largePadding),
-
-                    if (user != null)
-                      const SizedBox(height: AppConstants.largePadding),
 
                     // Operation selection (responsive grid)
                     if (user != null)
@@ -527,15 +474,50 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
 
-                    const SizedBox(height: AppConstants.defaultPadding),
-
-                    // Version Info
-                    Text(
-                      'Version $_appVersionLabel',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: faintOnPrimary,
+                    if (user != null) ...[
+                      const SizedBox(height: AppConstants.largePadding),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Mer att göra',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                      ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      if (hasStoryQuest)
+                        HomeStoryProgressCard(
+                          story: storyProgress,
+                          heroAsset: questHeroAsset,
+                          backgroundAsset: backgroundAsset,
+                          characterAsset: characterAsset,
+                          primaryActionColor: themeColors.primaryActionColor,
+                          secondaryActionColor: themeColors.secondaryActionColor,
+                          accentColor: accentColor,
+                          onPrimary: onPrimary,
+                          mutedOnPrimary: mutedOnPrimary,
+                          faintOnPrimary: onPrimary.withValues(
+                            alpha: AppOpacities.faintText,
                           ),
-                    ),
+                          cacheWidth: questHeroCacheWidth,
+                          cacheHeight: questHeroCacheHeight,
+                          onStartQuest: () => _startQuiz(
+                            operationType:
+                                userState.questStatus!.quest.operation,
+                            difficulty: userState.questStatus!.quest.difficulty,
+                          ),
+                          onOpenMap: () => context.pushSmooth(
+                            const StoryMapScreen(),
+                          ),
+                        ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      HomeBadgeAlbum(achievementIds: user.achievements),
+                    ],
+
+                    const SizedBox(height: AppConstants.defaultPadding),
                   ],
                 ),
               ),
@@ -556,7 +538,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     IconData icon,
     String? assetPath,
   ) {
-    final themeCfg = ref.read(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     final cardContent = PlayfulPanel(
@@ -565,7 +547,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         operationType: operation,
         difficulty: DifficultyLevel.easy,
       ),
-      highlightColor: themeCfg.primaryActionColor,
+      highlightColor: themeColors.primaryActionColor,
       padding: const EdgeInsets.all(AppConstants.microSpacing6),
       child: LayoutBuilder(
         builder: (context, constraints) {
@@ -582,10 +564,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 width: iconBubbleSize,
                 height: iconBubbleSize,
                 decoration: BoxDecoration(
-                  color: themeCfg.primaryActionColor.withValues(alpha: 0.18),
+                  color: themeColors.primaryActionColor.withValues(alpha: 0.18),
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: themeCfg.primaryActionColor.withValues(alpha: 0.32),
+                    color: themeColors.primaryActionColor.withValues(
+                      alpha: 0.32,
+                    ),
                   ),
                 ),
                 child: Hero(

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 class PrivacyPolicyScreen extends ConsumerWidget {
@@ -10,7 +9,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final subtleOnPrimary =
@@ -155,7 +154,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 decoration: BoxDecoration(
-                  color: themeCfg.accentColor.withValues(
+                  color: themeColors.accentColor.withValues(
                     alpha: AppOpacities.highlightStrong,
                   ),
                   borderRadius:
@@ -168,7 +167,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       children: [
                         Icon(
                           Icons.check_circle,
-                          color: themeCfg.accentColor,
+                          color: themeColors.accentColor,
                           size: 20,
                         ),
                         const SizedBox(width: 8),

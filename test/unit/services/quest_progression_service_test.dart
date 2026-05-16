@@ -26,7 +26,7 @@ void main() {
       expect(status.isCompleted, isFalse);
     });
 
-    test('middle-path innehåller 20 quests för hela kartan', () {
+    test('middle-path innehåller 30 quests för hela kartan', () {
       const user = UserProgress(
         userId: 'u1',
         name: 'Test',
@@ -35,12 +35,12 @@ void main() {
 
       final path = service.questsForUser(user);
 
-      expect(path, hasLength(20));
+      expect(path, hasLength(30));
       expect(path.first.id, 'q_plus_easy');
-      expect(path.last.id, 'q_div_medium_4');
+      expect(path.last.id, 'q_div_medium_4__del_2');
     });
 
-    test('Åk 1– 2 innehåller bara easy-quests', () {
+    test('Åk 1–2 får exakt 10 stopp även med bara plus och minus', () {
       const user = UserProgress(
         userId: 'u1',
         name: 'Test',
@@ -51,12 +51,27 @@ void main() {
       final firstId = service.firstQuestId(user);
       expect(firstId, 'q_plus_easy');
 
-      // Jump to last easy quest and ensure next is null (no medium in path).
-      final nextAfterDivEasy = service.nextQuestId(
-        user: user,
-        currentQuestId: 'q_div_easy',
+      final path = service.questsForUser(
+        user,
+        allowedOperations: {
+          OperationType.addition,
+          OperationType.subtraction,
+        },
       );
-      expect(nextAfterDivEasy, isNull);
+
+      expect(path, hasLength(10));
+      expect(path.every((quest) => quest.difficulty.name == 'easy'), isTrue);
+      expect(path.last.id, 'q_minus_easy_3__del_2');
+
+      final nextAfterLastEasy = service.nextQuestId(
+        user: user,
+        currentQuestId: path.last.id,
+        allowedOperations: {
+          OperationType.addition,
+          OperationType.subtraction,
+        },
+      );
+      expect(nextAfterLastEasy, isNull);
     });
 
     test(
@@ -76,8 +91,15 @@ void main() {
           allowedOperations: {OperationType.division},
         );
 
+        final path = service.questsForUser(
+          user,
+          allowedOperations: {OperationType.division},
+        );
+
         expect(status.quest.operation, OperationType.division);
         expect(status.quest.id, 'q_div_easy');
+        expect(path, hasLength(10));
+        expect(path.last.id, 'q_div_easy_3__del_4');
       },
     );
 
@@ -152,9 +174,11 @@ void main() {
         gradeLevel: 1,
       );
 
+      final path = service.questsForUser(user);
+
       final next = service.nextQuestId(
         user: user,
-        currentQuestId: 'q_div_easy',
+        currentQuestId: path.last.id,
       );
 
       expect(next, isNull);

@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-05-14
+uppdaterad: 2026-05-16
 -->
 # Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-14).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-16).
 
 ## Snabboversikt
 
@@ -68,6 +68,7 @@ Viktiga skarmar (med faktisk sokväg):
 
 Aktuell UI-notering:
 - `StoryMapScreen` och `HomeStoryProgressCard` konsumerar read-only `storyProgressProvider`, där `StoryProgressionService` nu bygger `nextBiome` centralt. Ingen ny story-persistens eller ny provider används för det spåret.
+- `QuestProgressionService` normaliserar nu samma story-path till fasta kartlangder efter grade/operations-filter: 10 stopp for easy-only-path och 30 stopp nar medium ar med. Om poolen blir for kort fylls den deterministiskt med sena delstopp (`__del_N`) i stallet for ny story-persistens eller separat kartlogik.
 
 ### core/
 
@@ -75,6 +76,9 @@ Teknisk app-logik, providers, tema och utilities.
 
 Viktiga delar:
 - `core/di/injection.dart`
+- `core/theme/app_theme_config.dart`
+- `core/theme/app_theme_colors.dart`
+- `core/providers/app_theme_provider.dart`
 - `core/providers/quiz_provider.dart`
 - `core/providers/tts_enabled_provider.dart`
 - `core/providers/user_provider.dart`
@@ -86,6 +90,11 @@ Viktiga delar:
 - `core/services/story_progression_service.dart`
 - `core/services/daily_challenge_service.dart`
 - `core/services/app_analytics_service.dart`
+
+Tema-notering:
+- `AppThemeConfig` ager fortfarande bakgrundsassets, hero-assets och `ThemeData`-bygget, men semantiska farg-/surface-tokens ligger nu i `AppThemeColors` som `ThemeExtension`.
+- Delade widgets och flera feature-skarmar laser nu fargerna via `Theme.of(context)` i stallet for direkta providerkopplingar till `appThemeConfigProvider`.
+- `SettingsScreen` exponerar bara faktiskt implementerade teman (`jungle`, `space`). Aldre sparade `underwater`/`fantasy` fallbackar deterministiskt till `space` tills riktiga teman finns.
 
 ### domain/
 
@@ -105,8 +114,8 @@ Repository-implementation for lokal lagring:
 
 ## Huvudfloden i produkten
 
-1. Barn valjer/skapar profil
-2. Home visar aktuell profil, en rekommenderad/öppen svårighetsmeny (4 räknesätt), plus aktiv maskot. (All "extra" UI som dagliga uppdrag eller automatiska progression-genvägar har städats bort för barnens fokus)
+1. Barn valjer eller skapar profil. Forsta profilskapandet ar forenk lat till namn + figur, och onboarding satter sedan arskurs samt effektiv `ageGroup`.
+2. Home visar aktuell profil, aktiv maskot och en tydlig primaryta for raknesatten under `Välj räknesätt`. Storykort och badgealbum ligger som sekundara ytor under `Mer att göra`.
 3. Quiz startas via `QuizNotifier.startSession(...)`
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback

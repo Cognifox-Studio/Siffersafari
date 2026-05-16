@@ -6,7 +6,7 @@
 
 ---
 
-## Nuläge (2026-05-14)
+## Nuläge (2026-05-16)
 
 **Version:** 1.4.1+17
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
@@ -14,6 +14,21 @@
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
 
 ### Senaste leveranser
+
+**2026-05-16 – theme-lagret delades upp i semantiska tokens och assets**
+- **Hybrid theme-lager:** `AppThemeColors` ar nu en `ThemeExtension` for semantiska farg-, panel- och progress-tokens, medan `AppThemeConfig` fortsatt ager assetval och `ThemeData`-bygget.
+- **Settings visar bara verkliga teman:** `SettingsScreen` listar nu bara `Djungel` och `Rymd`, och profiler med gamla `underwater`/`fantasy` fallbackar deterministiskt till `Rymd` i runtime.
+- **Verifiering:** `app_home_test.dart`, `settings_screen_test.dart` och `flutter analyze` passerar.
+
+**2026-05-16 – story/quest-pathen fick fast skala per nivåspann**
+- **Samma karta, tydligare storlek:** `QuestProgressionService` normaliserar nu pathen efter grade- och operationsfilter till minst 10 stopp for easy-only-path och 30 stopp nar medium ar med.
+- **Ingen ny story-persistens:** Om den filtrerade questpoolen ar for kort skapas deterministiska sena delstopp med `__del_N` i samma befintliga service i stallet for ny provider eller nytt storytrad.
+- **Verifiering:** `quest_progression_service_test.dart`, `story_progression_service_test.dart`, `user_quest_completion_event_test.dart`, `flutter analyze` och Pixel_6 sync passerar.
+
+**2026-05-16 – profilstart och hemhierarki forenklades**
+- **Onboarding ager nu arskursen:** `create_user_dialog.dart` samlar bara namn + figur och skapar profilen med `AgeGroup.young`; `OnboardingScreen` satter sedan arskurs och effektiv `ageGroup`.
+- **Home och story blev tydligare:** Hemskarmen prioriterar nu `Välj räknesätt` och lagger storykort + badgealbum under `Mer att göra`, medan `StoryMapScreen`-CTA:n `Spela nästa stopp` startar questet direkt i stallet for att bara stanga kartflodet.
+- **Verifiering:** `app_onboarding_test.dart`, `app_home_test.dart`, `settings_screen_test.dart`, `app_parent_mode_test.dart`, `app_results_test.dart`, `results_screen_test.dart`, `quiz_screen_tts_test.dart`, `flutter analyze` och Pixel_6 sync passerar.
 
 **2026-05-14 – första offline-TTS-slicen är landad**
 - **Profilscopad uppläsning i Föräldraläge:** `ParentDashboardScreen` har nu en `Uppläsning`-toggle som sparas per profil via `ttsEnabledProvider`.

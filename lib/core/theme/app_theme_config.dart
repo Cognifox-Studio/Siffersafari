@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
 
 import '../constants/app_constants.dart';
+import 'app_theme_colors.dart';
 
 /// Character animation states for flexible mascot animation control
 enum CharacterAnimationState {
@@ -52,44 +53,73 @@ class AppThemeConfig {
   Color get panelBackgroundColor => cardColor;
   Color get panelBorderColor =>
       colorScheme().onPrimary.withValues(alpha: AppOpacities.hudBorder);
-  Color get panelShadowColor =>
-      Colors.black.withValues(alpha: AppOpacities.shadowAmbient);
+  Color get panelShadowColor => Colors.black;
 
   Color get progressCompletedColor => secondaryActionColor;
   Color get progressCurrentColor => accentColor;
   Color get progressNextColor => primaryActionColor;
 
-  static AppThemeConfig forTheme(AppTheme theme) {
+  AppThemeColors get themeColors => AppThemeColors(
+        baseBackgroundColor: baseBackgroundColor,
+        primaryActionColor: primaryActionColor,
+        secondaryActionColor: secondaryActionColor,
+        accentColor: accentColor,
+        cardColor: cardColor,
+        disabledBackgroundColor: disabledBackgroundColor,
+        panelBackgroundColor: panelBackgroundColor,
+        panelBorderColor: panelBorderColor,
+        panelShadowColor: panelShadowColor,
+        progressCompletedColor: progressCompletedColor,
+        progressCurrentColor: progressCurrentColor,
+        progressNextColor: progressNextColor,
+      );
+
+  static const List<AppTheme> implementedThemes = <AppTheme>[
+    AppTheme.jungle,
+    AppTheme.space,
+  ];
+
+  static AppTheme resolveTheme(AppTheme theme) {
     switch (theme) {
-      case AppTheme.jungle:
-        return const AppThemeConfig(
-          theme: AppTheme.jungle,
-          backgroundAsset: 'assets/images/themes/jungle/background.png',
-          questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
-          characterAsset: 'assets/images/themes/jungle/character.png',
-          baseBackgroundColor: AppColors.jungleBackground,
-          primaryActionColor: AppColors.junglePrimary,
-          secondaryActionColor: AppColors.jungleSecondary,
-          accentColor: AppColors.jungleAccent,
-          cardColor: Color(0xCC2A4F36),
-          disabledBackgroundColor: Color(0xCC3D6C50),
-        );
       case AppTheme.space:
+      case AppTheme.jungle:
+        return theme;
       case AppTheme.underwater:
       case AppTheme.fantasy:
-        return const AppThemeConfig(
-          theme: AppTheme.space,
-          backgroundAsset: 'assets/images/themes/space/background.png',
-          questHeroAsset: 'assets/images/themes/space/quest_hero.png',
-          characterAsset: 'assets/images/themes/space/character.png',
-          baseBackgroundColor: AppColors.spaceBackground,
-          primaryActionColor: AppColors.spacePrimary,
-          secondaryActionColor: AppColors.spaceSecondary,
-          accentColor: AppColors.spaceAccent,
-          cardColor: Color(0xCC485466),
-          disabledBackgroundColor: Color(0xCC5B6575),
-        );
+        return AppTheme.space;
     }
+  }
+
+  static AppThemeConfig forTheme(AppTheme theme) {
+    final resolvedTheme = resolveTheme(theme);
+
+    if (resolvedTheme == AppTheme.jungle) {
+      return const AppThemeConfig(
+        theme: AppTheme.jungle,
+        backgroundAsset: 'assets/images/themes/jungle/background.png',
+        questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
+        characterAsset: 'assets/images/themes/jungle/character.png',
+        baseBackgroundColor: AppColors.jungleBackground,
+        primaryActionColor: AppColors.junglePrimary,
+        secondaryActionColor: AppColors.jungleSecondary,
+        accentColor: AppColors.jungleAccent,
+        cardColor: Color(0xCC2A4F36),
+        disabledBackgroundColor: Color(0xCC3D6C50),
+      );
+    }
+
+    return const AppThemeConfig(
+      theme: AppTheme.space,
+      backgroundAsset: 'assets/images/themes/space/background.png',
+      questHeroAsset: 'assets/images/themes/space/quest_hero.png',
+      characterAsset: 'assets/images/themes/space/character.png',
+      baseBackgroundColor: AppColors.spaceBackground,
+      primaryActionColor: AppColors.spacePrimary,
+      secondaryActionColor: AppColors.spaceSecondary,
+      accentColor: AppColors.spaceAccent,
+      cardColor: Color(0xCC485466),
+      disabledBackgroundColor: Color(0xCC5B6575),
+    );
   }
 
   ColorScheme colorScheme() {
@@ -107,6 +137,7 @@ class AppThemeConfig {
 
   ThemeData themeData() {
     final scheme = colorScheme();
+    final appThemeColors = themeColors;
     final baseTheme = ThemeData(
       useMaterial3: true,
       colorScheme: scheme,
@@ -148,7 +179,8 @@ class AppThemeConfig {
     );
 
     return baseTheme.copyWith(
-      scaffoldBackgroundColor: baseBackgroundColor,
+      extensions: <ThemeExtension<dynamic>>[appThemeColors],
+      scaffoldBackgroundColor: appThemeColors.baseBackgroundColor,
       textTheme: textTheme,
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -156,7 +188,7 @@ class AppThemeConfig {
             double.infinity,
             AppConstants.minTouchTargetSize,
           ),
-          backgroundColor: primaryActionColor,
+          backgroundColor: appThemeColors.primaryActionColor,
           foregroundColor: scheme.onPrimary,
           elevation: 0,
           shadowColor: Colors.transparent,
@@ -224,13 +256,13 @@ class AppThemeConfig {
         ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: cardColor,
+        backgroundColor: appThemeColors.cardColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius * 2),
         ),
       ),
       cardTheme: CardThemeData(
-        color: cardColor,
+        color: appThemeColors.cardColor,
         elevation: 0,
         margin: EdgeInsets.zero,
         shadowColor: Colors.transparent,
@@ -269,7 +301,9 @@ class AppThemeConfig {
         textStyle: TextStyle(color: scheme.onPrimary),
         menuStyle: MenuStyle(
           backgroundColor: WidgetStatePropertyAll(
-            baseBackgroundColor.withValues(alpha: AppOpacities.menuSurface),
+            appThemeColors.baseBackgroundColor.withValues(
+              alpha: AppOpacities.menuSurface,
+            ),
           ),
         ),
       ),
@@ -278,11 +312,11 @@ class AppThemeConfig {
         thickness: 1,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: accentColor,
+        color: appThemeColors.accentColor,
         linearMinHeight: AppConstants.progressBarHeightMedium,
       ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: cardColor,
+        backgroundColor: appThemeColors.cardColor,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
           color: scheme.onPrimary,
         ),

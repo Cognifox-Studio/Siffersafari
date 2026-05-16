@@ -7,13 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/text_to_speech_service_provider.dart';
 import 'package:siffersafari/core/providers/tts_enabled_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/services/text_to_speech_service.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/question.dart';
@@ -148,14 +148,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         ? ref.watch(ttsEnabledProvider(activeUser.userId))
         : false;
 
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final scheme = Theme.of(context).colorScheme;
     final onPrimary = scheme.onPrimary;
 
-    final primaryActionColor = themeCfg.primaryActionColor;
-    final accentColor = themeCfg.accentColor;
-    final cardColor = themeCfg.cardColor;
-    final cardBorderColor = onPrimary.withValues(alpha: AppOpacities.hudBorder);
+    final primaryActionColor = themeColors.primaryActionColor;
+    final accentColor = themeColors.accentColor;
+    final cardColor = themeColors.cardColor;
+    final cardBorderColor = themeColors.panelBorderColor;
     final lightTextColor = onPrimary;
     final mutedTextColor = onPrimary.withValues(alpha: AppOpacities.mutedText);
 
@@ -204,7 +204,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             builder: (_) => FeedbackDialog(
               feedback: feedback,
               onContinue: _handleNextQuestion,
-              continueLabel: isLastQuestion ? 'Se resultat' : 'NÃ¤sta',
+              continueLabel: isLastQuestion ? 'Se resultat' : 'Nästa',
               continueButtonColor: primaryActionColor,
               dialogBackgroundColor: cardColor,
               messageTextColor: mutedTextColor,
@@ -231,11 +231,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     return ThemedBackgroundScaffold(
       appBar: AppBar(
         title: Text(
-          'FrÃ¥ga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
+          'Fråga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
           style: TextStyle(color: onPrimary),
         ),
         leading: IconButton(
-          tooltip: 'StÃ¤ng quiz',
+          tooltip: 'Stäng quiz',
           icon: Icon(Icons.close, color: onPrimary),
           onPressed: _handleClose,
         ),
@@ -463,10 +463,10 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 
   Widget _buildAnswerButtons(BuildContext context, Question question) {
-    final themeCfg = ref.read(appThemeConfigProvider);
-    final idleButtonColor = themeCfg.primaryActionColor;
-    final selectedButtonColor = themeCfg.secondaryActionColor;
-    final buttonDisabledColor = themeCfg.disabledBackgroundColor;
+    final themeColors = context.appThemeColors;
+    final idleButtonColor = themeColors.primaryActionColor;
+    final selectedButtonColor = themeColors.secondaryActionColor;
+    final buttonDisabledColor = themeColors.disabledBackgroundColor;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     final options = _optionsForQuestion(question);
@@ -475,7 +475,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       builder: (context, constraints) {
         final double availableHeight = constraints.maxHeight;
         final double spacingH = AppConstants.smallPadding.h;
-        // TvÃ¥ rader
+        // Två rader
         final double calculatedHeight =
             ((availableHeight - spacingH) / 2).clamp(
           constraints.maxHeight < 360 ? 56.0 : AppConstants.answerButtonHeight,

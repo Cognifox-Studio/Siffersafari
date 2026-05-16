@@ -1,14 +1,14 @@
 ﻿<!--
 typ: explanation
 syfte: Historik, varför vi gjort vissa arkitekturval
-uppdaterad: 2026-05-14
+uppdaterad: 2026-05-16
 -->
 # Beslut och antaganden (Siffersafari)
 
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-14)
+## Gällande nuläge (2026-05-16)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
@@ -20,12 +20,19 @@ Princip: senaste datum vinner vid konflikt.
 - Distribution och uppdateringar for produktappen sker via Google Play. Inget OTA- eller in-app update-flode ar en aktiv del av produktens nulage.
 - Pedagogisk quizhjälp ligger i den befintliga feedbackdialogen och använder små, strukturerade visuella stöd i stället för ett separat hjälpsystem.
 - Nästa-biome-signalen ägs nu av `StoryProgressionService` och `StoryProgress.nextBiome` i stället för duplicerad, hårdkodad copy i hem- och story-UI.
+- Storykartan håller nu fast skala per svårighetsspann: easy-only-path normaliseras till 10 stopp och pathar som inkluderar medium normaliseras till 30 stopp efter grade- och operationsfilter.
 - Quizhjälpen täcker nu alla fyra räknesätten i samma feedbackväg: tallinje för addition/subtraktion och grupperad hjälp för multiplikation/division.
 - On-device TTS är profilscopad, föräldrastyrd och läser upp fråga/kort feedback utan att blockera UI eller kräva nät.
 - Tidiga v1.8-slices för camp och storykarta hålls i presentationslagret tills tydligare produktnytta motiverar ny progression, nya providers eller nya assets.
 - Copilot-customizations i `.github/` ska vara repoanknutna, länka vidare till docs i stället för att duplicera innehåll, och använda skill-namn som matchar respektive mappnamn.
 
 ## Historik (kort)
+
+### 2026-05-16
+- **Hybrid theme-lager i stallet for fortsatt monolit:** Semantiska farg- och surface-tokens flyttades till `AppThemeColors` som `ThemeExtension`, medan `AppThemeConfig` tills vidare behaller assetval och `ThemeData`-bygget. Det minskar direkta providerkopplingar i delade widgets och feature-UI utan att oppna en riskig assetmigrering i samma slice.
+- **Ofardiga teman exponeras inte i UI:** `SettingsScreen` visar nu bara implementerade teman (`jungle`, `space`). Aldre profiler med sparat `underwater` eller `fantasy` renderas deterministiskt som `space` tills riktiga theme-assets och tokens finns.
+- **Fast kartlangd utan nytt storytrad:** `QuestProgressionService` behaller grade-baserad svårighet och föräldrafiltrerade räknesätt, men normaliserar den synliga quest/story-pathen till 10 respektive 30 stopp. När den filtrerade questpoolen är för kort fylls sena delstopp på deterministiskt med `__del_N` i stället för att introducera ny persistens, separat story-provider eller ett nytt progressionsträd.
+- **Onboarding ager nu arskursvalet:** Första profilskapandet samlar bara namn + figur, medan onboarding sätter arskurs och effektiv `ageGroup`. Det minskar dubbelval och håller vuxenlogik borta från första barnsteget.
 
 ### 2026-05-14
 - **Nästa biome centraliserades i read-only storydata:** När samma biome-signal började synas både på hemkortet och i storykartan flyttades den till `StoryProgressionService` som `nextBiome` i `StoryProgress`. Det minskar UI-duplicering utan att öppna ny persistens eller progression.

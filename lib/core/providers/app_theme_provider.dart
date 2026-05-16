@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'package:siffersafari/domain/enums/app_theme.dart';
+
 import '../theme/app_theme_config.dart';
 import 'user_provider.dart';
 
 final appThemeProvider = Provider<AppTheme>((ref) {
   final user = ref.watch(userProvider).activeUser;
-  return user?.selectedTheme ?? AppTheme.jungle;
+  return AppThemeConfig.resolveTheme(user?.selectedTheme ?? AppTheme.jungle);
 });
 
 final appThemeConfigProvider = Provider<AppThemeConfig>((ref) {

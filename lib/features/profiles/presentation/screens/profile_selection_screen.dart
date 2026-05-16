@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
@@ -96,7 +96,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
   }
 }
 
-class _ProfileTile extends ConsumerWidget {
+class _ProfileTile extends StatelessWidget {
   const _ProfileTile({
     required this.name,
     required this.avatarEmoji,
@@ -108,14 +108,14 @@ class _ProfileTile extends ConsumerWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeCfg = ref.watch(appThemeConfigProvider);
+  Widget build(BuildContext context) {
+    final themeColors = context.appThemeColors;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     return PlayfulPanel(
       onTap: onTap,
       hero: true,
-      highlightColor: themeCfg.primaryActionColor,
+      highlightColor: themeColors.primaryActionColor,
       child: LayoutBuilder(
         builder: (context, constraints) {
           final compact =
@@ -126,7 +126,7 @@ class _ProfileTile extends ConsumerWidget {
               children: [
                 _ProfileAvatar(
                   avatarEmoji: avatarEmoji,
-                  color: themeCfg.accentColor,
+                  color: themeColors.accentColor,
                 ),
                 const SizedBox(width: AppConstants.defaultPadding),
                 Expanded(child: _ProfileTileText(name: name)),
@@ -144,7 +144,7 @@ class _ProfileTile extends ConsumerWidget {
             children: [
               _ProfileAvatar(
                 avatarEmoji: avatarEmoji,
-                color: themeCfg.accentColor,
+                color: themeColors.accentColor,
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               _ProfileTileText(

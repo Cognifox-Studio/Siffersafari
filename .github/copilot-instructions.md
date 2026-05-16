@@ -65,12 +65,7 @@ Arbetsstandard:
 ## Routing
 
 - Använd repo-skills under `.github/skills/` i stället för att improvisera när uppgiften redan matchar ett etablerat arbetsflöde, särskilt för QA, quiz-persistens, docs, analytics, release, Android-emulator, formulär, assets och `.github`-audits.
-- Använd custom agents under `.github/agents/` när arbetet behöver särskild mode-routing:
-	- `Plan`: analys, research, risker och testplan utan kodändringar.
-	- `Beast Mode`: implementation, iteration och QA end-to-end.
-	- `Customization Maintainer`: underhåll av prompts, skills, hooks, instruktioner och agentfiler under `.github/`.
-	- `UI Reviewer`: UI/UX- och responsivitetsgranskning.
-	- `release-manager`: releaseförberedelser, versionsbump och Play-flöde.
+- För konkret agent-, prompt- och skill-routing: läs `.github/AGENTS.md`.
 - Följ matchande filer under `.github/instructions/` när en viss arbetsyta berörs, i stället för att duplicera de reglerna här.
 - Använd `.github/prompts/` och `.github/hooks/` som stödyta vid customization-arbete, inte som ersättning för repo-dokumentation.
 

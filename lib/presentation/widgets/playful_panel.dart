@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 
 class PlayfulPanel extends StatelessWidget {
   const PlayfulPanel({
@@ -28,16 +29,14 @@ class PlayfulPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final scheme = theme.colorScheme;
-    final onPrimary = scheme.onPrimary;
+    final themeColors = context.appThemeColors;
     final resolvedRadius =
         radius ?? AppConstants.borderRadius * (hero ? 2 : 1.5);
-    final resolvedHighlight = highlightColor ?? scheme.secondary;
+    final resolvedHighlight = highlightColor ?? themeColors.accentColor;
     final resolvedBackground = backgroundColor ??
         theme.cardTheme.color ??
-        onPrimary.withValues(alpha: hero ? 0.16 : AppOpacities.panelFill);
-    final resolvedBorder =
-        borderColor ?? onPrimary.withValues(alpha: AppOpacities.hudBorder);
+      themeColors.panelBackgroundColor;
+    final resolvedBorder = borderColor ?? themeColors.panelBorderColor;
     final gradientTop = Color.alphaBlend(
       resolvedHighlight.withValues(alpha: hero ? 0.05 : 0.03),
       resolvedBackground,
@@ -62,7 +61,9 @@ class PlayfulPanel extends StatelessWidget {
         border: Border.all(color: resolvedBorder),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: hero ? 0.18 : 0.12),
+            color: themeColors.panelShadowColor.withValues(
+              alpha: hero ? 0.18 : 0.12,
+            ),
             blurRadius: hero ? 18 : 12,
             offset: const Offset(0, 6),
           ),

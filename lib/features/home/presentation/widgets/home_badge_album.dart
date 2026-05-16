@@ -29,7 +29,7 @@ class HomeBadgeAlbum extends ConsumerWidget {
       key: const Key('home_badge_album'),
       backgroundColor: Colors.white.withValues(alpha: 0.12),
       highlightColor: theme.colorScheme.secondary,
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
+      padding: const EdgeInsets.all(AppConstants.smallPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -66,15 +66,15 @@ class HomeBadgeAlbum extends ConsumerWidget {
           const SizedBox(height: AppConstants.microSpacing6),
           Text(
             helperText,
-            style: theme.textTheme.bodyMedium?.copyWith(
+            style: theme.textTheme.bodySmall?.copyWith(
               color: Colors.white.withValues(alpha: 0.84),
               fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(height: AppConstants.defaultPadding),
+          const SizedBox(height: AppConstants.smallPadding),
           Wrap(
             spacing: AppConstants.smallPadding,
-            runSpacing: AppConstants.smallPadding,
+            runSpacing: AppConstants.microSpacing6,
             children: [
               for (final entry in entries)
                 _BadgeTile(
@@ -107,58 +107,66 @@ class _BadgeTile extends StatelessWidget {
     final labelColor =
         unlocked ? Colors.white : Colors.white.withValues(alpha: 0.74);
 
-    return SizedBox(
-      width: 92,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            key: Key('home_badge_tile_${entry.id}'),
-            width: 56,
-            height: 56,
-            decoration: BoxDecoration(
-              color: tileColor,
-              shape: BoxShape.circle,
-              border: Border.all(color: borderColor, width: 2),
-              boxShadow: unlocked
-                  ? [
-                      BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.12),
-                        blurRadius: 8,
-                        offset: const Offset(0, 4),
-                      ),
-                    ]
-                  : null,
-            ),
-            child: Center(
-              child: unlocked
-                  ? Text(
-                      entry.emoji,
-                      key: Key('home_badge_icon_${entry.id}'),
-                      style: theme.textTheme.headlineSmall,
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(12),
-                      child: Image.asset(
-                        'assets/images/ui/locked_badge.png',
-                        key: Key('home_badge_locked_${entry.id}'),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-            ),
+    return Semantics(
+      label: unlocked
+          ? '${entry.albumLabel}, upplåst'
+          : '${entry.albumLabel}, låst',
+      child: Tooltip(
+        message: entry.albumLabel,
+        child: SizedBox(
+          width: 48,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                key: Key('home_badge_tile_${entry.id}'),
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: tileColor,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: borderColor, width: 2),
+                  boxShadow: unlocked
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.12),
+                            blurRadius: 8,
+                            offset: const Offset(0, 4),
+                          ),
+                        ]
+                      : null,
+                ),
+                child: Center(
+                  child: unlocked
+                      ? Text(
+                          entry.emoji,
+                          key: Key('home_badge_icon_${entry.id}'),
+                          style: theme.textTheme.titleLarge,
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Image.asset(
+                            'assets/images/ui/locked_badge.png',
+                            key: Key('home_badge_locked_${entry.id}'),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: AppConstants.microSpacing6),
+              Text(
+                entry.albumLabel,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: labelColor,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: AppConstants.microSpacing6),
-          Text(
-            entry.albumLabel,
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.labelMedium?.copyWith(
-              color: labelColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

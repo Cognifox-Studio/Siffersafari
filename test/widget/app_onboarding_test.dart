@@ -6,6 +6,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/main.dart';
 
 import '../test_utils.dart';
 
@@ -17,6 +18,46 @@ void main() {
   setUp(() async {
     repository = await setupWidgetTestDependencies();
   });
+
+  testWidgets(
+    '[Widget] Onboarding – first profile dialog defers grade choice to onboarding',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.widgetWithText(ElevatedButton, 'Skapa profil'),
+      );
+
+      await tester.tap(find.widgetWithText(ElevatedButton, 'Skapa profil'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Välj figur'), findsOneWidget);
+      expect(find.text('Årskurs'), findsNothing);
+
+      await tester.enterText(find.byType(TextField), 'Mira');
+      await tester.tap(find.widgetWithText(TextButton, 'Skapa'));
+      await tester.pump();
+
+      await pumpUntilFound(tester, find.text('Nu kör vi!'));
+
+      expect(find.text('Välj årskurs'), findsOneWidget);
+      expect(find.text('Tryck på en ruta.'), findsOneWidget);
+    },
+  );
 
   testWidgets(
     '[Widget] Onboarding – shown once and does not repeat',

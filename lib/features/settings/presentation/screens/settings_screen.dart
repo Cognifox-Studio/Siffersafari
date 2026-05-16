@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
+import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
@@ -94,7 +95,8 @@ class SettingsScreen extends ConsumerWidget {
     final user = userState.activeUser;
     final allUsers = userState.allUsers;
 
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
+    final availableThemes = AppThemeConfig.implementedThemes;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
     final subtleOnPrimary =
@@ -128,13 +130,13 @@ class SettingsScreen extends ConsumerWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _AdaptiveDropdownTile<String>(
-                            title: 'Användare',
+                            title: 'Profiler',
                             subtitle: 'Välj eller skapa en profil',
                             value: user?.userId,
                             isCompact: layout.isCompactWidth,
                             textColor: onPrimary,
                             subtitleColor: subtleOnPrimary,
-                            dropdownColor: themeCfg.baseBackgroundColor,
+                            dropdownColor: themeColors.baseBackgroundColor,
                             items: [
                               ...allUsers.map(
                                 (u) => DropdownMenuItem<String>(
@@ -155,7 +157,7 @@ class SettingsScreen extends ConsumerWidget {
                           const Divider(height: 1),
                           ListTile(
                             title: Text(
-                              'Skapa användare',
+                              'Skapa profil',
                               style: Theme.of(context)
                                   .textTheme
                                   .titleSmall
@@ -188,7 +190,7 @@ class SettingsScreen extends ConsumerWidget {
                         ),
                         child: Center(
                           child: Text(
-                            'Ingen aktiv användare',
+                            'Ingen aktiv profil',
                             style: Theme.of(context)
                                 .textTheme
                                 .titleMedium
@@ -218,7 +220,7 @@ class SettingsScreen extends ConsumerWidget {
                               isCompact: layout.isCompactWidth,
                               textColor: onPrimary,
                               subtitleColor: subtleOnPrimary,
-                              dropdownColor: themeCfg.baseBackgroundColor,
+                              dropdownColor: themeColors.baseBackgroundColor,
                               items: [
                                 const DropdownMenuItem<int?>(
                                   value: null,
@@ -241,13 +243,15 @@ class SettingsScreen extends ConsumerWidget {
                             _AdaptiveDropdownTile<AppTheme>(
                               title: 'Tema',
                               subtitle: 'Byt bakgrund och stil.',
-                              value: user.selectedTheme,
+                              value: AppThemeConfig.resolveTheme(
+                                user.selectedTheme,
+                              ),
                               isCompact: layout.isCompactWidth,
                               textColor: onPrimary,
                               subtitleColor: subtleOnPrimary,
-                              dropdownColor: themeCfg.baseBackgroundColor,
+                              dropdownColor: themeColors.baseBackgroundColor,
                               items: [
-                                ...AppTheme.values.map(
+                                ...availableThemes.map(
                                   (t) => DropdownMenuItem<AppTheme>(
                                     value: t,
                                     child: Text('${t.emoji} ${t.displayName}'),
@@ -283,8 +287,9 @@ class SettingsScreen extends ConsumerWidget {
                                     ),
                               ),
                               value: user.soundEnabled,
-                              activeThumbColor: themeCfg.accentColor,
-                              activeTrackColor: themeCfg.accentColor.withValues(
+                              activeThumbColor: themeColors.accentColor,
+                              activeTrackColor: themeColors.accentColor
+                                  .withValues(
                                 alpha: AppOpacities.highlightStrong,
                               ),
                               onChanged: (value) async {
@@ -315,8 +320,9 @@ class SettingsScreen extends ConsumerWidget {
                                     ),
                               ),
                               value: user.musicEnabled,
-                              activeThumbColor: themeCfg.accentColor,
-                              activeTrackColor: themeCfg.accentColor.withValues(
+                              activeThumbColor: themeColors.accentColor,
+                              activeTrackColor: themeColors.accentColor
+                                  .withValues(
                                 alpha: AppOpacities.highlightStrong,
                               ),
                               onChanged: (value) async {

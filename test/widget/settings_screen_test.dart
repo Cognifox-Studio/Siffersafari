@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
+import 'package:siffersafari/domain/enums/app_theme.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 
@@ -20,7 +22,7 @@ void main() {
   });
 
   testWidgets(
-    '[Widget] SettingsScreen – radera profil väljer nästa användare och rensar data',
+    '[Widget] SettingsScreen – radera profil väljer nästa profil och rensar data',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -151,6 +153,57 @@ void main() {
       expect(repository.getActiveUserId(), isNull);
       expect(container.read(userProvider).allUsers, isEmpty);
       expect(container.read(userProvider).activeUser, isNull);
+    },
+  );
+
+  testWidgets(
+    '[Widget] SettingsScreen – visar bara implementerade teman och fallbackar till rymd',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: 'u1',
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+          selectedTheme: AppTheme.fantasy,
+        ),
+      );
+      await repository.setActiveUserId('u1');
+
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      await container.read(userProvider.notifier).loadUsers();
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: MaterialApp(
+            theme: AppThemeConfig.forTheme(AppTheme.space).themeData(),
+            home: const SettingsScreen(),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final themeDropdown = tester.widget<DropdownButton<AppTheme>>(
+        find.byType(DropdownButton<AppTheme>),
+      );
+      expect(themeDropdown.value, AppTheme.space);
+
+      await tester.tap(find.byType(DropdownButton<AppTheme>));
+      await tester.pumpAndSettle();
+
+      expect(find.text('🚀 Rymd'), findsWidgets);
+      expect(find.text('🌴 Djungel'), findsWidgets);
+      expect(find.text('🌊 Undervatten'), findsNothing);
+      expect(find.text('🏰 Fantasy'), findsNothing);
     },
   );
 }

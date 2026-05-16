@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 
 class ThemedBackgroundScaffold extends ConsumerWidget {
   const ThemedBackgroundScaffold({
@@ -22,6 +23,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
 
     final size = MediaQuery.sizeOf(context);
     final dpr = MediaQuery.devicePixelRatioOf(context);
@@ -37,7 +39,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
         (overlayOpacity - 0.08).clamp(0.0, 1.0).toDouble();
 
     return Scaffold(
-      backgroundColor: cfg.baseBackgroundColor,
+      backgroundColor: themeColors.baseBackgroundColor,
       appBar: appBar,
       extendBodyBehindAppBar: effectiveExtendBodyBehindAppBar,
       body: Stack(
@@ -51,7 +53,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
                 cacheHeight: cacheHeight,
                 excludeFromSemantics: true,
                 errorBuilder: (context, error, stackTrace) {
-                  return ColoredBox(color: cfg.baseBackgroundColor);
+                  return ColoredBox(color: themeColors.baseBackgroundColor);
                 },
               ),
             ),
@@ -64,9 +66,9 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      cfg.baseBackgroundColor
+                      themeColors.baseBackgroundColor
                           .withValues(alpha: overlayTopOpacity),
-                      cfg.baseBackgroundColor
+                      themeColors.baseBackgroundColor
                           .withValues(alpha: overlayBottomOpacity),
                     ],
                   ),
@@ -79,7 +81,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
             right: -60,
             child: IgnorePointer(
               child: _FloatingOrb(
-                color: cfg.accentColor,
+                color: themeColors.accentColor,
                 size: 180,
               ),
             ),
@@ -89,7 +91,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
             left: -90,
             child: IgnorePointer(
               child: _FloatingOrb(
-                color: cfg.secondaryActionColor,
+                color: themeColors.secondaryActionColor,
                 size: 220,
               ),
             ),
@@ -99,7 +101,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
             left: -30,
             child: IgnorePointer(
               child: _FloatingOrb(
-                color: cfg.primaryActionColor,
+                color: themeColors.primaryActionColor,
                 size: 96,
               ),
             ),

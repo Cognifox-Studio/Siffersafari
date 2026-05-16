@@ -7,6 +7,7 @@ import 'package:siffersafari/core/providers/local_storage_repository_provider.da
 import 'package:siffersafari/core/providers/parent_settings_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
@@ -85,16 +86,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     // a null gradeLevel which would disable word problems, missing-number
     // questions and the parent benchmark section.
     final effectiveGrade = _gradeLevel ?? 1;
+    final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
+      fallback: AgeGroup.young,
+      gradeLevel: effectiveGrade,
+    );
 
     final activeUser = ref.read(userProvider).activeUser;
     if (activeUser != null && activeUser.userId == widget.userId) {
-      await ref
-          .read(userProvider.notifier)
-          .saveUser(activeUser.copyWith(gradeLevel: effectiveGrade));
+      await ref.read(userProvider.notifier).saveUser(
+            activeUser.copyWith(
+              gradeLevel: effectiveGrade,
+              ageGroup: effectiveAgeGroup,
+            ),
+          );
     } else {
       final user = repo.getUserProgress(widget.userId);
       if (user != null) {
-        await repo.saveUserProgress(user.copyWith(gradeLevel: effectiveGrade));
+        await repo.saveUserProgress(
+          user.copyWith(
+            gradeLevel: effectiveGrade,
+            ageGroup: effectiveAgeGroup,
+          ),
+        );
         await ref.read(userProvider.notifier).loadUsers();
       }
     }

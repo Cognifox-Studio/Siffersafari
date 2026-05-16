@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-05-11
+uppdaterad: 2026-05-16
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-11.
+Senast uppdaterad: 2026-05-16.
 
 ## Naming-baseline
 
@@ -38,6 +38,7 @@ Senast uppdaterad: 2026-05-11.
 ### Explanation (förklaringar, design, varför)
 - `ROADMAP.md` – Prioriterad release- och genomförandeplan
 - `DECISIONS_LOG.md` – Beslutslogg och varför
+- `jungle_episode_1_polish_plan.md` – Plan för att färdigställa djunglepisoden och barn-UX i nuvarande biom
 - `RIVERPOD_PATTERNS.md` – Provider-mönster och resonemang
 - `lore/` – Bakgrundshistorier och spelets lore (t.ex. [Loke](lore/loke.md), [Signe](lore/signe.md), [Astrid](lore/astrid.md))
 

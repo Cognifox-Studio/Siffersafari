@@ -48,7 +48,7 @@ void main() {
       );
 
       expect(story.worldTitle, 'Maskoten i djungeln');
-      expect(story.totalNodes, 20);
+      expect(story.totalNodes, 30);
       expect(story.currentNodeIndex, 0);
       expect(story.completedNodes, 0);
       expect(story.nodes.first.state.name, 'current');

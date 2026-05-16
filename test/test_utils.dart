@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
@@ -292,6 +293,34 @@ Future<void> pumpUntilFound(
     if (finder.evaluate().isNotEmpty) return;
     await tester.pump(const Duration(milliseconds: 50));
   }
+}
+
+/// Tap the interactive control inside a keyed surface widget.
+///
+/// Useful when the stable test key is attached to a non-hit-testable wrapper
+/// but the actual tap target is an InkWell below it.
+Future<void> tapInteractiveDescendant(
+  WidgetTester tester,
+  Finder finder,
+) async {
+  await tester.ensureVisible(finder);
+  await tester.pump();
+
+  final tappable = find
+      .descendant(
+        of: finder,
+        matching: find.byType(InkWell),
+      )
+      .hitTestable();
+
+  if (tappable.evaluate().isNotEmpty) {
+    await tester.tap(tappable.first, warnIfMissed: false);
+    await tester.pump();
+    return;
+  }
+
+  await tester.tap(finder, warnIfMissed: false);
+  await tester.pump();
 }
 
 // ============================================================================

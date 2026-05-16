@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
@@ -46,7 +45,7 @@ class CharacterInfo {
 
 class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
   final _nameController = TextEditingController();
-  int? _selectedGrade;
+  String? _nameErrorText;
   CharacterInfo _selectedCharacter = _characters.first;
   int _reactionNonce = 0;
 
@@ -83,14 +82,14 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final cfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
 
     return AlertDialog(
       scrollable: true,
-      backgroundColor: cfg.cardColor,
-      title: Text('Skapa användare', style: TextStyle(color: onPrimary)),
+      backgroundColor: themeColors.cardColor,
+      title: Text('Skapa profil', style: TextStyle(color: onPrimary)),
       content: SizedBox(
         width: double.maxFinite,
         child: Column(
@@ -100,15 +99,22 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
             TextField(
               controller: _nameController,
               autofocus: true,
+              onChanged: (_) {
+                if (_nameErrorText == null) return;
+                setState(() {
+                  _nameErrorText = null;
+                });
+              },
               style: TextStyle(color: onPrimary),
               decoration: InputDecoration(
                 labelText: 'Namn',
                 labelStyle: TextStyle(color: mutedOnPrimary),
+                errorText: _nameErrorText,
               ),
             ),
             const SizedBox(height: AppConstants.defaultPadding * 2),
             Text(
-              'Vem vill du spela som?',
+              'Välj figur',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: onPrimary,
                     fontWeight: FontWeight.w600,
@@ -139,11 +145,13 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
                       width: 140,
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? cfg.primaryActionColor.withValues(alpha: 0.2)
-                            : cfg.baseBackgroundColor,
+                            ? themeColors.primaryActionColor.withValues(
+                                alpha: 0.2,
+                              )
+                            : themeColors.baseBackgroundColor,
                         border: Border.all(
                           color: isSelected
-                              ? cfg.primaryActionColor
+                              ? themeColors.primaryActionColor
                               : Colors.transparent,
                           width: 2,
                         ),
@@ -194,74 +202,6 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
                 },
               ),
             ),
-            const SizedBox(height: AppConstants.defaultPadding * 2),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Årskurs',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: mutedOnPrimary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                  ),
-                ),
-                DropdownButton<int?>(
-                  value: _selectedGrade,
-                  dropdownColor: cfg.baseBackgroundColor,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: onPrimary),
-                  underline: const SizedBox.shrink(),
-                  items: const [
-                    DropdownMenuItem<int?>(
-                      value: null,
-                      child: Text('Ingen'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 1,
-                      child: Text('Åk 1'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 2,
-                      child: Text('Åk 2'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 3,
-                      child: Text('Åk 3'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 4,
-                      child: Text('Åk 4'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 5,
-                      child: Text('Åk 5'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 6,
-                      child: Text('Åk 6'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 7,
-                      child: Text('Åk 7'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 8,
-                      child: Text('Åk 8'),
-                    ),
-                    DropdownMenuItem<int?>(
-                      value: 9,
-                      child: Text('Åk 9'),
-                    ),
-                  ],
-                  onChanged: (value) => setState(() {
-                    _selectedGrade = value;
-                  }),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -273,19 +213,18 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
         TextButton(
           onPressed: () async {
             final name = _nameController.text.trim();
-            if (name.isEmpty) return;
-
-            final ageGroup = DifficultyConfig.effectiveAgeGroup(
-              fallback: AgeGroup.young,
-              gradeLevel: _selectedGrade,
-            );
+            if (name.isEmpty) {
+              setState(() {
+                _nameErrorText = 'Skriv ett namn.';
+              });
+              return;
+            }
 
             await ref.read(userProvider.notifier).createUser(
                   userId: const Uuid().v4(),
                   name: name,
-                  ageGroup: ageGroup,
+                  ageGroup: AgeGroup.young,
                   avatarEmoji: _selectedCharacter.emoji,
-                  gradeLevel: _selectedGrade,
                   selectedCharacterId: _selectedCharacter.id,
                 );
 

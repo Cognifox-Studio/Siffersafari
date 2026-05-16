@@ -2,10 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
-import 'package:siffersafari/core/theme/app_theme_config.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/gen/assets.g.dart';
@@ -27,7 +26,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   Widget build(BuildContext context) {
     final activeUser = ref.watch(userProvider).activeUser;
     final scheme = Theme.of(context).colorScheme;
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
 
     if (activeUser == null) {
       return const SizedBox.shrink();
@@ -82,7 +81,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 children: [
                   _ReactionButton(
                     label: 'Vanlig',
-                    themeCfg: themeCfg,
                     isSelected: _selectedReaction == CharacterReaction.idle,
                     onTap: () {
                       setState(
@@ -94,7 +92,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                   const SizedBox(width: AppConstants.smallPadding),
                   _ReactionButton(
                     label: 'TÃ¤nker',
-                    themeCfg: themeCfg,
                     isSelected:
                         _selectedReaction == CharacterReaction.answerWrong,
                     onTap: () {
@@ -107,7 +104,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                   const SizedBox(width: AppConstants.smallPadding),
                   _ReactionButton(
                     label: 'Glad!',
-                    themeCfg: themeCfg,
                     isSelected:
                         _selectedReaction == CharacterReaction.answerCorrect,
                     onTap: () {
@@ -133,7 +129,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                         Expanded(
                           flex: 2,
                           child: Center(
-                            child: _buildCharacter(activeUser, themeCfg),
+                            child: _buildCharacter(activeUser),
                           ),
                         ),
                         Expanded(
@@ -144,7 +140,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               bottom: AppConstants.largePadding,
                             ),
                             child: PlayfulPanel(
-                              backgroundColor: themeCfg.cardColor,
+                              backgroundColor: themeColors.cardColor,
                               padding: const EdgeInsets.all(
                                 AppConstants.defaultPadding,
                               ),
@@ -152,7 +148,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                                 context,
                                 unlockedItems,
                                 equippedItems,
-                                themeCfg,
                                 _selectedReaction,
                               ),
                             ),
@@ -168,7 +163,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       Expanded(
                         flex: 3,
                         child: Center(
-                          child: _buildCharacter(activeUser, themeCfg),
+                          child: _buildCharacter(activeUser),
                         ),
                       ),
                       const SizedBox(height: AppConstants.largePadding),
@@ -180,7 +175,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             vertical: AppConstants.defaultPadding,
                           ),
                           child: PlayfulPanel(
-                            backgroundColor: themeCfg.cardColor,
+                            backgroundColor: themeColors.cardColor,
                             padding: const EdgeInsets.all(
                               AppConstants.defaultPadding,
                             ),
@@ -188,7 +183,6 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               context,
                               unlockedItems,
                               equippedItems,
-                              themeCfg,
                               _selectedReaction,
                             ),
                           ),
@@ -205,7 +199,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     );
   }
 
-  Widget _buildCharacter(UserProgress activeUser, AppThemeConfig themeCfg) {
+  Widget _buildCharacter(UserProgress activeUser) {
     return Container(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
       decoration: BoxDecoration(
@@ -245,10 +239,10 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     BuildContext context,
     List<String> unlockedItems,
     Map<String, String> equippedItems,
-    AppThemeConfig themeCfg,
     CharacterReaction pose,
   ) {
     final wardrobeItems = InventoryConfig.wardrobeItems;
+    final themeColors = context.appThemeColors;
 
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -283,13 +277,13 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
           child: Container(
             decoration: BoxDecoration(
               color: isEquippedInPose
-                  ? themeCfg.secondaryActionColor
-                  : themeCfg.cardColor.withValues(alpha: 0.8),
+                  ? themeColors.secondaryActionColor
+                  : themeColors.cardColor.withValues(alpha: 0.8),
               borderRadius:
                   BorderRadius.circular(AppConstants.borderRadius * 1.5),
               border: Border.all(
                 color: isEquippedInPose
-                    ? themeCfg.primaryActionColor
+                    ? themeColors.primaryActionColor
                     : Colors.transparent,
                 width: isEquippedInPose ? 4 : 0,
               ),
@@ -328,25 +322,24 @@ class _ReactionButton extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
-    this.themeCfg,
   });
 
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
-  final AppThemeConfig? themeCfg;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final themeColors = context.appThemeColors;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? themeCfg?.primaryActionColor ?? theme.colorScheme.primary
-              : (themeCfg?.cardColor ?? theme.colorScheme.surface),
+              ? themeColors.primaryActionColor
+              : themeColors.cardColor,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected ? Colors.white : Colors.transparent,

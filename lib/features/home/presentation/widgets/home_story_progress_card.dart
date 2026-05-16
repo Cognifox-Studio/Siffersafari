@@ -42,14 +42,11 @@ class HomeStoryProgressCard extends StatelessWidget {
     final currentNode = story.currentNode;
     final nextNode = _nextNode();
     final visibleNodes = _selectVisibleNodes();
-    final overallProgress =
-        story.totalNodes == 0 ? 0.0 : story.completedNodes / story.totalNodes;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),
       child: PlayfulPanel(
-        hero: true,
-        margin: const EdgeInsets.only(top: AppConstants.defaultPadding),
+        margin: EdgeInsets.zero,
         highlightColor: accentColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -63,15 +60,15 @@ class HomeStoryProgressCard extends StatelessWidget {
               cacheHeight: cacheHeight,
               onPrimary: onPrimary,
             ),
-            const SizedBox(height: AppConstants.defaultPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             Text(
               story.worldTitle,
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: onPrimary,
                     fontWeight: FontWeight.w800,
                   ),
             ),
-            const SizedBox(height: AppConstants.defaultPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             Wrap(
               spacing: AppConstants.smallPadding,
               runSpacing: AppConstants.smallPadding,
@@ -82,13 +79,6 @@ class HomeStoryProgressCard extends StatelessWidget {
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
                 ),
-                if (currentNode != null)
-                  _InfoChip(
-                    label: 'Nu',
-                    value: currentNode.landmark,
-                    onPrimary: onPrimary,
-                    mutedOnPrimary: mutedOnPrimary,
-                  ),
                 if (story.nextBiome != null)
                   _LockedBiomeChip(
                     biomeName: story.nextBiome!.name,
@@ -97,14 +87,62 @@ class HomeStoryProgressCard extends StatelessWidget {
                   ),
               ],
             ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            _FocusCard(
-              label: 'Nästa stopp',
-              nextTitle: nextNode?.landmark ?? 'Målet är nära',
-              nextBody: nextNode == null ? 'Snart klar' : nextNode.title,
-              nextColor: primaryActionColor,
+            const SizedBox(height: AppConstants.smallPadding),
+            Container(
+              padding: const EdgeInsets.all(AppConstants.smallPadding),
+              decoration: BoxDecoration(
+                color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                border: Border.all(
+                  color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.flag_rounded,
+                    color: primaryActionColor,
+                    size: 20,
+                  ),
+                  const SizedBox(width: AppConstants.smallPadding),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Nästa stopp',
+                          style:
+                              Theme.of(context).textTheme.labelLarge?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                        ),
+                        const SizedBox(height: AppConstants.microSpacing4),
+                        Text(
+                          nextNode?.landmark ?? 'Målet är nära',
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    color: onPrimary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                        ),
+                        const SizedBox(height: AppConstants.microSpacing4),
+                        Text(
+                          nextNode == null ? 'Snart klar.' : nextNode.title,
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: AppConstants.defaultPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             _StoryPathPreview(
               nodes: visibleNodes,
               currentNodeId: currentNode?.id,
@@ -115,33 +153,24 @@ class HomeStoryProgressCard extends StatelessWidget {
               mutedOnPrimary: mutedOnPrimary,
               faintOnPrimary: faintOnPrimary,
             ),
-            const SizedBox(height: AppConstants.defaultPadding),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-              child: LinearProgressIndicator(
-                value: overallProgress,
-                minHeight: AppConstants.progressBarHeightSmall,
-                backgroundColor: onPrimary.withValues(
-                  alpha: AppOpacities.progressTrackLight,
-                ),
-                valueColor: AlwaysStoppedAnimation<Color>(accentColor),
-              ),
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
+            const SizedBox(height: AppConstants.smallPadding),
             ElevatedButton(
               onPressed: onStartQuest,
               child: const Text('Spela nästa stopp'),
             ),
             if (onOpenMap != null) ...[
-              const SizedBox(height: AppConstants.smallPadding),
-              OutlinedButton.icon(
-                onPressed: onOpenMap,
-                icon: Image.asset(
-                  'assets/images/ui/ic_ui_map.png',
-                  width: 24,
-                  height: 24,
+              const SizedBox(height: AppConstants.microSpacing6),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  onPressed: onOpenMap,
+                  icon: Image.asset(
+                    'assets/images/ui/ic_ui_map.png',
+                    width: 20,
+                    height: 20,
+                  ),
+                  label: const Text('Öppna kartan'),
                 ),
-                label: const Text('Öppna kartan'),
               ),
             ],
           ],
@@ -317,7 +346,7 @@ class _InfoChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
-      constraints: const BoxConstraints(minWidth: 140, maxWidth: 220),
+      constraints: const BoxConstraints(minWidth: 96, maxWidth: 180),
       child: Container(
         padding: const EdgeInsets.all(AppConstants.smallPadding),
         decoration: BoxDecoration(
@@ -342,7 +371,7 @@ class _InfoChip extends StatelessWidget {
               value,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: onPrimary,
                     fontWeight: FontWeight.w800,
                   ),
@@ -399,7 +428,7 @@ class _LockedBiomeChip extends StatelessWidget {
               const SizedBox(height: AppConstants.microSpacing4),
               Text(
                 biomeName,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: onPrimary,
                       fontWeight: FontWeight.w800,
                     ),
@@ -408,31 +437,6 @@ class _LockedBiomeChip extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _FocusCard extends StatelessWidget {
-  const _FocusCard({
-    required this.label,
-    required this.nextTitle,
-    required this.nextBody,
-    required this.nextColor,
-  });
-
-  final String label;
-  final String nextTitle;
-  final String nextBody;
-  final Color nextColor;
-
-  @override
-  Widget build(BuildContext context) {
-    return PlayfulAccentCard(
-      label: label,
-      title: nextTitle,
-      body: nextBody,
-      icon: Icons.flag_rounded,
-      accentColor: nextColor,
     );
   }
 }

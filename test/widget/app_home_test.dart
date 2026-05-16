@@ -138,7 +138,8 @@ void main() {
       );
 
       expect(find.textContaining('Repetitioner redo:'), findsNothing);
-      expect(find.text('🎮 Mer spel'), findsOneWidget);
+      expect(find.text('Välj räknesätt'), findsOneWidget);
+      expect(find.text('🎮 Mer spel'), findsNothing);
     },
   );
 
@@ -653,6 +654,12 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('Efter djungeln'), findsOneWidget);
+
+      await tester.ensureVisible(find.text('Spela nästa stopp'));
+      await tester.tap(find.text('Spela nästa stopp'));
+      await pumpUntilFound(tester, find.byType(QuestionCard));
+
+      expect(find.byType(QuestionCard), findsOneWidget);
     },
   );
 }

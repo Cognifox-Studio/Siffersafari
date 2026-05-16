@@ -1,10 +1,22 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/app_analytics_provider.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
+import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
+import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
+import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -14,8 +26,11 @@ class StoryMapScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final story = ref.watch(storyProgressProvider);
+    final userState = ref.watch(userProvider);
     final themeCfg = ref.watch(appThemeConfigProvider);
     final size = MediaQuery.sizeOf(context);
+    final themeColors = context.appThemeColors;
+    final accentColor = themeColors.accentColor;
     final scheme = Theme.of(context).colorScheme;
     final onPrimary = scheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
@@ -37,7 +52,7 @@ class StoryMapScreen extends ConsumerWidget {
               constraints: const BoxConstraints(maxWidth: 420),
               child: PlayfulPanel(
                 hero: true,
-                highlightColor: scheme.secondary,
+                highlightColor: accentColor,
                 child: const PlayfulSectionHeading(
                   title: 'Ingen karta än',
                   subtitle: 'Spela först.',
@@ -52,9 +67,75 @@ class StoryMapScreen extends ConsumerWidget {
 
     final currentNode = story.currentNode;
     final nextNode = _nextNode(story);
-    final completedColor = themeCfg.progressCompletedColor;
-    final currentColor = themeCfg.progressCurrentColor;
-    final nextColor = themeCfg.progressNextColor;
+    final completedColor = themeColors.progressCompletedColor;
+    final currentColor = themeColors.progressCurrentColor;
+    final nextColor = themeColors.progressNextColor;
+
+    void startCurrentQuest() {
+      final user = userState.activeUser;
+      final quest = userState.questStatus?.quest;
+      final targetNode = currentNode ?? nextNode;
+
+      if (user == null || (quest == null && targetNode == null)) {
+        Navigator.of(context).maybePop();
+        return;
+      }
+
+      ref.read(audioServiceProvider).playClickSound();
+      ref.read(userProvider.notifier).clearQuestNotice();
+
+      final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
+        fallback: user.ageGroup,
+        gradeLevel: user.gradeLevel,
+      );
+
+      final requestedDifficulty = quest?.difficulty ?? targetNode!.difficulty;
+      final effectiveDifficulty = DifficultyConfig.effectiveDifficulty(
+        fallback: requestedDifficulty,
+        gradeLevel: user.gradeLevel,
+      );
+
+      final steps = DifficultyConfig.buildDifficultySteps(
+        storedSteps: user.operationDifficultySteps,
+        defaultDifficulty: effectiveDifficulty,
+        gradeLevel: user.gradeLevel,
+      );
+
+      final operationType = quest?.operation ?? targetNode!.operation;
+      final wordProblemsEnabled = ref.read(
+        wordProblemsEnabledProvider(user.userId),
+      );
+      final missingNumberEnabled = ref.read(
+        missingNumberEnabledProvider(user.userId),
+      );
+
+      ref.read(quizProvider.notifier).startSession(
+            userId: user.userId,
+            ageGroup: effectiveAgeGroup,
+            gradeLevel: user.gradeLevel,
+            operationType: operationType,
+            difficulty: effectiveDifficulty,
+            initialDifficultyStepsByOperation: steps,
+            wordProblemsEnabled: wordProblemsEnabled,
+            missingNumberEnabled: missingNumberEnabled,
+          );
+
+      unawaited(
+        ref.read(appAnalyticsProvider).logEvent(
+          name: 'quiz_started',
+          userId: user.userId,
+          properties: {
+            'operation': operationType.name,
+            'difficulty': effectiveDifficulty.name,
+            'isDailyChallenge': false,
+            'gradeLevel': user.gradeLevel,
+            'source': 'story_map',
+          },
+        ),
+      );
+
+      context.pushSmooth(const QuizScreen());
+    }
 
     return ThemedBackgroundScaffold(
       appBar: AppBar(
@@ -80,7 +161,7 @@ class StoryMapScreen extends ConsumerWidget {
                   backgroundAsset: themeCfg.backgroundAsset,
                   completedColor: completedColor,
                   currentColor: currentColor,
-                  accentColor: scheme.secondary,
+                  accentColor: accentColor,
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
                   subtleOnPrimary: subtleOnPrimary,
@@ -90,16 +171,16 @@ class StoryMapScreen extends ConsumerWidget {
                   story: story,
                   currentNode: currentNode,
                   nextNode: nextNode,
-                  accentColor: scheme.secondary,
+                  accentColor: accentColor,
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
-                  onContinue: () => Navigator.of(context).maybePop(),
+                  onContinue: startCurrentQuest,
                 ),
                 if (story.nextBiome != null) ...[
                   const SizedBox(height: AppConstants.defaultPadding),
                   _LockedBiomeTeaser(
                     biome: story.nextBiome!,
-                    accentColor: scheme.secondary,
+                    accentColor: accentColor,
                     onPrimary: onPrimary,
                     mutedOnPrimary: mutedOnPrimary,
                   ),
@@ -108,7 +189,7 @@ class StoryMapScreen extends ConsumerWidget {
                 PlayfulPanel(
                   backgroundColor:
                       onPrimary.withValues(alpha: AppOpacities.panelFill),
-                  highlightColor: scheme.secondary,
+                  highlightColor: accentColor,
                   padding: EdgeInsets.zero,
                   child: Theme(
                     data: Theme.of(context).copyWith(
@@ -123,8 +204,8 @@ class StoryMapScreen extends ConsumerWidget {
                                   fontWeight: FontWeight.w700,
                                 ),
                       ),
-                      iconColor: scheme.secondary,
-                      collapsedIconColor: scheme.secondary,
+                      iconColor: accentColor,
+                      collapsedIconColor: accentColor,
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
@@ -139,7 +220,7 @@ class StoryMapScreen extends ConsumerWidget {
                             completedColor: completedColor,
                             currentColor: currentColor,
                             nextColor: nextColor,
-                            accentColor: scheme.secondary,
+                            accentColor: accentColor,
                             onPrimary: onPrimary,
                             mutedOnPrimary: mutedOnPrimary,
                             subtleOnPrimary: subtleOnPrimary,

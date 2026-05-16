@@ -53,6 +53,70 @@ class QuestProgressionService {
       requiredMastery: MasteryLevel.proficient,
     ),
     QuestDefinition(
+      id: 'q_plus_easy_2',
+      title: 'Tänd lägerelden',
+      description: 'Bli ännu tryggare på plus (lätt).',
+      operation: OperationType.addition,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_minus_easy_2',
+      title: 'Räkna hem stegen',
+      description: 'Bli ännu tryggare på minus (lätt).',
+      operation: OperationType.subtraction,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_times_easy_2',
+      title: 'Bygg repstegen',
+      description: 'Bli ännu tryggare på gånger (lätt).',
+      operation: OperationType.multiplication,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_div_easy_2',
+      title: 'Dela matsäcken',
+      description: 'Bli ännu tryggare på delat (lätt).',
+      operation: OperationType.division,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_plus_easy_3',
+      title: 'Fyll vattenflaskorna',
+      description: 'Bemästra plus på djungelstigen (lätt).',
+      operation: OperationType.addition,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_minus_easy_3',
+      title: 'Hitta rätt stig',
+      description: 'Bemästra minus på djungelstigen (lätt).',
+      operation: OperationType.subtraction,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_times_easy_3',
+      title: 'Res tältduken',
+      description: 'Bemästra gånger på djungelstigen (lätt).',
+      operation: OperationType.multiplication,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_div_easy_3',
+      title: 'Sortera fynden',
+      description: 'Bemästra delat på djungelstigen (lätt).',
+      operation: OperationType.division,
+      difficulty: DifficultyLevel.easy,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
       id: 'q_plus_medium',
       title: 'Kartlägg nya stigar',
       description: 'Bli skicklig på plus (medel).',
@@ -200,10 +264,66 @@ class QuestProgressionService {
       return false; // Ignorera hard tills det lanseras
     }).toList(growable: false);
 
-    return _applyAllowedOperations(
+    final filteredPath = _applyAllowedOperations(
       basePath: basePath,
       allowedOperations: allowedOperations,
     );
+
+    return _normalizePathLength(
+      basePath: filteredPath,
+      targetLength: _targetStopCountFor(includeMedium: includeMedium),
+    );
+  }
+
+  int _targetStopCountFor({required bool includeMedium}) {
+    return includeMedium ? 30 : 10;
+  }
+
+  QuestPath _normalizePathLength({
+    required QuestPath basePath,
+    required int targetLength,
+  }) {
+    if (basePath.isEmpty) return basePath;
+
+    if (basePath.length == targetLength) {
+      return basePath;
+    }
+
+    if (basePath.length > targetLength) {
+      return basePath.sublist(0, targetLength);
+    }
+
+    final expanded = <QuestDefinition>[...basePath];
+    final occurrenceByQuestId = <String, int>{
+      for (final quest in basePath) quest.id: 1,
+    };
+    var remaining = targetLength - basePath.length;
+
+    while (remaining > 0) {
+      final chunkSize =
+          remaining < basePath.length ? remaining : basePath.length;
+      final chunkStart = basePath.length - chunkSize;
+      final chunk = basePath.sublist(chunkStart);
+
+      for (final template in chunk) {
+        final nextOccurrence = (occurrenceByQuestId[template.id] ?? 1) + 1;
+        occurrenceByQuestId[template.id] = nextOccurrence;
+        expanded.add(
+          QuestDefinition(
+            id: '${template.id}__del_$nextOccurrence',
+            title: '${template.title} del $nextOccurrence',
+            description: template.description,
+            operation: template.operation,
+            difficulty: template.difficulty,
+            requiredMastery: template.requiredMastery,
+          ),
+        );
+      }
+
+      remaining -= chunkSize;
+    }
+
+    return expanded;
   }
 
   QuestPath _applyAllowedOperations({

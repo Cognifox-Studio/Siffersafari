@@ -6,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_analytics_provider.dart';
-import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/missing_number_settings_provider.dart';
 import 'package:siffersafari/core/providers/parent_settings_provider.dart';
@@ -14,6 +13,7 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
@@ -312,7 +312,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final storyProgress = ref.watch(storyProgressProvider);
     final questCompletion = userState.lastQuestCompletion;
 
-    final themeCfg = ref.watch(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
 
     final scheme = Theme.of(context).colorScheme;
     final onPrimary = scheme.onPrimary;
@@ -338,7 +338,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final hardest = _getHardestQuestions(session);
     final bonusPoints = reward?.bonusPoints ?? 0;
     final totalPoints = session.totalPoints + bonusPoints;
-    final panelColor = themeCfg.cardColor;
+    final panelColor = themeColors.cardColor;
     final didUnlockSomething = reward?.unlockedIds.isNotEmpty ?? false;
 
     final badgeTeaser = _buildBadgeTeaser(
@@ -427,13 +427,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 label: 'Rätt',
                 value: '${session.correctAnswers}',
                 icon: Icons.check_circle_rounded,
-                highlightColor: themeCfg.progressCompletedColor,
+                highlightColor: themeColors.progressCompletedColor,
               ),
               PlayfulStatPill(
                 label: 'Poäng',
                 value: totalPoints.toString(),
                 icon: Icons.star_rounded,
-                highlightColor: themeCfg.primaryActionColor,
+                highlightColor: themeColors.primaryActionColor,
               ),
             ],
           ),
@@ -455,43 +455,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           const SizedBox(height: AppConstants.largePadding),
         ],
         statsCard,
-        if (questCompletion != null && storyProgress != null) ...[
-          const SizedBox(height: AppConstants.largePadding),
-          _buildStoryCheckpointPanel(
-            context,
-            panelColor: panelColor,
-            onPrimary: onPrimary,
-            mutedOnPrimary: mutedOnPrimary,
-            storyProgress: storyProgress,
-            questCompletion: questCompletion,
-          ),
-        ],
-        if (showCoachCard) ...[
-          const SizedBox(height: AppConstants.largePadding),
-          _buildProgressSummaryPanel(
-            context,
-            panelColor: panelColor,
-            onPrimary: onPrimary,
-            mutedOnPrimary: mutedOnPrimary,
-            user: activeUser,
-            quizState: quizState,
-          ),
-        ],
-        if (showCelebrationCard) ...[
-          const SizedBox(height: AppConstants.largePadding),
-          _buildBadgePanel(
-            context,
-            panelColor: panelColor,
-            onPrimary: onPrimary,
-            mutedOnPrimary: mutedOnPrimary,
-            badgeTeaser: badgeTeaser,
-          ),
-        ],
         const SizedBox(height: AppConstants.largePadding),
         PlayfulPanel(
           hero: true,
           backgroundColor: panelColor,
-          highlightColor: themeCfg.secondaryActionColor,
+          highlightColor: themeColors.secondaryActionColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -532,6 +500,38 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             ],
           ),
         ),
+        if (questCompletion != null && storyProgress != null) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildStoryCheckpointPanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            storyProgress: storyProgress,
+            questCompletion: questCompletion,
+          ),
+        ],
+        if (showCoachCard) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildProgressSummaryPanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            user: activeUser,
+            quizState: quizState,
+          ),
+        ],
+        if (showCelebrationCard) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildBadgePanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            badgeTeaser: badgeTeaser,
+          ),
+        ],
       ],
     );
 
@@ -872,7 +872,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required StoryProgress storyProgress,
     required QuestCompletionEvent questCompletion,
   }) {
-    final themeCfg = ref.read(appThemeConfigProvider);
+    final themeColors = context.appThemeColors;
     final scheme = Theme.of(context).colorScheme;
     final currentNode = storyProgress.currentNode;
     final reachedLandmark = currentNode?.landmark ?? 'nästa plats';
@@ -921,7 +921,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 title: nextTitle,
                 body: nextBody,
                 icon: Icons.flag_rounded,
-                color: themeCfg.progressNextColor,
+                color: themeColors.progressNextColor,
                 onPrimary: onPrimary,
               );
 
