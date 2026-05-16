@@ -271,6 +271,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         storyProgress != null &&
         userState.questStatus != null &&
         allowedOps.contains(userState.questStatus!.quest.operation);
+    final heroEyebrow = user == null
+      ? 'Redo för safari?'
+      : hasStoryQuest
+        ? 'Hej, ${user.name}!'
+        : 'Välkommen, ${user.name}! 👋';
+    final heroTitle = user == null
+      ? 'Börja spela'
+      : hasStoryQuest
+        ? storyProgress.isEpisodeComplete
+          ? storyProgress.endingTitle
+          : storyProgress.currentObjectiveTitle
+        : 'Dags för äventyr!';
+    final heroSubtitle = user == null
+      ? 'Skapa en profil först.'
+      : hasStoryQuest
+        ? storyProgress.isEpisodeComplete
+          ? storyProgress.endingBody
+          : storyProgress.currentObjectiveDescription
+        : null;
+    final primaryButtonLabel = hasResumableSession
+      ? 'Fortsätt'
+      : hasStoryQuest
+        ? storyProgress.isEpisodeComplete
+          ? 'Se episoden'
+          : 'Spela nästa stopp'
+        : 'Spela nu';
+    final primaryButtonIcon = hasResumableSession
+      ? Icons.play_circle_fill_rounded
+      : hasStoryQuest
+        ? storyProgress.isEpisodeComplete
+          ? Icons.map_rounded
+          : Icons.explore_rounded
+        : Icons.play_arrow_rounded;
 
     final operationCards = _buildOperationCards(context, allowedOps);
 
@@ -355,14 +388,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           PlayfulSectionHeading(
                             center: true,
-                            eyebrow: user != null
-                                ? 'Välkommen, ${user.name}! 👋'
-                                : 'Redo för safari?',
-                            title: user != null
-                                ? 'Dags för äventyr!'
-                                : 'Börja spela',
-                            subtitle:
-                                user == null ? 'Skapa en profil först.' : null,
+                            eyebrow: heroEyebrow,
+                            title: heroTitle,
+                            subtitle: heroSubtitle,
                           ),
                           if (user != null) ...[
                             const SizedBox(height: AppConstants.smallPadding),
@@ -384,7 +412,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 ),
                                 if (hasStoryQuest)
                                   PlayfulInfoChip(
-                                    label: 'Uppdrag',
+                                    label: storyProgress.isEpisodeComplete
+                                        ? 'Episod klar'
+                                        : storyProgress.actLabel,
                                     icon: Icons.explore_rounded,
                                     color: themeColors.secondaryActionColor,
                                   ),
@@ -400,6 +430,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ElevatedButton.icon(
                               key: const Key('primary_play_button'),
                               onPressed: () {
+                                if (hasStoryQuest &&
+                                    storyProgress.isEpisodeComplete &&
+                                    !hasResumableSession) {
+                                  context.pushSmooth(const StoryMapScreen());
+                                  return;
+                                }
+
                                 _startOrResumePrimaryQuiz(
                                   user: user,
                                   allowedOps: allowedOps,
@@ -410,14 +447,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 foregroundColor: themeColors.primaryActionColor,
                                 minimumSize: const Size.fromHeight(60),
                               ),
-                              icon: Icon(
-                                hasResumableSession
-                                    ? Icons.play_circle_fill_rounded
-                                    : Icons.play_arrow_rounded,
-                                size: 32,
-                              ),
+                              icon: Icon(primaryButtonIcon, size: 32),
                               label: Text(
-                                hasResumableSession ? 'Fortsätt' : 'Spela nu',
+                                primaryButtonLabel,
                                 style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -504,11 +536,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           ),
                           cacheWidth: questHeroCacheWidth,
                           cacheHeight: questHeroCacheHeight,
-                          onStartQuest: () => _startQuiz(
-                            operationType:
-                                userState.questStatus!.quest.operation,
-                            difficulty: userState.questStatus!.quest.difficulty,
-                          ),
+                          onStartQuest: () {
+                            if (storyProgress.isEpisodeComplete) {
+                              context.pushSmooth(const StoryMapScreen());
+                              return;
+                            }
+
+                            _startQuiz(
+                              operationType:
+                                  userState.questStatus!.quest.operation,
+                              difficulty:
+                                  userState.questStatus!.quest.difficulty,
+                            );
+                          },
                           onOpenMap: () => context.pushSmooth(
                             const StoryMapScreen(),
                           ),

@@ -6,9 +6,10 @@ uppdaterad: 2026-05-16
 
 # Plan: Färdigställ Episode 1 i djungeln
 
-> Status: Revised Draft
+> Status: Implementerad i kod 2026-05-16
 > Horisont: Nuvarande biom, inga nya biom-assets
 > Mål: Göra djungeln till ett färdigt, releasebart Episode 1-system innan nästa värld byggs
+> Verifiering: `flutter analyze`, `app_home_test.dart`, `app_onboarding_test.dart`, `app_results_test.dart`, `results_screen_test.dart`, `app_quiz_flow_test.dart`, `story_progression_service_test.dart`, `quest_progression_service_test.dart`, `scripts/flutter_pixel6.ps1 -Action sync`
 
 Den här planen styr polish-arbetet för nuvarande djungelbiom. Fokus är inte att bygga fler system, utan att göra det som redan finns lättare att förstå, roligare att använda och tydligare som en sammanhållen första episod.
 

@@ -46,6 +46,7 @@ class HomeStoryProgressCard extends StatelessWidget {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),
       child: PlayfulPanel(
+        key: const Key('home_story_progress_card'),
         margin: EdgeInsets.zero,
         highlightColor: accentColor,
         child: Column(
@@ -68,11 +69,26 @@ class HomeStoryProgressCard extends StatelessWidget {
                     fontWeight: FontWeight.w800,
                   ),
             ),
+            const SizedBox(height: AppConstants.microSpacing6),
+            Text(
+              story.isEpisodeComplete ? story.endingBody : story.worldSubtitle,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: mutedOnPrimary,
+                    fontWeight: FontWeight.w600,
+                    height: 1.35,
+                  ),
+            ),
             const SizedBox(height: AppConstants.smallPadding),
             Wrap(
               spacing: AppConstants.smallPadding,
               runSpacing: AppConstants.smallPadding,
               children: [
+                _InfoChip(
+                  label: 'Akt',
+                  value: story.actLabel,
+                  onPrimary: onPrimary,
+                  mutedOnPrimary: mutedOnPrimary,
+                ),
                 _InfoChip(
                   label: 'Klart',
                   value: '${story.completedNodes}/${story.totalNodes}',
@@ -86,6 +102,58 @@ class HomeStoryProgressCard extends StatelessWidget {
                     mutedOnPrimary: mutedOnPrimary,
                   ),
               ],
+            ),
+            const SizedBox(height: AppConstants.smallPadding),
+            Container(
+              padding: const EdgeInsets.all(AppConstants.smallPadding),
+              decoration: BoxDecoration(
+                color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                border: Border.all(
+                  color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    story.isEpisodeComplete ? 'Klart' : 'Nu',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: mutedOnPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: AppConstants.microSpacing4),
+                  Text(
+                    story.isEpisodeComplete
+                        ? story.endingTitle
+                        : story.currentObjectiveTitle,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: onPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                  ),
+                  const SizedBox(height: AppConstants.microSpacing4),
+                  Text(
+                    'Plats: ${currentNode?.landmark ?? 'Djungelstigen'}',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: mutedOnPrimary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                  ),
+                  const SizedBox(height: AppConstants.microSpacing4),
+                  Text(
+                    story.isEpisodeComplete
+                    ? story.endingBody
+                    : story.currentObjectiveDescription,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: mutedOnPrimary,
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
+                        ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppConstants.smallPadding),
             Container(
@@ -111,7 +179,7 @@ class HomeStoryProgressCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nästa stopp',
+                          story.isEpisodeComplete ? 'Senare' : 'Sedan',
                           style:
                               Theme.of(context).textTheme.labelLarge?.copyWith(
                                     color: mutedOnPrimary,
@@ -120,7 +188,9 @@ class HomeStoryProgressCard extends StatelessWidget {
                         ),
                         const SizedBox(height: AppConstants.microSpacing4),
                         Text(
-                          nextNode?.landmark ?? 'Målet är nära',
+                          story.isEpisodeComplete
+                              ? 'Nästa värld'
+                              : nextNode?.landmark ?? 'Djungeln klar snart',
                           style:
                               Theme.of(context).textTheme.titleMedium?.copyWith(
                                     color: onPrimary,
@@ -129,7 +199,11 @@ class HomeStoryProgressCard extends StatelessWidget {
                         ),
                         const SizedBox(height: AppConstants.microSpacing4),
                         Text(
-                          nextNode == null ? 'Snart klar.' : nextNode.title,
+                          story.isEpisodeComplete
+                              ? story.endingBody
+                              : nextNode == null
+                                  ? 'Ett sista steg kvar.'
+                                  : nextNode.title,
                           style:
                               Theme.of(context).textTheme.bodySmall?.copyWith(
                                     color: mutedOnPrimary,
@@ -156,7 +230,9 @@ class HomeStoryProgressCard extends StatelessWidget {
             const SizedBox(height: AppConstants.smallPadding),
             ElevatedButton(
               onPressed: onStartQuest,
-              child: const Text('Spela nästa stopp'),
+              child: Text(
+                story.isEpisodeComplete ? 'Se episoden' : 'Spela nästa stopp',
+              ),
             ),
             if (onOpenMap != null) ...[
               const SizedBox(height: AppConstants.microSpacing6),

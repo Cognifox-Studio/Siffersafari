@@ -221,6 +221,17 @@ class StoryProgressionService {
       index: currentNodeIndex,
       chapterOne: chapterOne,
     );
+    final isEpisodeComplete =
+        effectivePath.isNotEmpty && completedNodes >= effectivePath.length;
+    final totalActs = _totalActsFor(totalNodes: effectivePath.length);
+    final actIndex = _actIndexFor(
+      index: currentNodeIndex,
+      totalNodes: effectivePath.length,
+      totalActs: totalActs,
+      isEpisodeComplete: isEpisodeComplete,
+    );
+    final actBeat = _actBeatFor(actIndex: actIndex);
+    final endingBeat = _endingBeatFor(currentStatus.quest.difficulty);
 
     return StoryProgress(
       worldTitle: 'Maskoten i djungeln',
@@ -228,6 +239,10 @@ class StoryProgressionService {
           ? 'Kapitel 1: Hjälp maskoten att laga den trasiga bron.'
           : 'Följ stigen genom djungeln och lås upp nya platser.',
       chapterTitle: _chapterTitleFor(currentStatus.quest.difficulty),
+      actIndex: actIndex,
+      totalActs: totalActs,
+      actTitle: actBeat.title,
+      actBody: actBeat.body,
       currentObjectiveTitle:
           chapterOne ? objectiveBeat.title : currentStatus.quest.title,
       currentObjectiveDescription:
@@ -237,12 +252,35 @@ class StoryProgressionService {
       totalNodes: effectivePath.length,
       currentNodeIndex: currentNodeIndex,
       nodes: nodes,
+      isEpisodeComplete: isEpisodeComplete,
+      endingTitle: endingBeat.title,
+      endingBody: endingBeat.body,
       nextBiome: _nextBiomeFor(
         difficulty: currentStatus.quest.difficulty,
-        isFinalNode: currentNodeIndex >= effectivePath.length - 1,
+        isFinalNode:
+            isEpisodeComplete || currentNodeIndex >= effectivePath.length - 1,
       ),
       notice: notice,
     );
+  }
+
+  int _totalActsFor({required int totalNodes}) {
+    if (totalNodes <= 1) return 1;
+    if (totalNodes == 2) return 2;
+    return 3;
+  }
+
+  int _actIndexFor({
+    required int index,
+    required int totalNodes,
+    required int totalActs,
+    required bool isEpisodeComplete,
+  }) {
+    if (totalActs <= 1 || totalNodes <= 1) return 1;
+    if (isEpisodeComplete) return totalActs;
+
+    final segmentLength = totalNodes / totalActs;
+    return ((index / segmentLength).floor() + 1).clamp(1, totalActs);
   }
 
   StoryBiomePreview? _nextBiomeFor({
@@ -267,6 +305,34 @@ class StoryProgressionService {
     }
 
     return 'Junglexpediton';
+  }
+
+  _StoryBeat _actBeatFor({required int actIndex}) {
+    const beats = <_StoryBeat>[
+      _StoryBeat(
+        title: 'Bron',
+        body: 'Bygg bron och samla första ledtrådarna.',
+      ),
+      _StoryBeat(
+        title: 'Spåren',
+        body: 'Följ djungelspåren djupare in i episoden.',
+      ),
+      _StoryBeat(
+        title: 'Solporten',
+        body: 'Håll tempot och nå slutet av Episode 1.',
+      ),
+    ];
+
+    final safeIndex = (actIndex - 1).clamp(0, beats.length - 1);
+    return beats[safeIndex];
+  }
+
+  _StoryBeat _endingBeatFor(DifficultyLevel difficulty) {
+    final biomeName = _upcomingBiomes[difficulty]?.name ?? 'Nästa värld';
+    return _StoryBeat(
+      title: 'Djungeln klar!',
+      body: 'Episode 1 är klar. $biomeName kommer senare.',
+    );
   }
 
   _StoryBeat _objectiveBeatFor({

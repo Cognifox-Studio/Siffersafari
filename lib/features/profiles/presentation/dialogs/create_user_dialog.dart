@@ -53,22 +53,21 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
     CharacterInfo(
       id: 'loke',
       name: 'Loke',
-      description: 'Apan som ser mönster i allt. Älskar ordning och pussel.',
+      description: 'Ser mönster snabbt.',
       assetPath: 'assets/characters/loke/png/loke_base.png',
       emoji: '🐵',
     ),
     CharacterInfo(
       id: 'signe',
       name: 'Signe',
-      description:
-          'Djungelns snabbaste leopard. Ser banan som ett stort pussel.',
+      description: 'Springer snabbt.',
       assetPath: 'assets/characters/signe/png/signe_base.png',
       emoji: '🐆',
     ),
     CharacterInfo(
       id: 'astrid',
       name: 'Astrid',
-      description: 'Minnesmästaren. En liten elefant som aldrig glömmer.',
+      description: 'Minns allt.',
       assetPath: 'assets/characters/astrid/png/astrid_base.png',
       emoji: '🐘',
     ),
@@ -99,6 +98,8 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
             TextField(
               controller: _nameController,
               autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              textInputAction: TextInputAction.done,
               onChanged: (_) {
                 if (_nameErrorText == null) return;
                 setState(() {
@@ -108,6 +109,7 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
               style: TextStyle(color: onPrimary),
               decoration: InputDecoration(
                 labelText: 'Namn',
+                hintText: 'Skriv namn',
                 labelStyle: TextStyle(color: mutedOnPrimary),
                 errorText: _nameErrorText,
               ),
@@ -139,63 +141,79 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
                     });
                   }
 
-                  return GestureDetector(
-                    onTap: handleTap,
-                    child: Container(
-                      width: 140,
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? themeColors.primaryActionColor.withValues(
-                                alpha: 0.2,
-                              )
-                            : themeColors.baseBackgroundColor,
-                        border: Border.all(
-                          color: isSelected
-                              ? themeColors.primaryActionColor
-                              : Colors.transparent,
-                          width: 2,
+                  return Semantics(
+                    button: true,
+                    selected: isSelected,
+                    label: 'Välj ${char.name}',
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(
+                          AppConstants.borderRadius,
                         ),
-                        borderRadius:
-                            BorderRadius.circular(AppConstants.borderRadius),
-                      ),
-                      padding: const EdgeInsets.all(AppConstants.smallPadding),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Expanded(
-                            child: GameCharacter(
-                              onTap: handleTap,
-                              characterId: CharacterId.values.firstWhere(
-                                (e) => e.name == char.id,
-                                orElse: () => CharacterId.loke,
+                        onTap: handleTap,
+                        child: Container(
+                          width: 140,
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? themeColors.primaryActionColor.withValues(
+                                    alpha: 0.2,
+                                  )
+                                : themeColors.baseBackgroundColor,
+                            border: Border.all(
+                              color: isSelected
+                                  ? themeColors.primaryActionColor
+                                  : Colors.transparent,
+                              width: 2,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.borderRadius,
+                            ),
+                          ),
+                          padding: const EdgeInsets.all(
+                            AppConstants.smallPadding,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Expanded(
+                                child: GameCharacter(
+                                  onTap: handleTap,
+                                  characterId: CharacterId.values.firstWhere(
+                                    (e) => e.name == char.id,
+                                    orElse: () => CharacterId.loke,
+                                  ),
+                                  reaction: isSelected
+                                      ? CharacterReaction.celebrate
+                                      : CharacterReaction.idle,
+                                  reactionNonce: isSelected ? _reactionNonce : 0,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
-                              reaction: isSelected
-                                  ? CharacterReaction.celebrate
-                                  : CharacterReaction.idle,
-                              reactionNonce: isSelected ? _reactionNonce : 0,
-                              fit: BoxFit.contain,
-                            ),
+                              const SizedBox(
+                                height: AppConstants.smallPadding,
+                              ),
+                              Text(
+                                char.name,
+                                style: TextStyle(
+                                  color: onPrimary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                char.description,
+                                style: TextStyle(
+                                  color: mutedOnPrimary,
+                                  fontSize: 11,
+                                ),
+                                textAlign: TextAlign.center,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: AppConstants.smallPadding),
-                          Text(
-                            char.name,
-                            style: TextStyle(
-                              color: onPrimary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            char.description,
-                            style: TextStyle(
-                              color: mutedOnPrimary,
-                              fontSize: 11,
-                            ),
-                            textAlign: TextAlign.center,
-                            maxLines: 4,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
+                        ),
                       ),
                     ),
                   );

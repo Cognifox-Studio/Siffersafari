@@ -25,6 +25,7 @@ import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:siffersafari/features/story/presentation/screens/story_map_screen.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/confetti_overlay.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
@@ -349,6 +350,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       didUnlockSomething: didUnlockSomething,
     );
     final activeUser = userState.activeUser;
+    final hasStoryCheckpoint = questCompletion != null && storyProgress != null;
 
     final summaryHero = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -455,6 +457,18 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           const SizedBox(height: AppConstants.largePadding),
         ],
         statsCard,
+        if (hasStoryCheckpoint) ...[
+          const SizedBox(height: AppConstants.largePadding),
+          _buildStoryCheckpointPanel(
+            context,
+            panelColor: panelColor,
+            onPrimary: onPrimary,
+            mutedOnPrimary: mutedOnPrimary,
+            storyProgress: storyProgress,
+            questCompletion: questCompletion,
+            onContinueStory: _goToStoryMapFromResults,
+          ),
+        ],
         const SizedBox(height: AppConstants.largePadding),
         PlayfulPanel(
           hero: true,
@@ -463,8 +477,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const PlayfulSectionHeading(
-                title: 'Kör mer?',
+              PlayfulSectionHeading(
+                title: hasStoryCheckpoint ? 'Träna mer?' : 'Kör mer?',
               ),
               SizedBox(height: AppConstants.defaultPadding.h),
               ElevatedButton.icon(
@@ -474,7 +488,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                   useFocusedMiniPass: false,
                 ),
                 icon: const Icon(Icons.replay_rounded),
-                label: const Text('Spela igen!'),
+                label: const Text('Spela igen'),
               ),
               SizedBox(height: AppConstants.defaultPadding.h),
               OutlinedButton.icon(
@@ -500,17 +514,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             ],
           ),
         ),
-        if (questCompletion != null && storyProgress != null) ...[
-          const SizedBox(height: AppConstants.largePadding),
-          _buildStoryCheckpointPanel(
-            context,
-            panelColor: panelColor,
-            onPrimary: onPrimary,
-            mutedOnPrimary: mutedOnPrimary,
-            storyProgress: storyProgress,
-            questCompletion: questCompletion,
-          ),
-        ],
         if (showCoachCard) ...[
           const SizedBox(height: AppConstants.largePadding),
           _buildProgressSummaryPanel(
@@ -622,6 +625,15 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     ref.read(userProvider.notifier).clearLastLevelUp();
     context.pushAndRemoveUntilSmooth(
       const HomeScreen(),
+      (route) => false,
+    );
+  }
+
+  void _goToStoryMapFromResults() {
+    ref.read(userProvider.notifier).clearLastQuestCompletion();
+    ref.read(userProvider.notifier).clearLastLevelUp();
+    context.pushAndRemoveUntilSmooth(
+      const StoryMapScreen(),
       (route) => false,
     );
   }
@@ -871,16 +883,30 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required Color mutedOnPrimary,
     required StoryProgress storyProgress,
     required QuestCompletionEvent questCompletion,
+    required VoidCallback onContinueStory,
   }) {
     final themeColors = context.appThemeColors;
     final scheme = Theme.of(context).colorScheme;
     final currentNode = storyProgress.currentNode;
     final reachedLandmark = currentNode?.landmark ?? 'nästa plats';
-    final nextTitle =
-        questCompletion.nextQuestTitle ?? storyProgress.currentObjectiveTitle;
-    final nextBody = questCompletion.nextQuestTitle == null
-        ? 'Du är snart framme vid slutet av den här stigen.'
+    final isEpisodeComplete = storyProgress.isEpisodeComplete;
+    final panelTitle = isEpisodeComplete
+        ? storyProgress.endingTitle
+        : 'Nu nådde du $reachedLandmark!';
+    final panelLead = isEpisodeComplete
+        ? storyProgress.endingBody
+        : 'Storyn gick vidare.';
+    final nextTitle = isEpisodeComplete
+        ? 'Episode 1 klar'
+        : questCompletion.nextQuestTitle ?? storyProgress.currentObjectiveTitle;
+    final nextBody = isEpisodeComplete
+        ? storyProgress.endingBody
         : 'Nästa mål: $nextTitle';
+    final storyButtonLabel =
+        isEpisodeComplete ? 'Se episoden' : 'Fortsätt storyn';
+    final storyButtonIcon = isEpisodeComplete
+        ? Icons.map_rounded
+        : Icons.explore_rounded;
 
     return PlayfulPanel(
       backgroundColor: panelColor,
@@ -890,7 +916,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Nytt stopp!',
+            panelTitle,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w800,
@@ -898,7 +924,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           ),
           SizedBox(height: AppConstants.smallPadding.h),
           Text(
-            'Nu: $reachedLandmark',
+            panelLead,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -909,15 +935,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             builder: (context, constraints) {
               final stackCards = constraints.maxWidth < 620;
               final currentCard = _StoryFocusCard(
-                label: 'Du är här',
+                label: isEpisodeComplete ? 'Sista stopp' : 'Nu',
                 title: reachedLandmark,
-                body: storyProgress.chapterTitle,
+                body: isEpisodeComplete
+                    ? questCompletion.completedQuestTitle
+                    : questCompletion.completedQuestDescription,
                 icon: Icons.place_rounded,
                 color: scheme.secondary,
                 onPrimary: onPrimary,
               );
               final nextCard = _StoryFocusCard(
-                label: 'Nästa stopp',
+                label: isEpisodeComplete ? 'Nu' : 'Sedan',
                 title: nextTitle,
                 body: nextBody,
                 icon: Icons.flag_rounded,
@@ -944,6 +972,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 ],
               );
             },
+          ),
+          SizedBox(height: AppConstants.defaultPadding.h),
+          ElevatedButton.icon(
+            onPressed: onContinueStory,
+            icon: Icon(storyButtonIcon),
+            label: Text(storyButtonLabel),
           ),
         ],
       ),

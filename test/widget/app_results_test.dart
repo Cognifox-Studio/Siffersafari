@@ -218,13 +218,14 @@ void main() {
         }
       }
 
-      await pumpUntilFound(tester, find.text('Nytt stopp!'));
+      await pumpUntilFound(tester, find.textContaining('Nu nådde du'));
 
-      expect(find.text('Nytt stopp!'), findsOneWidget);
+      expect(find.textContaining('Nu nådde du'), findsOneWidget);
       expect(
         find.textContaining('Nästa mål: Hitta borttappade siffror'),
         findsWidgets,
       );
+      expect(find.text('Fortsätt storyn'), findsOneWidget);
     },
   );
 }

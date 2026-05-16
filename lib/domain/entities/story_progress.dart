@@ -75,6 +75,10 @@ class StoryProgress extends Equatable {
     required this.worldTitle,
     required this.worldSubtitle,
     required this.chapterTitle,
+    required this.actIndex,
+    required this.totalActs,
+    required this.actTitle,
+    required this.actBody,
     required this.currentObjectiveTitle,
     required this.currentObjectiveDescription,
     required this.progress,
@@ -82,6 +86,9 @@ class StoryProgress extends Equatable {
     required this.totalNodes,
     required this.currentNodeIndex,
     required this.nodes,
+    required this.isEpisodeComplete,
+    required this.endingTitle,
+    required this.endingBody,
     this.nextBiome,
     this.notice,
   });
@@ -89,6 +96,10 @@ class StoryProgress extends Equatable {
   final String worldTitle;
   final String worldSubtitle;
   final String chapterTitle;
+  final int actIndex;
+  final int totalActs;
+  final String actTitle;
+  final String actBody;
   final String currentObjectiveTitle;
   final String currentObjectiveDescription;
   final double progress;
@@ -96,8 +107,13 @@ class StoryProgress extends Equatable {
   final int totalNodes;
   final int currentNodeIndex;
   final List<StoryNode> nodes;
+  final bool isEpisodeComplete;
+  final String endingTitle;
+  final String endingBody;
   final StoryBiomePreview? nextBiome;
   final String? notice;
+
+  String get actLabel => 'Akt $actIndex av $totalActs';
 
   StoryNode? get currentNode {
     for (final node in nodes) {
@@ -111,6 +127,10 @@ class StoryProgress extends Equatable {
         worldTitle,
         worldSubtitle,
         chapterTitle,
+        actIndex,
+        totalActs,
+        actTitle,
+        actBody,
         currentObjectiveTitle,
         currentObjectiveDescription,
         progress,
@@ -118,6 +138,9 @@ class StoryProgress extends Equatable {
         totalNodes,
         currentNodeIndex,
         nodes,
+        isEpisodeComplete,
+        endingTitle,
+        endingBody,
         nextBiome,
         notice,
       ];

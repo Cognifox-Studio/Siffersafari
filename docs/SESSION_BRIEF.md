@@ -15,6 +15,12 @@
 
 ### Senaste leveranser
 
+**2026-05-16 – Episode 1 i djungeln känns nu som en sammanhållen första episod**
+- **Story-first start:** `HomeScreen`, `HomeStoryProgressCard`, `InitialProfileSetupScreen` och `create_user_dialog.dart` pekar nu tydligare mot aktivt uppdrag, enklare första minut och barnvänligare figurval.
+- **Lätt aktlager ovanpå befintlig path:** `StoryProgress` och `StoryProgressionService` bär nu `Akt X av Y`, akt-copy och ett explicit `Djungeln klar!`-slutläge utan ny persistens eller nytt progressionsträd.
+- **Karta och resultat hänger ihop:** `StoryMapScreen` visar nu episodrytm i hero- och nu/sedan-panelerna, och `ResultsScreen` prioriterar storyfortsättning med `Fortsätt storyn` eller episodepilog före replayvalen.
+- **Verifiering:** `app_home_test.dart`, `app_onboarding_test.dart`, `app_results_test.dart`, `results_screen_test.dart`, `app_quiz_flow_test.dart`, `story_progression_service_test.dart`, `quest_progression_service_test.dart`, `flutter analyze` och `scripts/flutter_pixel6.ps1 -Action sync` passerar.
+
 **2026-05-16 – theme-lagret delades upp i semantiska tokens och assets**
 - **Hybrid theme-lager:** `AppThemeColors` ar nu en `ThemeExtension` for semantiska farg-, panel- och progress-tokens, medan `AppThemeConfig` fortsatt ager assetval och `ThemeData`-bygget.
 - **Settings visar bara verkliga teman:** `SettingsScreen` listar nu bara `Djungel` och `Rymd`, och profiler med gamla `underwater`/`fantasy` fallbackar deterministiskt till `Rymd` i runtime.

@@ -51,6 +51,9 @@ void main() {
       expect(story.totalNodes, 30);
       expect(story.currentNodeIndex, 0);
       expect(story.completedNodes, 0);
+      expect(story.actLabel, 'Akt 1 av 3');
+      expect(story.actTitle, 'Bron');
+      expect(story.isEpisodeComplete, isFalse);
       expect(story.nodes.first.state.name, 'current');
       expect(story.nodes.first.landmark, 'Startlägret');
       expect(
@@ -115,6 +118,25 @@ void main() {
         completedQuestIds: const {'quest_bridge'},
       );
 
+      expect(progress.nextBiome, isNull);
+    });
+
+    test('ger slutlage nar hela episoden ar klar', () {
+      final progress = storyService.createStoryProgress(
+        path: const [easyQuest, secondQuest],
+        currentStatus: const QuestStatus(
+          quest: secondQuest,
+          masteryRate: 1.0,
+          progress: 1.0,
+          isCompleted: true,
+        ),
+        completedQuestIds: const {'quest_bridge', 'quest_finish'},
+      );
+
+      expect(progress.isEpisodeComplete, isTrue);
+      expect(progress.actLabel, 'Akt 2 av 2');
+      expect(progress.endingTitle, 'Djungeln klar!');
+      expect(progress.endingBody, contains('kommer senare'));
       expect(progress.nextBiome, isNull);
     });
   });

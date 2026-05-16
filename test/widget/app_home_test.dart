@@ -144,7 +144,7 @@ void main() {
   );
 
   testWidgets(
-    '[Widget] App home – visar primar spela-nu-knapp for aktiv profil',
+    '[Widget] App home – visar storystyrd primarknapp for aktiv profil',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -176,7 +176,18 @@ void main() {
       );
 
       expect(find.byKey(const Key('primary_play_button')), findsOneWidget);
-      expect(find.text('Spela nu'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('primary_play_button')),
+          matching: find.text('Spela nästa stopp'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Uppdrag: Hämta rep'), findsWidgets);
+      expect(
+        find.text('Lös talen så hittar vi rep till bron.'),
+        findsWidgets,
+      );
     },
   );
 
@@ -624,7 +635,8 @@ void main() {
       );
 
       expect(find.text('Djungelkartan'), findsAtLeastNWidgets(1));
-      expect(find.text('Nästa stopp'), findsOneWidget);
+      expect(find.text('Akt 1 av 3'), findsWidgets);
+      expect(find.text('Resten av stigen'), findsOneWidget);
       expect(
         find.byKey(const Key('story_map_next_biome_chip')),
         findsOneWidget,
@@ -645,8 +657,8 @@ void main() {
         findsOneWidget,
       );
 
-      await tester.ensureVisible(find.text('Fler stopp'));
-      await tester.tap(find.text('Fler stopp'));
+      await tester.ensureVisible(find.text('Resten av stigen'));
+      await tester.tap(find.text('Resten av stigen'));
       await tester.pump();
 
       expect(

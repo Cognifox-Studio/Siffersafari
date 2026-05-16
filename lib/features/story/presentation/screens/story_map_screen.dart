@@ -16,6 +16,7 @@ import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
+import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
@@ -72,6 +73,14 @@ class StoryMapScreen extends ConsumerWidget {
     final nextColor = themeColors.progressNextColor;
 
     void startCurrentQuest() {
+      if (story.isEpisodeComplete) {
+        context.pushAndRemoveUntilSmooth(
+          const HomeScreen(),
+          (route) => false,
+        );
+        return;
+      }
+
       final user = userState.activeUser;
       final quest = userState.questStatus?.quest;
       final targetNode = currentNode ?? nextNode;
@@ -151,8 +160,11 @@ class StoryMapScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const PlayfulSectionHeading(
+                PlayfulSectionHeading(
                   title: 'Djungelkartan',
+                  subtitle: story.isEpisodeComplete
+                      ? story.endingBody
+                      : '${story.actLabel}: ${story.actTitle}',
                 ),
                 const SizedBox(height: AppConstants.defaultPadding),
                 _MapHeroCard(
@@ -197,7 +209,7 @@ class StoryMapScreen extends ConsumerWidget {
                     ),
                     child: ExpansionTile(
                       title: Text(
-                        'Fler stopp',
+                        'Resten av stigen',
                         style:
                             Theme.of(context).textTheme.titleMedium?.copyWith(
                                   color: onPrimary,
@@ -312,11 +324,34 @@ class _MapHeroCard extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
           ),
+          const SizedBox(height: AppConstants.microSpacing6),
+          Text(
+            '${story.actLabel}: ${story.actTitle}',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          const SizedBox(height: AppConstants.microSpacing4),
+          Text(
+            story.isEpisodeComplete ? story.endingBody : story.actBody,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: mutedOnPrimary,
+                  fontWeight: FontWeight.w600,
+                  height: 1.35,
+                ),
+          ),
           const SizedBox(height: AppConstants.defaultPadding),
           Wrap(
             spacing: AppConstants.smallPadding,
             runSpacing: AppConstants.smallPadding,
             children: [
+              _HeaderChip(
+                label: 'Akt',
+                value: story.actLabel,
+                onPrimary: onPrimary,
+                mutedOnPrimary: mutedOnPrimary,
+              ),
               _HeaderChip(
                 label: 'Klart',
                 value: '${story.completedNodes}/${story.totalNodes}',
@@ -481,7 +516,27 @@ class _NowAndNextPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final nextLabel = nextNode?.landmark ?? 'målet';
+    final panelTitle = story.isEpisodeComplete
+        ? story.endingTitle
+        : story.actLabel;
+    final panelBody = story.isEpisodeComplete
+        ? story.endingBody
+        : story.actBody;
+    final currentLabel = story.isEpisodeComplete ? 'Sista stopp' : 'Nu';
+    final currentTitle = currentNode?.landmark ?? 'Starten';
+    final currentBody = story.isEpisodeComplete
+        ? story.chapterTitle
+        : story.currentObjectiveTitle;
+    final nextLabel = story.isEpisodeComplete ? 'Senare' : 'Sedan';
+    final nextTitle = story.isEpisodeComplete
+        ? 'Nästa värld'
+        : nextNode?.landmark ?? 'Djungeln klar snart';
+    final nextBody = story.isEpisodeComplete
+        ? story.endingBody
+        : nextNode?.title ?? 'Ett sista steg kvar.';
+    final buttonLabel = story.isEpisodeComplete ? 'Till hem' : 'Spela nästa stopp';
+    final buttonIcon =
+        story.isEpisodeComplete ? Icons.home_rounded : Icons.play_arrow_rounded;
 
     return PlayfulPanel(
       highlightColor: accentColor,
@@ -489,7 +544,7 @@ class _NowAndNextPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Nästa stopp',
+            panelTitle,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   color: onPrimary,
                   fontWeight: FontWeight.w900,
@@ -497,17 +552,95 @@ class _NowAndNextPanel extends StatelessWidget {
           ),
           const SizedBox(height: AppConstants.smallPadding),
           Text(
-            '${currentNode?.landmark ?? 'Starten'} → $nextLabel',
+            panelBody,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w700,
                 ),
           ),
           const SizedBox(height: AppConstants.defaultPadding),
+          Container(
+            padding: const EdgeInsets.all(AppConstants.smallPadding),
+            decoration: BoxDecoration(
+              color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+              border: Border.all(
+                color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  currentLabel,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  currentTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  currentBody,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Container(
+            padding: const EdgeInsets.all(AppConstants.smallPadding),
+            decoration: BoxDecoration(
+              color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+              borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+              border: Border.all(
+                color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  nextLabel,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  nextTitle,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  nextBody,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
           ElevatedButton.icon(
             onPressed: onContinue,
-            icon: const Icon(Icons.play_arrow_rounded),
-            label: const Text('Spela nästa stopp'),
+            icon: Icon(buttonIcon),
+            label: Text(buttonLabel),
           ),
         ],
       ),
@@ -552,7 +685,7 @@ class _NearbyStopsPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          'Fler stopp',
+          'Resten av stigen',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
                 color: onPrimary,
                 fontWeight: FontWeight.w800,

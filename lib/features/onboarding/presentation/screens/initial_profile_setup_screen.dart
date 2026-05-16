@@ -2,7 +2,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
-import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import 'package:siffersafari/presentation/widgets/mascot_reaction_view.dart';
@@ -84,7 +83,6 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           child: SizedBox(
                             height: mascotHeight,
                             child: MascotReactionView.withState(
-                              state: CharacterAnimationState.idle,
                               height: mascotHeight,
                               fit: BoxFit.contain,
                             ),
@@ -92,7 +90,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppConstants.largePadding),
                         Text(
-                          'Välkommen!',
+                          'Välj en figur',
                           style: Theme.of(context)
                               .textTheme
                               .headlineSmall
@@ -108,7 +106,7 @@ class InitialProfileSetupScreen extends ConsumerWidget {
                           child: Align(
                             alignment: Alignment.center,
                             child: Text(
-                              'Skapa en profil. Sedan kör vi.',
+                              'Skriv namn. Sen kör vi.',
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyMedium
