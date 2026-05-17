@@ -847,6 +847,8 @@ class _LockedBiomePreviewCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shadowColor = context.appThemeColors.panelShadowColor;
+
     return Container(
       key: const Key('story_map_locked_biome_preview'),
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -859,7 +861,7 @@ class _LockedBiomePreviewCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: shadowColor.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -947,6 +949,7 @@ class _StopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shadowColor = context.appThemeColors.panelShadowColor;
     final visual = _NodeVisual.forSceneTag(
       node.sceneTag,
       primaryColor: nextColor,
@@ -981,7 +984,7 @@ class _StopCard extends StatelessWidget {
         border: Border.all(color: borderColor, width: isCurrent ? 2 : 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.10),
+            color: shadowColor.withValues(alpha: 0.10),
             blurRadius: isCurrent ? 16 : 10,
             offset: const Offset(0, 6),
           ),
@@ -1126,6 +1129,7 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
 
   @override
   Widget build(BuildContext context) {
+    final shadowColor = context.appThemeColors.panelShadowColor;
     final nodes = widget.story.nodes;
     if (nodes.isEmpty) return const SizedBox.shrink();
 
@@ -1153,7 +1157,7 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                 ),
                 // Dark overlay for readability
                 ColoredBox(
-                  color: Colors.black.withValues(alpha: 0.32),
+                  color: shadowColor.withValues(alpha: 0.32),
                 ),
                 // Path + nodes via CustomPaint
                 CustomPaint(
@@ -1163,6 +1167,7 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                     completedColor: widget.completedColor,
                     currentColor: widget.currentColor,
                     accentColor: widget.accentColor,
+                    onPrimary: widget.onPrimary,
                   ),
                 ),
                 // Tap targets & node labels
@@ -1249,13 +1254,13 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                   vertical: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.55),
+                                  color: shadowColor.withValues(alpha: 0.55),
                                   borderRadius: BorderRadius.circular(999),
                                 ),
                                 child: Text(
                                   '${node.stepIndex + 1}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: widget.onPrimary,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -1323,6 +1328,7 @@ class _MapPathPainter extends CustomPainter {
     required this.completedColor,
     required this.currentColor,
     required this.accentColor,
+    required this.onPrimary,
   });
 
   final List<Offset> positions;
@@ -1330,6 +1336,7 @@ class _MapPathPainter extends CustomPainter {
   final Color completedColor;
   final Color currentColor;
   final Color accentColor;
+  final Color onPrimary;
 
   static const nodeRadius = 14.0;
 
@@ -1344,7 +1351,7 @@ class _MapPathPainter extends CustomPainter {
       final paint = Paint()
         ..color = isDone
             ? completedColor.withValues(alpha: 0.90)
-            : Colors.white.withValues(alpha: 0.30)
+            : onPrimary.withValues(alpha: 0.30)
         ..strokeWidth = 3
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
@@ -1367,8 +1374,8 @@ class _MapPathPainter extends CustomPainter {
             currentColor.withValues(alpha: 0.75),
           ),
         StoryNodeState.upcoming => (
-            Colors.white.withValues(alpha: 0.22),
-            Colors.white.withValues(alpha: 0.50),
+            onPrimary.withValues(alpha: 0.22),
+            onPrimary.withValues(alpha: 0.50),
           ),
       };
 
@@ -1386,7 +1393,7 @@ class _MapPathPainter extends CustomPainter {
       // Icon: checkmark for done, dot for current
       if (node.state == StoryNodeState.completed) {
         final iconPaint = Paint()
-          ..color = Colors.white
+          ..color = onPrimary
           ..strokeWidth = 2.5
           ..strokeCap = StrokeCap.round
           ..style = PaintingStyle.stroke;
@@ -1407,7 +1414,7 @@ class _MapPathPainter extends CustomPainter {
           pos,
           5,
           Paint()
-            ..color = Colors.white
+            ..color = onPrimary
             ..style = PaintingStyle.fill,
         );
       }
@@ -1438,6 +1445,7 @@ class _MapNodeTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shadowColor = context.appThemeColors.panelShadowColor;
     final color = switch (node.state) {
       StoryNodeState.completed => completedColor,
       StoryNodeState.current => currentColor,
@@ -1447,7 +1455,7 @@ class _MapNodeTooltip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.82),
+        color: shadowColor.withValues(alpha: 0.82),
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
         border: Border.all(color: color.withValues(alpha: 0.80), width: 1.5),
       ),
@@ -1466,8 +1474,8 @@ class _MapNodeTooltip extends StatelessWidget {
               children: [
                 Text(
                   'Stopp ${node.stepIndex + 1} · ${node.landmark}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: onPrimary,
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
                   ),
@@ -1477,7 +1485,7 @@ class _MapNodeTooltip extends StatelessWidget {
           ),
           Icon(
             Icons.close_rounded,
-            color: Colors.white.withValues(alpha: 0.50),
+            color: onPrimary.withValues(alpha: 0.50),
             size: 16,
           ),
         ],

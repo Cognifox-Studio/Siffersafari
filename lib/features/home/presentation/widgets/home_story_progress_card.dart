@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 
@@ -295,6 +296,8 @@ class _HeroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final shadowColor = context.appThemeColors.panelShadowColor;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.borderRadius),
       child: SizedBox(
@@ -326,8 +329,8 @@ class _HeroBanner extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.05),
-                      Colors.black.withValues(alpha: 0.28),
+                      shadowColor.withValues(alpha: 0.05),
+                      shadowColor.withValues(alpha: 0.28),
                     ],
                   ),
                 ),
