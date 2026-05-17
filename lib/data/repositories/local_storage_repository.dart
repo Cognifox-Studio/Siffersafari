@@ -11,6 +11,14 @@ class LocalStorageRepository {
   Box<dynamic> get _quizHistoryBox => Hive.box(AppConstants.quizHistoryBox);
   Box<dynamic> get _settingsBox => Hive.box(AppConstants.settingsBox);
 
+  Future<Box<dynamic>> _ensureBoxOpen(String boxName) async {
+    if (Hive.isBoxOpen(boxName)) {
+      return Hive.box<dynamic>(boxName);
+    }
+
+    return Hive.openBox<dynamic>(boxName);
+  }
+
   String inProgressQuizSessionId({
     required String userId,
     required String operationTypeName,
@@ -332,8 +340,12 @@ class LocalStorageRepository {
 
   /// Clear all data (for testing or reset)
   Future<void> clearAllData() async {
-    await _userProgressBox.clear();
-    await _quizHistoryBox.clear();
-    await _settingsBox.clear();
+    final userProgressBox = await _ensureBoxOpen(AppConstants.userProgressBox);
+    final quizHistoryBox = await _ensureBoxOpen(AppConstants.quizHistoryBox);
+    final settingsBox = await _ensureBoxOpen(AppConstants.settingsBox);
+
+    await userProgressBox.clear();
+    await quizHistoryBox.clear();
+    await settingsBox.clear();
   }
 }

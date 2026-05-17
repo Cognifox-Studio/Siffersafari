@@ -193,7 +193,10 @@ void main() {
         await it.waitFor(
           tester,
           'create-user dialog',
-          () => find.text('Skapa användare').evaluate().isNotEmpty,
+          () =>
+              find.text('Välj figur').evaluate().isNotEmpty ||
+              find.text('Välj en figur').evaluate().isNotEmpty ||
+              find.text('Skriv namn').evaluate().isNotEmpty,
         );
 
         await tester.enterText(find.byType(TextField).first, 'Test');
