@@ -34,6 +34,10 @@ class SettingsKeys {
   static String textToSpeechEnabled(String userId) =>
       'text_to_speech_enabled_$userId';
 
+  static String soundVolume(String userId) => 'sound_volume_$userId';
+
+  static String musicVolume(String userId) => 'music_volume_$userId';
+
   static const String analyticsEvents = 'analytics_events';
 
   /// Key for tracking daily challenge completion.
@@ -56,6 +60,8 @@ class SettingsKeys {
         spacedRepetitionSchedules(userId),
         spacedRepetitionEnabled(userId),
         textToSpeechEnabled(userId),
+        soundVolume(userId),
+        musicVolume(userId),
         dailyChallengeStreak(userId),
       ];
 

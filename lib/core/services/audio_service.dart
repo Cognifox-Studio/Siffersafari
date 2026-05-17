@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
@@ -14,6 +16,22 @@ enum AppMusicTrack {
   home,
   story,
   quiz,
+}
+
+enum AppAudioLevel {
+  off(0.0),
+  low(0.45),
+  high(1.0);
+
+  const AppAudioLevel(this.factor);
+
+  final double factor;
+
+  static AppAudioLevel fromVolume(double volume, {required bool enabled}) {
+    if (!enabled || volume <= 0.01) return AppAudioLevel.off;
+    if (volume < 0.75) return AppAudioLevel.low;
+    return AppAudioLevel.high;
+  }
 }
 
 class AudioAssetSpec {
@@ -78,15 +96,50 @@ const Map<AppMusicTrack, AudioAssetSpec> appMusicTrackAssets = {
 
 /// Service for playing audio feedback and music
 class AudioService {
+  static const _musicRecoveryDelay = Duration(milliseconds: 120);
+
+  AudioService();
+
   final _audioPlayer = AudioPlayer();
   final _musicPlayer = AudioPlayer();
 
   bool _soundEnabled = true;
   bool _musicEnabled = true;
+  bool _playersConfigured = false;
+  double _soundVolume = 1.0;
+  double _musicVolume = 1.0;
   AppMusicTrack? _currentMusicTrack;
+  Timer? _musicRecoveryTimer;
 
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
+  double get soundVolume => _soundVolume;
+  double get musicVolume => _musicVolume;
+
+  Future<void> _ensurePlayersConfigured() async {
+    if (_playersConfigured) return;
+
+    try {
+      await _audioPlayer.setPlayerMode(PlayerMode.lowLatency);
+      await _audioPlayer.setAudioContext(
+        AudioContextConfig(
+          focus: AudioContextConfigFocus.mixWithOthers,
+        ).build(),
+      );
+
+      await _musicPlayer.setPlayerMode(PlayerMode.mediaPlayer);
+      _playersConfigured = true;
+    } catch (_) {
+      _playersConfigured = false;
+      rethrow;
+    }
+  }
+
+  double _clampVolume(double volume) => volume.clamp(0.0, 1.0);
+
+  double _resolveVolume(double? baseVolume, double factor) {
+    return ((baseVolume ?? 1.0) * _clampVolume(factor)).clamp(0.0, 1.0);
+  }
 
   /// Enable or disable sound effects
   void setSoundEnabled(bool enabled) {
@@ -97,7 +150,62 @@ class AudioService {
   void setMusicEnabled(bool enabled) {
     _musicEnabled = enabled;
     if (!enabled) {
-      stopMusic();
+      unawaited(stopMusic(clearTrack: false));
+      return;
+    }
+
+    final currentTrack = _currentMusicTrack;
+    if (currentTrack != null && _musicPlayer.state != PlayerState.playing) {
+      unawaited(playMusicTrack(currentTrack));
+    }
+  }
+
+  /// Set the master volume factor for sound effects.
+  void setSoundVolume(double volume) {
+    _soundVolume = _clampVolume(volume);
+  }
+
+  /// Set the master volume factor for background music.
+  void setMusicVolume(double volume) {
+    _musicVolume = _clampVolume(volume);
+
+    final currentTrack = _currentMusicTrack;
+    if (!_musicEnabled || currentTrack == null) return;
+
+    final spec = appMusicTrackAssets[currentTrack];
+    if (spec == null) return;
+
+    unawaited(
+      _musicPlayer.setVolume(_resolveVolume(spec.volume, _musicVolume)),
+    );
+  }
+
+  void _scheduleMusicRecovery() {
+    final currentTrack = _currentMusicTrack;
+    if (!_musicEnabled || currentTrack == null) return;
+
+    _musicRecoveryTimer?.cancel();
+    _musicRecoveryTimer = Timer(
+      _musicRecoveryDelay,
+      () => unawaited(_restoreMusicIfInterrupted(currentTrack)),
+    );
+  }
+
+  Future<void> _restoreMusicIfInterrupted(AppMusicTrack track) async {
+    if (!_musicEnabled || _currentMusicTrack != track) return;
+    if (_musicPlayer.state == PlayerState.playing) return;
+
+    try {
+      if (_musicPlayer.state == PlayerState.paused) {
+        await _musicPlayer.resume();
+        return;
+      }
+
+      await playMusicTrack(track);
+    } catch (_) {
+      if (_musicEnabled && _currentMusicTrack == track) {
+        await playMusicTrack(track);
+      }
     }
   }
 
@@ -108,31 +216,43 @@ class AudioService {
     if (spec == null) return;
 
     try {
+      await _ensurePlayersConfigured();
       await _playAssetWithFallback(
         player: _audioPlayer,
         primary: spec.primary,
         fallback: spec.fallback,
-        volume: spec.volume,
+        volume: _resolveVolume(spec.volume, _soundVolume),
       );
+      _scheduleMusicRecovery();
     } catch (_) {
       // Handle error silently for now
     }
   }
 
   Future<void> playMusicTrack(AppMusicTrack track) async {
-    if (!_musicEnabled || _currentMusicTrack == track) return;
+    if (!_musicEnabled) {
+      _currentMusicTrack = track;
+      return;
+    }
+
+    final isSameTrackStillPlaying = _currentMusicTrack == track &&
+        _musicPlayer.state == PlayerState.playing;
+    if (isSameTrackStillPlaying) {
+      return;
+    }
 
     final spec = appMusicTrackAssets[track];
     if (spec == null) return;
 
     try {
+      await _ensurePlayersConfigured();
       await _musicPlayer.stop();
       await _musicPlayer.setReleaseMode(ReleaseMode.loop);
       await _playAssetWithFallback(
         player: _musicPlayer,
         primary: spec.primary,
         fallback: spec.fallback,
-        volume: spec.volume,
+        volume: _resolveVolume(spec.volume, _musicVolume),
       );
       _currentMusicTrack = track;
     } catch (_) {
@@ -141,8 +261,7 @@ class AudioService {
   }
 
   /// Play correct answer sound
-  Future<void> playCorrectSound() =>
-      playSoundEffect(AppSoundEffect.correct);
+  Future<void> playCorrectSound() => playSoundEffect(AppSoundEffect.correct);
 
   /// Play wrong answer sound
   Future<void> playWrongSound() => playSoundEffect(AppSoundEffect.wrong);
@@ -193,14 +312,17 @@ class AudioService {
   }
 
   /// Stop background music
-  Future<void> stopMusic() async {
-    _currentMusicTrack = null;
+  Future<void> stopMusic({bool clearTrack = true}) async {
+    if (clearTrack) {
+      _currentMusicTrack = null;
+    }
     await _musicPlayer.stop();
   }
 
   /// Dispose audio players
   void dispose() {
-    _audioPlayer.dispose();
-    _musicPlayer.dispose();
+    _musicRecoveryTimer?.cancel();
+    unawaited(_audioPlayer.dispose());
+    unawaited(_musicPlayer.dispose());
   }
 }

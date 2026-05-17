@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
@@ -61,6 +62,59 @@ void main() {
       }
 
       expect(titleFinder, findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    '[Widget] App home – barn kan styra ljud fran hemskarmen',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'audio-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Mira',
+        ageGroup: AgeGroup.middle,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('home_audio_button')),
+      );
+
+      await tester.tap(find.byKey(const Key('home_audio_button')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('home_audio_dialog')), findsOneWidget);
+
+      await tester.tap(find.byKey(const Key('home_audio_music_off')));
+      await tester.pumpAndSettle();
+
+      expect(repository.getUserProgress(userId)?.musicEnabled, isFalse);
+
+      await tester.tap(find.byKey(const Key('home_audio_sound_low')));
+      await tester.pumpAndSettle();
+
+      expect(repository.getUserProgress(userId)?.soundEnabled, isTrue);
+      expect(
+        repository.getSetting(SettingsKeys.soundVolume(userId)),
+        AppAudioLevel.low.factor,
+      );
     },
   );
 

@@ -343,6 +343,8 @@ Future<InMemoryLocalStorageRepository> setupWidgetTestDependencies() async {
   getIt.registerSingleton<LocalStorageRepository>(repository);
 
   final audio = MockAudioService();
+  when(() => audio.soundVolume).thenReturn(1.0);
+  when(() => audio.musicVolume).thenReturn(1.0);
   when(() => audio.playCorrectSound()).thenAnswer((_) async {});
   when(() => audio.playWrongSound()).thenAnswer((_) async {});
   when(() => audio.playCelebrationSound()).thenAnswer((_) async {});

@@ -9,12 +9,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:siffersafari/app/bootstrap/presentation/startup_flow_gate.dart';
 import 'package:siffersafari/app/bootstrap/presentation/startup_splash_gate.dart';
+import 'package:siffersafari/domain/enums/app_theme.dart';
 
 import 'core/constants/app_constants.dart';
 import 'core/di/injection.dart';
 import 'core/providers/app_theme_provider.dart';
 import 'core/theme/app_theme_config.dart';
-import 'domain/enums/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

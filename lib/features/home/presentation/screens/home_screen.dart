@@ -14,6 +14,7 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
@@ -131,6 +132,108 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       if (!mounted) return;
       ref.read(audioServiceProvider).playHomeMusic();
     });
+  }
+
+  Future<void> _openAudioControls(UserProgress user) async {
+    final audio = ref.read(audioServiceProvider);
+    var soundLevel = AppAudioLevel.fromVolume(
+      audio.soundVolume,
+      enabled: user.soundEnabled,
+    );
+    var musicLevel = AppAudioLevel.fromVolume(
+      audio.musicVolume,
+      enabled: user.musicEnabled,
+    );
+    var isApplying = false;
+
+    await showDialog<void>(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            Future<void> updateSoundLevel(AppAudioLevel level) async {
+              if (isApplying) return;
+
+              setModalState(() {
+                isApplying = true;
+                soundLevel = level;
+              });
+
+              try {
+                await ref.read(userProvider.notifier).setSoundLevel(level);
+                if (level != AppAudioLevel.off) {
+                  await ref.read(audioServiceProvider).playClickSound();
+                }
+              } finally {
+                if (dialogContext.mounted) {
+                  setModalState(() {
+                    isApplying = false;
+                  });
+                }
+              }
+            }
+
+            Future<void> updateMusicLevel(AppAudioLevel level) async {
+              if (isApplying) return;
+
+              setModalState(() {
+                isApplying = true;
+                musicLevel = level;
+              });
+
+              try {
+                await ref.read(userProvider.notifier).setMusicLevel(level);
+              } finally {
+                if (dialogContext.mounted) {
+                  setModalState(() {
+                    isApplying = false;
+                  });
+                }
+              }
+            }
+
+            return AlertDialog(
+              key: const Key('home_audio_dialog'),
+              title: const Text('Ljud'),
+              content: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 420),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _HomeAudioLevelPicker(
+                      title: 'Ljudeffekter',
+                      subtitle: 'Klick och jubel',
+                      keyPrefix: 'home_audio_sound',
+                      selectedLevel: soundLevel,
+                      isBusy: isApplying,
+                      onSelected: updateSoundLevel,
+                    ),
+                    const SizedBox(height: AppConstants.defaultPadding),
+                    _HomeAudioLevelPicker(
+                      title: 'Musik',
+                      subtitle: 'Bakgrundsmusik',
+                      keyPrefix: 'home_audio_music',
+                      selectedLevel: musicLevel,
+                      isBusy: isApplying,
+                      onSelected: updateMusicLevel,
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isApplying
+                      ? null
+                      : () => Navigator.of(dialogContext).pop(),
+                  child: const Text('Klar'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   // endregion
@@ -291,38 +394,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         userState.questStatus != null &&
         allowedOps.contains(userState.questStatus!.quest.operation);
     final heroEyebrow = user == null
-      ? 'Redo för safari?'
-      : hasStoryQuest
-        ? 'Hej, ${user.name}!'
-        : 'Välkommen, ${user.name}! 👋';
+        ? 'Redo för safari?'
+        : hasStoryQuest
+            ? 'Hej, ${user.name}!'
+            : 'Välkommen, ${user.name}! 👋';
     final heroTitle = user == null
-      ? 'Börja spela'
-      : hasStoryQuest
-        ? storyProgress.isEpisodeComplete
-          ? storyProgress.endingTitle
-          : storyProgress.currentObjectiveTitle
-        : 'Dags för äventyr!';
+        ? 'Börja spela'
+        : hasStoryQuest
+            ? storyProgress.isEpisodeComplete
+                ? storyProgress.endingTitle
+                : storyProgress.currentObjectiveTitle
+            : 'Dags för äventyr!';
     final heroSubtitle = user == null
-      ? 'Skapa en profil först.'
-      : hasStoryQuest
-        ? storyProgress.isEpisodeComplete
-          ? storyProgress.endingBody
-          : storyProgress.currentObjectiveDescription
-        : null;
+        ? 'Skapa en profil först.'
+        : hasStoryQuest
+            ? storyProgress.isEpisodeComplete
+                ? storyProgress.endingBody
+                : storyProgress.currentObjectiveDescription
+            : null;
     final primaryButtonLabel = hasResumableSession
-      ? 'Fortsätt'
-      : hasStoryQuest
-        ? storyProgress.isEpisodeComplete
-          ? 'Se episoden'
-          : 'Spela nästa stopp'
-        : 'Spela nu';
+        ? 'Fortsätt'
+        : hasStoryQuest
+            ? storyProgress.isEpisodeComplete
+                ? 'Se episoden'
+                : 'Spela nästa stopp'
+            : 'Spela nu';
     final primaryButtonIcon = hasResumableSession
-      ? Icons.play_circle_fill_rounded
-      : hasStoryQuest
-        ? storyProgress.isEpisodeComplete
-          ? Icons.map_rounded
-          : Icons.explore_rounded
-        : Icons.play_arrow_rounded;
+        ? Icons.play_circle_fill_rounded
+        : hasStoryQuest
+            ? storyProgress.isEpisodeComplete
+                ? Icons.map_rounded
+                : Icons.explore_rounded
+            : Icons.play_arrow_rounded;
 
     final operationCards = _buildOperationCards(context, allowedOps);
 
@@ -376,6 +479,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   height: 120,
                                   fit: BoxFit.contain,
                                 ),
+                                if (user != null)
+                                  Positioned(
+                                    left: 0,
+                                    child: IconButton(
+                                      key: const Key('home_audio_button'),
+                                      tooltip: 'Ljud',
+                                      onPressed: () => _openAudioControls(user),
+                                      iconSize: 42,
+                                      icon: Icon(
+                                        Icons.volume_up_rounded,
+                                        color: onPrimary,
+                                      ),
+                                    ),
+                                  ),
                                 if (user != null)
                                   Positioned(
                                     right: 0,
@@ -546,7 +663,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           backgroundAsset: backgroundAsset,
                           characterAsset: characterAsset,
                           primaryActionColor: themeColors.primaryActionColor,
-                          secondaryActionColor: themeColors.secondaryActionColor,
+                          secondaryActionColor:
+                              themeColors.secondaryActionColor,
                           accentColor: accentColor,
                           onPrimary: onPrimary,
                           mutedOnPrimary: mutedOnPrimary,
@@ -746,4 +864,66 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   // endregion
+}
+
+class _HomeAudioLevelPicker extends StatelessWidget {
+  const _HomeAudioLevelPicker({
+    required this.title,
+    required this.subtitle,
+    required this.keyPrefix,
+    required this.selectedLevel,
+    required this.isBusy,
+    required this.onSelected,
+  });
+
+  final String title;
+  final String subtitle;
+  final String keyPrefix;
+  final AppAudioLevel selectedLevel;
+  final bool isBusy;
+  final Future<void> Function(AppAudioLevel level) onSelected;
+
+  String _labelFor(AppAudioLevel level) {
+    switch (level) {
+      case AppAudioLevel.off:
+        return 'Av';
+      case AppAudioLevel.low:
+        return 'Låg';
+      case AppAudioLevel.high:
+        return 'Hög';
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+              ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          subtitle,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: AppConstants.smallPadding),
+        Wrap(
+          spacing: AppConstants.smallPadding,
+          runSpacing: AppConstants.smallPadding,
+          children: AppAudioLevel.values.map((level) {
+            return ChoiceChip(
+              key: Key('${keyPrefix}_${level.name}'),
+              label: Text(_labelFor(level)),
+              selected: selectedLevel == level,
+              onSelected: isBusy ? null : (_) => onSelected(level),
+            );
+          }).toList(growable: false),
+        ),
+      ],
+    );
+  }
 }

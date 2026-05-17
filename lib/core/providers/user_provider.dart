@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/core/services/achievement_service.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
+import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/level_up_event.dart';
@@ -10,9 +14,6 @@ import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 
-import '../services/achievement_service.dart';
-import '../services/audio_service.dart';
-import '../services/quest_progression_service.dart';
 import 'achievement_service_provider.dart';
 import 'audio_service_provider.dart';
 import 'local_storage_repository_provider.dart';
@@ -260,7 +261,22 @@ class UserNotifier extends StateNotifier<UserState> {
     state = state.copyWith(lastLevelUp: null, newlyUnlockedItem: null);
   }
 
+  double _readAudioLevelSetting(String key) {
+    final raw = _repository.getSetting(key);
+    if (raw is! num) return AppAudioLevel.high.factor;
+
+    final volume = raw.toDouble().clamp(0.0, 1.0);
+    if (volume <= 0.01) return AppAudioLevel.high.factor;
+    return volume;
+  }
+
   void _syncAudioSettings(UserProgress user) {
+    _audioService.setSoundVolume(
+      _readAudioLevelSetting(SettingsKeys.soundVolume(user.userId)),
+    );
+    _audioService.setMusicVolume(
+      _readAudioLevelSetting(SettingsKeys.musicVolume(user.userId)),
+    );
     _audioService.setSoundEnabled(user.soundEnabled);
     _audioService.setMusicEnabled(user.musicEnabled);
   }
@@ -351,6 +367,48 @@ class UserNotifier extends StateNotifier<UserState> {
     await loadUsers();
     _syncAudioSettings(user);
     state = state.copyWith(activeUser: user);
+  }
+
+  Future<void> setSoundLevel(AppAudioLevel level) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    if (level != AppAudioLevel.off) {
+      await _repository.saveSetting(
+        SettingsKeys.soundVolume(user.userId),
+        level.factor,
+      );
+      _audioService.setSoundVolume(level.factor);
+    }
+
+    final enabled = level != AppAudioLevel.off;
+    if (user.soundEnabled != enabled) {
+      await saveUser(user.copyWith(soundEnabled: enabled));
+      return;
+    }
+
+    _audioService.setSoundEnabled(enabled);
+  }
+
+  Future<void> setMusicLevel(AppAudioLevel level) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    if (level != AppAudioLevel.off) {
+      await _repository.saveSetting(
+        SettingsKeys.musicVolume(user.userId),
+        level.factor,
+      );
+      _audioService.setMusicVolume(level.factor);
+    }
+
+    final enabled = level != AppAudioLevel.off;
+    if (user.musicEnabled != enabled) {
+      await saveUser(user.copyWith(musicEnabled: enabled));
+      return;
+    }
+
+    _audioService.setMusicEnabled(enabled);
   }
 
   Future<void> deleteUser(String userId) async {

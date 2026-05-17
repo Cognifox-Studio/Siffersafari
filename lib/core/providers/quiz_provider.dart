@@ -3,6 +3,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/quiz_feature_settings.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
+import 'package:siffersafari/core/services/question_generator_service.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../core/config/app_features.dart';
@@ -20,8 +22,6 @@ import '../../domain/enums/operation_type.dart';
 import '../../domain/services/adaptive_difficulty_service.dart';
 import '../../domain/services/feedback_service.dart';
 import '../../domain/services/spaced_repetition_service.dart';
-import '../services/audio_service.dart';
-import '../services/question_generator_service.dart';
 import 'adaptive_difficulty_service_provider.dart';
 import 'audio_service_provider.dart';
 import 'feedback_service_provider.dart';
