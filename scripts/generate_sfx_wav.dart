@@ -2,8 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
-/// Generates simple, kid-friendly SFX WAV files (16-bit PCM, 44.1kHz, mono)
-/// into assets/sounds.
+/// Generates simple, kid-friendly SFX WAV files
+/// (16-bit PCM, 44.1kHz, mono) into assets/sounds.
 ///
 /// It always creates timestamped backups if the target files already exist.
 ///
@@ -47,11 +47,37 @@ void main(List<String> args) {
       name: 'celebration.wav',
       samples: _renderCelebration(sampleRate: sampleRate),
     ),
+    _NamedSound(
+      name: 'map_open.wav',
+      samples: _renderMapOpen(sampleRate: sampleRate),
+    ),
+    _NamedSound(
+      name: 'quiz_start.wav',
+      samples: _renderQuizStart(sampleRate: sampleRate),
+    ),
+    _NamedSound(
+      name: 'home_music.wav',
+      samples: _renderHomeMusic(sampleRate: sampleRate),
+    ),
+    _NamedSound(
+      name: 'story_music.wav',
+      samples: _renderStoryMusic(sampleRate: sampleRate),
+    ),
+    _NamedSound(
+      name: 'quiz_music.wav',
+      samples: _renderQuizMusic(sampleRate: sampleRate),
+    ),
   ];
 
   final targets = onlySet == null
       ? allTargets
-          .where((t) => t.name != 'celebration.wav')
+        .where(
+        (t) =>
+          t.name != 'celebration.wav' &&
+          t.name != 'home_music.wav' &&
+          t.name != 'story_music.wav' &&
+          t.name != 'quiz_music.wav',
+        )
           .toList(growable: false)
       : allTargets
           .where((t) => onlySet.contains(_stemName(t.name)))
@@ -306,6 +332,365 @@ List<double> _renderCelebration({required int sampleRate}) {
 
   _fadeOut(withEcho, sampleRate: sampleRate, ms: 140);
   return _normalize(withEcho, targetPeak: 0.72);
+}
+
+List<double> _renderMapOpen({required int sampleRate}) {
+  const durationMs = 420;
+  final n = (sampleRate * durationMs / 1000).round();
+  final out = List<double>.filled(n, 0);
+
+  for (var i = 0; i < n; i++) {
+    final t = i / sampleRate;
+    final x = i / max(1, n - 1);
+    final whooshEnv = _adsr(
+      i,
+      n,
+      attack: 0.02,
+      decay: 0.22,
+      sustain: 0.18,
+      release: 0.40,
+    );
+    final noise = (_hashNoise(i) * 2 - 1) * 0.18;
+    final shimmer = sin(2 * pi * (620 + 520 * x) * t) * 0.28;
+    out[i] = (noise + shimmer) * whooshEnv;
+  }
+
+  _addToneEvent(
+    out,
+    sampleRate: sampleRate,
+    startSample: (sampleRate * 0.08).round(),
+    durationMs: 260,
+    frequency: 880,
+    amplitude: 0.42,
+    harmonicMix: 0.18,
+    shimmerMix: 0.08,
+  );
+  _addToneEvent(
+    out,
+    sampleRate: sampleRate,
+    startSample: (sampleRate * 0.16).round(),
+    durationMs: 220,
+    frequency: 1174.66,
+    amplitude: 0.28,
+    harmonicMix: 0.16,
+    shimmerMix: 0.10,
+  );
+
+  _fadeOut(out, sampleRate: sampleRate, ms: 80);
+  return _normalize(out, targetPeak: 0.62);
+}
+
+List<double> _renderQuizStart({required int sampleRate}) {
+  const durationMs = 520;
+  final n = (sampleRate * durationMs / 1000).round();
+  final out = List<double>.filled(n, 0);
+
+  _addNoiseHit(
+    out,
+    sampleRate: sampleRate,
+    startSample: 0,
+    durationMs: 140,
+    amplitude: 0.20,
+  );
+  _addToneEvent(
+    out,
+    sampleRate: sampleRate,
+    startSample: 0,
+    durationMs: 200,
+    frequency: 220,
+    amplitude: 0.34,
+    harmonicMix: 0.06,
+  );
+
+  final startTimes = <double>[0.10, 0.18, 0.27, 0.36];
+  final notes = <double>[523.25, 659.25, 783.99, 1046.50];
+  for (var index = 0; index < notes.length; index++) {
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: (sampleRate * startTimes[index]).round(),
+      durationMs: 180,
+      frequency: notes[index],
+      amplitude: 0.30,
+      harmonicMix: 0.16,
+      shimmerMix: 0.06,
+    );
+  }
+
+  _fadeOut(out, sampleRate: sampleRate, ms: 90);
+  return _normalize(out, targetPeak: 0.68);
+}
+
+List<double> _renderHomeMusic({required int sampleRate}) {
+  const bpm = 92.0;
+  const beats = 8;
+  final beatSamples = (sampleRate * 60 / bpm).round();
+  final eighthSamples = (beatSamples / 2).round();
+  final n = beatSamples * beats;
+  final out = List<double>.filled(n, 0);
+
+  const melody = <double?>[
+    523.25,
+    659.25,
+    783.99,
+    659.25,
+    587.33,
+    659.25,
+    783.99,
+    880.00,
+    523.25,
+    659.25,
+    739.99,
+    659.25,
+    587.33,
+    659.25,
+    783.99,
+    null,
+  ];
+  const bass = <double>[196.00, 220.00, 174.61, 220.00];
+
+  for (var beat = 0; beat < beats; beat++) {
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: beat * beatSamples,
+      durationMs: 420,
+      frequency: bass[beat % bass.length],
+      amplitude: 0.28,
+      harmonicMix: 0.08,
+    );
+  }
+
+  for (var step = 0; step < melody.length; step++) {
+    final note = melody[step];
+    if (note == null) continue;
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: step * eighthSamples,
+      durationMs: 220,
+      frequency: note,
+      amplitude: 0.24,
+      harmonicMix: 0.18,
+      shimmerMix: 0.04,
+    );
+  }
+
+  for (var beat = 0; beat < beats; beat++) {
+    _addNoiseHit(
+      out,
+      sampleRate: sampleRate,
+      startSample: beat * beatSamples,
+      durationMs: 90,
+      amplitude: beat.isEven ? 0.030 : 0.020,
+    );
+  }
+
+  return _normalize(out, targetPeak: 0.40);
+}
+
+List<double> _renderStoryMusic({required int sampleRate}) {
+  const bpm = 84.0;
+  const beats = 8;
+  final beatSamples = (sampleRate * 60 / bpm).round();
+  final eighthSamples = (beatSamples / 2).round();
+  final n = beatSamples * beats;
+  final out = List<double>.filled(n, 0);
+
+  const drone = <double>[174.61, 196.00, 220.00, 196.00];
+  for (var beat = 0; beat < beats; beat++) {
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: beat * beatSamples,
+      durationMs: 560,
+      frequency: drone[beat % drone.length],
+      amplitude: 0.24,
+      harmonicMix: 0.05,
+    );
+  }
+
+  const melody = <double?>[
+    392.00,
+    null,
+    440.00,
+    523.25,
+    587.33,
+    null,
+    523.25,
+    440.00,
+    392.00,
+    null,
+    440.00,
+    523.25,
+    659.25,
+    587.33,
+    523.25,
+    null,
+  ];
+
+  for (var step = 0; step < melody.length; step++) {
+    final note = melody[step];
+    if (note == null) continue;
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: step * eighthSamples,
+      durationMs: 260,
+      frequency: note,
+      amplitude: 0.20,
+      harmonicMix: 0.12,
+      shimmerMix: 0.03,
+      vibratoHz: 4.5,
+      vibratoDepthHz: 2.5,
+    );
+  }
+
+  for (var beat = 0; beat < beats; beat++) {
+    if (beat == 2 || beat == 6) continue;
+    _addNoiseHit(
+      out,
+      sampleRate: sampleRate,
+      startSample: beat * beatSamples,
+      durationMs: 120,
+      amplitude: beat.isEven ? 0.05 : 0.03,
+    );
+  }
+
+  return _normalize(out, targetPeak: 0.36);
+}
+
+List<double> _renderQuizMusic({required int sampleRate}) {
+  const bpm = 112.0;
+  const beats = 8;
+  final beatSamples = (sampleRate * 60 / bpm).round();
+  final sixteenthSamples = (beatSamples / 4).round();
+  final n = beatSamples * beats;
+  final out = List<double>.filled(n, 0);
+
+  const bass = <double>[220.00, 246.94, 261.63, 246.94];
+  for (var beat = 0; beat < beats; beat++) {
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: beat * beatSamples,
+      durationMs: 240,
+      frequency: bass[beat % bass.length],
+      amplitude: 0.18,
+      harmonicMix: 0.08,
+    );
+  }
+
+  const riff = <double?>[
+    659.25,
+    783.99,
+    880.00,
+    null,
+    783.99,
+    880.00,
+    987.77,
+    null,
+    659.25,
+    783.99,
+    880.00,
+    987.77,
+    1046.50,
+    987.77,
+    880.00,
+    null,
+  ];
+
+  for (var step = 0; step < riff.length; step++) {
+    final note = riff[step];
+    if (note == null) continue;
+    _addToneEvent(
+      out,
+      sampleRate: sampleRate,
+      startSample: step * sixteenthSamples * 2,
+      durationMs: 150,
+      frequency: note,
+      amplitude: 0.17,
+      harmonicMix: 0.20,
+      shimmerMix: 0.05,
+    );
+  }
+
+  for (var step = 0; step < beats * 2; step++) {
+    _addNoiseHit(
+      out,
+      sampleRate: sampleRate,
+      startSample: step * (beatSamples ~/ 2),
+      durationMs: 60,
+      amplitude: step.isEven ? 0.026 : 0.016,
+    );
+  }
+
+  return _normalize(out, targetPeak: 0.34);
+}
+
+void _addToneEvent(
+  List<double> out, {
+  required int sampleRate,
+  required int startSample,
+  required int durationMs,
+  required double frequency,
+  required double amplitude,
+  double harmonicMix = 0.10,
+  double shimmerMix = 0.0,
+  double vibratoHz = 0.0,
+  double vibratoDepthHz = 0.0,
+}) {
+  if (startSample >= out.length) return;
+
+  final length = min(
+    out.length - startSample,
+    (sampleRate * durationMs / 1000).round(),
+  );
+  if (length <= 1) return;
+
+  for (var i = 0; i < length; i++) {
+    final t = i / sampleRate;
+    final vib = vibratoHz == 0.0 || vibratoDepthHz == 0.0
+        ? 0.0
+        : sin(2 * pi * vibratoHz * t) * vibratoDepthHz;
+    final f = frequency + vib;
+    final env = _adsr(
+      i,
+      length,
+      attack: 0.06,
+      decay: 0.18,
+      sustain: 0.34,
+      release: 0.42,
+    );
+    final base = sin(2 * pi * f * t);
+    final harmonic = sin(2 * pi * f * 2.01 * t) * harmonicMix;
+    final shimmer = shimmerMix == 0.0
+        ? 0.0
+        : sin(2 * pi * f * 3.02 * t) * shimmerMix;
+    out[startSample + i] += (base + harmonic + shimmer) * env * amplitude;
+  }
+}
+
+void _addNoiseHit(
+  List<double> out, {
+  required int sampleRate,
+  required int startSample,
+  required int durationMs,
+  required double amplitude,
+}) {
+  if (startSample >= out.length) return;
+
+  final length = min(
+    out.length - startSample,
+    (sampleRate * durationMs / 1000).round(),
+  );
+  if (length <= 1) return;
+
+  for (var i = 0; i < length; i++) {
+    final env = _expDecay(i, length, halfLifeFraction: 0.16);
+    final noise = (_hashNoise(startSample + i) * 2 - 1) * amplitude;
+    out[startSample + i] += noise * env;
+  }
 }
 
 List<double> _applyEcho(

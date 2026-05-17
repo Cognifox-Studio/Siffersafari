@@ -65,8 +65,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         _checkUserData(activeUser.userId);
       }
 
-      // Start background music when home screen loads
-      ref.read(audioServiceProvider).playMusic();
+      // Start home music when the child lands on the main screen.
+      ref.read(audioServiceProvider).playHomeMusic();
 
       if (mounted) {
         setState(() {
@@ -111,6 +111,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  void _openStoryMap() {
+    final audio = ref.read(audioServiceProvider);
+    audio.playMapOpenSound();
+    audio.playStoryMusic();
+
+    context.pushSmooth(const StoryMapScreen()).then((_) {
+      if (!mounted) return;
+      ref.read(audioServiceProvider).playHomeMusic();
+    });
+  }
+
+  void _openQuizScreen() {
+    final audio = ref.read(audioServiceProvider);
+    audio.playQuizStartSound();
+    audio.playQuizMusic();
+
+    context.pushSmooth(const QuizScreen()).then((_) {
+      if (!mounted) return;
+      ref.read(audioServiceProvider).playHomeMusic();
+    });
+  }
+
   // endregion
 
   // region _startQuiz Method
@@ -125,12 +147,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             );
 
     if (didResume) {
-      ref.read(audioServiceProvider).playClickSound();
       setState(() {
         _mascotReaction = CharacterReaction.screenChange;
         _mascotReactionNonce++;
       });
-      context.pushSmooth(const QuizScreen());
+      _openQuizScreen();
       return;
     }
 
@@ -147,8 +168,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     required DifficultyLevel difficulty,
     bool isDailyChallenge = false,
   }) {
-    ref.read(audioServiceProvider).playClickSound();
-
     final user = ref.read(userProvider).activeUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -213,7 +232,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _mascotReaction = CharacterReaction.screenChange;
       _mascotReactionNonce++;
     });
-    context.pushSmooth(const QuizScreen());
+    _openQuizScreen();
   }
 
   // endregion
@@ -433,7 +452,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                 if (hasStoryQuest &&
                                     storyProgress.isEpisodeComplete &&
                                     !hasResumableSession) {
-                                  context.pushSmooth(const StoryMapScreen());
+                                  _openStoryMap();
                                   return;
                                 }
 
@@ -538,7 +557,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           cacheHeight: questHeroCacheHeight,
                           onStartQuest: () {
                             if (storyProgress.isEpisodeComplete) {
-                              context.pushSmooth(const StoryMapScreen());
+                              _openStoryMap();
                               return;
                             }
 
@@ -549,9 +568,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   userState.questStatus!.quest.difficulty,
                             );
                           },
-                          onOpenMap: () => context.pushSmooth(
-                            const StoryMapScreen(),
-                          ),
+                          onOpenMap: _openStoryMap,
                         ),
                       const SizedBox(height: AppConstants.defaultPadding),
                       HomeBadgeAlbum(achievementIds: user.achievements),

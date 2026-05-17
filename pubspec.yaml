@@ -63,7 +63,12 @@ flutter:
     - assets/sounds/celebration.wav
     - assets/sounds/click.wav
     - assets/sounds/correct.wav
+    - assets/sounds/map_open.wav
+    - assets/sounds/quiz_start.wav
     - assets/sounds/wrong.wav
+    - assets/sounds/home_music.mp3
+    - assets/sounds/story_music.mp3
+    - assets/sounds/quiz_music.mp3
     # Character assets are listed per runtime folder to keep bundling explicit
     # for app + integration-test builds.
     - assets/characters/loke/png/

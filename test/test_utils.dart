@@ -347,7 +347,12 @@ Future<InMemoryLocalStorageRepository> setupWidgetTestDependencies() async {
   when(() => audio.playWrongSound()).thenAnswer((_) async {});
   when(() => audio.playCelebrationSound()).thenAnswer((_) async {});
   when(() => audio.playClickSound()).thenAnswer((_) async {});
+  when(() => audio.playMapOpenSound()).thenAnswer((_) async {});
   when(() => audio.playMusic()).thenAnswer((_) async {});
+  when(() => audio.playHomeMusic()).thenAnswer((_) async {});
+  when(() => audio.playStoryMusic()).thenAnswer((_) async {});
+  when(() => audio.playQuizMusic()).thenAnswer((_) async {});
+  when(() => audio.playQuizStartSound()).thenAnswer((_) async {});
   when(() => audio.stopMusic()).thenAnswer((_) async {});
   getIt.registerSingleton<AudioService>(audio);
 

@@ -623,6 +623,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   void _goHomeFromResults() {
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
+    ref.read(audioServiceProvider).playHomeMusic();
     context.pushAndRemoveUntilSmooth(
       const HomeScreen(),
       (route) => false,
@@ -632,6 +633,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   void _goToStoryMapFromResults() {
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
+    ref.read(audioServiceProvider).playMapOpenSound();
+    ref.read(audioServiceProvider).playStoryMusic();
     context.pushAndRemoveUntilSmooth(
       const StoryMapScreen(),
       (route) => false,
@@ -729,6 +732,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       }
     }
 
+    ref.read(audioServiceProvider).playQuizStartSound();
+    ref.read(audioServiceProvider).playQuizMusic();
     context.pushAndRemoveUntilSmooth(
       const QuizScreen(),
       (route) => false,

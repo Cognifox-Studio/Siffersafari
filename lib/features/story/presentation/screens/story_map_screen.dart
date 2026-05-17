@@ -72,8 +72,20 @@ class StoryMapScreen extends ConsumerWidget {
     final currentColor = themeColors.progressCurrentColor;
     final nextColor = themeColors.progressNextColor;
 
+    void openQuizFromMap() {
+      final audio = ref.read(audioServiceProvider);
+      audio.playQuizStartSound();
+      audio.playQuizMusic();
+
+      context.pushSmooth(const QuizScreen()).then((_) {
+        if (!context.mounted) return;
+        ref.read(audioServiceProvider).playStoryMusic();
+      });
+    }
+
     void startCurrentQuest() {
       if (story.isEpisodeComplete) {
+        ref.read(audioServiceProvider).playHomeMusic();
         context.pushAndRemoveUntilSmooth(
           const HomeScreen(),
           (route) => false,
@@ -143,7 +155,7 @@ class StoryMapScreen extends ConsumerWidget {
         ),
       );
 
-      context.pushSmooth(const QuizScreen());
+      openQuizFromMap();
     }
 
     return ThemedBackgroundScaffold(
@@ -516,12 +528,10 @@ class _NowAndNextPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final panelTitle = story.isEpisodeComplete
-        ? story.endingTitle
-        : story.actLabel;
-    final panelBody = story.isEpisodeComplete
-        ? story.endingBody
-        : story.actBody;
+    final panelTitle =
+        story.isEpisodeComplete ? story.endingTitle : story.actLabel;
+    final panelBody =
+        story.isEpisodeComplete ? story.endingBody : story.actBody;
     final currentLabel = story.isEpisodeComplete ? 'Sista stopp' : 'Nu';
     final currentTitle = currentNode?.landmark ?? 'Starten';
     final currentBody = story.isEpisodeComplete
@@ -534,7 +544,8 @@ class _NowAndNextPanel extends StatelessWidget {
     final nextBody = story.isEpisodeComplete
         ? story.endingBody
         : nextNode?.title ?? 'Ett sista steg kvar.';
-    final buttonLabel = story.isEpisodeComplete ? 'Till hem' : 'Spela nästa stopp';
+    final buttonLabel =
+        story.isEpisodeComplete ? 'Till hem' : 'Spela nästa stopp';
     final buttonIcon =
         story.isEpisodeComplete ? Icons.home_rounded : Icons.play_arrow_rounded;
 

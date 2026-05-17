@@ -1,6 +1,81 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
 
+enum AppSoundEffect {
+  click,
+  correct,
+  wrong,
+  celebration,
+  mapOpen,
+  quizStart,
+}
+
+enum AppMusicTrack {
+  home,
+  story,
+  quiz,
+}
+
+class AudioAssetSpec {
+  const AudioAssetSpec({
+    required this.primary,
+    this.fallback,
+    this.volume,
+  });
+
+  final String primary;
+  final String? fallback;
+  final double? volume;
+}
+
+const Map<AppSoundEffect, AudioAssetSpec> appSoundEffectAssets = {
+  AppSoundEffect.click: AudioAssetSpec(
+    primary: 'sounds/click.mp3',
+    fallback: 'sounds/click.wav',
+    volume: 0.55,
+  ),
+  AppSoundEffect.correct: AudioAssetSpec(
+    primary: 'sounds/correct.mp3',
+    fallback: 'sounds/correct.wav',
+    volume: 0.78,
+  ),
+  AppSoundEffect.wrong: AudioAssetSpec(
+    primary: 'sounds/wrong.mp3',
+    fallback: 'sounds/wrong.wav',
+    volume: 0.7,
+  ),
+  AppSoundEffect.celebration: AudioAssetSpec(
+    primary: 'sounds/celebration.mp3',
+    fallback: 'sounds/celebration.wav',
+    volume: 0.82,
+  ),
+  AppSoundEffect.mapOpen: AudioAssetSpec(
+    primary: 'sounds/map_open.mp3',
+    fallback: 'sounds/map_open.wav',
+    volume: 0.62,
+  ),
+  AppSoundEffect.quizStart: AudioAssetSpec(
+    primary: 'sounds/quiz_start.mp3',
+    fallback: 'sounds/quiz_start.wav',
+    volume: 0.68,
+  ),
+};
+
+const Map<AppMusicTrack, AudioAssetSpec> appMusicTrackAssets = {
+  AppMusicTrack.home: AudioAssetSpec(
+    primary: 'sounds/home_music.mp3',
+    volume: 0.24,
+  ),
+  AppMusicTrack.story: AudioAssetSpec(
+    primary: 'sounds/story_music.mp3',
+    volume: 0.22,
+  ),
+  AppMusicTrack.quiz: AudioAssetSpec(
+    primary: 'sounds/quiz_music.mp3',
+    volume: 0.18,
+  ),
+};
+
 /// Service for playing audio feedback and music
 class AudioService {
   final _audioPlayer = AudioPlayer();
@@ -8,6 +83,7 @@ class AudioService {
 
   bool _soundEnabled = true;
   bool _musicEnabled = true;
+  AppMusicTrack? _currentMusicTrack;
 
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
@@ -25,87 +101,89 @@ class AudioService {
     }
   }
 
-  /// Play correct answer sound
-  Future<void> playCorrectSound() async {
+  Future<void> playSoundEffect(AppSoundEffect effect) async {
     if (!_soundEnabled) return;
+
+    final spec = appSoundEffectAssets[effect];
+    if (spec == null) return;
+
     try {
       await _playAssetWithFallback(
         player: _audioPlayer,
-        primary: 'sounds/correct.mp3',
-        fallback: 'sounds/correct.wav',
+        primary: spec.primary,
+        fallback: spec.fallback,
+        volume: spec.volume,
       );
-    } catch (e) {
+    } catch (_) {
       // Handle error silently for now
     }
   }
 
-  /// Play wrong answer sound
-  Future<void> playWrongSound() async {
-    if (!_soundEnabled) return;
-    try {
-      await _playAssetWithFallback(
-        player: _audioPlayer,
-        primary: 'sounds/wrong.mp3',
-        fallback: 'sounds/wrong.wav',
-      );
-    } catch (e) {
-      // Handle error silently for now
-    }
-  }
+  Future<void> playMusicTrack(AppMusicTrack track) async {
+    if (!_musicEnabled || _currentMusicTrack == track) return;
 
-  /// Play celebration sound
-  Future<void> playCelebrationSound() async {
-    if (!_soundEnabled) return;
-    try {
-      await _playAssetWithFallback(
-        player: _audioPlayer,
-        primary: 'sounds/celebration.mp3',
-        fallback: 'sounds/celebration.wav',
-      );
-    } catch (e) {
-      // Handle error silently for now
-    }
-  }
+    final spec = appMusicTrackAssets[track];
+    if (spec == null) return;
 
-  /// Play button click sound
-  Future<void> playClickSound() async {
-    if (!_soundEnabled) return;
     try {
-      await _playAssetWithFallback(
-        player: _audioPlayer,
-        primary: 'sounds/click.mp3',
-        fallback: 'sounds/click.wav',
-      );
-    } catch (e) {
-      // Handle error silently for now
-    }
-  }
-
-  /// Play background music
-  Future<void> playMusic() async {
-    if (!_musicEnabled) return;
-    try {
+      await _musicPlayer.stop();
+      await _musicPlayer.setReleaseMode(ReleaseMode.loop);
       await _playAssetWithFallback(
         player: _musicPlayer,
-        primary: 'sounds/background_music.wav',
-        fallback: 'sounds/background_music.mp3',
-        volume: 0.3,
+        primary: spec.primary,
+        fallback: spec.fallback,
+        volume: spec.volume,
       );
-      await _musicPlayer.setReleaseMode(ReleaseMode.loop);
-    } catch (e) {
+      _currentMusicTrack = track;
+    } catch (_) {
       // Handle error silently for now
     }
   }
+
+  /// Play correct answer sound
+  Future<void> playCorrectSound() =>
+      playSoundEffect(AppSoundEffect.correct);
+
+  /// Play wrong answer sound
+  Future<void> playWrongSound() => playSoundEffect(AppSoundEffect.wrong);
+
+  /// Play celebration sound
+  Future<void> playCelebrationSound() =>
+      playSoundEffect(AppSoundEffect.celebration);
+
+  /// Play button click sound
+  Future<void> playClickSound() => playSoundEffect(AppSoundEffect.click);
+
+  /// Play story map open sound
+  Future<void> playMapOpenSound() => playSoundEffect(AppSoundEffect.mapOpen);
+
+  /// Play quiz start sound
+  Future<void> playQuizStartSound() =>
+      playSoundEffect(AppSoundEffect.quizStart);
+
+  /// Play home background music
+  Future<void> playHomeMusic() => playMusicTrack(AppMusicTrack.home);
+
+  /// Play story background music
+  Future<void> playStoryMusic() => playMusicTrack(AppMusicTrack.story);
+
+  /// Play quiz background music
+  Future<void> playQuizMusic() => playMusicTrack(AppMusicTrack.quiz);
+
+  /// Play background music
+  Future<void> playMusic() => playHomeMusic();
 
   Future<void> _playAssetWithFallback({
     required AudioPlayer player,
     required String primary,
-    required String fallback,
+    String? fallback,
     double? volume,
   }) async {
     try {
       await player.play(AssetSource(primary), volume: volume);
     } catch (_) {
+      if (fallback == null) rethrow;
+
       // Fallback to WAV (larger file, should be converted to MP3 for production)
       debugPrint(
         '⚠️ Using WAV fallback for $primary - convert to MP3 to reduce APK size',
@@ -116,6 +194,7 @@ class AudioService {
 
   /// Stop background music
   Future<void> stopMusic() async {
+    _currentMusicTrack = null;
     await _musicPlayer.stop();
   }
 
