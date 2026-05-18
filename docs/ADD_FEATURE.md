@@ -235,10 +235,10 @@ Se [DEPLOY_ANDROID.md](DEPLOY_ANDROID.md) för full process.
 Kort:
 ```bash
 # Uppdatera version i pubspec.yaml
-version: 1.4.1+16  # Exempel, välj nästa riktiga version
+version: <nästa_version>  # Exempel: 1.4.1+18
 
 # Commit
-git commit -m "chore: bump version to 1.3.1"
+git commit -m "chore: bump version to <nästa_version>"
 
 # Build release AAB
 flutter build aab --release

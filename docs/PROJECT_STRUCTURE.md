@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Faktisk mapp- och filstruktur
-uppdaterad: 2026-05-11
+uppdaterad: 2026-05-18
 -->
 # Project Structure (As-Is)
 
-Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-11).
+Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-18).
 
 ## Root
 
@@ -48,6 +48,7 @@ Byggartefakter som inte ar kallkod:
   - `daily_challenge/providers/`: `daily_challenge_provider.dart`
   - `home/presentation/screens/`: `home_screen.dart`
   - `home/presentation/widgets/`: `home_story_progress_card.dart`
+  - `inventory/presentation/screens/`: `wardrobe_screen.dart`
   - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart`
   - `quiz/presentation/dialogs/`: `feedback_dialog.dart`
   - `quiz/presentation/widgets/`: `answer_button.dart`, `question_card.dart`
@@ -60,7 +61,6 @@ Byggartefakter som inte ar kallkod:
 - `presentation/`
   - `widgets/`: ateranvandbara UI-komponenter: `game_character.dart`, `mascot_reaction_view.dart`, `progress_indicator_bar.dart`, `star_rating.dart`, `themed_background_scaffold.dart`
   - historiska `screens/` och `dialogs/` finns inte langre; ny UI ligger i `lib/features/**/presentation/**`
-  - `inventory/` finns som featuremapp i repo:t men saknar i nuläget aktiv widgetfil i workspace; garderobsflödet ska inte beskrivas som kanonisk feature-UI förrän en verklig fil finns där
 
 ## Namngivningsbaseline
 
@@ -76,6 +76,7 @@ Byggartefakter som inte ar kallkod:
 - `lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart`
 - `lib/features/profiles/presentation/screens/profile_selection_screen.dart`
 - `lib/features/home/presentation/screens/home_screen.dart`
+- `lib/features/inventory/presentation/screens/wardrobe_screen.dart`
 - `lib/features/quiz/presentation/screens/quiz_screen.dart`
 - `lib/features/quiz/presentation/screens/results_screen.dart`
 - `lib/features/story/presentation/screens/story_map_screen.dart`

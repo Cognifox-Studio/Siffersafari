@@ -1,0 +1,13 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "type": "command",
+        "windows": "powershell -NoProfile -ExecutionPolicy Bypass -File .github/hooks/customization-frontmatter-guard.ps1",
+        "linux": "sh -lc 'cat >/dev/null; exit 0'",
+        "osx": "sh -lc 'cat >/dev/null; exit 0'",
+        "timeout": 10
+      }
+    ]
+  }
+}

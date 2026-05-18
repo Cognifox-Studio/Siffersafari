@@ -155,7 +155,7 @@
 - **Regressionsskydd:** Lade riktade widgettester för wardrobe-beteenden samt ett nytt audit-test som verifierar att alla aktiva wardrobe-items i inventory-listan har explicit hit-shape-täckning.
 
 **2026-05-11 – UI Rendering Fix Wardrobe**
-- **Garderobsfönster:** Löste ett problem där garderoben (`WardrobeDialog`) bara visade en svart skärm (men inga visuella fel från Flutter) på grund av en `hasSize` / `IntrinsicWidth` layout-krasch i bakgrunden. Dialog-widgeten misslyckades med att mäta raden med knappar. Fixades genom att införa `Wrap` för knappar, `shrinkWrap: true` på inre scroll-vyer och gränsen `ConstrainedBox(maxWidth: 400)` runt allting. Dialogen syns nu som den ska på enheten.
+- **Garderobsfönster:** Löste ett problem där garderoben bara visade en svart skärm (men inga visuella fel från Flutter) på grund av en `hasSize` / `IntrinsicWidth` layout-krasch i bakgrunden. Garderobsvyn misslyckades med att mäta raden med knappar. Fixades genom att införa `Wrap` för knappar, `shrinkWrap: true` på inre scroll-vyer och gränsen `ConstrainedBox(maxWidth: 400)` runt allting. Dialogen syns nu som den ska på enheten.
 
 **2026-05-11 – Init-audit av utvecklarytan**
 - **Docs och customizations:** Synkade utvecklarlagret mot faktisk appstruktur. `docs/README.md` beskriver nu `SESSION_BRIEF.md` som aktuellt läge i stället för historisk logg, `docs/PROJECT_STRUCTURE.md` och `docs/ADD_FEATURE.md` följer feature-first-strukturen bättre, och `.github`-ytan är tydligare dokumenterad utan pensionerade prompts.
@@ -175,7 +175,7 @@
 **2026-05-06 – Hemskärm & Garderobens UI-logik**
 - **Hemskärmslayout (Home Screen):** Förenklad layout genom att centrera spelets logga och minimera onödigt vertikalt utrymme.
 - **Större Maskot:** Siffersafari-maskoten Loke gjordes väsentligt mycket större på hemskärmen (SizedBox höjd 190/210 i hemskärmen).
-- **Garderobsfunktion (WardrobeDialog):** Återställde och kopplade ihop garderoben med Home Screen via maskotens `onTap`. När man klickar på apan öppnas profilens inventarie-fönster (Wardrobe).
+- **Garderobsfunktion:** Återställde och kopplade ihop garderoben med Home Screen via maskotens `onTap`. När man klickar på apan öppnas profilens inventarie-fönster.
 - **Riverpod State Propagation:** Rättade ett data-flödesfel där Lokes karaktärsvy (`GameCharacter`) i hemskärmen inte uppdaterades när ny utrustning (till exempel hatten) tog på sig. Man tryckte in `user.equippedItems` till `GameCharacter()`.
 - **Clip.none för Stack:** Rättade problem med avklippta items, till exempel en hatt på huvudet, genom att lägga till `clipBehavior: Clip.none` på maskotens renderande `Stack`.
 

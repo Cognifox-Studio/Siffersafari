@@ -38,10 +38,10 @@ Viktigt: enligt `.gitignore` ar endast `.vscode/tasks.json` spårad i git (övri
 
 Efter att du oppnat repot i VS Code:
 
-1. Kor `Developer: Reload Window`.
-2. Anvand `Run and Debug` for `Flutter: Debug`.
-3. Anvand `Tasks: Run Task` for `QA: Analyze` och testfloden.
-4. Anvand `Tasks: Run Task` for Pixel_6-kommandon vid behov.
+1. Anvand `Run and Debug` for `Flutter: Debug`.
+2. Anvand `Tasks: Run Task` for `QA: Analyze` och testfloden.
+3. Anvand `Tasks: Run Task` for Pixel_6-kommandon vid behov.
+4. Om tasks eller debug-profiler inte dyker upp direkt: kor `Developer: Reload Window` en gang.
 
 ## Vanliga kommandon
 
