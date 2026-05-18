@@ -20,9 +20,9 @@ class _StarRatingState extends State<StarRating>
   late final List<Animation<double>> _scales;
   late final List<Animation<double>> _opacities;
 
-  // Total 750 ms: each star takes 450 ms (60 %), stagger 150 ms (20 %).
-  // Star 0: 0.0–0.6 | Star 1: 0.2–0.8 | Star 2: 0.4–1.0
-  static const _totalDuration = Duration(milliseconds: 750);
+  // Keep the reveal short so results feel rewarding without dragging.
+  // Star 0: 0.0–0.62 | Star 1: 0.19–0.81 | Star 2: 0.38–1.0
+  static const _totalDuration = Duration(milliseconds: 480);
 
   @override
   void initState() {
@@ -30,22 +30,22 @@ class _StarRatingState extends State<StarRating>
     _controller = AnimationController(vsync: this, duration: _totalDuration)
       ..forward();
     _scales = List.generate(3, (i) {
-      final start = i * 0.2;
-      final end = start + 0.6;
+      final start = i * 0.19;
+      final end = (start + 0.62).clamp(0.0, 1.0);
       return Tween<double>(begin: 0.5, end: 1.0).animate(
         CurvedAnimation(
           parent: _controller,
-          curve: Interval(start, end, curve: Curves.easeOutBack),
+          curve: Interval(start, end, curve: Curves.easeOutCubic),
         ),
       );
     });
     _opacities = List.generate(3, (i) {
-      final start = i * 0.2;
-      final end = start + 0.5;
+      final start = i * 0.19;
+      final end = (start + 0.48).clamp(0.0, 1.0);
       return Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: _controller,
-          curve: Interval(start, end, curve: Curves.easeOut),
+          curve: Interval(start, end, curve: Curves.easeOutCubic),
         ),
       );
     });

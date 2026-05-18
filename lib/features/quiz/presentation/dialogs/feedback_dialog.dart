@@ -105,172 +105,178 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
     final showComboBadge = comboMultiplier >= 1.5;
 
     return Dialog(
+      insetPadding: EdgeInsets.symmetric(
+        horizontal: AppConstants.defaultPadding.w,
+        vertical: AppConstants.largePadding.h,
+      ),
       backgroundColor: dialogBackgroundColor,
       shape: dialogShape,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(AppConstants.largePadding.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (showComboBadge) ...[
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppConstants.defaultPadding.w,
-                  vertical: AppConstants.microSpacing6.h,
-                ),
-                decoration: BoxDecoration(
-                  color: Color.alphaBlend(
-                    comboStartColor.withValues(alpha: 0.18),
-                    dialogBackgroundColor,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: 420.w),
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(AppConstants.largePadding.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (showComboBadge) ...[
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppConstants.defaultPadding.w,
+                    vertical: AppConstants.microSpacing6.h,
                   ),
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
-                  border: Border.all(
-                    color: comboEndColor.withValues(alpha: 0.48),
-                  ),
-                ),
-                child: Text(
-                  '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: onSurface,
-                        fontWeight: FontWeight.w900,
-                        letterSpacing: 1.2,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              SizedBox(height: AppConstants.smallPadding.h),
-            ],
-            ExcludeSemantics(
-              child: Container(
-                height: 120.h,
-                alignment: Alignment.center,
-                child: activeUser != null
-                    ? GameCharacter(
-                        characterId: CharacterId.values.firstWhere(
-                          (e) => e.name == activeUser.selectedCharacterId,
-                          orElse: () => CharacterId.loke,
-                        ),
-                        equippedItems: activeUser.equippedItems,
-                        customItemOffsets: activeUser.customItemOffsets,
-                        reaction: isCorrect
-                            ? CharacterReaction.celebrate
-                            : CharacterReaction.answerWrong,
-                        height: 120.h,
-                      )
-                    : Icon(
-                        isCorrect
-                            ? Icons.check_rounded
-                            : Icons.psychology_alt_rounded,
-                        color: mainColor,
-                        size: AppConstants.feedbackDialogIconSize.sp,
-                      ),
-              ),
-            ),
-
-            SizedBox(height: AppConstants.defaultPadding.h),
-
-            // Title
-            Semantics(
-              header: true,
-              label: title,
-              child: ExcludeSemantics(
-                child: Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: mainColor,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-
-            SizedBox(height: AppConstants.defaultPadding.h),
-
-            // Message
-            Semantics(
-              label: widget.feedback.message,
-              child: ExcludeSemantics(
-                child: Column(
-                  children: [
-                    if (lines.isNotEmpty)
-                      Text(
-                        lines.first,
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: widget.messageTextColor ?? mutedOnSurface,
-                              fontWeight: FontWeight.w700,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                    if (lines.length >= 2) ...[
-                      SizedBox(height: AppConstants.smallPadding.h),
-                      Text(
-                        lines[1],
-                        style:
-                            Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                  color: onSurface,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                    if (lines.length >= 3) ...[
-                      SizedBox(height: AppConstants.defaultPadding.h),
-                      ..._buildExtraLines(
-                        context,
-                        lines.sublist(2),
-                        defaultColor: widget.messageTextColor ?? mutedOnSurface,
-                        accentColor: isCorrect ? correctColor : incorrectAccent,
-                      ),
-                    ],
-                    if (widget.feedback.numberLine != null) ...[
-                      SizedBox(height: AppConstants.defaultPadding.h),
-                      _FeedbackNumberLineView(
-                        numberLine: widget.feedback.numberLine!,
-                        accentColor: isCorrect ? correctColor : incorrectAccent,
-                        textColor: onSurface,
-                      ),
-                    ],
-                    if (widget.feedback.groupModel != null) ...[
-                      SizedBox(height: AppConstants.defaultPadding.h),
-                      _FeedbackGroupModelView(
-                        groupModel: widget.feedback.groupModel!,
-                        accentColor: isCorrect ? correctColor : incorrectAccent,
-                        textColor: onSurface,
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-
-            SizedBox(height: AppConstants.largePadding.h),
-
-            // Continue button
-            ElevatedButton(
-              autofocus: true,
-              onPressed: () {
-                Navigator.of(context).pop();
-                widget.onContinue();
-              },
-              style: (Theme.of(context).elevatedButtonTheme.style ??
-                      const ButtonStyle())
-                  .copyWith(
-                backgroundColor: WidgetStatePropertyAll(buttonBackgroundColor),
-                foregroundColor: WidgetStatePropertyAll(scheme.onPrimary),
-              ),
-              child: Text(
-                widget.continueLabel,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: scheme.onPrimary,
-                      fontWeight: FontWeight.bold,
+                  decoration: BoxDecoration(
+                    color: Color.alphaBlend(
+                      comboStartColor.withValues(alpha: 0.18),
+                      dialogBackgroundColor,
                     ),
+                    borderRadius:
+                        BorderRadius.circular(AppConstants.borderRadius),
+                    border: Border.all(
+                      color: comboEndColor.withValues(alpha: 0.48),
+                    ),
+                  ),
+                  child: Text(
+                    '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: onSurface,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                SizedBox(height: AppConstants.smallPadding.h),
+              ],
+              ExcludeSemantics(
+                child: Container(
+                  height: 120.h,
+                  alignment: Alignment.center,
+                  child: activeUser != null
+                      ? GameCharacter(
+                          characterId: CharacterId.values.firstWhere(
+                            (e) => e.name == activeUser.selectedCharacterId,
+                            orElse: () => CharacterId.loke,
+                          ),
+                          equippedItems: activeUser.equippedItems,
+                          customItemOffsets: activeUser.customItemOffsets,
+                          reaction: isCorrect
+                              ? CharacterReaction.celebrate
+                              : CharacterReaction.answerWrong,
+                          height: 120.h,
+                        )
+                      : Icon(
+                          isCorrect
+                              ? Icons.check_rounded
+                              : Icons.psychology_alt_rounded,
+                          color: mainColor,
+                          size: AppConstants.feedbackDialogIconSize.sp,
+                        ),
+                ),
               ),
-            ),
-          ],
+              SizedBox(height: AppConstants.defaultPadding.h),
+              Semantics(
+                header: true,
+                label: title,
+                child: ExcludeSemantics(
+                  child: Text(
+                    title,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: mainColor,
+                        ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+              SizedBox(height: AppConstants.defaultPadding.h),
+              Semantics(
+                label: widget.feedback.message,
+                child: ExcludeSemantics(
+                  child: Column(
+                    children: [
+                      if (lines.isNotEmpty)
+                        Text(
+                          lines.first,
+                          style:
+                              Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    color:
+                                        widget.messageTextColor ?? mutedOnSurface,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                          textAlign: TextAlign.center,
+                        ),
+                      if (lines.length >= 2) ...[
+                        SizedBox(height: AppConstants.smallPadding.h),
+                        Text(
+                          lines[1],
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                color: onSurface,
+                                fontWeight: FontWeight.w900,
+                              ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                      if (lines.length >= 3) ...[
+                        SizedBox(height: AppConstants.defaultPadding.h),
+                        ..._buildExtraLines(
+                          context,
+                          lines.sublist(2),
+                          defaultColor:
+                              widget.messageTextColor ?? mutedOnSurface,
+                          accentColor:
+                              isCorrect ? correctColor : incorrectAccent,
+                        ),
+                      ],
+                      if (widget.feedback.numberLine != null) ...[
+                        SizedBox(height: AppConstants.defaultPadding.h),
+                        _FeedbackNumberLineView(
+                          numberLine: widget.feedback.numberLine!,
+                          accentColor:
+                              isCorrect ? correctColor : incorrectAccent,
+                          textColor: onSurface,
+                        ),
+                      ],
+                      if (widget.feedback.groupModel != null) ...[
+                        SizedBox(height: AppConstants.defaultPadding.h),
+                        _FeedbackGroupModelView(
+                          groupModel: widget.feedback.groupModel!,
+                          accentColor:
+                              isCorrect ? correctColor : incorrectAccent,
+                          textColor: onSurface,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: AppConstants.largePadding.h),
+              ElevatedButton(
+                autofocus: true,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  widget.onContinue();
+                },
+                style: (Theme.of(context).elevatedButtonTheme.style ??
+                        const ButtonStyle())
+                    .copyWith(
+                  backgroundColor: WidgetStatePropertyAll(buttonBackgroundColor),
+                  foregroundColor: WidgetStatePropertyAll(scheme.onPrimary),
+                ),
+                child: Text(
+                  widget.continueLabel,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: scheme.onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -330,7 +336,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
       child: ExcludeSemantics(
         child: SizedBox(
           key: const Key('feedback_number_line'),
-          width: 220.w,
+          width: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -358,7 +364,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
               ),
               SizedBox(height: AppConstants.smallPadding.h),
               SizedBox(
-                height: 54.h,
+                height: 64.h,
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -388,7 +394,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
                     Positioned(
                       left: 18.w,
                       right: 18.w,
-                      top: 18.h,
+                      top: 22.h,
                       child: Container(
                         height: 4.h,
                         decoration: BoxDecoration(
@@ -399,7 +405,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
                     ),
                     Positioned(
                       left: 10.w,
-                      top: 12.h,
+                      top: 16.h,
                       child: _NumberLineDot(
                         color: numberLine.startOnLeft
                             ? accentColor
@@ -408,7 +414,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
                     ),
                     Positioned(
                       right: 10.w,
-                      top: 12.h,
+                      top: 16.h,
                       child: _NumberLineDot(
                         color: numberLine.startOnLeft
                             ? accentColor.withValues(alpha: 0.42)
@@ -417,7 +423,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
                     ),
                     Positioned(
                       left: 0,
-                      top: 30.h,
+                      top: 40.h,
                       child: SizedBox(
                         width: 46.w,
                         child: Text(
@@ -433,7 +439,7 @@ class _FeedbackNumberLineView extends StatelessWidget {
                     ),
                     Positioned(
                       right: 0,
-                      top: 30.h,
+                      top: 40.h,
                       child: SizedBox(
                         width: 46.w,
                         child: Text(

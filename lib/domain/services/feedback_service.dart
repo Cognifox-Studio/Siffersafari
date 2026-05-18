@@ -179,61 +179,35 @@ class FeedbackService {
   }) {
     if (gotSpeedBonus) {
       final options = switch (ageGroup) {
-        AgeGroup.young => const ['Blixtsnabb!', 'Supersnabb!', 'ZOOOM!'],
-        AgeGroup.middle => const ['Blixtsnabb!', 'Snabbbonus!', 'Raketfart!'],
-        AgeGroup.older => const [
-            'Snabbt jobbat!',
-            'Blixtsnabbt!',
-            'Raketfart!',
-          ],
+        AgeGroup.young => const ['Blixt!', 'Snabbt!', 'ZOOOM!'],
+        AgeGroup.middle => const ['Blixt!', 'Snabbt!', 'Raketfart!'],
+        AgeGroup.older => const ['Snabbt!', 'Blixt!', 'Raketfart!'],
       };
       return _pick(seed, options);
     }
 
     if (correctStreak >= 3) {
       final options = switch (ageGroup) {
-        AgeGroup.young => const ['Svit-super!', 'Du är i zonen!', 'Eldsvit!'],
-        AgeGroup.middle => const [
-            'Svit-mästare!',
-            'Du är i zonen!',
-            'Eldsvit!',
-          ],
-        AgeGroup.older => const [
-            'Stabil svit!',
-            'Du är i zonen!',
-            'Snygg svit!',
-          ],
+        AgeGroup.young => const ['I zonen!', 'Snygg svit!', 'Eldsvit!'],
+        AgeGroup.middle => const ['I zonen!', 'Snygg svit!', 'Eldsvit!'],
+        AgeGroup.older => const ['I zonen!', 'Snygg svit!', 'Stabil svit!'],
       };
       return _pick(seed, options);
     }
 
     final options = switch (ageGroup) {
-      AgeGroup.young => const ['WOW!', 'Woho!', 'Snyggt!', 'Kanon!'],
-      AgeGroup.middle => const [
-          'Grymt jobbat!',
-          'Snyggt!',
-          'Kanon!',
-          'Starkt!',
-        ],
-      AgeGroup.older => const [
-          'Klockrent!',
-          'Stabilt!',
-          'Snyggt!',
-          'Bra jobbat!',
-        ],
+      AgeGroup.young => const ['Bra!', 'Woho!', 'Snyggt!'],
+      AgeGroup.middle => const ['Bra!', 'Snyggt!', 'Starkt!'],
+      AgeGroup.older => const ['Bra!', 'Snyggt!', 'Stabilt!'],
     };
     return _pick(seed, options);
   }
 
   String _getEncouragingTitle(AgeGroup ageGroup, {required String seed}) {
     final options = switch (ageGroup) {
-      AgeGroup.young => const ['Hoppsan! Testa igen!', 'Nära!', 'Okej — igen!'],
-      AgeGroup.middle => const ['Nästan!', 'Nära!', 'Bra försök!'],
-      AgeGroup.older => const [
-          'Lite fel — du fixar det!',
-          'Nära!',
-          'Bra försök!',
-        ],
+      AgeGroup.young => const ['Försök igen', 'Nära!', 'Igen!'],
+      AgeGroup.middle => const ['Försök igen', 'Nära!', 'Bra försök!'],
+      AgeGroup.older => const ['Försök igen', 'Nära!', 'Bra försök!'],
     };
     return _pick(seed, options);
   }

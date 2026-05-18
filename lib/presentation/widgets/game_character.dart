@@ -225,17 +225,17 @@ class _GameCharacterState extends State<GameCharacter>
       case CharacterReaction.idle:
         return const Duration(milliseconds: 1);
       case CharacterReaction.enter:
-        return const Duration(milliseconds: 520);
+        return const Duration(milliseconds: 440);
       case CharacterReaction.answerCorrect:
-        return const Duration(milliseconds: 820);
+        return const Duration(milliseconds: 620);
       case CharacterReaction.celebrate:
-        return const Duration(milliseconds: 1100);
+        return const Duration(milliseconds: 900);
       case CharacterReaction.answerWrong:
-        return const Duration(milliseconds: 560);
-      case CharacterReaction.userTap:
-        return const Duration(milliseconds: 360);
-      case CharacterReaction.screenChange:
         return const Duration(milliseconds: 420);
+      case CharacterReaction.userTap:
+        return const Duration(milliseconds: 260);
+      case CharacterReaction.screenChange:
+        return const Duration(milliseconds: 320);
       case CharacterReaction.run:
         return const Duration(milliseconds: 600); // 8 x 75ms = 600ms
     }

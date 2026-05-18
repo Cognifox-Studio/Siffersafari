@@ -145,8 +145,8 @@ class HomeStoryProgressCard extends StatelessWidget {
                   const SizedBox(height: AppConstants.microSpacing4),
                   Text(
                     story.isEpisodeComplete
-                    ? story.endingBody
-                    : story.currentObjectiveDescription,
+                        ? story.endingBody
+                        : story.currentObjectiveDescription,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: mutedOnPrimary,
                           fontWeight: FontWeight.w600,

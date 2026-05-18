@@ -315,20 +315,7 @@ class _MapHeroCard extends StatelessWidget {
             backgroundAsset: backgroundAsset,
           ),
           const SizedBox(height: AppConstants.smallPadding),
-          // Legend row
-          Row(
-            children: [
-              _MapLegendDot(color: completedColor, label: 'Klar'),
-              const SizedBox(width: AppConstants.smallPadding),
-              _MapLegendDot(color: currentColor, label: 'Här nu'),
-              const SizedBox(width: AppConstants.smallPadding),
-              _MapLegendDot(
-                color: onPrimary.withValues(alpha: 0.35),
-                label: 'Kommande',
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.defaultPadding),
+          const SizedBox(height: AppConstants.microSpacing6),
           Text(
             story.worldTitle,
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
@@ -788,7 +775,7 @@ class _LockedBiomeTeaser extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Senare',
+                  'Sen',
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w800,
@@ -805,6 +792,8 @@ class _LockedBiomeTeaser extends StatelessWidget {
                 const SizedBox(height: AppConstants.microSpacing4),
                 Text(
                   biome.tagline,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w700,
@@ -1079,39 +1068,6 @@ class _StopCard extends StatelessWidget {
   }
 }
 
-// ─── Interactive map canvas ────────────────────────────────────────────────
-
-class _MapLegendDot extends StatelessWidget {
-  const _MapLegendDot({required this.color, required this.label});
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onPrimary
-                    .withValues(alpha: 0.90),
-                fontWeight: FontWeight.w700,
-              ),
-        ),
-      ],
-    );
-  }
-}
-
 class _InteractiveMapCanvas extends StatefulWidget {
   const _InteractiveMapCanvas({
     required this.story,
@@ -1216,43 +1172,15 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                 ),
                               ),
 
-                            // 🏕️ Illustration for baslager landmark
-                            if (node.sceneTag == 'baslager')
+                            if (_storyLandmarkAssetPath(node.sceneTag)
+                                case final assetPath?)
                               Positioned(
                                 bottom: 6,
                                 child: Image.asset(
-                                  'assets/images/story/campfire.png',
-                                  width: 48,
-                                  height: 48,
-                                ),
-                              ),
-
-                            // 🛖 Illustration for koja landmark
-                            if (node.sceneTag == 'koja')
-                              Positioned(
-                                bottom: 6,
-                                child: Image.asset(
-                                  'assets/images/story/cabin.png',
-                                  width: 54,
-                                  height: 54,
-                                ),
-                              )
-                            else if (node.sceneTag == 'monkey_rock')
-                              Positioned(
-                                bottom: 6,
-                                child: Image.asset(
-                                  'assets/images/story/map_monkey_rock.png',
-                                  width: 54,
-                                  height: 54,
-                                ),
-                              )
-                            else if (node.sceneTag == 'fors')
-                              Positioned(
-                                bottom: 6,
-                                child: Image.asset(
-                                  'assets/images/story/map_waterfall.png',
-                                  width: 54,
-                                  height: 54,
+                                  assetPath,
+                                  width: node.sceneTag == 'baslager' ? 48 : 54,
+                                  height:
+                                      node.sceneTag == 'baslager' ? 48 : 54,
                                 ),
                               ),
 
@@ -1557,17 +1485,20 @@ class _NodeVisual {
     required Color secondaryColor,
     required Color accentColor,
   }) {
+    final assetPath = _storyLandmarkAssetPath(sceneTag);
+    if (assetPath != null) {
+      return _NodeVisual(
+        assetPath: assetPath,
+        color: _storyLandmarkVisualColor(
+          sceneTag,
+          primaryColor: primaryColor,
+          secondaryColor: secondaryColor,
+          accentColor: accentColor,
+        ),
+      );
+    }
+
     switch (sceneTag) {
-      case 'baslager':
-        return _NodeVisual(
-          assetPath: 'assets/images/story/campfire.png',
-          color: primaryColor.withValues(alpha: 0.88),
-        );
-      case 'koja':
-        return _NodeVisual(
-          assetPath: 'assets/images/story/cabin.png',
-          color: primaryColor.withValues(alpha: 0.88),
-        );
       case 'frukt':
         return _NodeVisual(
           icon: Icons.apple,
@@ -1589,14 +1520,6 @@ class _NodeVisual {
             secondaryColor,
           ),
         );
-      case 'karta':
-        return _NodeVisual(
-          icon: Icons.map,
-          color: Color.alphaBlend(
-            accentColor.withValues(alpha: 0.60),
-            secondaryColor,
-          ),
-        );
       case 'fors':
         return _NodeVisual(
           icon: Icons.water,
@@ -1605,42 +1528,6 @@ class _NodeVisual {
             primaryColor,
           ),
         );
-      case 'tempel':
-        return _NodeVisual(
-          icon: Icons.account_balance,
-          color: primaryColor,
-        );
-      case 'soltempel':
-        return _NodeVisual(
-          icon: Icons.wb_sunny,
-          color: accentColor,
-        );
-      case 'skog':
-        return _NodeVisual(
-          icon: Icons.park,
-          color: secondaryColor,
-        );
-      case 'trumma':
-        return _NodeVisual(
-          icon: Icons.music_note,
-          color: Color.alphaBlend(
-            primaryColor.withValues(alpha: 0.65),
-            accentColor,
-          ),
-        );
-      case 'port':
-        return _NodeVisual(
-          icon: Icons.door_front_door,
-          color: Color.alphaBlend(
-            secondaryColor.withValues(alpha: 0.40),
-            primaryColor,
-          ),
-        );
-      case 'skatt':
-        return _NodeVisual(
-          icon: Icons.workspace_premium,
-          color: accentColor.withValues(alpha: 0.92),
-        );
     }
 
     return _NodeVisual(
@@ -1648,4 +1535,91 @@ class _NodeVisual {
       color: accentColor,
     );
   }
+}
+
+String? _storyLandmarkAssetPath(String sceneTag) {
+  switch (sceneTag) {
+    case 'baslager':
+      return 'assets/images/story/campfire.png';
+    case 'koja':
+      return 'assets/images/story/cabin.png';
+    case 'monkey_rock':
+      return 'assets/images/story/map_monkey_rock.png';
+    case 'fors':
+      return 'assets/images/story/map_waterfall.png';
+    case 'frukt':
+      return 'assets/images/story/map_fruit_glade.png';
+    case 'bro':
+      return 'assets/images/story/map_bridge.png';
+    case 'karta':
+      return 'assets/images/story/map_cartography_camp.png';
+    case 'tempel':
+      return 'assets/images/story/map_temple_gate.png';
+    case 'soltempel':
+      return 'assets/images/story/map_sun_temple.png';
+    case 'skog':
+      return 'assets/images/story/map_forest_grove.png';
+    case 'trumma':
+      return 'assets/images/story/map_drum_grove.png';
+    case 'port':
+      return 'assets/images/story/map_stone_gate.png';
+    case 'skatt':
+      return 'assets/images/story/map_treasure_cache.png';
+  }
+
+  return null;
+}
+
+Color _storyLandmarkVisualColor(
+  String sceneTag, {
+  required Color primaryColor,
+  required Color secondaryColor,
+  required Color accentColor,
+}) {
+  switch (sceneTag) {
+    case 'baslager':
+    case 'koja':
+      return primaryColor.withValues(alpha: 0.88);
+    case 'monkey_rock':
+      return Color.alphaBlend(
+        secondaryColor.withValues(alpha: 0.55),
+        primaryColor,
+      );
+    case 'fors':
+      return Color.alphaBlend(
+        accentColor.withValues(alpha: 0.55),
+        primaryColor,
+      );
+    case 'frukt':
+      return secondaryColor.withValues(alpha: 0.92);
+    case 'bro':
+      return Color.alphaBlend(
+        primaryColor.withValues(alpha: 0.55),
+        secondaryColor,
+      );
+    case 'karta':
+      return Color.alphaBlend(
+        accentColor.withValues(alpha: 0.60),
+        secondaryColor,
+      );
+    case 'tempel':
+      return primaryColor;
+    case 'soltempel':
+    case 'skatt':
+      return accentColor.withValues(alpha: 0.92);
+    case 'skog':
+      return secondaryColor;
+    case 'trumma':
+      return Color.alphaBlend(
+        primaryColor.withValues(alpha: 0.65),
+        accentColor,
+      );
+    case 'port':
+      return Color.alphaBlend(
+        secondaryColor.withValues(alpha: 0.40),
+        primaryColor,
+      );
+  }
+
+  return accentColor;
 }

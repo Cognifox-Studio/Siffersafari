@@ -34,6 +34,7 @@ Senast uppdaterad: 2026-05-16.
 - `PROJECT_STRUCTURE.md` – Repo-struktur
 - `SERVICES_API.md` – Servicekontrakt
 - `KUNSKAPSNIVA_PER_AK.md` – Nivåspecifikationer
+- `missing_app_art_image_order_2026-05-17.md` – Inventerad bildbeställning för saknade aktiva visuella assets
 
 ### Explanation (förklaringar, design, varför)
 - `ROADMAP.md` – Prioriterad release- och genomförandeplan

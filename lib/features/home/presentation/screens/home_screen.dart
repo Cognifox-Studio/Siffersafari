@@ -529,39 +529,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             subtitle: heroSubtitle,
                           ),
                           if (user != null) ...[
-                            const SizedBox(height: AppConstants.smallPadding),
-                            CampSceneView(
-                              mascotReaction: _mascotReaction,
-                              mascotReactionNonce: _mascotReactionNonce,
-                              isWideScreen: isWideScreen,
-                            ),
-                            const SizedBox(height: AppConstants.defaultPadding),
-                            Wrap(
-                              alignment: WrapAlignment.center,
-                              spacing: AppConstants.smallPadding,
-                              runSpacing: AppConstants.smallPadding,
-                              children: [
-                                PlayfulInfoChip(
-                                  label: 'Nivå ${user.level}',
-                                  icon: Icons.auto_awesome_rounded,
-                                  color: accentColor,
-                                ),
-                                if (hasStoryQuest)
-                                  PlayfulInfoChip(
-                                    label: storyProgress.isEpisodeComplete
-                                        ? 'Episod klar'
-                                        : storyProgress.actLabel,
-                                    icon: Icons.explore_rounded,
-                                    color: themeColors.secondaryActionColor,
-                                  ),
-                                if (isDailyChallengeCompleted)
-                                  PlayfulInfoChip(
-                                    label: 'Dagens runda klar',
-                                    icon: Icons.check_circle_rounded,
-                                    color: themeColors.progressCompletedColor,
-                                  ),
-                              ],
-                            ),
                             const SizedBox(height: AppConstants.largePadding),
                             ElevatedButton.icon(
                               key: const Key('primary_play_button'),
@@ -591,6 +558,39 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
+                            const SizedBox(height: AppConstants.defaultPadding),
+                            Wrap(
+                              alignment: WrapAlignment.center,
+                              spacing: AppConstants.smallPadding,
+                              runSpacing: AppConstants.smallPadding,
+                              children: [
+                                PlayfulInfoChip(
+                                  label: 'Nivå ${user.level}',
+                                  icon: Icons.auto_awesome_rounded,
+                                  color: accentColor,
+                                ),
+                                if (hasStoryQuest)
+                                  PlayfulInfoChip(
+                                    label: storyProgress.isEpisodeComplete
+                                        ? 'Episod klar'
+                                        : storyProgress.actLabel,
+                                    icon: Icons.explore_rounded,
+                                    color: themeColors.secondaryActionColor,
+                                  ),
+                                if (isDailyChallengeCompleted)
+                                  PlayfulInfoChip(
+                                    label: 'Dagens runda klar',
+                                    icon: Icons.check_circle_rounded,
+                                    color: themeColors.progressCompletedColor,
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: AppConstants.defaultPadding),
+                            CampSceneView(
+                              mascotReaction: _mascotReaction,
+                              mascotReactionNonce: _mascotReactionNonce,
+                              isWideScreen: isWideScreen,
                             ),
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),

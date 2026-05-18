@@ -50,17 +50,17 @@ class _AnswerButtonState extends State<AnswerButton>
       CurvedAnimation(parent: _pressController, curve: Curves.easeInOut),
     );
     _feedbackController = AnimationController(
-      duration: const Duration(milliseconds: 420),
+      duration: const Duration(milliseconds: 320),
       vsync: this,
     );
-    // Correct: scale pop (0.92 → 1.12 → 1.0) via easeOutBack
+    // Correct: keep the pop short and controlled so feedback feels crisp.
     _feedbackScale = TweenSequence<double>([
-      TweenSequenceItem(tween: Tween(begin: 0.92, end: 1.12), weight: 60),
-      TweenSequenceItem(tween: Tween(begin: 1.12, end: 1.0), weight: 40),
+      TweenSequenceItem(tween: Tween(begin: 0.96, end: 1.06), weight: 55),
+      TweenSequenceItem(tween: Tween(begin: 1.06, end: 1.0), weight: 45),
     ]).animate(
       CurvedAnimation(
         parent: _feedbackController,
-        curve: Curves.easeOut,
+        curve: Curves.easeOutCubic,
       ),
     );
     // Wrong: horizontal shake (damped sine) — computed inline in builder

@@ -115,7 +115,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_pet_zebra_companion',
       slot: 'pet',
-      assetPath: 'assets/images/ui/img_avatar_zebra.png',
+      assetPath: 'assets/images/items/item_pet_zebra_companion_nobg.png',
       name: 'Zebravän',
       renderScale: 0.8,
       showInWardrobe: false,

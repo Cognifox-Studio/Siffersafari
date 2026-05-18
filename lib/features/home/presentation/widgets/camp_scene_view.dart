@@ -95,7 +95,7 @@ class CampSceneView extends ConsumerWidget {
         .clamp(0, unlockedCampItemCount);
 
     // The height of the camp scene.
-    final height = isWideScreen ? 280.0 : 250.0;
+    final height = isWideScreen ? 256.0 : 216.0;
 
     return Container(
       key: const Key('camp_scene_view'),

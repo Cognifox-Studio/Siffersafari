@@ -71,13 +71,13 @@ void main(List<String> args) {
 
   final targets = onlySet == null
       ? allTargets
-        .where(
-        (t) =>
-          t.name != 'celebration.wav' &&
-          t.name != 'home_music.wav' &&
-          t.name != 'story_music.wav' &&
-          t.name != 'quiz_music.wav',
-        )
+          .where(
+            (t) =>
+                t.name != 'celebration.wav' &&
+                t.name != 'home_music.wav' &&
+                t.name != 'story_music.wav' &&
+                t.name != 'quiz_music.wav',
+          )
           .toList(growable: false)
       : allTargets
           .where((t) => onlySet.contains(_stemName(t.name)))
@@ -664,9 +664,8 @@ void _addToneEvent(
     );
     final base = sin(2 * pi * f * t);
     final harmonic = sin(2 * pi * f * 2.01 * t) * harmonicMix;
-    final shimmer = shimmerMix == 0.0
-        ? 0.0
-        : sin(2 * pi * f * 3.02 * t) * shimmerMix;
+    final shimmer =
+        shimmerMix == 0.0 ? 0.0 : sin(2 * pi * f * 3.02 * t) * shimmerMix;
     out[startSample + i] += (base + harmonic + shimmer) * env * amplitude;
   }
 }

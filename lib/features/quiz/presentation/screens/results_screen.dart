@@ -471,35 +471,57 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         ],
         const SizedBox(height: AppConstants.largePadding),
         PlayfulPanel(
-          hero: true,
+          hero: !hasStoryCheckpoint,
           backgroundColor: panelColor,
           highlightColor: themeColors.secondaryActionColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               PlayfulSectionHeading(
-                title: hasStoryCheckpoint ? 'Träna mer?' : 'Kör mer?',
+                title: hasStoryCheckpoint ? 'Mer att prova' : 'Kör mer?',
               ),
               SizedBox(height: AppConstants.defaultPadding.h),
-              ElevatedButton.icon(
-                onPressed: () => _startRoundFromResults(
-                  session: session,
-                  hardest: hardest,
-                  useFocusedMiniPass: false,
+              if (hasStoryCheckpoint)
+                OutlinedButton.icon(
+                  onPressed: () => _startRoundFromResults(
+                    session: session,
+                    hardest: hardest,
+                    useFocusedMiniPass: false,
+                  ),
+                  icon: const Icon(Icons.replay_rounded),
+                  label: const Text('Spela igen'),
+                )
+              else
+                ElevatedButton.icon(
+                  onPressed: () => _startRoundFromResults(
+                    session: session,
+                    hardest: hardest,
+                    useFocusedMiniPass: false,
+                  ),
+                  icon: const Icon(Icons.replay_rounded),
+                  label: const Text('Spela igen'),
                 ),
-                icon: const Icon(Icons.replay_rounded),
-                label: const Text('Spela igen'),
-              ),
               SizedBox(height: AppConstants.defaultPadding.h),
-              OutlinedButton.icon(
-                onPressed: () => _startRoundFromResults(
-                  session: session,
-                  hardest: hardest,
-                  useFocusedMiniPass: true,
+              if (hasStoryCheckpoint)
+                TextButton.icon(
+                  onPressed: () => _startRoundFromResults(
+                    session: session,
+                    hardest: hardest,
+                    useFocusedMiniPass: true,
+                  ),
+                  icon: const Icon(Icons.bolt_rounded),
+                  label: const Text('Snabbträna ⚡'),
+                )
+              else
+                OutlinedButton.icon(
+                  onPressed: () => _startRoundFromResults(
+                    session: session,
+                    hardest: hardest,
+                    useFocusedMiniPass: true,
+                  ),
+                  icon: const Icon(Icons.bolt_rounded),
+                  label: const Text('Snabbträna ⚡'),
                 ),
-                icon: const Icon(Icons.bolt_rounded),
-                label: const Text('Snabbträna ⚡'),
-              ),
               SizedBox(height: AppConstants.smallPadding.h),
               TextButton(
                 onPressed: _goHomeFromResults,
@@ -777,11 +799,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required Color mutedOnPrimary,
     required _BadgeTeaser badgeTeaser,
   }) {
-    final scheme = Theme.of(context).colorScheme;
+    final themeColors = context.appThemeColors;
 
     return PlayfulPanel(
+      hero: true,
       backgroundColor: panelColor,
-      highlightColor: scheme.secondary,
+      highlightColor: themeColors.primaryActionColor,
       padding: EdgeInsets.all(AppConstants.largePadding.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -898,20 +921,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final panelTitle = isEpisodeComplete
         ? storyProgress.endingTitle
         : 'Nu nådde du $reachedLandmark!';
-    final panelLead = isEpisodeComplete
-        ? storyProgress.endingBody
-        : 'Storyn gick vidare.';
+    final panelLead =
+        isEpisodeComplete ? storyProgress.endingBody : 'Storyn gick vidare.';
     final nextTitle = isEpisodeComplete
         ? 'Episode 1 klar'
         : questCompletion.nextQuestTitle ?? storyProgress.currentObjectiveTitle;
-    final nextBody = isEpisodeComplete
-        ? storyProgress.endingBody
-        : 'Nästa mål: $nextTitle';
+    final nextBody =
+        isEpisodeComplete ? storyProgress.endingBody : 'Nästa mål: $nextTitle';
     final storyButtonLabel =
         isEpisodeComplete ? 'Se episoden' : 'Fortsätt storyn';
-    final storyButtonIcon = isEpisodeComplete
-        ? Icons.map_rounded
-        : Icons.explore_rounded;
+    final storyButtonIcon =
+        isEpisodeComplete ? Icons.map_rounded : Icons.explore_rounded;
 
     return PlayfulPanel(
       backgroundColor: panelColor,
@@ -983,6 +1003,9 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             onPressed: onContinueStory,
             icon: Icon(storyButtonIcon),
             label: Text(storyButtonLabel),
+            style: ElevatedButton.styleFrom(
+              minimumSize: const Size.fromHeight(56),
+            ),
           ),
         ],
       ),
