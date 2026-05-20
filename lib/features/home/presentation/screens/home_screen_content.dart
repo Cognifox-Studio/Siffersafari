@@ -741,57 +741,60 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           final iconBubbleSize = compact ? 44.0 : 72.0;
           final iconSize = compact ? 24.0 : AppConstants.largeIconSize;
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: iconBubbleSize,
-                height: iconBubbleSize,
-                decoration: BoxDecoration(
-                  color: themeColors.primaryActionColor.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: themeColors.primaryActionColor.withValues(
-                      alpha: 0.32,
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: iconBubbleSize,
+                  height: iconBubbleSize,
+                  decoration: BoxDecoration(
+                    color:
+                        themeColors.primaryActionColor.withValues(alpha: 0.18),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: themeColors.primaryActionColor.withValues(
+                        alpha: 0.32,
+                      ),
                     ),
                   ),
-                ),
-                child: Hero(
-                  tag: 'operation_${operation.name}',
-                  child: assetPath != null
-                      ? Center(
-                          child: Image.asset(
-                            assetPath,
-                            width: iconBubbleSize * 0.7,
-                            height: iconBubbleSize * 0.7,
-                            fit: BoxFit.contain,
+                  child: Hero(
+                    tag: 'operation_${operation.name}',
+                    child: assetPath != null
+                        ? Center(
+                            child: Image.asset(
+                              assetPath,
+                              width: iconBubbleSize * 0.7,
+                              height: iconBubbleSize * 0.7,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : Icon(
+                            icon,
+                            size: iconSize,
+                            color: onPrimary,
                           ),
-                        )
-                      : Icon(
-                          icon,
-                          size: iconSize,
-                          color: onPrimary,
-                        ),
+                  ),
                 ),
-              ),
-              SizedBox(
-                height: compact
-                    ? AppConstants.microSpacing6
-                    : AppConstants.smallPadding,
-              ),
-              Text(
-                operation.displayName,
-                maxLines: compact ? 1 : 2,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: onPrimary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: compact ? 14 : null,
-                    ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+                SizedBox(
+                  height: compact
+                      ? AppConstants.microSpacing6
+                      : AppConstants.smallPadding,
+                ),
+                Text(
+                  operation.displayName,
+                  maxLines: compact ? 1 : 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: compact ? 14 : null,
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
           );
         },
       ),

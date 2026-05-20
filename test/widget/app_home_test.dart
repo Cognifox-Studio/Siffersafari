@@ -250,6 +250,62 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] App home – centrerar räknesättsinnehållet i kortet pa mobil',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'compact-grid-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Nora',
+        ageGroup: AgeGroup.middle,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('operation_card_addition')),
+      );
+
+      final additionCardFinder =
+          find.byKey(const Key('operation_card_addition'));
+      final additionCard = tester.getRect(additionCardFinder);
+      final additionLabel = tester.getRect(find.text('Plusraketer'));
+      final additionIcon = tester.getRect(
+        find
+            .descendant(
+              of: additionCardFinder,
+              matching: find.byType(Image),
+            )
+            .first,
+      );
+
+      final labelLeftInset = additionLabel.left - additionCard.left;
+      final labelRightInset = additionCard.right - additionLabel.right;
+      final iconLeftInset = additionIcon.left - additionCard.left;
+      final iconRightInset = additionCard.right - additionIcon.right;
+
+      expect(labelLeftInset, moreOrLessEquals(labelRightInset, epsilon: 16));
+      expect(iconLeftInset, moreOrLessEquals(iconRightInset, epsilon: 16));
+      expect(find.text('Mer att göra'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
     '[Widget] App home – visar upplast camp-objekt for aktiv profil',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
