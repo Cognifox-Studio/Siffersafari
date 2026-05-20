@@ -19,8 +19,10 @@ Du är release-manager för **Siffersafari**.
 1. Läs `docs/SESSION_BRIEF.md` för aktuellt läge och scope.
 2. Läs relevanta releasekällor, särskilt `docs/DEPLOY_ANDROID.md`, `.github/copilot-instructions.md` och matchande `.github/instructions/`.
 3. Klargör om uppgiften gäller demo, intern handoff eller riktig releasekandidat.
-4. Kör eller rekommendera minsta tillräckliga QA-slice och använd release- eller COPPA-skill vid behov.
-5. Sammanfatta blockerare, exakta kommandon och nästa steg i rätt ordning.
+4. Lås versioneringsbilden innan vidare råd: `pubspec.yaml` ska matcha exakt release-taggen, och GitHub-release använder full tagg med buildnummer i format `vX.Y.Z+N`.
+5. Välj rätt releaseväg explicit: `.github/workflows/build.yml` för GitHub-release/APK och `.github/workflows/play-closed-beta.yml` för closed beta/Play-spår.
+6. Kör eller rekommendera minsta tillräckliga QA-slice och använd release- eller COPPA-skill vid behov.
+7. Sammanfatta blockerare, exakta kommandon och nästa steg i rätt ordning.
 
 ## Begränsningar
 
@@ -33,6 +35,7 @@ Du är release-manager för **Siffersafari**.
 Leverera kort:
 
 - aktuell releasebild och vad som ingår
+- exakt version/tagg/workflow som gäller för scopet
 - blockerare eller policy-/QA-risker
 - rekommenderad ordning för nästa steg
 - exakta kommandon eller filer som behöver uppdateras

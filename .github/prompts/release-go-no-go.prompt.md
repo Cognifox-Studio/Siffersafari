@@ -1,6 +1,6 @@
 ---
 name: "release-go-no-go"
-description: "Gör en kort go/no-go-bedömning inför demo, handoff, taggning eller Play-flöde i Siffersafari med rätt QA- och policykontroller"
+description: "Gör en kort go/no-go-bedömning inför demo, handoff, GitHub-release, full taggning i format vX.Y.Z+N eller Play-flöde i Siffersafari med rätt QA- och policykontroller"
 argument-hint: "Beskriv om det gäller demo, intern överlämning, closed beta eller skarp release"
 agent: "agent"
 ---
@@ -23,9 +23,13 @@ Arbetsordning:
 
 1. Klassificera målet: demo, intern handoff, closed beta eller skarp release.
 2. Välj minsta rimliga QA-slice för just den releaseytan och kör den i stället för att hoppa direkt till fullsvit.
-3. Kontrollera att version, artifacts, workflow och releaseväg matchar scope.
-4. Om Android- eller Play-flödet berörs: gör även en liten COPPA- och policykontroll.
-5. Avsluta med `Go`, `Soft go` eller `No-go` och ange exakt vad som blockerar eller återstår.
+3. Kontrollera att `pubspec.yaml` och release-taggen matchar exakt. GitHub-release i detta repo använder full tagg med buildnummer, till exempel `version: 1.4.2+19` och tagg `v1.4.2+19`.
+4. Kontrollera att artifacts, workflow och releaseväg matchar scope:
+- `build.yml` för vanlig GitHub-release med APK på GitHub Releases.
+- `play-closed-beta.yml` för Play closed beta och AAB-/Play-spår.
+- `.apk` är lokal/GitHub-verifieringsartefakt; `.aab` är Play-format.
+5. Om Android- eller Play-flödet berörs: gör även en liten COPPA- och policykontroll.
+6. Avsluta med `Go`, `Soft go` eller `No-go` och ange exakt vad som blockerar eller återstår.
 
 Go/No-go-format:
 
