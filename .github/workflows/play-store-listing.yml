@@ -6,6 +6,11 @@ env:
 on:
   workflow_dispatch:
     inputs:
+      track:
+        description: "Play track for metadata-sync, normalt alpha"
+        required: true
+        type: string
+        default: alpha
       validate_only:
         description: "Validera bara mot Play utan att skriva nya utkast"
         required: true
@@ -64,6 +69,7 @@ jobs:
         env:
           FASTLANE_SKIP_UPDATE_CHECK: 1
           PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}
+          PLAY_LISTING_TRACK: ${{ inputs.track }}
           PLAY_LISTING_VALIDATE_ONLY: ${{ inputs.validate_only }}
           PLAY_LISTING_SYNC_TEXTS: ${{ inputs.sync_texts }}
           PLAY_LISTING_SYNC_IMAGES: ${{ inputs.sync_images }}
