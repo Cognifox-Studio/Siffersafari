@@ -150,16 +150,6 @@ Anvands av:
 - `ParentPinScreen`
 - `PinRecoveryScreen`
 
-### DataExportService
-Fil: `lib/domain/services/data_export_service.dart`
-
-Ansvar:
-- exportera profildata/metadata till JSON-filer
-- lista och radera exporterade filer
-
-Anvands av:
-- `ParentDashboardScreen`
-
 ### SpacedRepetitionService
 Fil: `lib/domain/services/spaced_repetition_service.dart`
 
@@ -240,7 +230,7 @@ Ansvar:
 ## DI och providers
 
 - DI: `lib/core/di/injection.dart`
-- Providers: `lib/core/providers/*.dart`
+- Providers: främst `lib/core/providers/*.dart`, plus featureägda providers som `lib/features/daily_challenge/providers/*.dart`
 
 Notera:
 - Providers konsumerar services/repository via Riverpod.

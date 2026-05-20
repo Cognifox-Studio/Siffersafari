@@ -8,6 +8,14 @@ import 'package:siffersafari/domain/enums/operation_type.dart';
 class DifficultyConfig {
   DifficultyConfig._();
 
+  static bool isM3Grade(int? gradeLevel) {
+    return gradeLevel != null && gradeLevel >= 4 && gradeLevel <= 6;
+  }
+
+  static bool isM5aGrade(int? gradeLevel) {
+    return gradeLevel != null && gradeLevel >= 7 && gradeLevel <= 9;
+  }
+
   /// Target success rate for "lagom" difficulty.
   ///
   /// Heuristic: aim for a high-but-not-perfect success rate.

@@ -35,10 +35,15 @@ class PlayfulPanel extends StatelessWidget {
     final resolvedHighlight = highlightColor ?? themeColors.accentColor;
     final resolvedBackground = backgroundColor ??
         theme.cardTheme.color ??
-      themeColors.panelBackgroundColor;
+        themeColors.panelBackgroundColor;
     final resolvedBorder = borderColor ?? themeColors.panelBorderColor;
+    final panelRadius = BorderRadius.circular(resolvedRadius);
     final gradientTop = Color.alphaBlend(
       resolvedHighlight.withValues(alpha: hero ? 0.05 : 0.03),
+      resolvedBackground,
+    );
+    final gradientBottom = Color.alphaBlend(
+      resolvedHighlight.withValues(alpha: hero ? 0.09 : 0.05),
       resolvedBackground,
     );
 
@@ -55,9 +60,11 @@ class PlayfulPanel extends StatelessWidget {
           colors: [
             gradientTop,
             resolvedBackground,
+            gradientBottom,
           ],
+          stops: const [0.0, 0.45, 1.0],
         ),
-        borderRadius: BorderRadius.circular(resolvedRadius),
+        borderRadius: panelRadius,
         border: Border.all(color: resolvedBorder),
         boxShadow: [
           BoxShadow(
@@ -67,18 +74,76 @@ class PlayfulPanel extends StatelessWidget {
             blurRadius: hero ? 18 : 12,
             offset: const Offset(0, 6),
           ),
+          BoxShadow(
+            color: resolvedHighlight.withValues(alpha: hero ? 0.12 : 0.06),
+            blurRadius: hero ? 28 : 18,
+            offset: const Offset(0, 12),
+          ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(resolvedRadius),
-        child: Material(
-          color: Colors.transparent,
-          child: onTap == null
-              ? content
-              : InkWell(
-                  onTap: onTap,
-                  child: content,
+        borderRadius: panelRadius,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Colors.white.withValues(alpha: hero ? 0.08 : 0.04),
+                        Colors.transparent,
+                        resolvedHighlight.withValues(alpha: hero ? 0.10 : 0.05),
+                      ],
+                      stops: const [0.0, 0.35, 1.0],
+                    ),
+                  ),
                 ),
+              ),
+            ),
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.white.withValues(alpha: hero ? 0.18 : 0.10),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                  child: SizedBox(height: hero ? 18 : 12),
+                ),
+              ),
+            ),
+            Positioned(
+              top: -resolvedRadius,
+              right: -resolvedRadius * 0.5,
+              child: IgnorePointer(
+                child: _PanelGlow(
+                  color: resolvedHighlight,
+                  size: hero ? 150 : 96,
+                ),
+              ),
+            ),
+            Material(
+              color: Colors.transparent,
+              child: onTap == null
+                  ? content
+                  : InkWell(
+                      borderRadius: panelRadius,
+                      onTap: onTap,
+                      child: content,
+                    ),
+            ),
+          ],
         ),
       ),
     );
@@ -86,6 +151,35 @@ class PlayfulPanel extends StatelessWidget {
     return Padding(
       padding: margin ?? EdgeInsets.zero,
       child: decoratedChild,
+    );
+  }
+}
+
+class _PanelGlow extends StatelessWidget {
+  const _PanelGlow({
+    required this.color,
+    required this.size,
+  });
+
+  final Color color;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size,
+      height: size,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              color.withValues(alpha: 0.22),
+              color.withValues(alpha: 0.0),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,10 +1,10 @@
 window.__PROJECT_GRAPH__ = {
-  "generatedAt": "2026-05-13T20:01:54.993010",
+  "generatedAt": "2026-05-20T20:27:06.911364",
   "repoRoot": "D:/Projects/Personal/Multiplikation",
   "stats": {
-    "dartFiles": 99,
-    "modules": 26,
-    "edges": 126
+    "dartFiles": 118,
+    "modules": 25,
+    "edges": 134
   },
   "columns": [
     {
@@ -92,13 +92,14 @@ window.__PROJECT_GRAPH__ = {
       "column": "features",
       "kind": "shared-ui",
       "kindLabel": "delad UI",
-      "fileCount": 7,
+      "fileCount": 8,
       "roleCounts": {
-        "dart": 7
+        "dart": 8
       },
       "files": [
         "lib/presentation/widgets/confetti_overlay.dart",
         "lib/presentation/widgets/game_character.dart",
+        "lib/presentation/widgets/game_character_inventory_helpers.dart",
         "lib/presentation/widgets/mascot_reaction_view.dart",
         "lib/presentation/widgets/playful_panel.dart",
         "lib/presentation/widgets/progress_indicator_bar.dart",
@@ -133,12 +134,16 @@ window.__PROJECT_GRAPH__ = {
       "column": "features",
       "kind": "feature",
       "kindLabel": "feature",
-      "fileCount": 3,
+      "fileCount": 6,
       "roleCounts": {
+        "dart": 3,
         "screen": 3
       },
       "files": [
         "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+        "lib/features/parent/presentation/screens/parent_dashboard_screen_benchmark.dart",
+        "lib/features/parent/presentation/screens/parent_dashboard_screen_content.dart",
+        "lib/features/parent/presentation/screens/parent_dashboard_screen_widgets.dart",
         "lib/features/parent/presentation/screens/parent_pin_screen.dart",
         "lib/features/parent/presentation/screens/pin_recovery_screen.dart"
       ]
@@ -152,16 +157,18 @@ window.__PROJECT_GRAPH__ = {
       "column": "features",
       "kind": "feature",
       "kindLabel": "feature",
-      "fileCount": 4,
+      "fileCount": 6,
       "roleCounts": {
-        "dart": 3,
+        "dart": 5,
         "screen": 1
       },
       "files": [
         "lib/features/home/presentation/screens/home_screen.dart",
+        "lib/features/home/presentation/screens/home_screen_content.dart",
         "lib/features/home/presentation/widgets/camp_scene_view.dart",
         "lib/features/home/presentation/widgets/home_badge_album.dart",
-        "lib/features/home/presentation/widgets/home_story_progress_card.dart"
+        "lib/features/home/presentation/widgets/home_story_progress_card.dart",
+        "lib/features/home/presentation/widgets/home_story_progress_card_content.dart"
       ]
     },
     {
@@ -227,16 +234,18 @@ window.__PROJECT_GRAPH__ = {
       "column": "features",
       "kind": "feature",
       "kindLabel": "feature",
-      "fileCount": 5,
+      "fileCount": 7,
       "roleCounts": {
-        "dart": 2,
+        "dart": 4,
         "dialog": 1,
         "screen": 2
       },
       "files": [
         "lib/features/quiz/presentation/dialogs/feedback_dialog.dart",
+        "lib/features/quiz/presentation/dialogs/feedback_dialog_content.dart",
         "lib/features/quiz/presentation/screens/quiz_screen.dart",
         "lib/features/quiz/presentation/screens/results_screen.dart",
+        "lib/features/quiz/presentation/screens/results_screen_content.dart",
         "lib/features/quiz/presentation/widgets/answer_button.dart",
         "lib/features/quiz/presentation/widgets/question_card.dart"
       ]
@@ -250,12 +259,15 @@ window.__PROJECT_GRAPH__ = {
       "column": "features",
       "kind": "feature",
       "kindLabel": "feature",
-      "fileCount": 1,
+      "fileCount": 3,
       "roleCounts": {
+        "dart": 2,
         "screen": 1
       },
       "files": [
-        "lib/features/story/presentation/screens/story_map_screen.dart"
+        "lib/features/story/presentation/screens/story_map_screen.dart",
+        "lib/features/story/presentation/screens/story_map_screen_content.dart",
+        "lib/features/story/presentation/screens/story_map_screen_map_canvas.dart"
       ]
     },
     {
@@ -267,9 +279,9 @@ window.__PROJECT_GRAPH__ = {
       "column": "state",
       "kind": "core",
       "kindLabel": "grundsystem",
-      "fileCount": 18,
+      "fileCount": 20,
       "roleCounts": {
-        "provider": 18
+        "provider": 20
       },
       "files": [
         "lib/core/providers/achievement_service_provider.dart",
@@ -288,6 +300,8 @@ window.__PROJECT_GRAPH__ = {
         "lib/core/providers/spaced_repetition_service_provider.dart",
         "lib/core/providers/spaced_repetition_settings_provider.dart",
         "lib/core/providers/story_progress_provider.dart",
+        "lib/core/providers/text_to_speech_service_provider.dart",
+        "lib/core/providers/tts_enabled_provider.dart",
         "lib/core/providers/user_provider.dart",
         "lib/core/providers/word_problems_settings_provider.dart"
       ]
@@ -318,18 +332,26 @@ window.__PROJECT_GRAPH__ = {
       "column": "services",
       "kind": "core",
       "kindLabel": "grundsystem",
-      "fileCount": 7,
+      "fileCount": 14,
       "roleCounts": {
-        "service": 7
+        "dart": 2,
+        "service": 12
       },
       "files": [
         "lib/core/services/achievement_service.dart",
         "lib/core/services/app_analytics_service.dart",
+        "lib/core/services/apply_quiz_result_use_case.dart",
         "lib/core/services/audio_service.dart",
         "lib/core/services/daily_challenge_service.dart",
         "lib/core/services/quest_progression_service.dart",
         "lib/core/services/question_generator_service.dart",
-        "lib/core/services/story_progression_service.dart"
+        "lib/core/services/question_generator_service_impl.dart",
+        "lib/core/services/quiz_review_schedule_service.dart",
+        "lib/core/services/quiz_session_storage_service.dart",
+        "lib/core/services/story_progression_service.dart",
+        "lib/core/services/text_to_speech_service.dart",
+        "lib/core/services/user_audio_settings_service.dart",
+        "lib/core/services/user_quest_state_service.dart"
       ]
     },
     {
@@ -498,11 +520,12 @@ window.__PROJECT_GRAPH__ = {
       "column": "foundation",
       "kind": "core",
       "kindLabel": "grundsystem",
-      "fileCount": 1,
+      "fileCount": 2,
       "roleCounts": {
-        "dart": 1
+        "dart": 2
       },
       "files": [
+        "lib/core/theme/app_theme_colors.dart",
         "lib/core/theme/app_theme_config.dart"
       ]
     },
@@ -530,23 +553,6 @@ window.__PROJECT_GRAPH__ = {
         "lib/domain/enums/mastery_level.g.dart",
         "lib/domain/enums/operation_type.dart",
         "lib/domain/enums/operation_type.g.dart"
-      ]
-    },
-    {
-      "id": "lib/wardrobe_preview.dart",
-      "label": "Wardrobe Preview.dart",
-      "technicalLabel": "wardrobe_preview.dart",
-      "description": "Övrig kod som inte grupperats i en tydligare modul ännu.",
-      "path": "lib/wardrobe_preview.dart",
-      "column": "foundation",
-      "kind": "other",
-      "kindLabel": "övrigt",
-      "fileCount": 1,
-      "roleCounts": {
-        "dart": 1
-      },
-      "files": [
-        "lib/wardrobe_preview.dart"
       ]
     }
   ],
@@ -579,6 +585,60 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "core/services",
+      "target": "domain/entities",
+      "weight": 19,
+      "examples": [
+        {
+          "from": "lib/core/services/achievement_service.dart",
+          "to": "lib/domain/entities/quiz_session.dart"
+        },
+        {
+          "from": "lib/core/services/achievement_service.dart",
+          "to": "lib/domain/entities/user_progress.dart"
+        },
+        {
+          "from": "lib/core/services/apply_quiz_result_use_case.dart",
+          "to": "lib/domain/entities/inventory_item.dart"
+        },
+        {
+          "from": "lib/core/services/apply_quiz_result_use_case.dart",
+          "to": "lib/domain/entities/level_up_event.dart"
+        },
+        {
+          "from": "lib/core/services/apply_quiz_result_use_case.dart",
+          "to": "lib/domain/entities/quest.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/providers",
+      "target": "core/services",
+      "weight": 17,
+      "examples": [
+        {
+          "from": "lib/core/providers/achievement_service_provider.dart",
+          "to": "lib/core/services/achievement_service.dart"
+        },
+        {
+          "from": "lib/core/providers/app_analytics_provider.dart",
+          "to": "lib/core/services/app_analytics_service.dart"
+        },
+        {
+          "from": "lib/core/providers/audio_service_provider.dart",
+          "to": "lib/core/services/audio_service.dart"
+        },
+        {
+          "from": "lib/core/providers/quest_progression_service_provider.dart",
+          "to": "lib/core/services/quest_progression_service.dart"
+        },
+        {
+          "from": "lib/core/providers/question_generator_service_provider.dart",
+          "to": "lib/core/services/question_generator_service.dart"
+        }
+      ]
+    },
+    {
       "source": "feature:quiz",
       "target": "core/providers",
       "weight": 15,
@@ -593,15 +653,42 @@ window.__PROJECT_GRAPH__ = {
         },
         {
           "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
-        },
-        {
-          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
           "to": "lib/core/providers/audio_service_provider.dart"
         },
         {
           "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
           "to": "lib/core/providers/quiz_provider.dart"
+        },
+        {
+          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
+          "to": "lib/core/providers/text_to_speech_service_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/services",
+      "target": "domain/enums",
+      "weight": 15,
+      "examples": [
+        {
+          "from": "lib/core/services/daily_challenge_service.dart",
+          "to": "lib/domain/enums/difficulty_level.dart"
+        },
+        {
+          "from": "lib/core/services/daily_challenge_service.dart",
+          "to": "lib/domain/enums/operation_type.dart"
+        },
+        {
+          "from": "lib/core/services/quest_progression_service.dart",
+          "to": "lib/domain/enums/age_group.dart"
+        },
+        {
+          "from": "lib/core/services/quest_progression_service.dart",
+          "to": "lib/domain/enums/difficulty_level.dart"
+        },
+        {
+          "from": "lib/core/services/quest_progression_service.dart",
+          "to": "lib/domain/enums/mastery_level.dart"
         }
       ]
     },
@@ -633,63 +720,9 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "core/providers",
-      "target": "core/services",
-      "weight": 11,
-      "examples": [
-        {
-          "from": "lib/core/providers/achievement_service_provider.dart",
-          "to": "lib/core/services/achievement_service.dart"
-        },
-        {
-          "from": "lib/core/providers/app_analytics_provider.dart",
-          "to": "lib/core/services/app_analytics_service.dart"
-        },
-        {
-          "from": "lib/core/providers/audio_service_provider.dart",
-          "to": "lib/core/services/audio_service.dart"
-        },
-        {
-          "from": "lib/core/providers/quest_progression_service_provider.dart",
-          "to": "lib/core/services/quest_progression_service.dart"
-        },
-        {
-          "from": "lib/core/providers/question_generator_service_provider.dart",
-          "to": "lib/core/services/question_generator_service.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/services",
-      "target": "domain/enums",
-      "weight": 10,
-      "examples": [
-        {
-          "from": "lib/core/services/daily_challenge_service.dart",
-          "to": "lib/domain/enums/difficulty_level.dart"
-        },
-        {
-          "from": "lib/core/services/daily_challenge_service.dart",
-          "to": "lib/domain/enums/operation_type.dart"
-        },
-        {
-          "from": "lib/core/services/quest_progression_service.dart",
-          "to": "lib/domain/enums/age_group.dart"
-        },
-        {
-          "from": "lib/core/services/quest_progression_service.dart",
-          "to": "lib/domain/enums/difficulty_level.dart"
-        },
-        {
-          "from": "lib/core/services/quest_progression_service.dart",
-          "to": "lib/domain/enums/mastery_level.dart"
-        }
-      ]
-    },
-    {
       "source": "feature:parent",
       "target": "core/providers",
-      "weight": 10,
+      "weight": 11,
       "examples": [
         {
           "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
@@ -710,6 +743,33 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
           "to": "lib/core/providers/quiz_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/providers",
+      "target": "core/di",
+      "weight": 9,
+      "examples": [
+        {
+          "from": "lib/core/providers/achievement_service_provider.dart",
+          "to": "lib/core/di/injection.dart"
+        },
+        {
+          "from": "lib/core/providers/adaptive_difficulty_service_provider.dart",
+          "to": "lib/core/di/injection.dart"
+        },
+        {
+          "from": "lib/core/providers/audio_service_provider.dart",
+          "to": "lib/core/di/injection.dart"
+        },
+        {
+          "from": "lib/core/providers/feedback_service_provider.dart",
+          "to": "lib/core/di/injection.dart"
+        },
+        {
+          "from": "lib/core/providers/local_storage_repository_provider.dart",
+          "to": "lib/core/di/injection.dart"
         }
       ]
     },
@@ -742,28 +802,28 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "core/providers",
-      "target": "core/di",
+      "target": "data/repositories",
       "weight": 8,
       "examples": [
         {
-          "from": "lib/core/providers/achievement_service_provider.dart",
-          "to": "lib/core/di/injection.dart"
-        },
-        {
-          "from": "lib/core/providers/adaptive_difficulty_service_provider.dart",
-          "to": "lib/core/di/injection.dart"
-        },
-        {
-          "from": "lib/core/providers/audio_service_provider.dart",
-          "to": "lib/core/di/injection.dart"
-        },
-        {
-          "from": "lib/core/providers/feedback_service_provider.dart",
-          "to": "lib/core/di/injection.dart"
-        },
-        {
           "from": "lib/core/providers/local_storage_repository_provider.dart",
-          "to": "lib/core/di/injection.dart"
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/providers/missing_number_settings_provider.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/providers/parent_settings_provider.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/providers/spaced_repetition_settings_provider.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
         }
       ]
     },
@@ -795,29 +855,29 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "core/providers",
-      "target": "core/config",
+      "source": "feature:story",
+      "target": "core/providers",
       "weight": 8,
       "examples": [
         {
-          "from": "lib/core/providers/missing_number_settings_provider.dart",
-          "to": "lib/core/config/quiz_feature_settings.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/providers/app_analytics_provider.dart"
         },
         {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/core/config/app_features.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/providers/app_theme_provider.dart"
         },
         {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/core/config/difficulty_config.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/providers/audio_service_provider.dart"
         },
         {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/core/config/quiz_feature_settings.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/providers/missing_number_settings_provider.dart"
         },
         {
-          "from": "lib/core/providers/spaced_repetition_settings_provider.dart",
-          "to": "lib/core/config/quiz_feature_settings.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/providers/quiz_provider.dart"
         }
       ]
     },
@@ -845,33 +905,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/quiz/presentation/screens/results_screen.dart",
           "to": "lib/presentation/widgets/game_character.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/services",
-      "target": "domain/entities",
-      "weight": 8,
-      "examples": [
-        {
-          "from": "lib/core/services/achievement_service.dart",
-          "to": "lib/domain/entities/quiz_session.dart"
-        },
-        {
-          "from": "lib/core/services/achievement_service.dart",
-          "to": "lib/domain/entities/user_progress.dart"
-        },
-        {
-          "from": "lib/core/services/daily_challenge_service.dart",
-          "to": "lib/domain/entities/user_progress.dart"
-        },
-        {
-          "from": "lib/core/services/quest_progression_service.dart",
-          "to": "lib/domain/entities/quest.dart"
-        },
-        {
-          "from": "lib/core/services/quest_progression_service.dart",
-          "to": "lib/domain/entities/user_progress.dart"
         }
       ]
     },
@@ -904,55 +937,28 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "core/providers",
-      "target": "domain/enums",
+      "target": "core/config",
       "weight": 7,
       "examples": [
-        {
-          "from": "lib/core/providers/app_theme_provider.dart",
-          "to": "lib/domain/enums/app_theme.dart"
-        },
-        {
-          "from": "lib/core/providers/parent_settings_provider.dart",
-          "to": "lib/domain/enums/operation_type.dart"
-        },
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/domain/enums/age_group.dart"
-        },
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/domain/enums/difficulty_level.dart"
-        },
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/domain/enums/operation_type.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/providers",
-      "target": "data/repositories",
-      "weight": 7,
-      "examples": [
-        {
-          "from": "lib/core/providers/local_storage_repository_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
-        },
         {
           "from": "lib/core/providers/missing_number_settings_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
-        },
-        {
-          "from": "lib/core/providers/parent_settings_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
+          "to": "lib/core/config/quiz_feature_settings.dart"
         },
         {
           "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
+          "to": "lib/core/config/difficulty_config.dart"
+        },
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/core/config/quiz_feature_settings.dart"
         },
         {
           "from": "lib/core/providers/spaced_repetition_settings_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
+          "to": "lib/core/config/quiz_feature_settings.dart"
+        },
+        {
+          "from": "lib/core/providers/story_progress_provider.dart",
+          "to": "lib/core/config/difficulty_config.dart"
         }
       ]
     },
@@ -984,29 +990,83 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "core/di",
+      "source": "core/providers",
       "target": "domain/enums",
+      "weight": 6,
+      "examples": [
+        {
+          "from": "lib/core/providers/app_theme_provider.dart",
+          "to": "lib/domain/enums/app_theme.dart"
+        },
+        {
+          "from": "lib/core/providers/parent_settings_provider.dart",
+          "to": "lib/domain/enums/operation_type.dart"
+        },
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/domain/enums/age_group.dart"
+        },
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/domain/enums/difficulty_level.dart"
+        },
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/domain/enums/operation_type.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/services",
+      "target": "data/repositories",
+      "weight": 6,
+      "examples": [
+        {
+          "from": "lib/core/services/app_analytics_service.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/services/apply_quiz_result_use_case.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/services/quiz_review_schedule_service.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/services/quiz_session_storage_service.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        },
+        {
+          "from": "lib/core/services/user_audio_settings_service.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/di",
+      "target": "core/services",
       "weight": 5,
       "examples": [
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/enums/age_group.dart"
+          "to": "lib/core/services/achievement_service.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/enums/app_theme.dart"
+          "to": "lib/core/services/audio_service.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/enums/difficulty_level.dart"
+          "to": "lib/core/services/quest_progression_service.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/enums/mastery_level.dart"
+          "to": "lib/core/services/question_generator_service.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/enums/operation_type.dart"
+          "to": "lib/core/services/text_to_speech_service.dart"
         }
       ]
     },
@@ -1038,121 +1098,83 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:profiles",
-      "target": "core/providers",
+      "source": "core/services",
+      "target": "core/constants",
       "weight": 5,
       "examples": [
         {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
+          "from": "lib/core/services/achievement_service.dart",
+          "to": "lib/core/constants/app_constants.dart"
         },
         {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
-          "to": "lib/core/providers/user_provider.dart"
+          "from": "lib/core/services/app_analytics_service.dart",
+          "to": "lib/core/constants/settings_keys.dart"
         },
         {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
+          "from": "lib/core/services/quiz_review_schedule_service.dart",
+          "to": "lib/core/constants/settings_keys.dart"
         },
         {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/core/providers/audio_service_provider.dart"
+          "from": "lib/core/services/user_audio_settings_service.dart",
+          "to": "lib/core/constants/settings_keys.dart"
         },
         {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/core/providers/user_provider.dart"
+          "from": "lib/core/services/user_quest_state_service.dart",
+          "to": "lib/core/constants/app_constants.dart"
         }
       ]
     },
     {
-      "source": "feature:quiz",
-      "target": "core/utils",
-      "weight": 4,
+      "source": "core/services",
+      "target": "core/config",
+      "weight": 5,
       "examples": [
         {
-          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
-          "to": "lib/core/utils/adaptive_layout.dart"
+          "from": "lib/core/services/question_generator_service.dart",
+          "to": "lib/core/config/app_features.dart"
         },
         {
-          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
-          "to": "lib/core/utils/page_transitions.dart"
+          "from": "lib/core/services/question_generator_service.dart",
+          "to": "lib/core/config/difficulty_config.dart"
         },
         {
-          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
-          "to": "lib/core/utils/adaptive_layout.dart"
+          "from": "lib/core/services/quiz_review_schedule_service.dart",
+          "to": "lib/core/config/app_features.dart"
         },
         {
-          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
-          "to": "lib/core/utils/page_transitions.dart"
-        }
-      ]
-    },
-    {
-      "source": "presentation/widgets",
-      "target": "core/constants",
-      "weight": 4,
-      "examples": [
-        {
-          "from": "lib/presentation/widgets/playful_panel.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "from": "lib/core/services/quiz_review_schedule_service.dart",
+          "to": "lib/core/config/quiz_feature_settings.dart"
         },
         {
-          "from": "lib/presentation/widgets/progress_indicator_bar.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/presentation/widgets/star_rating.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/presentation/widgets/themed_background_scaffold.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "from": "lib/core/services/user_quest_state_service.dart",
+          "to": "lib/core/config/difficulty_config.dart"
         }
       ]
     },
     {
       "source": "core/di",
-      "target": "core/services",
-      "weight": 4,
+      "target": "domain/enums",
+      "weight": 5,
       "examples": [
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/core/services/achievement_service.dart"
+          "to": "lib/domain/enums/age_group.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/core/services/audio_service.dart"
+          "to": "lib/domain/enums/app_theme.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/core/services/quest_progression_service.dart"
+          "to": "lib/domain/enums/difficulty_level.dart"
         },
         {
           "from": "lib/core/di/injection.dart",
-          "to": "lib/core/services/question_generator_service.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "core/utils",
-      "weight": 4,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/core/utils/adaptive_layout.dart"
+          "to": "lib/domain/enums/mastery_level.dart"
         },
         {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/core/utils/page_transitions.dart"
-        },
-        {
-          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
-          "to": "lib/core/utils/input_validators.dart"
-        },
-        {
-          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
-          "to": "lib/core/utils/input_validators.dart"
+          "from": "lib/core/di/injection.dart",
+          "to": "lib/domain/enums/operation_type.dart"
         }
       ]
     },
@@ -1180,6 +1202,52 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "presentation/widgets",
+      "target": "core/constants",
+      "weight": 4,
+      "examples": [
+        {
+          "from": "lib/presentation/widgets/playful_panel.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/progress_indicator_bar.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/star_rating.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/themed_background_scaffold.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "core/utils",
+      "weight": 4,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/core/utils/adaptive_layout.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/core/utils/page_transitions.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
+          "to": "lib/core/utils/input_validators.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
+          "to": "lib/core/utils/input_validators.dart"
+        }
+      ]
+    },
+    {
       "source": "feature:onboarding",
       "target": "presentation/widgets",
       "weight": 4,
@@ -1203,21 +1271,25 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:parent",
-      "target": "core/constants",
-      "weight": 3,
+      "source": "feature:quiz",
+      "target": "core/utils",
+      "weight": 4,
       "examples": [
         {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
+          "to": "lib/core/utils/adaptive_layout.dart"
         },
         {
-          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
+          "to": "lib/core/utils/page_transitions.dart"
         },
         {
-          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
+          "to": "lib/core/utils/adaptive_layout.dart"
+        },
+        {
+          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
+          "to": "lib/core/utils/page_transitions.dart"
         }
       ]
     },
@@ -1237,101 +1309,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
           "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:inventory",
-      "target": "core/providers",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
-        },
-        {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/core/providers/audio_service_provider.dart"
-        },
-        {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/core/providers/user_provider.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "presentation/widgets",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        },
-        {
-          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        },
-        {
-          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "domain/entities",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/screens/home_screen.dart",
-          "to": "lib/domain/entities/user_progress.dart"
-        },
-        {
-          "from": "lib/features/home/presentation/widgets/camp_scene_view.dart",
-          "to": "lib/domain/entities/inventory_item.dart"
-        },
-        {
-          "from": "lib/features/home/presentation/widgets/home_story_progress_card.dart",
-          "to": "lib/domain/entities/story_progress.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:profiles",
-      "target": "presentation/widgets",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
-          "to": "lib/presentation/widgets/game_character.dart"
-        },
-        {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/presentation/widgets/playful_panel.dart"
-        },
-        {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "core/constants",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/screens/home_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/features/home/presentation/widgets/home_badge_album.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/features/home/presentation/widgets/home_story_progress_card.dart",
-          "to": "lib/core/constants/app_constants.dart"
         }
       ]
     },
@@ -1351,25 +1328,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/domain/services/feedback_service.dart",
           "to": "lib/domain/enums/operation_type.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/providers",
-      "target": "core/constants",
-      "weight": 3,
-      "examples": [
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/core/constants/settings_keys.dart"
-        },
-        {
-          "from": "lib/core/providers/user_provider.dart",
-          "to": "lib/core/constants/app_constants.dart"
         }
       ]
     },
@@ -1393,6 +1351,120 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "feature:profiles",
+      "target": "presentation/widgets",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "to": "lib/presentation/widgets/game_character.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/presentation/widgets/playful_panel.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:profiles",
+      "target": "core/providers",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "to": "lib/core/providers/user_provider.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/core/providers/audio_service_provider.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/core/providers/user_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
+      "target": "core/constants",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/home/presentation/widgets/home_badge_album.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/home/presentation/widgets/home_story_progress_card.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:settings",
+      "target": "core/theme",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        },
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        },
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/theme/app_theme_config.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
+      "target": "domain/entities",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/domain/entities/user_progress.dart"
+        },
+        {
+          "from": "lib/features/home/presentation/widgets/camp_scene_view.dart",
+          "to": "lib/domain/entities/inventory_item.dart"
+        },
+        {
+          "from": "lib/features/home/presentation/widgets/home_story_progress_card.dart",
+          "to": "lib/domain/entities/story_progress.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "presentation/widgets",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        }
+      ]
+    },
+    {
       "source": "core/config",
       "target": "domain/enums",
       "weight": 3,
@@ -1412,20 +1484,84 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:settings",
-      "target": "core/providers",
+      "source": "feature:parent",
+      "target": "core/constants",
       "weight": 3,
       "examples": [
         {
-          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "presentation/widgets",
+      "target": "core/theme",
+      "weight": 3,
+      "examples": [
+        {
+          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
+          "to": "lib/core/theme/app_theme_config.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/playful_panel.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/themed_background_scaffold.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:daily_challenge",
+      "target": "core/services",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
+          "to": "lib/core/services/daily_challenge_service.dart"
+        },
+        {
+          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
+          "to": "lib/core/services/daily_challenge_service.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:quiz",
+      "target": "gen",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/quiz/presentation/dialogs/feedback_dialog.dart",
+          "to": "lib/gen/assets.g.dart"
+        },
+        {
+          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
+          "to": "lib/gen/assets.g.dart"
+        }
+      ]
+    },
+    {
+      "source": "app/bootstrap",
+      "target": "core/providers",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
           "to": "lib/core/providers/app_theme_provider.dart"
         },
         {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
-        },
-        {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
           "to": "lib/core/providers/user_provider.dart"
         }
       ]
@@ -1446,32 +1582,152 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:inventory",
-      "target": "domain/entities",
+      "source": "feature:story",
+      "target": "core/utils",
       "weight": 2,
       "examples": [
         {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/domain/entities/inventory_item.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/utils/adaptive_layout.dart"
         },
         {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/domain/entities/user_progress.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/utils/page_transitions.dart"
         }
       ]
     },
     {
-      "source": "feature:daily_challenge",
+      "source": "presentation/widgets",
+      "target": "core/providers",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
+          "to": "lib/core/providers/user_provider.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/themed_background_scaffold.dart",
+          "to": "lib/core/providers/app_theme_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:profiles",
+      "target": "core/theme",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:settings",
+      "target": "core/utils",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/utils/adaptive_layout.dart"
+        },
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/utils/page_transitions.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:profiles",
+      "target": "core/constants",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "presentation/widgets",
+      "target": "gen",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/presentation/widgets/game_character.dart",
+          "to": "lib/gen/assets.g.dart"
+        },
+        {
+          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
+          "to": "lib/gen/assets.g.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:quiz",
+      "target": "feature:home",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
+          "to": "lib/features/home/presentation/screens/home_screen.dart"
+        },
+        {
+          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
+          "to": "lib/features/home/presentation/screens/home_screen.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:settings",
+      "target": "presentation/widgets",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        },
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
       "target": "core/services",
       "weight": 2,
       "examples": [
         {
-          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
-          "to": "lib/core/services/daily_challenge_service.dart"
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/core/services/audio_service.dart"
         },
         {
-          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
-          "to": "lib/core/services/daily_challenge_service.dart"
+          "from": "lib/features/home/presentation/widgets/home_badge_album.dart",
+          "to": "lib/core/services/achievement_service.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
+      "target": "core/theme",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
+        },
+        {
+          "from": "lib/features/home/presentation/widgets/home_story_progress_card.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
         }
       ]
     },
@@ -1487,6 +1743,21 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/home/presentation/screens/home_screen.dart",
           "to": "lib/core/utils/page_transitions.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/theme",
+      "target": "core/constants",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/core/theme/app_theme_colors.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/core/theme/app_theme_config.dart",
+          "to": "lib/core/constants/app_constants.dart"
         }
       ]
     },
@@ -1507,136 +1778,16 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "feature:quiz",
-      "target": "feature:home",
+      "target": "core/theme",
       "weight": 2,
       "examples": [
         {
           "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
-          "to": "lib/features/home/presentation/screens/home_screen.dart"
+          "to": "lib/core/theme/app_theme_colors.dart"
         },
         {
           "from": "lib/features/quiz/presentation/screens/results_screen.dart",
-          "to": "lib/features/home/presentation/screens/home_screen.dart"
-        }
-      ]
-    },
-    {
-      "source": "main",
-      "target": "app/bootstrap",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/main.dart",
-          "to": "lib/app/bootstrap/presentation/startup_flow_gate.dart"
-        },
-        {
-          "from": "lib/main.dart",
-          "to": "lib/app/bootstrap/presentation/startup_splash_gate.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:story",
-      "target": "presentation/widgets",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
-          "to": "lib/presentation/widgets/playful_panel.dart"
-        },
-        {
-          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:story",
-      "target": "core/providers",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
-        },
-        {
-          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
-          "to": "lib/core/providers/story_progress_provider.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:settings",
-      "target": "core/utils",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
-          "to": "lib/core/utils/adaptive_layout.dart"
-        },
-        {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
-          "to": "lib/core/utils/page_transitions.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:settings",
-      "target": "presentation/widgets",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        },
-        {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
-        }
-      ]
-    },
-    {
-      "source": "domain/services",
-      "target": "domain/constants",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/domain/services/adaptive_difficulty_service.dart",
-          "to": "lib/domain/constants/learning_constants.dart"
-        },
-        {
-          "from": "lib/domain/services/spaced_repetition_service.dart",
-          "to": "lib/domain/constants/learning_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:settings",
-      "target": "core/constants",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "presentation/widgets",
-      "target": "core/providers",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
-          "to": "lib/core/providers/user_provider.dart"
-        },
-        {
-          "from": "lib/presentation/widgets/themed_background_scaffold.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
+          "to": "lib/core/theme/app_theme_colors.dart"
         }
       ]
     },
@@ -1652,21 +1803,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/quiz/presentation/screens/results_screen.dart",
           "to": "lib/core/config/difficulty_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "presentation/widgets",
-      "target": "gen",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/presentation/widgets/game_character.dart",
-          "to": "lib/gen/assets.g.dart"
-        },
-        {
-          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
-          "to": "lib/gen/assets.g.dart"
         }
       ]
     },
@@ -1686,77 +1822,32 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:quiz",
-      "target": "gen",
+      "source": "main",
+      "target": "app/bootstrap",
       "weight": 2,
       "examples": [
         {
-          "from": "lib/features/quiz/presentation/dialogs/feedback_dialog.dart",
-          "to": "lib/gen/assets.g.dart"
+          "from": "lib/main.dart",
+          "to": "lib/app/bootstrap/presentation/startup_flow_gate.dart"
         },
         {
-          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
-          "to": "lib/gen/assets.g.dart"
+          "from": "lib/main.dart",
+          "to": "lib/app/bootstrap/presentation/startup_splash_gate.dart"
         }
       ]
     },
     {
-      "source": "core/services",
-      "target": "core/config",
+      "source": "feature:onboarding",
+      "target": "domain/enums",
       "weight": 2,
       "examples": [
         {
-          "from": "lib/core/services/question_generator_service.dart",
-          "to": "lib/core/config/app_features.dart"
+          "from": "lib/features/onboarding/presentation/screens/onboarding_screen.dart",
+          "to": "lib/domain/enums/age_group.dart"
         },
         {
-          "from": "lib/core/services/question_generator_service.dart",
-          "to": "lib/core/config/difficulty_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:profiles",
-      "target": "core/constants",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/features/profiles/presentation/screens/profile_selection_screen.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "domain/services",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
-          "to": "lib/domain/services/parent_pin_service.dart"
-        },
-        {
-          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
-          "to": "lib/domain/services/parent_pin_service.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/services",
-      "target": "core/constants",
-      "weight": 2,
-      "examples": [
-        {
-          "from": "lib/core/services/achievement_service.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        },
-        {
-          "from": "lib/core/services/app_analytics_service.dart",
-          "to": "lib/core/constants/settings_keys.dart"
+          "from": "lib/features/onboarding/presentation/screens/onboarding_screen.dart",
+          "to": "lib/domain/enums/operation_type.dart"
         }
       ]
     },
@@ -1776,6 +1867,36 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "core/providers",
+      "target": "core/constants",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/core/providers/user_provider.dart",
+          "to": "lib/core/constants/settings_keys.dart"
+        }
+      ]
+    },
+    {
+      "source": "domain/services",
+      "target": "domain/constants",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/domain/services/adaptive_difficulty_service.dart",
+          "to": "lib/domain/constants/learning_constants.dart"
+        },
+        {
+          "from": "lib/domain/services/spaced_repetition_service.dart",
+          "to": "lib/domain/constants/learning_constants.dart"
+        }
+      ]
+    },
+    {
       "source": "feature:onboarding",
       "target": "core/utils",
       "weight": 2,
@@ -1787,6 +1908,51 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/onboarding/presentation/screens/onboarding_screen.dart",
           "to": "lib/core/utils/adaptive_layout.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "domain/services",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
+          "to": "lib/domain/services/parent_pin_service.dart"
+        },
+        {
+          "from": "lib/features/parent/presentation/screens/pin_recovery_screen.dart",
+          "to": "lib/domain/services/parent_pin_service.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:story",
+      "target": "presentation/widgets",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/presentation/widgets/playful_panel.dart"
+        },
+        {
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:inventory",
+      "target": "core/providers",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/core/providers/audio_service_provider.dart"
+        },
+        {
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/core/providers/user_provider.dart"
         }
       ]
     },
@@ -1806,17 +1972,17 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "app/bootstrap",
-      "target": "core/providers",
+      "source": "feature:inventory",
+      "target": "domain/entities",
       "weight": 2,
       "examples": [
         {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/core/providers/app_theme_provider.dart"
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/domain/entities/inventory_item.dart"
         },
         {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/core/providers/user_provider.dart"
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/domain/entities/user_progress.dart"
         }
       ]
     },
@@ -1836,6 +2002,32 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "feature:settings",
+      "target": "core/constants",
+      "weight": 2,
+      "examples": [
+        {
+          "from": "lib/features/settings/presentation/screens/privacy_policy_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        },
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:profiles",
+      "target": "gen",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "to": "lib/gen/assets.g.dart"
+        }
+      ]
+    },
+    {
       "source": "feature:inventory",
       "target": "core/constants",
       "weight": 1,
@@ -1843,61 +2035,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
           "to": "lib/core/constants/app_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "app/bootstrap",
-      "target": "feature:home",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/features/home/presentation/screens/home_screen.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:inventory",
-      "target": "core/theme",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/core/theme/app_theme_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "core/services",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/widgets/home_badge_album.dart",
-          "to": "lib/core/services/achievement_service.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:inventory",
-      "target": "gen",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
-          "to": "lib/gen/assets.g.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/di",
-      "target": "data/repositories",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/di/injection.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
         }
       ]
     },
@@ -1913,39 +2050,6 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "core/providers",
-      "target": "domain/constants",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/providers/quiz_provider.dart",
-          "to": "lib/domain/constants/learning_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:onboarding",
-      "target": "core/theme",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart",
-          "to": "lib/core/theme/app_theme_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/constants",
-      "target": "domain/constants",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/constants/app_constants.dart",
-          "to": "lib/domain/constants/learning_constants.dart"
-        }
-      ]
-    },
-    {
       "source": "feature:onboarding",
       "target": "feature:profiles",
       "weight": 1,
@@ -1953,17 +2057,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart",
           "to": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/di",
-      "target": "domain/entities",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/di/injection.dart",
-          "to": "lib/domain/entities/user_progress.dart"
         }
       ]
     },
@@ -1979,39 +2072,6 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:onboarding",
-      "target": "domain/enums",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/onboarding/presentation/screens/onboarding_screen.dart",
-          "to": "lib/domain/enums/operation_type.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "core/config",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/core/config/difficulty_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "app/bootstrap",
-      "target": "feature:onboarding",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart"
-        }
-      ]
-    },
-    {
       "source": "feature:home",
       "target": "feature:settings",
       "weight": 1,
@@ -2019,61 +2079,6 @@ window.__PROJECT_GRAPH__ = {
         {
           "from": "lib/features/home/presentation/screens/home_screen.dart",
           "to": "lib/features/settings/presentation/screens/settings_screen.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/services",
-      "target": "data/repositories",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/services/app_analytics_service.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "domain/enums",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/domain/enums/operation_type.dart"
-        }
-      ]
-    },
-    {
-      "source": "lib/wardrobe_preview.dart",
-      "target": "presentation/widgets",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/wardrobe_preview.dart",
-          "to": "lib/presentation/widgets/game_character.dart"
-        }
-      ]
-    },
-    {
-      "source": "app/bootstrap",
-      "target": "feature:profiles",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/features/profiles/presentation/screens/profile_selection_screen.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:parent",
-      "target": "domain/entities",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
-          "to": "lib/domain/entities/pin_recovery_config.dart"
         }
       ]
     },
@@ -2089,12 +2094,12 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:profiles",
+      "source": "feature:parent",
       "target": "core/config",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
           "to": "lib/core/config/difficulty_config.dart"
         }
       ]
@@ -2122,6 +2127,105 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
+      "source": "feature:home",
+      "target": "feature:onboarding",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/features/onboarding/presentation/screens/onboarding_screen.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "domain/enums",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/domain/enums/operation_type.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "feature:settings",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
+          "to": "lib/features/settings/presentation/screens/settings_screen.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
+      "target": "feature:daily_challenge",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/features/daily_challenge/providers/daily_challenge_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:parent",
+      "target": "domain/entities",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/parent/presentation/screens/parent_pin_screen.dart",
+          "to": "lib/domain/entities/pin_recovery_config.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:home",
+      "target": "core/config",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/home/presentation/screens/home_screen.dart",
+          "to": "lib/core/config/difficulty_config.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:daily_challenge",
+      "target": "data/repositories",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:daily_challenge",
+      "target": "core/providers",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
+          "to": "lib/core/providers/local_storage_repository_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:daily_challenge",
+      "target": "domain/enums",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
+          "to": "lib/domain/enums/operation_type.dart"
+        }
+      ]
+    },
+    {
       "source": "feature:profiles",
       "target": "domain/enums",
       "weight": 1,
@@ -2133,24 +2237,24 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:profiles",
-      "target": "gen",
+      "source": "feature:inventory",
+      "target": "core/theme",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/profiles/presentation/dialogs/create_user_dialog.dart",
-          "to": "lib/gen/assets.g.dart"
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
         }
       ]
     },
     {
-      "source": "core/theme",
-      "target": "domain/enums",
+      "source": "feature:daily_challenge",
+      "target": "domain/entities",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/core/theme/app_theme_config.dart",
-          "to": "lib/domain/enums/app_theme.dart"
+          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
+          "to": "lib/domain/entities/user_progress.dart"
         }
       ]
     },
@@ -2177,13 +2281,57 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "lib/wardrobe_preview.dart",
-      "target": "gen",
+      "source": "app/bootstrap",
+      "target": "core/constants",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/wardrobe_preview.dart",
-          "to": "lib/gen/assets.g.dart"
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
+          "to": "lib/core/constants/app_constants.dart"
+        }
+      ]
+    },
+    {
+      "source": "domain/services",
+      "target": "data/repositories",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/domain/services/parent_pin_service.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:quiz",
+      "target": "domain/services",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/quiz/presentation/dialogs/feedback_dialog.dart",
+          "to": "lib/domain/services/feedback_service.dart"
+        }
+      ]
+    },
+    {
+      "source": "domain/services",
+      "target": "core/constants",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/domain/services/parent_pin_service.dart",
+          "to": "lib/core/constants/settings_keys.dart"
+        }
+      ]
+    },
+    {
+      "source": "data/repositories",
+      "target": "domain/entities",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/data/repositories/local_storage_repository.dart",
+          "to": "lib/domain/entities/user_progress.dart"
         }
       ]
     },
@@ -2200,67 +2348,45 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "feature:quiz",
+      "target": "core/services",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/quiz/presentation/screens/quiz_screen.dart",
+          "to": "lib/core/services/text_to_speech_service.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/theme",
+      "target": "domain/enums",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/core/theme/app_theme_config.dart",
+          "to": "lib/domain/enums/app_theme.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/services",
       "target": "domain/services",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/quiz/presentation/dialogs/feedback_dialog.dart",
-          "to": "lib/domain/services/feedback_service.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "feature:onboarding",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/screens/home_screen.dart",
-          "to": "lib/features/onboarding/presentation/screens/onboarding_screen.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "feature:daily_challenge",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/screens/home_screen.dart",
-          "to": "lib/features/daily_challenge/providers/daily_challenge_provider.dart"
+          "from": "lib/core/services/quiz_review_schedule_service.dart",
+          "to": "lib/domain/services/spaced_repetition_service.dart"
         }
       ]
     },
     {
       "source": "core/providers",
-      "target": "core/theme",
+      "target": "domain/constants",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/core/providers/app_theme_provider.dart",
-          "to": "lib/core/theme/app_theme_config.dart"
-        }
-      ]
-    },
-    {
-      "source": "data/repositories",
-      "target": "domain/entities",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/data/repositories/local_storage_repository.dart",
-          "to": "lib/domain/entities/user_progress.dart"
-        }
-      ]
-    },
-    {
-      "source": "app/bootstrap",
-      "target": "presentation/widgets",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+          "from": "lib/core/providers/quiz_provider.dart",
+          "to": "lib/domain/constants/learning_constants.dart"
         }
       ]
     },
@@ -2276,13 +2402,13 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:parent",
-      "target": "feature:settings",
+      "source": "core/providers",
+      "target": "core/theme",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/parent/presentation/screens/parent_dashboard_screen.dart",
-          "to": "lib/features/settings/presentation/screens/settings_screen.dart"
+          "from": "lib/core/providers/app_theme_provider.dart",
+          "to": "lib/core/theme/app_theme_config.dart"
         }
       ]
     },
@@ -2298,46 +2424,68 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "core/config",
-      "target": "data/repositories",
+      "source": "feature:quiz",
+      "target": "feature:story",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/core/config/quiz_feature_settings.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/config",
-      "target": "core/constants",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/config/quiz_feature_settings.dart",
-          "to": "lib/core/constants/settings_keys.dart"
+          "from": "lib/features/quiz/presentation/screens/results_screen.dart",
+          "to": "lib/features/story/presentation/screens/story_map_screen.dart"
         }
       ]
     },
     {
       "source": "feature:home",
-      "target": "core/config",
+      "target": "gen",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/home/presentation/screens/home_screen.dart",
-          "to": "lib/core/config/difficulty_config.dart"
+          "from": "lib/features/home/presentation/widgets/camp_scene_view.dart",
+          "to": "lib/gen/assets.g.dart"
         }
       ]
     },
     {
-      "source": "feature:daily_challenge",
-      "target": "data/repositories",
+      "source": "core/di",
+      "target": "domain/entities",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
+          "from": "lib/core/di/injection.dart",
+          "to": "lib/domain/entities/user_progress.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:inventory",
+      "target": "gen",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/inventory/presentation/screens/wardrobe_screen.dart",
+          "to": "lib/gen/assets.g.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:settings",
+      "target": "core/providers",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/settings/presentation/screens/settings_screen.dart",
+          "to": "lib/core/providers/user_provider.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/constants",
+      "target": "domain/constants",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/core/constants/app_constants.dart",
+          "to": "lib/domain/constants/learning_constants.dart"
         }
       ]
     },
@@ -2365,6 +2513,17 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "feature:story",
+      "target": "core/config",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/core/config/difficulty_config.dart"
+        }
+      ]
+    },
+    {
+      "source": "feature:story",
       "target": "core/constants",
       "weight": 1,
       "examples": [
@@ -2375,24 +2534,35 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:daily_challenge",
-      "target": "core/providers",
+      "source": "core/config",
+      "target": "data/repositories",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/daily_challenge/providers/daily_challenge_provider.dart",
-          "to": "lib/core/providers/local_storage_repository_provider.dart"
+          "from": "lib/core/config/quiz_feature_settings.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
         }
       ]
     },
     {
       "source": "feature:story",
-      "target": "core/utils",
+      "target": "core/theme",
       "weight": 1,
       "examples": [
         {
           "from": "lib/features/story/presentation/screens/story_map_screen.dart",
-          "to": "lib/core/utils/adaptive_layout.dart"
+          "to": "lib/core/theme/app_theme_colors.dart"
+        }
+      ]
+    },
+    {
+      "source": "core/config",
+      "target": "core/constants",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/core/config/quiz_feature_settings.dart",
+          "to": "lib/core/constants/settings_keys.dart"
         }
       ]
     },
@@ -2408,24 +2578,57 @@ window.__PROJECT_GRAPH__ = {
       ]
     },
     {
-      "source": "feature:daily_challenge",
-      "target": "domain/enums",
+      "source": "feature:story",
+      "target": "feature:home",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
-          "to": "lib/domain/enums/operation_type.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/features/home/presentation/screens/home_screen.dart"
         }
       ]
     },
     {
-      "source": "feature:daily_challenge",
-      "target": "domain/entities",
+      "source": "feature:story",
+      "target": "feature:quiz",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart",
-          "to": "lib/domain/entities/user_progress.dart"
+          "from": "lib/features/story/presentation/screens/story_map_screen.dart",
+          "to": "lib/features/quiz/presentation/screens/quiz_screen.dart"
+        }
+      ]
+    },
+    {
+      "source": "app/bootstrap",
+      "target": "presentation/widgets",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
+          "to": "lib/presentation/widgets/themed_background_scaffold.dart"
+        }
+      ]
+    },
+    {
+      "source": "app/bootstrap",
+      "target": "feature:profiles",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
+          "to": "lib/features/profiles/presentation/screens/profile_selection_screen.dart"
+        }
+      ]
+    },
+    {
+      "source": "main",
+      "target": "domain/enums",
+      "weight": 1,
+      "examples": [
+        {
+          "from": "lib/main.dart",
+          "to": "lib/domain/enums/app_theme.dart"
         }
       ]
     },
@@ -2442,78 +2645,45 @@ window.__PROJECT_GRAPH__ = {
     },
     {
       "source": "app/bootstrap",
-      "target": "core/constants",
+      "target": "feature:onboarding",
       "weight": 1,
       "examples": [
         {
           "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
-          "to": "lib/core/constants/app_constants.dart"
+          "to": "lib/features/onboarding/presentation/screens/initial_profile_setup_screen.dart"
         }
       ]
     },
     {
-      "source": "domain/services",
-      "target": "data/repositories",
+      "source": "app/bootstrap",
+      "target": "feature:home",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/domain/services/parent_pin_service.dart",
-          "to": "lib/data/repositories/local_storage_repository.dart"
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
+          "to": "lib/features/home/presentation/screens/home_screen.dart"
         }
       ]
     },
     {
-      "source": "presentation/widgets",
+      "source": "app/bootstrap",
       "target": "core/theme",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/presentation/widgets/mascot_reaction_view.dart",
-          "to": "lib/core/theme/app_theme_config.dart"
+          "from": "lib/app/bootstrap/presentation/startup_flow_gate.dart",
+          "to": "lib/core/theme/app_theme_colors.dart"
         }
       ]
     },
     {
-      "source": "domain/services",
-      "target": "core/constants",
+      "source": "core/di",
+      "target": "data/repositories",
       "weight": 1,
       "examples": [
         {
-          "from": "lib/domain/services/parent_pin_service.dart",
-          "to": "lib/core/constants/settings_keys.dart"
-        }
-      ]
-    },
-    {
-      "source": "lib/wardrobe_preview.dart",
-      "target": "domain/entities",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/wardrobe_preview.dart",
-          "to": "lib/domain/entities/inventory_item.dart"
-        }
-      ]
-    },
-    {
-      "source": "core/theme",
-      "target": "core/constants",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/core/theme/app_theme_config.dart",
-          "to": "lib/core/constants/app_constants.dart"
-        }
-      ]
-    },
-    {
-      "source": "feature:home",
-      "target": "gen",
-      "weight": 1,
-      "examples": [
-        {
-          "from": "lib/features/home/presentation/widgets/camp_scene_view.dart",
-          "to": "lib/gen/assets.g.dart"
+          "from": "lib/core/di/injection.dart",
+          "to": "lib/data/repositories/local_storage_repository.dart"
         }
       ]
     }

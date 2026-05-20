@@ -105,7 +105,6 @@ Viktiga tjanster:
 - `FeedbackService`
 - `ParentPinService`
 - `SpacedRepetitionService`
-- `DataExportService`
 
 ### data/
 

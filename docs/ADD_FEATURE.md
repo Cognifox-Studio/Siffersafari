@@ -84,7 +84,7 @@ Typiskt arbetssätt:
 
 Öppna `lib/domain/services/adaptive_difficulty_service.dart` och justera logik för progression mellan befintliga svårighetsgrader (`easy`, `medium`, `hard`).
 
-Obs: Denna logik används ofta från Riverpod-notifiers i `lib/core/providers/`.
+Obs: Denna logik används ofta från Riverpod-notifiers i den yta som äger flödet, oftast `lib/core/providers/` eller en featuremapp under `lib/features/*/providers/`.
 
 
 ### Steg 4: Uppdatera UI (vid behov)
@@ -279,7 +279,7 @@ Se [SERVICES_API.md](SERVICES_API.md) för hur services struktureras.
 1. Skapa service (domain eller core beroende på beroenden):
   - Pure domain: `lib/domain/services/my_service.dart`
   - Flutter-aware: `lib/core/services/my_service.dart`
-2. Exponera via provider i `lib/core/providers/` om den behövs i UI/state.
+2. Exponera via provider i den yta som äger state, vanligtvis `lib/core/providers/` eller en featureägd provider under `lib/features/<feature>/providers/`.
 3. Om GetIt används: registrera i `lib/core/di/injection.dart`.
 
 ### Pattern 2: Add Persistent Data

@@ -25,7 +25,6 @@ Byggartefakter som inte ar kallkod:
 ## lib/
 
 - `main.dart`: entrypoint + bootstrap
-- `wardrobe_preview.dart`: lokal previewyta för att justera inventory-rendering mot `GameCharacter`
 - `core/`
   - `config/`: difficulty och feature-konfiguration
   - `constants/`: nycklar, IDs, UI-konstanter
@@ -112,7 +111,6 @@ Byggartefakter som inte ar kallkod:
 - `questProgressionServiceProvider` – QuestProgressionService
 - `storyProgressionServiceProvider` – StoryProgressionService
 - `parentPinServiceProvider` – ParentPinService
-- `dataExportServiceProvider` – DataExportService
 - `spacedRepetitionServiceProvider` – SpacedRepetitionService
 - `localStorageRepositoryProvider` – LocalStorageRepository
 

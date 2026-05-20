@@ -7,10 +7,13 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 - Läs `docs/SESSION_BRIEF.md` först vid start och när användaren säger "fortsätt".
 - Läs `.github/copilot-instructions.md` för alltid-på-regler, repo-fallgropar och QA-baseline.
 - Läs `docs/README.md` som index och `docs/ARCHITECTURE.md` bara när uppgiften kräver mer faktisk implementation.
+- Om scopet fortfarande är oklart: börja med `.github/prompts/repo-start-routing.prompt.md` eller agenten `Plan` innan du väljer en skill.
 
 ## Snabbstart
 
 - Om scopet är oklart: kör `.github/prompts/repo-start-routing.prompt.md` först.
+- Om en ny utvecklare eller kall agent behöver snabb repo-onboarding: kör `.github/prompts/onboard-new-dev.prompt.md`.
+- Om du behöver veta vilka instructions, skills eller prompts som faktiskt matchar en viss fil eller mapp: kör `.github/prompts/instruction-match-audit.prompt.md`.
 - Om ett analyze-, test-, emulator- eller buildfel precis klistrats in: kör `.github/prompts/qa-failure-router.prompt.md` först.
 - Om ett bygg-, test- eller appfel uppstår: kör `.github/prompts/felsok.prompt.md` först.
 - Om v1.5.0 resume- eller persistensscopet ska auditeras: kör `.github/prompts/resume-v150-persistence-audit.prompt.md`.
@@ -27,6 +30,7 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 - Välj `Customization Maintainer` när arbetet bara gäller `.github`-customizations.
 - Välj `UI Reviewer` för ren UI-granskning utan implementation.
 - Välj `release-manager` för version, release readiness eller Play Console-arbete.
+- Använd skills först när arbetsflödet redan är känt; om du fortfarande mappar problemet är prompt eller agent bättre startyta.
 
 ## Vanliga skills
 
@@ -86,10 +90,11 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 ## Arbetsordning
 
 1. Läs `docs/SESSION_BRIEF.md`.
-2. Om scopet eller QA-valet är oklart, börja med motsvarande prompt eller skill i stället för bred scanning.
-3. Välj specialagent bara när uppgiften behöver ett tydligt modebyte.
-4. Läs agentfilen i `.github/agents/` om du behöver agentens exakta arbetssätt.
-5. Följ `.github/copilot-instructions.md` för repo-regler; låt skills och promptar bära smalare arbetsflöden.
+2. Om scopet eller QA-valet är oklart, börja med relevant prompt eller agenten `Plan` i stället för bred scanning.
+3. Välj skill först när arbetsflödet redan matchar en etablerad slice.
+4. Välj specialagent bara när uppgiften behöver ett tydligt modebyte.
+5. Läs agentfilen i `.github/agents/` om du behöver agentens exakta arbetssätt.
+6. Följ `.github/copilot-instructions.md` för repo-regler; låt skills och promptar bära smalare arbetsflöden.
 
 ## Underhållsprincip
 

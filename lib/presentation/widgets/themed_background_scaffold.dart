@@ -23,7 +23,9 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cfg = ref.watch(appThemeConfigProvider);
+    final theme = Theme.of(context);
     final themeColors = context.appThemeColors;
+    final onPrimary = theme.colorScheme.onPrimary;
 
     final size = MediaQuery.sizeOf(context);
     final dpr = MediaQuery.devicePixelRatioOf(context);
@@ -76,6 +78,59 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
               ),
             ),
           ),
+          Positioned.fill(
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      themeColors.primaryActionColor.withValues(alpha: 0.12),
+                      Colors.transparent,
+                      themeColors.accentColor.withValues(alpha: 0.10),
+                    ],
+                    stops: const [0.0, 0.45, 1.0],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Positioned(
+            top: -size.height * 0.06,
+            left: -size.width * 0.10,
+            right: -size.width * 0.10,
+            child: IgnorePointer(
+              child: _AtmosphericGlow(
+                size: Size(size.width * 1.2, size.height * 0.34),
+                colors: [
+                  onPrimary.withValues(alpha: 0.14),
+                  themeColors.accentColor.withValues(alpha: 0.12),
+                  Colors.transparent,
+                ],
+              ),
+            ),
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.black.withValues(alpha: 0.22),
+                      Colors.transparent,
+                    ],
+                  ),
+                ),
+                child: SizedBox(height: appBar == null ? 96 : 140),
+              ),
+            ),
+          ),
           Positioned(
             top: -120,
             right: -60,
@@ -106,6 +161,16 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
               ),
             ),
           ),
+          Positioned(
+            bottom: size.height * 0.18,
+            right: -30,
+            child: IgnorePointer(
+              child: _FloatingOrb(
+                color: onPrimary,
+                size: 88,
+              ),
+            ),
+          ),
           SafeArea(
             child: Padding(
               padding: padding ?? EdgeInsets.zero,
@@ -120,6 +185,34 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _AtmosphericGlow extends StatelessWidget {
+  const _AtmosphericGlow({
+    required this.size,
+    required this.colors,
+  });
+
+  final Size size;
+  final List<Color> colors;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: size.width,
+      height: size.height,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment.topCenter,
+            radius: 0.95,
+            colors: colors,
+            stops: const [0.0, 0.42, 1.0],
+          ),
+        ),
       ),
     );
   }

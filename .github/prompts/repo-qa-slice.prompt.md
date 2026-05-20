@@ -12,7 +12,7 @@ Utga fran dessa kallor:
 - [copilot-instructions.md](../copilot-instructions.md)
 - [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 - [docs/SESSION_BRIEF.md](../../docs/SESSION_BRIEF.md)
-- [docs/ROADMAP.md](../../docs/ROADMAP.md)
+- [docs/ACTIVE_PLAN.md](../../docs/ACTIVE_PLAN.md)
 - [.github/skills/testa-att-appen-fungerar/SKILL.md](../skills/testa-att-appen-fungerar/SKILL.md)
 - [.github/skills/dubbelkolla-andrad-kod/SKILL.md](../skills/dubbelkolla-andrad-kod/SKILL.md)
 - [.github/skills/testa-att-quiz-sparas-ratt/SKILL.md](../skills/testa-att-quiz-sparas-ratt/SKILL.md)

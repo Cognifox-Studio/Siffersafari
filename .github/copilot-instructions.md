@@ -8,12 +8,14 @@ Siffersafari är ett Flutter-baserat mattespel för barn. Appen är Android-firs
 
 Läs dessa källor i den här ordningen när uppgiften kräver mer kontext:
 
-0. `.github/AGENTS.md` när du behöver snabb routing till rätt agent, skill eller prompt.
-1. `docs/SESSION_BRIEF.md` vid start, vid "fortsätt" och när du behöver nuläget.
-2. `docs/README.md` som index till övrig dokumentation.
-3. `docs/ARCHITECTURE.md` för faktisk arkitektur, startup och aktiva runtime-val.
-4. `docs/DECISIONS_LOG.md` när äldre beslut eller avvägningar påverkar lösningen.
-5. `docs/PROJECT_STRUCTURE.md` och `docs/SERVICES_API.md` när struktur eller servicekontrakt berörs.
+0. `docs/SESSION_BRIEF.md` vid start, vid "fortsätt" och när du behöver nuläget.
+1. `.github/AGENTS.md` när du behöver snabb routing till rätt agent, skill eller prompt.
+2. Matchande filinstruktion under `.github/instructions/` när filytan är känd.
+3. Relevant repo-skill under `.github/skills/` först när arbetsflödet redan matchar en etablerad slice.
+4. `docs/README.md` som index till övrig dokumentation.
+5. `docs/ARCHITECTURE.md` för faktisk arkitektur, startup och aktiva runtime-val.
+6. `docs/DECISIONS_LOG.md` när äldre beslut eller avvägningar påverkar lösningen.
+7. `docs/PROJECT_STRUCTURE.md` och `docs/SERVICES_API.md` när struktur eller servicekontrakt berörs.
 
 Länka hellre till dessa dokument än att duplicera innehåll i nya customizations.
 
@@ -28,11 +30,12 @@ Länka hellre till dessa dokument än att duplicera innehåll i nya customizatio
 
 ## Arbetsflöde
 
-1. Identifiera ägande kodväg och billigaste möjliga verifiering.
-2. Välj den minsta rimliga QA-slicen för ändringen.
-3. Kontrollera om en befintlig skill, agent eller instruktion redan täcker arbetsflödet.
-4. Uppdatera `docs/DECISIONS_LOG.md` eller `docs/SESSION_BRIEF.md` bara när verkligheten faktiskt har ändrats.
-5. Vid `.github`-arbete: uppdatera befintliga customizations före att skapa nya centrala filer.
+1. Läs `docs/SESSION_BRIEF.md`, hitta ägande kodväg och välj billigaste möjliga verifiering.
+2. När filytan är känd: följ matchande `.github/instructions/` före bredare scanning.
+3. Välj den minsta rimliga QA-slicen för ändringen.
+4. Använd repo-skills först när problemet redan matchar ett etablerat arbetsflöde; om scopet är oklart, börja med `.github/AGENTS.md`, en relevant prompt eller agenten `Plan`.
+5. Uppdatera `docs/DECISIONS_LOG.md` eller `docs/SESSION_BRIEF.md` bara när verkligheten faktiskt har ändrats.
+6. Vid `.github`-arbete: uppdatera befintliga customizations före att skapa nya centrala filer.
 
 ## QA
 
@@ -64,7 +67,9 @@ Arbetsstandard:
 
 ## Routing
 
+- Börja med `.github/AGENTS.md`, en relevant prompt eller agenten `Plan` om scopet fortfarande är oklart efter första läsningen.
 - Använd repo-skills under `.github/skills/` i stället för att improvisera när uppgiften redan matchar ett etablerat arbetsflöde, särskilt för QA, quiz-persistens, docs, analytics, release, Android-emulator, formulär, assets och `.github`-audits.
+- Ladda inte en skill bara för att samla generell kontext; skills är smala workflow-ytor när problemtypen redan är identifierad.
 - För konkret agent-, prompt- och skill-routing: läs `.github/AGENTS.md`.
 - Följ matchande filer under `.github/instructions/` när en viss arbetsyta berörs, i stället för att duplicera de reglerna här.
 - Använd `.github/prompts/` och `.github/hooks/` som stödyta vid customization-arbete, inte som ersättning för repo-dokumentation.
@@ -74,7 +79,7 @@ Arbetsstandard:
 - Pixel_6 kan fastna offline i adb. Prioritera cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
 - Stale APK efter rebuild löses ofta med `scripts/flutter_pixel6.ps1 -Action install` eller `-Action sync`.
 - Historiska docs och artifacts kan vara stale. Kontrollera alltid mot `docs/ARCHITECTURE.md` och aktuell kod.
-- Anta inte längre SVG-first mascot-runtime. Den aktiva maskotvägen är PNG-first med Flutter-animationer ovanpå.
+- Legacy-spår för mascot i docs, artifacts eller äldre customizations kan fortfarande nämna SVG/Rive. Följ alltid PNG-first-regeln ovan.
 - Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till `UserProgress` när quizet avslutas.
 - Vid parsningslogik/formatering (t.ex. SRS-nycklar): packa data med formatversion (t.ex. `v2|`) stället för regex-gissningar på varierande display-text.
 

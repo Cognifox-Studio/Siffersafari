@@ -8,7 +8,7 @@ void main() {
     test(
       '[Unit] WardrobeHitShapeAudit – all active wardrobe items have explicit hit shapes',
       () {
-        final source = _gameCharacterSource();
+        final source = _gameCharacterLibrarySource();
         final activeSlots = _extractSlotLayers(source);
         final explicitItemIds = _extractExplicitHitShapeItemIds(source);
 
@@ -34,7 +34,7 @@ void main() {
       '[Unit] WardrobeHitShapeAudit – explicit hit shapes reference known inventory items only',
       () {
         final explicitItemIds =
-            _extractExplicitHitShapeItemIds(_gameCharacterSource());
+            _extractExplicitHitShapeItemIds(_gameCharacterLibrarySource());
         final knownItemIds =
             InventoryConfig.allItems.map((item) => item.id).toSet();
 
@@ -53,8 +53,39 @@ void main() {
   });
 }
 
-String _gameCharacterSource() {
-  return File(_gameCharacterPath).readAsStringSync();
+String _gameCharacterLibrarySource() {
+  final mainFile = File(_gameCharacterPath);
+  final mainSource = mainFile.readAsStringSync();
+  final buffer = StringBuffer(mainSource);
+
+  for (final relativePath in _extractPartPaths(mainSource)) {
+    final normalizedPath = relativePath.replaceAll(
+      '/',
+      Platform.pathSeparator,
+    );
+    final partFile = File(
+      '${mainFile.parent.path}${Platform.pathSeparator}$normalizedPath',
+    );
+    if (!partFile.existsSync()) {
+      fail(
+        'Kunde inte hitta GameCharacter-partfilen $relativePath för audit-testet.',
+      );
+    }
+    buffer
+      ..writeln()
+      ..writeln(partFile.readAsStringSync());
+  }
+
+  return buffer.toString();
+}
+
+Iterable<String> _extractPartPaths(String source) sync* {
+  for (final match in RegExp(r"part '([^']+)';").allMatches(source)) {
+    final relativePath = match.group(1);
+    if (relativePath != null && relativePath.isNotEmpty) {
+      yield relativePath;
+    }
+  }
 }
 
 Set<String> _extractSlotLayers(String source) {

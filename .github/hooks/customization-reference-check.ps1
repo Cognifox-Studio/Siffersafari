@@ -19,6 +19,7 @@ try {
   $root = (Get-Location).Path
   $repoPrefixes = @(
     '.github/',
+    '.vscode/',
     'docs/',
     'lib/',
     'test/',
@@ -28,6 +29,14 @@ try {
     'site/',
     'integration_test/',
     'artifacts/'
+  )
+  $repoRootFiles = @(
+    'README.md',
+    'pubspec.yaml',
+    'analysis_options.yaml',
+    'devtools_options.yaml',
+    'CODE_OF_CONDUCT.md',
+    'SECURITY.md'
   )
   $broken = New-Object System.Collections.Generic.List[string]
 
@@ -46,6 +55,9 @@ try {
     if ($trimmed -match '^(https?:|mailto:|vscode:|#)') {
       return
     }
+    if ($trimmed -match '^/memories/') {
+      return
+    }
     if ($trimmed -match '[*{}<>]') {
       return
     }
@@ -55,11 +67,12 @@ try {
       return
     }
 
+    $normalizedPath = $pathOnly.TrimStart('/')
     $target = $null
     if ($pathOnly -match '^(\.\.?[/\\])') {
       $target = [System.IO.Path]::GetFullPath((Join-Path $BaseDir $pathOnly))
-    } elseif (($repoPrefixes | Where-Object { $pathOnly.StartsWith($_) }).Count -gt 0) {
-      $target = Join-Path $root $pathOnly
+    } elseif ((($repoPrefixes | Where-Object { $normalizedPath.StartsWith($_) }).Count -gt 0) -or ($repoRootFiles -contains $normalizedPath)) {
+      $target = Join-Path $root $normalizedPath
     }
 
     if ($null -eq $target) {
@@ -82,12 +95,17 @@ try {
       return
     }
 
+    if ($Value -match '^/memories/') {
+      return
+    }
+
     if ($Value -match '^(\.\.?[/\\])') {
       Test-CustomizationPath -Source $Source -Candidate $Value -BaseDir $BaseDir
       return
     }
 
-    if (($repoPrefixes | Where-Object { $Value.StartsWith($_) }).Count -gt 0) {
+    $normalizedValue = $Value.TrimStart('/')
+    if ((($repoPrefixes | Where-Object { $normalizedValue.StartsWith($_) }).Count -gt 0) -or ($repoRootFiles -contains $normalizedValue)) {
       Test-CustomizationPath -Source $Source -Candidate $Value -BaseDir $BaseDir
     }
   }

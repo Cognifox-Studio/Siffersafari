@@ -102,12 +102,16 @@ void main() {
 
       expect(find.byKey(const Key('home_audio_dialog')), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('home_audio_music_off')));
+      final musicSlider = find.byKey(const Key('home_audio_music_slider'));
+      final musicRect = tester.getRect(musicSlider);
+      await tester.tapAt(Offset(musicRect.left + 12, musicRect.center.dy));
       await tester.pumpAndSettle();
 
       expect(repository.getUserProgress(userId)?.musicEnabled, isFalse);
 
-      await tester.tap(find.byKey(const Key('home_audio_sound_low')));
+      final soundSlider = find.byKey(const Key('home_audio_sound_slider'));
+      final soundRect = tester.getRect(soundSlider);
+      await tester.tapAt(soundRect.center);
       await tester.pumpAndSettle();
 
       expect(repository.getUserProgress(userId)?.soundEnabled, isTrue);

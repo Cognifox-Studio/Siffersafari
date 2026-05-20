@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-05-16
+uppdaterad: 2026-05-18
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-16.
+Senast uppdaterad: 2026-05-18.
 
 ## Naming-baseline
 
@@ -34,18 +34,14 @@ Senast uppdaterad: 2026-05-16.
 - `PROJECT_STRUCTURE.md` – Repo-struktur
 - `SERVICES_API.md` – Servicekontrakt
 - `KUNSKAPSNIVA_PER_AK.md` – Nivåspecifikationer
-- `missing_app_art_image_order_2026-05-17.md` – Inventerad bildbeställning för saknade aktiva visuella assets
 
 ### Explanation (förklaringar, design, varför)
-- `ROADMAP.md` – Prioriterad release- och genomförandeplan
+- `ACTIVE_PLAN.md` – Aktiv prioriteringsyta för polish och nästa committed steg; nuläge och beslut hålls i `SESSION_BRIEF.md` och `DECISIONS_LOG.md`
 - `DECISIONS_LOG.md` – Beslutslogg och varför
-- `jungle_episode_1_polish_plan.md` – Plan för att färdigställa djunglepisoden och barn-UX i nuvarande biom
-- `RIVERPOD_PATTERNS.md` – Provider-mönster och resonemang
 - `lore/` – Bakgrundshistorier och spelets lore (t.ex. [Loke](lore/loke.md), [Signe](lore/signe.md), [Astrid](lore/astrid.md))
 
 ### Övrigt
 - `PRIVACY_POLICY.md` – Policy (källtext för publik privacy policy-sida)
-- `PARENTS_TEACHERS_GUIDE.md` – Guide för föräldrar/lärare
 - `SESSION_BRIEF.md` – Aktuellt läge, senaste leveranser och nästa steg
 
 ---

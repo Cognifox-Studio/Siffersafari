@@ -148,10 +148,20 @@ class AppThemeConfig {
         letterSpacing: -1.2,
         height: 0.98,
       ),
+      displayMedium: baseTheme.textTheme.displayMedium?.copyWith(
+        fontWeight: FontWeight.w900,
+        letterSpacing: -1.0,
+        height: 1.0,
+      ),
       headlineLarge: baseTheme.textTheme.headlineLarge?.copyWith(
         fontWeight: FontWeight.w900,
         letterSpacing: -0.8,
         height: 1.0,
+      ),
+      headlineMedium: baseTheme.textTheme.headlineMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.6,
+        height: 1.05,
       ),
       headlineSmall: baseTheme.textTheme.headlineSmall?.copyWith(
         fontWeight: FontWeight.w900,
@@ -165,6 +175,10 @@ class AppThemeConfig {
       titleMedium: baseTheme.textTheme.titleMedium?.copyWith(
         fontWeight: FontWeight.w700,
       ),
+      titleSmall: baseTheme.textTheme.titleSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.1,
+      ),
       bodyLarge: baseTheme.textTheme.bodyLarge?.copyWith(
         fontWeight: FontWeight.w600,
         height: 1.3,
@@ -173,10 +187,30 @@ class AppThemeConfig {
         fontWeight: FontWeight.w600,
         height: 1.35,
       ),
+      bodySmall: baseTheme.textTheme.bodySmall?.copyWith(
+        fontWeight: FontWeight.w600,
+        height: 1.35,
+      ),
       labelLarge: baseTheme.textTheme.labelLarge?.copyWith(
         fontWeight: FontWeight.w800,
       ),
+      labelMedium: baseTheme.textTheme.labelMedium?.copyWith(
+        fontWeight: FontWeight.w800,
+        letterSpacing: 0.2,
+      ),
+      labelSmall: baseTheme.textTheme.labelSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+      ),
     );
+    final buttonShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.7),
+    );
+    final panelShape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.5),
+    );
+    final filledSurface =
+        scheme.onPrimary.withValues(alpha: AppOpacities.subtleFill);
 
     return baseTheme.copyWith(
       extensions: <ThemeExtension<dynamic>>[appThemeColors],
@@ -190,21 +224,47 @@ class AppThemeConfig {
           ),
           backgroundColor: appThemeColors.primaryActionColor,
           foregroundColor: scheme.onPrimary,
-          elevation: 0,
-          shadowColor: Colors.transparent,
+          elevation: 4,
+          shadowColor: appThemeColors.primaryActionColor.withValues(
+            alpha: 0.28,
+          ),
+          surfaceTintColor: Colors.transparent,
+          side: BorderSide(
+            color: scheme.onPrimary.withValues(alpha: 0.10),
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.largePadding,
-            vertical: AppConstants.defaultPadding,
+            vertical: AppConstants.defaultPadding + 2,
           ),
-          textStyle: const TextStyle(
+          textStyle: textTheme.labelLarge?.copyWith(
             fontSize: AppConstants.buttonFontSize,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadius * 1.5,
-            ),
+          shape: buttonShape,
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: const Size(
+            double.infinity,
+            AppConstants.minTouchTargetSize,
           ),
+          backgroundColor: appThemeColors.secondaryActionColor,
+          foregroundColor: scheme.onPrimary,
+          surfaceTintColor: Colors.transparent,
+          shadowColor: appThemeColors.secondaryActionColor.withValues(
+            alpha: 0.22,
+          ),
+          elevation: 3,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.largePadding,
+            vertical: AppConstants.defaultPadding + 2,
+          ),
+          textStyle: textTheme.labelLarge?.copyWith(
+            fontSize: AppConstants.buttonFontSize,
+            fontWeight: FontWeight.w800,
+          ),
+          shape: buttonShape,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -214,34 +274,48 @@ class AppThemeConfig {
             AppConstants.minTouchTargetSize,
           ),
           foregroundColor: scheme.onPrimary,
-          backgroundColor:
-              scheme.onPrimary.withValues(alpha: AppOpacities.subtleFill),
+          backgroundColor: filledSurface,
+          side: BorderSide(
+            color: scheme.secondary.withValues(alpha: 0.75),
+            width: 1.4,
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.largePadding,
-            vertical: AppConstants.defaultPadding,
+            vertical: AppConstants.defaultPadding + 2,
           ),
-          side: BorderSide(color: scheme.secondary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(
-              AppConstants.borderRadius * 1.5,
-            ),
-          ),
-          textStyle: const TextStyle(
+          textStyle: textTheme.labelLarge?.copyWith(
             fontSize: AppConstants.buttonFontSize,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
+          shape: buttonShape,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           minimumSize: const Size.square(AppConstants.minTouchTargetSizeSmall),
           foregroundColor: scheme.secondary,
+          backgroundColor: Colors.transparent,
           padding: const EdgeInsets.symmetric(
             horizontal: AppConstants.defaultPadding,
             vertical: AppConstants.smallPadding,
           ),
-          textStyle: const TextStyle(
-            fontWeight: FontWeight.w700,
+          textStyle: textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          backgroundColor: filledSurface,
+          foregroundColor: scheme.onPrimary,
+          minimumSize: const Size.square(AppConstants.minTouchTargetSize),
+          padding: const EdgeInsets.all(AppConstants.smallPadding),
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(AppConstants.borderRadius * 1.3),
+            side: BorderSide(
+              color: scheme.onPrimary.withValues(alpha: AppOpacities.hudBorder),
+            ),
           ),
         ),
       ),
@@ -250,6 +324,8 @@ class AppThemeConfig {
         backgroundColor: Colors.transparent,
         foregroundColor: scheme.onPrimary,
         elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         titleTextStyle: textTheme.titleLarge?.copyWith(
           color: scheme.onPrimary,
           fontWeight: FontWeight.w900,
@@ -257,23 +333,30 @@ class AppThemeConfig {
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: appThemeColors.cardColor,
+        surfaceTintColor: Colors.transparent,
+        shadowColor: Colors.black.withValues(alpha: 0.32),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius * 2),
+          side: BorderSide(
+            color: scheme.onPrimary.withValues(alpha: AppOpacities.hudBorder),
+          ),
         ),
       ),
       cardTheme: CardThemeData(
         color: appThemeColors.cardColor,
         elevation: 0,
         margin: EdgeInsets.zero,
-        shadowColor: Colors.transparent,
+        shadowColor: Colors.black.withValues(alpha: 0.16),
         surfaceTintColor: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.5),
-        ),
+        shape: panelShape,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: scheme.onPrimary.withValues(alpha: AppOpacities.subtleFill),
+        fillColor: filledSurface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.defaultPadding,
+          vertical: AppConstants.defaultPadding,
+        ),
         labelStyle: TextStyle(
           color: scheme.onPrimary.withValues(alpha: AppOpacities.mutedText),
         ),
@@ -305,7 +388,88 @@ class AppThemeConfig {
               alpha: AppOpacities.menuSurface,
             ),
           ),
+          shape: WidgetStatePropertyAll(panelShape),
         ),
+      ),
+      chipTheme: baseTheme.chipTheme.copyWith(
+        backgroundColor: filledSurface,
+        selectedColor: scheme.secondary.withValues(alpha: 0.22),
+        secondarySelectedColor:
+            appThemeColors.secondaryActionColor.withValues(alpha: 0.22),
+        disabledColor: appThemeColors.disabledBackgroundColor,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.defaultPadding,
+          vertical: AppConstants.microSpacing4,
+        ),
+        labelStyle: textTheme.labelMedium?.copyWith(
+          color: scheme.onPrimary,
+          fontWeight: FontWeight.w800,
+        ),
+        secondaryLabelStyle: textTheme.labelMedium?.copyWith(
+          color: scheme.onPrimary,
+          fontWeight: FontWeight.w800,
+        ),
+        shape: StadiumBorder(
+          side: BorderSide(
+            color: scheme.onPrimary.withValues(alpha: AppOpacities.hudBorder),
+          ),
+        ),
+      ),
+      sliderTheme: baseTheme.sliderTheme.copyWith(
+        activeTrackColor: appThemeColors.secondaryActionColor,
+        inactiveTrackColor: scheme.onPrimary.withValues(alpha: 0.14),
+        disabledActiveTrackColor: appThemeColors.disabledBackgroundColor,
+        disabledInactiveTrackColor:
+            scheme.onPrimary.withValues(alpha: AppOpacities.borderSubtle),
+        thumbColor: appThemeColors.secondaryActionColor,
+        disabledThumbColor: appThemeColors.disabledBackgroundColor,
+        overlayColor: appThemeColors.secondaryActionColor.withValues(
+          alpha: 0.16,
+        ),
+        valueIndicatorColor: appThemeColors.cardColor,
+        valueIndicatorTextStyle: textTheme.labelMedium?.copyWith(
+          color: scheme.onPrimary,
+          fontWeight: FontWeight.w800,
+        ),
+        trackHeight: 8,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+      ),
+      listTileTheme: ListTileThemeData(
+        iconColor: scheme.onPrimary,
+        textColor: scheme.onPrimary,
+        tileColor: filledSurface,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.defaultPadding,
+          vertical: AppConstants.microSpacing4,
+        ),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.3),
+        ),
+      ),
+      switchTheme: SwitchThemeData(
+        trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return appThemeColors.secondaryActionColor.withValues(alpha: 0.56);
+          }
+          return scheme.onPrimary.withValues(alpha: 0.16);
+        }),
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return scheme.onSecondary;
+          }
+          return scheme.onPrimary;
+        }),
+        overlayColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.pressed)) {
+            return scheme.secondary.withValues(alpha: 0.16);
+          }
+          if (states.contains(WidgetState.hovered)) {
+            return scheme.secondary.withValues(alpha: 0.10);
+          }
+          return null;
+        }),
       ),
       dividerTheme: DividerThemeData(
         color: scheme.onPrimary.withValues(alpha: AppOpacities.divider),
@@ -324,6 +488,7 @@ class AppThemeConfig {
           borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.5),
         ),
         behavior: SnackBarBehavior.floating,
+        insetPadding: const EdgeInsets.all(AppConstants.defaultPadding),
       ),
     );
   }

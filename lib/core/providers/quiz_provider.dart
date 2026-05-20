@@ -5,12 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/config/quiz_feature_settings.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
+import 'package:siffersafari/core/services/quiz_review_schedule_service.dart';
+import 'package:siffersafari/core/services/quiz_session_storage_service.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../core/config/app_features.dart';
 import '../../core/config/difficulty_config.dart';
 import '../../core/constants/app_constants.dart';
-import '../../core/constants/settings_keys.dart';
 import '../../data/repositories/local_storage_repository.dart';
 import '../../domain/constants/learning_constants.dart';
 import '../../domain/entities/question.dart';
@@ -123,14 +123,28 @@ class QuizState {
 /// Use [startSession] to begin a quiz; [submitAnswer] to record responses.
 class QuizNotifier extends StateNotifier<QuizState> {
   QuizNotifier(
-    this._questionGenerator,
-    this._feedbackService,
-    this._audioService,
-    this._repository, {
+    QuestionGeneratorService questionGenerator,
+    FeedbackService feedbackService,
+    AudioService audioService,
+    LocalStorageRepository repository, {
     required AdaptiveDifficultyService adaptiveDifficultyService,
     required SpacedRepetitionService spacedRepetitionService,
-  })  : _adaptiveDifficultyService = adaptiveDifficultyService,
+    QuizReviewScheduleService? reviewScheduleService,
+    QuizSessionStorageService? sessionStorageService,
+  })  : _questionGenerator = questionGenerator,
+        _feedbackService = feedbackService,
+        _audioService = audioService,
+        _repository = repository,
+        _adaptiveDifficultyService = adaptiveDifficultyService,
         _spacedRepetitionService = spacedRepetitionService,
+        _reviewScheduleService = reviewScheduleService ??
+            QuizReviewScheduleService(
+              questionGenerator: questionGenerator,
+              repository: repository,
+              spacedRepetitionService: spacedRepetitionService,
+            ),
+        _sessionStorageService =
+            sessionStorageService ?? QuizSessionStorageService(repository),
         super(const QuizState());
 
   final QuestionGeneratorService _questionGenerator;
@@ -139,301 +153,21 @@ class QuizNotifier extends StateNotifier<QuizState> {
   final LocalStorageRepository _repository;
   final AdaptiveDifficultyService _adaptiveDifficultyService;
   final SpacedRepetitionService _spacedRepetitionService;
+  final QuizReviewScheduleService _reviewScheduleService;
+  final QuizSessionStorageService _sessionStorageService;
   final _uuid = const Uuid();
-
-  String _packedReviewKey({
-    required OperationType operationType,
-    required int operand1,
-    required int operand2,
-    required int correctAnswer,
-    required String displayQuestionText,
-  }) {
-    return 'v2|${operationType.name}|$operand1|$operand2|$correctAnswer|$displayQuestionText';
-  }
-
-  String _reviewKeyForQuestion(Question question) {
-    // Question IDs are per-session UUIDs, so use a stable packed content key
-    // on disk instead of display-text parsing.
-    return _packedReviewKey(
-      operationType: question.operationType,
-      operand1: question.operand1,
-      operand2: question.operand2,
-      correctAnswer: question.correctAnswer,
-      displayQuestionText: question.displayQuestionText,
-    );
-  }
-
-  String _normalizeStoredReviewKey(String key) {
-    if (key.isEmpty || key.startsWith('v2|')) return key;
-
-    final parsed = _questionGenerator.tryGenerateFromSrsKey(
-      key,
-      DifficultyLevel.easy,
-    );
-    if (parsed == null) return key;
-
-    return _reviewKeyForQuestion(parsed);
-  }
-
-  String _canonicalStoredReviewKey({
-    required String key,
-    required String questionId,
-  }) {
-    final normalizedKey = _normalizeStoredReviewKey(key);
-    final normalizedQuestionId = _normalizeStoredReviewKey(questionId);
-
-    if (normalizedQuestionId.startsWith('v2|')) return normalizedQuestionId;
-    if (normalizedKey.startsWith('v2|')) return normalizedKey;
-    return normalizedQuestionId;
-  }
-
-  Map<String, ReviewSchedule> _loadReviewSchedules(String userId) {
-    dynamic raw;
-    try {
-      raw = _repository.getSetting(
-        SettingsKeys.spacedRepetitionSchedules(userId),
-      );
-    } catch (e) {
-      debugPrint(
-        '[QuizNotifier] _loadReviewSchedules skipped (storage unavailable): $e',
-      );
-      return const <String, ReviewSchedule>{};
-    }
-    if (raw is! List) return const <String, ReviewSchedule>{};
-
-    final map = <String, ReviewSchedule>{};
-    var migratedAny = false;
-    for (final item in raw) {
-      if (item is! Map) continue;
-      final entry = Map<String, dynamic>.from(item);
-      final key = entry['key']?.toString();
-      final questionId = entry['questionId']?.toString();
-      final nextReviewRaw = entry['nextReviewDate']?.toString();
-      final intervalDays = entry['intervalDays'];
-      final consecutiveCorrect = entry['consecutiveCorrect'];
-
-      if (key == null || key.isEmpty) continue;
-      if (questionId == null || questionId.isEmpty) continue;
-      final nextReviewDate = DateTime.tryParse(nextReviewRaw ?? '');
-      if (nextReviewDate == null) continue;
-      if (intervalDays is! int || consecutiveCorrect is! int) continue;
-
-      final canonicalKey = _canonicalStoredReviewKey(
-        key: key,
-        questionId: questionId,
-      );
-      if (canonicalKey != key || canonicalKey != questionId) {
-        migratedAny = true;
-      }
-
-      final schedule = ReviewSchedule(
-        questionId: canonicalKey,
-        nextReviewDate: nextReviewDate,
-        intervalDays: intervalDays,
-        consecutiveCorrect: consecutiveCorrect,
-      );
-
-      final existing = map[canonicalKey];
-      if (existing == null ||
-          nextReviewDate.isAfter(existing.nextReviewDate) ||
-          (nextReviewDate.isAtSameMomentAs(existing.nextReviewDate) &&
-              consecutiveCorrect >= existing.consecutiveCorrect)) {
-        map[canonicalKey] = schedule;
-      }
-    }
-
-    if (migratedAny) {
-      unawaited(_saveReviewSchedules(userId, map));
-    }
-
-    return map;
-  }
-
-  Future<void> _saveReviewSchedules(
-    String userId,
-    Map<String, ReviewSchedule> schedules,
-  ) async {
-    final raw = schedules.entries
-        .map(
-          (entry) => {
-            'key': entry.key,
-            'questionId': entry.key,
-            'nextReviewDate': entry.value.nextReviewDate.toIso8601String(),
-            'intervalDays': entry.value.intervalDays,
-            'consecutiveCorrect': entry.value.consecutiveCorrect,
-          },
-        )
-        .toList(growable: false);
-
-    try {
-      await _repository.saveSetting(
-        SettingsKeys.spacedRepetitionSchedules(userId),
-        raw,
-      );
-    } catch (e) {
-      debugPrint(
-        '[QuizNotifier] _saveReviewSchedules skipped (storage unavailable): $e',
-      );
-    }
-  }
-
-  int _countDueReviews(Map<String, ReviewSchedule> schedules, DateTime now) {
-    return _spacedRepetitionService
-        .getDueQuestionIds(schedules.values.toList(growable: false), now)
-        .length;
-  }
-
-  bool _isSpacedRepetitionEnabled(String userId) {
-    try {
-      return QuizFeatureSettings.readSpacedRepetitionEnabled(
-        repository: _repository,
-        userId: userId,
-      );
-    } catch (_) {
-      return AppFeatures.spacedRepetitionEnabled;
-    }
-  }
 
   void hydrateReviewSummaryForUser(String userId) {
     if (userId.isEmpty) return;
 
-    final isEnabled = _isSpacedRepetitionEnabled(userId);
-    final reviewSchedules = isEnabled
-        ? _loadReviewSchedules(userId)
-        : const <String, ReviewSchedule>{};
-    final dueCount =
-        isEnabled ? _countDueReviews(reviewSchedules, DateTime.now()) : 0;
+    final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
 
     state = state.copyWith(
       userId: userId,
       reviewSchedulesByKey: Map<String, ReviewSchedule>.unmodifiable(
-        reviewSchedules,
+        reviewState.schedules,
       ),
-      dueReviewCount: dueCount,
-    );
-  }
-
-  void _persistInProgressSession({
-    required String userId,
-    required QuizSession session,
-    bool persistEvenWithoutAnswers = false,
-  }) {
-    debugPrint(
-      '[QuizNotifier] _persistInProgressSession: '
-      'userId=$userId, operationType=${session.operationType.name}',
-    );
-    final answered = session.correctAnswers + session.wrongAnswers;
-    if (answered <= 0 && !persistEvenWithoutAnswers) {
-      debugPrint(
-        '[QuizNotifier] _persistInProgressSession: no answers yet, skipping',
-      );
-      return;
-    }
-
-    final inProgressId = _repository.inProgressQuizSessionId(
-      userId: userId,
-      operationTypeName: session.operationType.name,
-    );
-
-    // Clean up any legacy in-progress entries
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: session.operationType.name,
-        exceptSessionId: inProgressId,
-      ),
-    );
-
-    final sessionMap = session.toJson();
-    sessionMap['sessionId'] = inProgressId;
-    sessionMap['userId'] = userId;
-    sessionMap['isComplete'] = false;
-    sessionMap['pendingDueKeys'] = List<String>.from(state.pendingDueKeys);
-    if (answered <= 0) {
-      sessionMap['totalQuestions'] = 0;
-      sessionMap['correctAnswers'] = 0;
-      sessionMap['wrongAnswers'] = 0;
-      sessionMap['successRate'] = 0.0;
-      sessionMap['totalPoints'] = 0;
-    }
-
-    unawaited(_repository.saveQuizSession(sessionMap));
-  }
-
-  void _resetInProgressUnderlag({
-    required String userId,
-    required OperationType operationType,
-    required DifficultyLevel difficulty,
-  }) {
-    final now = DateTime.now();
-    _writeSessionInfo(
-      userId: userId,
-      operationType: operationType,
-      difficulty: difficulty,
-      correctAnswers: 0,
-      totalQuestions: 0,
-      successRate: 0.0,
-      points: 0,
-      start: now,
-      end: now,
-    );
-  }
-
-  void _writeSessionInfo({
-    required String userId,
-    required OperationType operationType,
-    required DifficultyLevel difficulty,
-    required int correctAnswers,
-    required int totalQuestions,
-    required double successRate,
-    required int points,
-    required DateTime start,
-    required DateTime end,
-  }) {
-    final inProgressId = _repository.inProgressQuizSessionId(
-      userId: userId,
-      operationTypeName: operationType.name,
-    );
-
-    // Clean up any legacy in-progress entries so benchmark underlag doesn't
-    // overcount abandoned sessions.
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: operationType.name,
-        exceptSessionId: inProgressId,
-      ),
-    );
-
-    // Fire-and-forget so answering stays snappy.
-    unawaited(
-      _repository.saveQuizSession({
-        'sessionId': inProgressId,
-        'userId': userId,
-        'operationType': operationType.name,
-        'difficulty': difficulty.name,
-        'correctAnswers': correctAnswers,
-        'totalQuestions': totalQuestions,
-        'successRate': successRate,
-        'points': points,
-        'bonusPoints': 0,
-        'pointsWithBonus': points,
-        'startTime': start.toIso8601String(),
-        'endTime': end.toIso8601String(),
-        'isComplete': false,
-      }),
-    );
-  }
-
-  void _prepareInProgressStorage({
-    required String userId,
-    required OperationType operationType,
-    required DifficultyLevel difficulty,
-  }) {
-    _resetInProgressUnderlag(
-      userId: userId,
-      operationType: operationType,
-      difficulty: difficulty,
+      dueReviewCount: reviewState.dueCount,
     );
   }
 
@@ -460,29 +194,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
   }
 
-  ({Map<String, ReviewSchedule> schedules, int dueCount})
-      _loadInitialReviewState(
-    String userId,
-  ) {
-    final isSpacedRepetitionEnabled = _isSpacedRepetitionEnabled(userId);
-    final reviewSchedules = isSpacedRepetitionEnabled
-        ? _loadReviewSchedules(userId)
-        : const <String, ReviewSchedule>{};
-    final dueCount = isSpacedRepetitionEnabled
-        ? _countDueReviews(reviewSchedules, DateTime.now())
-        : 0;
-
-    return (schedules: reviewSchedules, dueCount: dueCount);
-  }
-
   void _activateSessionState({
     required String userId,
     required QuizSession session,
     required Map<OperationType, int> steps,
-    required ({
-      Map<String, ReviewSchedule> schedules,
-      int dueCount
-    }) reviewState,
+    required QuizReviewStateSnapshot reviewState,
     required bool isDailyChallenge,
     List<String> pendingDueKeys = const [],
   }) {
@@ -504,51 +220,12 @@ class QuizNotifier extends StateNotifier<QuizState> {
       isDailyChallenge: isDailyChallenge,
     );
 
-    _persistInProgressSession(
+    _sessionStorageService.persistInProgressSession(
       userId: userId,
       session: session,
+      pendingDueKeys: pendingDueKeys,
       persistEvenWithoutAnswers: true,
     );
-  }
-
-  /// Returns due SRS keys filtered to the sessionâ€™s operation type.
-  /// For [OperationType.mixed] sessions, all due keys are included.
-  /// Capped at [max(1, totalQuestions ~/ 3)] to avoid flooding the session.
-  List<String> _getDueKeysForSession(
-    Map<String, ReviewSchedule> schedules,
-    OperationType sessionOpType,
-    int totalQuestions,
-    DateTime now,
-  ) {
-    final allDue = _spacedRepetitionService.getDueQuestionIds(
-      schedules.values.toList(growable: false),
-      now,
-    );
-    final filtered = allDue.where((key) {
-      if (sessionOpType == OperationType.mixed) return true;
-      // v2-format: "v2|{opName}|..." â€” extract opName from segment [1]
-      // legacy format remains supported while old storage migrates forward.
-      final isV2 = key.startsWith('v2|');
-      final opName = isV2
-          ? key.split('|').elementAtOrNull(1) ?? ''
-          : key.substring(0, key.indexOf('|').clamp(0, key.length));
-      if (opName.isEmpty) return false;
-      return opName == sessionOpType.name;
-    }).toList();
-
-    if (filtered.isEmpty) return const [];
-    final cap = (totalQuestions ~/ 3).clamp(1, filtered.length);
-    return filtered.take(cap).toList();
-  }
-
-  List<String> _readPendingDueKeys(Map<String, dynamic> sessionMap) {
-    final raw = sessionMap['pendingDueKeys'];
-    if (raw is! List) return const <String>[];
-
-    return raw
-        .whereType<String>()
-        .where((key) => key.isNotEmpty)
-        .toList(growable: false);
   }
 
   ({List<Question> initialQuestions, List<String> pendingDueKeys})
@@ -559,7 +236,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required Map<String, ReviewSchedule> schedules,
     required DateTime now,
   }) {
-    final dueKeys = _getDueKeysForSession(
+    final dueKeys = _reviewScheduleService.getDueKeysForSession(
       schedules,
       operationType,
       questions.length,
@@ -622,7 +299,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       'operation=${operationType.name}, difficulty=${difficulty.name}',
     );
 
-    _prepareInProgressStorage(
+    _sessionStorageService.prepareInProgressStorage(
       userId: userId,
       operationType: operationType,
       difficulty: difficulty,
@@ -645,10 +322,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
       missingNumberEnabledOverride: missingNumberEnabled,
     );
 
-    final reviewState = _loadInitialReviewState(userId);
+    final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
 
     // Compute due SRS keys for this session and try to use the first one.
-    final dueKeys = _getDueKeysForSession(
+    final dueKeys = _reviewScheduleService.getDueKeysForSession(
       reviewState.schedules,
       operationType,
       count,
@@ -702,13 +379,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     final session = QuizSessionJson.fromJson(sessionMap);
 
-    _prepareInProgressStorage(
+    _sessionStorageService.prepareInProgressStorage(
       userId: userId,
       operationType: session.operationType,
       difficulty: session.difficulty,
     );
 
-    final reviewState = _loadInitialReviewState(userId);
+    final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
 
     _activateSessionState(
       userId: userId,
@@ -716,7 +393,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       steps: session.difficultyStepsByOperation,
       reviewState: reviewState,
       isDailyChallenge: false,
-      pendingDueKeys: _readPendingDueKeys(sessionMap),
+      pendingDueKeys: _reviewScheduleService.readPendingDueKeys(sessionMap),
     );
   }
 
@@ -758,7 +435,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return;
     }
 
-    _prepareInProgressStorage(
+    _sessionStorageService.prepareInProgressStorage(
       userId: userId,
       operationType: operationType,
       difficulty: difficulty,
@@ -779,7 +456,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
           ),
     );
 
-    final reviewState = _loadInitialReviewState(userId);
+    final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
 
     final questionPlan = _buildCustomSessionQuestionPlan(
       questions: questions,
@@ -924,11 +601,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
     final userId = state.userId;
     final isSpacedRepetitionEnabled = userId != null &&
         userId.isNotEmpty &&
-        _isSpacedRepetitionEnabled(userId);
+        _reviewScheduleService.isSpacedRepetitionEnabled(userId);
 
     final updatedReviewSchedules = isSpacedRepetitionEnabled
         ? (() {
-            final reviewKey = _reviewKeyForQuestion(question);
+            final reviewKey = _reviewScheduleService.keyForQuestion(question);
             final previousReview = state.reviewSchedulesByKey[reviewKey];
             final updatedReview = _spacedRepetitionService.scheduleNextReview(
               questionId: reviewKey,
@@ -941,7 +618,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
           })()
         : const <String, ReviewSchedule>{};
     final dueCount = isSpacedRepetitionEnabled
-        ? _countDueReviews(updatedReviewSchedules, DateTime.now())
+        ? _reviewScheduleService.countDueReviews(
+            updatedReviewSchedules,
+            DateTime.now(),
+          )
         : 0;
 
     state = state.copyWith(
@@ -976,9 +656,18 @@ class QuizNotifier extends StateNotifier<QuizState> {
       debugPrint(
         '[QuizNotifier] submitAnswer: persisting session for userId=$userId',
       );
-      _persistInProgressSession(userId: userId, session: updatedSession);
+      _sessionStorageService.persistInProgressSession(
+        userId: userId,
+        session: updatedSession,
+        pendingDueKeys: state.pendingDueKeys,
+      );
       if (isSpacedRepetitionEnabled) {
-        unawaited(_saveReviewSchedules(userId, updatedReviewSchedules));
+        unawaited(
+          _reviewScheduleService.saveReviewSchedules(
+            userId,
+            updatedReviewSchedules,
+          ),
+        );
       }
     }
   }
@@ -986,9 +675,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void cancelSession(String userId) {
     final session = state.session;
     if (session == null) return;
-    _persistInProgressSession(
+    _sessionStorageService.persistInProgressSession(
       userId: userId,
       session: session,
+      pendingDueKeys: state.pendingDueKeys,
       persistEvenWithoutAnswers: true,
     );
   }
@@ -1049,9 +739,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     final userId = state.userId;
     if (userId != null && userId.isNotEmpty) {
-      _persistInProgressSession(
+      _sessionStorageService.persistInProgressSession(
         userId: userId,
         session: updatedSession,
+        pendingDueKeys: newPendingDueKeys,
         persistEvenWithoutAnswers: true,
       );
     }
@@ -1103,6 +794,12 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
   final repo = ref.watch(localStorageRepositoryProvider);
   final adaptiveDifficulty = ref.watch(adaptiveDifficultyServiceProvider);
   final spacedRepetition = ref.watch(spacedRepetitionServiceProvider);
+  final reviewScheduleService = QuizReviewScheduleService(
+    questionGenerator: generator,
+    repository: repo,
+    spacedRepetitionService: spacedRepetition,
+  );
+  final sessionStorageService = QuizSessionStorageService(repo);
 
   return QuizNotifier(
     generator,
@@ -1111,6 +808,8 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
     repo,
     adaptiveDifficultyService: adaptiveDifficulty,
     spacedRepetitionService: spacedRepetition,
+    reviewScheduleService: reviewScheduleService,
+    sessionStorageService: sessionStorageService,
   );
 });
 
