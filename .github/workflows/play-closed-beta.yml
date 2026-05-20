@@ -1,18 +1,33 @@
 name: Play Closed Beta
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   workflow_dispatch:
     inputs:
       track:
-        description: "Play track (exempel: beta, qa, internal)"
+        description: "Play track (exempel: alpha, beta, internal)"
         required: true
         type: string
-        default: "beta"
+        default: "alpha"
+      release_status:
+        description: "draft = bara upload, completed = klar for Play-sparet nar Play tillater det"
+        required: true
+        type: choice
+        default: "draft"
+        options:
+          - draft
+          - completed
       run_tests:
         description: "Kor flutter test test innan build"
         required: true
         type: boolean
         default: true
+
+concurrency:
+  group: play-closed-beta-${{ inputs.track }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -25,15 +40,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Validate Play track
+      - name: Validate Play track and release status
         run: |
           TRACK="${{ inputs.track }}"
+          RELEASE_STATUS="${{ inputs.release_status }}"
           if [ -z "$TRACK" ]; then
             echo "Track must not be empty"
             exit 1
           fi
           if [ "$TRACK" = "production" ]; then
             echo "Use a dedicated production workflow instead of Play Closed Beta"
+            exit 1
+          fi
+          if [ "$RELEASE_STATUS" != "draft" ] && [ "$RELEASE_STATUS" != "completed" ]; then
+            echo "Unsupported release status: $RELEASE_STATUS"
             exit 1
           fi
 
@@ -95,4 +115,5 @@ jobs:
           packageName: se.cognifox.Siffersafari
           releaseFiles: build/app/outputs/bundle/release/app-release.aab
           tracks: ${{ inputs.track }}
-          status: draft
+          status: ${{ inputs.release_status }}
+          whatsNewDirectory: play/release-notes

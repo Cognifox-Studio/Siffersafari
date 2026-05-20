@@ -1,0 +1,20 @@
+Siffersafari is an offline-first math game for children ages 6-12.
+
+Children can:
+- play short quizzes in addition, subtraction, multiplication, and division
+- choose operations and difficulty based on age and progress
+- collect points, rewards, and follow their story through the app
+
+Adults can:
+- create multiple child profiles on the same device
+- unlock parent mode with a PIN
+- review progress and control content without disturbing the child flow
+
+Why Siffersafari:
+- works without an account and without requiring internet access
+- stores progress locally on the device
+- no ads
+- no tracking
+- built for a simple and child-friendly experience
+
+The app is designed for daily math practice that feels playful, clear, and easy to start.

@@ -17,6 +17,8 @@ Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-18).
 - `docs/` dokumentation
 - `.github/` CI/CD och templates
 - `android/` Android-konfiguration
+- `fastlane/` Play Store metadata och listing-sync
+- `play/` release notes for Play-upload
 
 Byggartefakter som inte ar kallkod:
 - `build/`
@@ -159,8 +161,15 @@ Exempel:
 - `workflows/android-smoke.yml` Android-smoke för APK-flödet
 - `workflows/build.yml` release build + release upload
 - `workflows/play-closed-beta.yml` Play closed beta-flöde
+- `workflows/play-store-listing.yml` separat Play Store listing-sync
 - `workflows/privacy-policy-pages.yml` publicering av privacy policy-sidor
 - `workflows/release-guard.yml` release sanity + storlekskontroll
+
+## fastlane/
+
+- `Appfile` package-konfiguration for Play Store
+- `Fastfile` lane for metadata-sync mot Google Play
+- `metadata/android/` versionerad listing-copy per locale samt valfria bilder/screenshots
 
 ## Namngivning (faktiskt anvand i repo)
 

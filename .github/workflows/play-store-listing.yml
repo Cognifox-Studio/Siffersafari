@@ -1,0 +1,72 @@
+name: Play Store Listing Sync
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+on:
+  workflow_dispatch:
+    inputs:
+      validate_only:
+        description: "Validera bara mot Play utan att skriva nya utkast"
+        required: true
+        type: boolean
+        default: true
+      sync_texts:
+        description: "Synca titel, kort beskrivning och full beskrivning"
+        required: true
+        type: boolean
+        default: true
+      sync_images:
+        description: "Synca listing-bilder som icon och feature graphic"
+        required: true
+        type: boolean
+        default: false
+      sync_screenshots:
+        description: "Synca screenshots fran fastlane/metadata/android/.../images/phoneScreenshots"
+        required: true
+        type: boolean
+        default: false
+      send_for_review:
+        description: "Skicka metadataandringen vidare for review i stallet for att spara som draft"
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: play-store-listing
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync-play-store-listing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate required secret
+        run: |
+          if [ -z "${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}" ]; then
+            echo "Missing required secret: PLAY_SERVICE_ACCOUNT_JSON"
+            exit 1
+          fi
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+
+      - name: Sync Play Store listing metadata
+        env:
+          FASTLANE_SKIP_UPDATE_CHECK: 1
+          PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets['PLAY_SERVICE_ACCOUNT_JSON'] }}
+          PLAY_LISTING_VALIDATE_ONLY: ${{ inputs.validate_only }}
+          PLAY_LISTING_SYNC_TEXTS: ${{ inputs.sync_texts }}
+          PLAY_LISTING_SYNC_IMAGES: ${{ inputs.sync_images }}
+          PLAY_LISTING_SYNC_SCREENSHOTS: ${{ inputs.sync_screenshots }}
+          PLAY_LISTING_SEND_FOR_REVIEW: ${{ inputs.send_for_review }}
+        run: bundle exec fastlane android sync_store_listing

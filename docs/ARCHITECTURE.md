@@ -170,8 +170,11 @@ CI/workflows:
 - `.github/workflows/android-smoke.yml`: Android-smoke för APK/device-flöden
 - `.github/workflows/build.yml`: release build + signering + GitHub Release
 - `.github/workflows/play-closed-beta.yml`: closed beta-publicering mot Play-flödet
+- `.github/workflows/play-store-listing.yml`: separat sync av Play Store-listing, metadata och valfria screenshots
 - `.github/workflows/privacy-policy-pages.yml`: publicering av statiska privacy policy-sidor
 - `.github/workflows/release-guard.yml`: snabb releasevalidering + APK size guard
+
+Play Store-copy versioneras separat i `fastlane/metadata/android/` sa att butikssida och binar-upload kan styras oberoende av varandra.
 
 ## Kanda tekniska noteringar
 

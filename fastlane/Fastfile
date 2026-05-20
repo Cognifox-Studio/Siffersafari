@@ -1,0 +1,41 @@
+default_platform(:android)
+
+def env_true(name, default)
+  value = ENV[name]
+  return default if value.nil? || value.empty?
+
+  %w[1 true yes on].include?(value.downcase)
+end
+
+platform :android do
+  desc "Sync Play Store listing metadata, images and screenshots"
+  lane :sync_store_listing do
+    sync_texts = env_true("PLAY_LISTING_SYNC_TEXTS", true)
+    sync_images = env_true("PLAY_LISTING_SYNC_IMAGES", false)
+    sync_screenshots = env_true("PLAY_LISTING_SYNC_SCREENSHOTS", false)
+    validate_only = env_true("PLAY_LISTING_VALIDATE_ONLY", true)
+    send_for_review = env_true("PLAY_LISTING_SEND_FOR_REVIEW", false)
+
+    UI.message(
+      "sync_texts=#{sync_texts} sync_images=#{sync_images} " \
+      "sync_screenshots=#{sync_screenshots} validate_only=#{validate_only} " \
+      "send_for_review=#{send_for_review}"
+    )
+
+    upload_to_play_store(
+      package_name: "se.cognifox.Siffersafari",
+      json_key_data: ENV.fetch("PLAY_SERVICE_ACCOUNT_JSON"),
+      metadata_path: "fastlane/metadata/android",
+      skip_upload_aab: true,
+      skip_upload_apk: true,
+      skip_upload_changelogs: true,
+      skip_upload_metadata: !sync_texts,
+      skip_upload_images: !sync_images,
+      skip_upload_screenshots: !sync_screenshots,
+      sync_image_upload: true,
+      validate_only: validate_only,
+      changes_not_sent_for_review: !send_for_review,
+      rescue_changes_not_sent_for_review: true
+    )
+  end
+end

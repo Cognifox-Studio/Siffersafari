@@ -1,0 +1,20 @@
+Siffersafari ar ett offline-first mattespel for barn 6-12 ar.
+
+Barnet kan:
+- spela korta quiz i addition, subtraktion, multiplikation och division
+- valja raknesatt och niva efter alder och progression
+- samla poang, beloningar och folja sin story genom appen
+
+Vuxna kan:
+- skapa flera barnprofiler pa samma enhet
+- lasa upp foraldralaget med PIN
+- se statistik och styra innehall utan att stora barnflodet
+
+Varfor Siffersafari:
+- fungerar utan konto och utan krav pa internet
+- sparar progression lokalt pa enheten
+- inga annonser
+- ingen sparning
+- byggd for ett enkelt och tryggt barnflode
+
+Appen ar gjord for daglig mattetraning som kanns lekfull, tydlig och latt att komma igang med.

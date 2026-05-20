@@ -1,331 +1,240 @@
 # Deploying to Android
 
-Denna guide visar hur du **bygger, testar och releaser** APK:er för Android.
+Denna guide beskriver repo:ts faktiska Android-floden: Pixel_6 for utveckling, signerad `.aab` for Google Play och GitHub Actions for automatisk closed-test-upload.
 
 ---
 
-## Quick Start
+## Snabbval
 
-**För utveckling (Pixel_6 emulator):**
+**Utveckling pa Pixel_6:**
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 ```
 
-## 0. Automatisk Release via GitHub Actions (Rekommenderas)
-Vi har nu en fullt konfigurerad CI/CD pipeline för Siffersafari. Du behöver oftast **inte bygga releaser lokalt**. 
-Gör så här för att släppa en ny version:
+**Automatisk upload till Google Play closed test:**
+- Workflow: `.github/workflows/play-closed-beta.yml`
+- Format: `build/app/outputs/bundle/release/app-release.aab`
 
-1. Sätt ny version i `pubspec.yaml` (t.ex. `version: 1.3.4+12`).
-2. Spara, committa och pusha ändringarna till main.
-3. Kör kommandot för att skapa och pusha en ny tagg:
-   ```bash
-   git tag v1.3.4
-   git push origin v1.3.4
-   ```
-4. Pipelinen (`.github/workflows/build.yml`) sätter automatiskt upp Keystore (via GitHub Secrets), kör analyze, bygger signerad Android release apk (`app-release.apk`) och laddar upp den till *GitHub Releases*.
+**Signerad APK till GitHub Release:**
+- Workflow: `.github/workflows/build.yml`
+- Format: `build/app/outputs/flutter-apk/app-release.apk`
+
+Google Play accepterar `.aab`, inte `.apk`.
 
 ---
 
-## 1. Development Build (Debug)
+## 1. Utveckling pa Pixel_6
 
-### Via Pixel_6-script (rekommenderat)
-
-Denna PowerShell-script bygger, installerar och startar appen deterministiskt på Pixel_6:
+Anvand repo-scriptet for deterministisk build/install mot emulatorn:
 
 ```powershell
-# SYNC: Bygg + installera + starta om appen (säkrast när emulatorn måste matcha kod)
+# Bygg + installera + starta om appen
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 
-# RUN: Dev-läge med hot reload (snabbare om APK redan installerad)
+# Dev-lage med hot reload
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action run
 
-# INSTALL: Bara bygg + installera (startar inte appen)
+# Bara bygg + installera
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action install
 ```
 
-**Varför det här scriptet?**
-- ✅ Deterministisk targetting av **Pixel_6** (ingen gissning om vilken enhet)
-- ✅ Väntar på att Android är fullt startad (`sys.boot_completed = 1`)
-- ✅ Verifierar APK-SHA256 innan installation
-- ✅ Minskar risken för "gammal APK som fick inte uppdatera"
-
-### Manual Flutter run
-
-```bash
-# Lista enheter
-flutter devices
-
-# Kör på specifik enhet
-flutter run -d emulator-<id>
-
-# Med debug-info
-flutter run -v
-```
+Nar native Android, navigation eller UI har andrats ar `sync` den sakraste verifieringen.
 
 ---
 
-## 2. Test Build (Debug APK)
+## 2. Versionshantering
 
-### Bygga test APK
+Versionen styrs i `pubspec.yaml`:
 
-```bash
-flutter build apk --debug
-
-# Output:
-# ✓ Built build/app/outputs/flutter-apk/app-debug.apk (XX MB)
+```yaml
+version: 1.4.3+20
 ```
 
-**Installera manuellt:**
+- `1.4.3` = versionsnamn
+- `20` = versionskod
+
+Innan varje Play-upload ska bada uppdateras. Play nekar nya builds om versionskoden inte okar.
+
+---
+
+## 3. Hemligheter for release och Play API
+
+Foljande GitHub Secrets maste finnas for automatisk Play-upload:
+
+1. `KEYSTORE_BASE64`
+2. `KEYSTORE_PASSWORD`
+3. `PLAY_SERVICE_ACCOUNT_JSON`
+
+`KEYSTORE_BASE64` ska vara base64 av `android/app/upload-keystore.jks`.
+
+Exempel i PowerShell:
+
 ```powershell
-adb install build/app/outputs/flutter-apk/app-debug.apk
+[Convert]::ToBase64String([IO.File]::ReadAllBytes("android/app/upload-keystore.jks"))
 ```
+
+`PLAY_SERVICE_ACCOUNT_JSON` ska vara hela JSON-innehallet fran ett Google Play service account som har access till appen `se.cognifox.Siffersafari` i Play Console API Access.
+
+Skriv aldrig ut eller klistra in service account-JSON i chatten eller i repo:t.
 
 ---
 
-## 3. Release Build (Signed APK)
+## 4. Automatisk upload till Google Play closed test
 
-För att distribuera på **Google Play**, behöver du en **signerad APK**.
+Workflowen `.github/workflows/play-closed-beta.yml` bygger signerad AAB och laddar upp den till valt Play-spar.
 
-### Step 1: Skapa key store (första gången)
+Release notes for samma workflow ligger i `play/release-notes/` som `whatsnew-sv-SE` och `whatsnew-en-US`.
 
-```bash
-# Generera keystore (sparas hemligt!)
-keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload-key
+### Via GitHub UI
 
-# Fyllande frågor:
-# - Keystore password: (välj starkt lösenord, sparas!)
-# - Key password: (samma eller annat)
-# - CN (ditt namn): Ropbe  
-# - O (organisation): Siffersafari
-# - L (stad): (din stad)
-# - ST (stat): (din region)
-# - C (land): SE
+1. Oppna `Actions`.
+2. Valj `Play Closed Beta`.
+3. Klicka `Run workflow`.
+4. Ange:
+   - `track`: normalt `alpha`
+   - `release_status`: `draft` eller `completed`
+   - `run_tests`: normalt `true`
 
-# Resultatet sparas som: upload-keystore.jks (GIT-IGNORERA DENNA!)
+### Via GH CLI
+
+```powershell
+gh workflow run play-closed-beta.yml -f track=alpha -f release_status=draft -f run_tests=true
 ```
 
-**VIKTIGT:** `upload-keystore.jks` är hemlig! **ALDRIG commita till Git!** Se `.gitignore`.
-## GitHub Actions – Automated Builds & Releases
+Hamta senaste korningen:
 
-
-### Step 2: Konfigurera Android keystore path
-
-Skapa `android/key.properties` (eller uppdatera om den finns):
-
-```properties
-storePassword=<ditt_keystore_lösenord>
-keyPassword=<ditt_key_lösenord>
-keyAlias=upload-key
-storeFile=upload-keystore.jks
+```powershell
+gh run list --workflow play-closed-beta.yml --limit 1
 ```
 
-**VIKTIGT:** `key.properties` är även hemlig! Se `.gitignore`.
+### Val av `release_status`
 
-### Step 3: Bygga release APK
+- `draft`: sakrast. Uploadar builden utan att forutsatta att Play accepterar en klar release direkt.
+- `completed`: anvand nar du vill att releasen ska behandlas som klar for sparet utan manuell draft-hantering i Console.
 
-```bash
-flutter build apk --release
+Google Play kan fortfarande krava review. Automatisk upload tar bort det manuella upload-steget, inte Googles granskning.
 
-# Output:
-# ✓ Built build/app/outputs/flutter-apk/app-release.apk (XX MB)
-```
+Om Play svarar med `Only releases with status draft may be created on draft app`, kor om workflowen med `release_status=draft`.
 
 ---
 
-## 4. Google Play Console Setup
+## 5. Automatisk butikssides-sync
 
-*Denna del antas du redan gjort. Om inte, se [Google Play Console docs](https://support.google.com/googleplay/android-developer/answer/9859348).*
+Full listing-sync kor separat via `.github/workflows/play-store-listing.yml` och metadata i `fastlane/metadata/android/`.
 
-**Kort checklist:**
-- [ ] Google Play Developer-konto skapat ($25 one-time)
-- [ ] Applikation skapad i Play Console
-- [ ] Publik integritetspolicy-URL finns och kan öppnas utan inloggning
-- [ ] Release-noteringar på svenska/engelska
-- [ ] Screenshots för Play Store (finns i `integration_test/screenshots_test.dart`)
-- [ ] Icon och feature-graphics uppladdade
+Det ar medvetet ett eget flode sa att butikstext, screenshots och grafik inte blandas ihop med binar-uploaden.
 
-**Privacy policy URL för detta repo:**
-- Källtext: `docs/PRIVACY_POLICY.md`
-- Publik GitHub Pages-sida: `https://cognifox-studio.github.io/Siffersafari/privacy-policy/`
-- Deploy-workflow: `.github/workflows/privacy-policy-pages.yml`
+### Defaultbeteende
 
----
+- `validate_only=true`: validerar mot Play utan att skriva nya utkast
+- `sync_texts=true`: syncar titel + kort/full beskrivning
+- `sync_images=false`: uploadar inte icon eller feature graphic utan uttryckligt val
+- `sync_screenshots=false`: uploadar inte screenshots utan uttryckligt val
+- `send_for_review=false`: metadata sparas som draft i stallet for att skickas vidare direkt
 
-## 5. Release to Play Store
+### Via GH CLI
 
-### Upload APK
-4. **Upload APK:** Välj `build/app/outputs/flutter-apk/app-release.apk`
-   ```
-   Version 1.3.1 - March 21, 2026
-   
-   - Uppdaterade dependencies (Riverpod, audioplayers, etc.)
-   - Förbättrad offline-stabilitet
-   - Bugfixar för quiz-progression
-   ```
-6. **Review & confirm**
-7. **Send for review** (eller **Deploy to production**)
-
-**Observera:** First time? Google Play granskar appen (typically 2-4 timmar, ibland upp till 24h). Senare updates går ofta snabbare.
-
----
-
-## 6. Version Management
-
-Version är definierad i `pubspec.yaml`:
-
-```yaml
-version: 1.3.1+9
+```powershell
+gh workflow run play-store-listing.yml -f validate_only=true -f sync_texts=true -f sync_images=false -f sync_screenshots=false -f send_for_review=false
 ```
 
-**Namnkonvention:**
-- `1.0.0` = Version (3 siffror: major.minor.patch)
-- `+1` = Build number (iterativ, incrementeras varje build)
+Nar du ar nojd med textmetadata kan du kora om workflowen med `validate_only=false`.
 
-**Innan release:**
-```yaml
-# Uppdatera:
-version: 1.3.1+9
+### Metadatafiler
 
-# Commit message:
-"chore: bump version to 1.3.1 (Google Play release)"
-
-# Git tag:
-git tag v1.3.1
-git push origin v1.3.1
-```
+- `fastlane/metadata/android/sv-SE/*.txt`
+- `fastlane/metadata/android/en-US/*.txt`
+- valfria bilder och screenshots enligt `fastlane/metadata/android/README.md`
 
 ---
 
-## 7. Pre-Release Checklist
+## 6. Lokal manuell fallback
 
-Innan du pushar till Play Store, kör denna checklist:
+Om du vill bygga samma Play-artefakt lokalt:
 
-```bash
-# 1. Lint & tests
+```powershell
+flutter build appbundle --release
+```
+
+Output:
+
+```text
+build/app/outputs/bundle/release/app-release.aab
+```
+
+Den filen kan laddas upp manuellt i Play Console till closed test.
+
+---
+
+## 7. GitHub Release APK
+
+Workflowen `.github/workflows/build.yml` bygger fortfarande en signerad `app-release.apk` och publicerar den till GitHub Releases.
+
+Det flodet ar bra for intern QA och artefakthantering, men det ersatter inte Google Play-uploaden. For Play ska du anvanda `.aab`.
+
+---
+
+## 8. Rekommenderad verifiering fore Play-upload
+
+Kor minsta rimliga QA-slice fore release:
+
+```powershell
 flutter analyze
 flutter test
-
-# 2. Build (debug + release)
-flutter build apk --debug
-flutter build apk --release
-
-# 3. Manual smoke test på emulator
-flutter run -d emulator-<id>
-# Testa: profiler skapas, quiz fungerar, achievements sparas
-
-# 4. Signature-verify
-# (Flutter gör detta automatiskt för release builds)
-
-# 5. APK size check
-ls -lh build/app/outputs/flutter-apk/app-release.apk
-# Target: < 50 MB (helst < 30 MB)
+powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 ```
 
-### Uppdateringsmodell for release
+Lagg till fokuserade integrationstester eller smoke-test nar andringen beror quizflode, navigation, assets eller Android-beteende.
 
-Produktappen anvander inte langre OTA- eller in-app update-floden. Distribution och uppdateringar sker via Google Play, i linje med barnpolicy/COPPA-krav.
-
-Det betyder:
-
-1. Ingen release-gate for `ota_update` eller installationsprompt behovs.
-2. Verifiering av uppgradering sker i forsta hand via Play-sparet eller via vanlig installation ovanpa befintlig appversion nar migration/dataretention ska testas.
-3. Om du testar uppgradering manuellt, fokusera pa dataretention:
-   - profil(er) kvar
-   - foraldra-PIN kvar
-   - statistik/poang kvar
-   - quizhistorik kvar
-
-No-go: om uppgradering eller ominstallation over befintlig version leder till tappad lokal data.
+Produktappen ska forbli fri fran OTA/sideload-logik, `REQUEST_INSTALL_PACKAGES`, annonser och tracking-SDK:er.
 
 ---
 
-## 8. Troubleshooting
+## 9. Play Console-forberedelser
 
-### "APK not aligned to 4 bytes"
-```bash
-zipalign -v 4 app-release-unaligned.apk app-release.apk
-```
+Verifiera att dessa Play-ytor redan ar korrekta innan du automatiserar fler uploads:
 
-### "Keystore not found"
-```bash
-# Verifiera key.properties finns i android/
-# och att storeFile sökvägen är korrekt relativ till android/
-```
+1. Integritetspolicyn ar publik och oppen utan inloggning.
+2. Appen anvander ratt package name: `se.cognifox.Siffersafari`.
+3. Servicekontot ar kopplat via Play Console API Access.
+4. Closed-test-sparet du valjer finns faktiskt i Play Console, normalt `alpha`.
+5. Metadata-workflowen anvander `fastlane/metadata/android/` som kallsanning for listing-copy.
 
-### "APK is too large"
-Kolla size breakdown:
-```bash
-flutter build apk --release --analyze-size
-```
+Repo-facit for privacy policy:
 
-Vanliga culprits:
-- ❌ Unused assets (skulle redan vara rensade nu)
-- ❌ Stora dependencies (review pubspec.yaml)
-- ✅ WAV vs MP3 (vi är i process att konvertera till MP3)
-
-### "Version code X is lower than previously released code Y"
-- **Orsak:** Build number i `pubspec.yaml` går inte upp
-- **Lösning:** Incrementera `+1` → `+2` etc. innan nästa release
+- Kalltext: `docs/PRIVACY_POLICY.md`
+- Publik sida: `https://cognifox-studio.github.io/Siffersafari/privacy-policy/`
 
 ---
 
-## 9. Release Notes Template
+## 10. Troubleshooting
 
-Använd denne mall för release notes på Play Store och GitHub:
+### Missing required secrets
 
-```markdown
-# Version X.Y.Z (Release Date)
+Workflowen stoppar tidigt om `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD` eller `PLAY_SERVICE_ACCOUNT_JSON` saknas.
 
-## Features
-- Feature 1 description
-- Feature 2 description
+Listing-workflowen kraver bara `PLAY_SERVICE_ACCOUNT_JSON`.
 
-## Improvements
-- Improvement 1
-- Improvement 2
+### `Only releases with status draft may be created on draft app`
 
-## Bugfixes
-- Fixed bug 1
-- Fixed bug 2
+Play accepterar inte `completed` an. Kor samma workflow igen med `release_status=draft`.
 
-## Known Issues
-- (om något)
+### Package mismatch
 
-## Technical Changes
-- Updated dependency X from v1 to v2
-- Refactored Y service
+Play-uploaden maste anvanda samma package name som appen i Console: `se.cognifox.Siffersafari`.
+
+### AAB/APK for stor
+
+Analysera storleken med:
+
+```powershell
+flutter build appbundle --release --analyze-size
 ```
 
+### Version code is lower than previously released code
+
+Oka buildnumret i `pubspec.yaml`, till exempel `1.4.3+20` -> `1.4.4+21`.
+
 ---
 
-**Nästa steg:** Läs [ADD_FEATURE.md](ADD_FEATURE.md) för hur man lägger till nya features inom denna pipeline.
-
----
-
-## 10. GitHub Actions: Closed Beta (Google Play)
-
-For automatisk uppladdning till closed testing finns workflow:
-
-- `.github/workflows/play-closed-beta.yml`
-
-### Secrets som maste finnas i GitHub repo settings
-
-1. `KEYSTORE_BASE64` - base64 av `android/app/upload-keystore.jks`
-2. `KEYSTORE_PASSWORD` - losenord till keystore/key
-3. `PLAY_SERVICE_ACCOUNT_JSON` - hela JSON-innehallet for Play API service account
-
-### Korning
-
-1. Gå till `Actions` i GitHub.
-2. Välj `Play Closed Beta`.
-3. Klicka `Run workflow`.
-4. Ange `track`:
-   - `beta` (vanlig closed beta)
-   - `internal` (snabb intern test)
-   - eller custom closed track-namn
-5. Valfritt: avmarkera `run_tests` om du bara vill verifiera uploadflodet.
-
-### Resultat
-
-Workflow bygger signerad `app-release.aab` och laddar upp till valt Play-track.
-Release blir tillganglig enligt Play Consoles granskning/regler for sparet.
+Nasta steg for ny releaseyta eller releasebeslut finns i `docs/SESSION_BRIEF.md` och `docs/DECISIONS_LOG.md`.

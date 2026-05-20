@@ -15,6 +15,11 @@
 
 ### Senaste leveranser
 
+**2026-05-21 – Play-automationen delades upp i release-upload och butikssides-sync**
+- **Separata workflows for mindre risk:** `.github/workflows/play-closed-beta.yml` skickar nu med release notes fran `play/release-notes/`, medan nya `.github/workflows/play-store-listing.yml` syncar listing-copy separat fran `fastlane/metadata/android/`.
+- **Listing-sync ar defensiv som standard:** Metadata-workflowen kor med validering och utan bild/screenshot-upload som default, sa butikstext kan granskas for sig innan riktiga listing-utkast skickas vidare.
+- **Verifiering:** Andrade workflow-, fastlane- och docsfiler ar fria fran editorfel.
+
 **2026-05-16 – Episode 1 i djungeln känns nu som en sammanhållen första episod**
 - **Story-first start:** `HomeScreen`, `HomeStoryProgressCard`, `InitialProfileSetupScreen` och `create_user_dialog.dart` pekar nu tydligare mot aktivt uppdrag, enklare första minut och barnvänligare figurval.
 - **Lätt aktlager ovanpå befintlig path:** `StoryProgress` och `StoryProgressionService` bär nu `Akt X av Y`, akt-copy och ett explicit `Djungeln klar!`-slutläge utan ny persistens eller nytt progressionsträd.

@@ -30,6 +30,8 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+.bundle/
+/vendor/bundle/
 
 # Local test outputs
 test_results.json
@@ -71,6 +73,11 @@ assets/images/themes/**/**/*_preview*.png
 # Signing keys (SECRET - never commit)
 android/upload-keystore.jks
 android/key.properties
+
+# Fastlane local outputs
+fastlane/Preview.html
+fastlane/report.xml
+fastlane/test_output
 
 # Lokal överföringsmapp för inkommande filer
 _incoming/
