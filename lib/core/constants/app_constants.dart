@@ -131,10 +131,22 @@ class AppConstants {
   // Achievement IDs
   static const String firstQuizAchievement =
       AchievementIds.firstQuizAchievement;
+  static const String firstAdditionAchievement =
+      AchievementIds.firstAdditionAchievement;
+  static const String firstSubtractionAchievement =
+      AchievementIds.firstSubtractionAchievement;
+  static const String firstMultiplicationAchievement =
+      AchievementIds.firstMultiplicationAchievement;
+  static const String firstDivisionAchievement =
+      AchievementIds.firstDivisionAchievement;
   static const String streak7Achievement = AchievementIds.streak7Achievement;
   static const String streak30Achievement = AchievementIds.streak30Achievement;
   static const String master100Achievement =
       AchievementIds.master100Achievement;
   static const String perfectScoreAchievement =
       AchievementIds.perfectScoreAchievement;
+  static const String hardQuizAchievement = AchievementIds.hardQuizAchievement;
+  static const String quiz10Achievement = AchievementIds.quiz10Achievement;
+  static const String points500Achievement =
+      AchievementIds.points500Achievement;
 }

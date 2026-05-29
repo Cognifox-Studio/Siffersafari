@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/services/daily_challenge_service.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
@@ -39,6 +40,7 @@ class DailyChallengeCard extends ConsumerWidget {
     final challengeState = ref.watch(dailyChallengeProvider(userId));
     final isCompleted = challengeState.isCompleted;
     final streak = challengeState.streakCount;
+    final chestCacheSize = imageCacheExtent(context, 28);
 
     // Hide card if today's operation isn't allowed for this profile.
     if (!allowedOps.contains(challenge.operation)) {
@@ -137,6 +139,8 @@ class DailyChallengeCard extends ConsumerWidget {
                 'assets/images/ui/img_loot_chest.png',
                 width: 28,
                 height: 28,
+                cacheWidth: chestCacheSize,
+                cacheHeight: chestCacheSize,
               ),
               label: const Text('Spela'),
             ),

@@ -1,0 +1,850 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 4 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 4,
+  "stage": "4-6",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 10000
+    },
+    "operations": [
+      "addition",
+      "subtraction",
+      "multiplication",
+      "division"
+    ],
+    "centralConcepts": [
+      "statistik",
+      "sannolikhet",
+      "area_omkrets",
+      "enhetsbyten_cm_m_g_kg_ml_l",
+      "diagramtolkning",
+      "multiplikation_i_tva_steg_t_ex_45_12",
+      "division_med_storre_tal_t_ex_360_15"
+    ],
+    "strategies": [
+      "flerstegsproblem",
+      "rimlighetsbedomning",
+      "dela_upp_multiplikation_t_ex_45_12_45_10_45_2",
+      "dela_upp_division",
+      "identifiera_area_vs_omkrets",
+      "tolka_diagram"
+    ],
+    "commonMisconceptions": [
+      "blandar_area_omkrets",
+      "missar_enhetsbyten",
+      "fel_vid_lang_division",
+      "fel_vid_multiplikation_med_tvasiffriga_tal",
+      "missforstar_sannolikhet_t_ex_3_av_10"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
+    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+  ],
+  "coverage": {
+    "questionCount": 120,
+    "headlineQuestionCount": 120,
+    "declaredQuestionCount": 120,
+    "countsBySection": {
+      "addition_large_numbers": 30,
+      "subtraction_large_numbers": 30,
+      "multiplication": 30,
+      "division": 20,
+      "statistics": 10
+    },
+    "declaredCountsBySection": {
+      "addition_large_numbers": 30,
+      "subtraction_large_numbers": 30,
+      "multiplication": 30,
+      "division": 20,
+      "statistics": 10
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": [
+      {
+        "sectionId": "statistics",
+        "questionCount": 3
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "addition_large_numbers",
+      "label": "Addition av större tal",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g4_addition_large_numbers_001",
+          "prompt": "3200 + 1450",
+          "responseType": "numeric",
+          "correctAnswer": 4650
+        },
+        {
+          "id": "g4_addition_large_numbers_002",
+          "prompt": "4500 + 2300",
+          "responseType": "numeric",
+          "correctAnswer": 6800
+        },
+        {
+          "id": "g4_addition_large_numbers_003",
+          "prompt": "6789 + 2100",
+          "responseType": "numeric",
+          "correctAnswer": 8889
+        },
+        {
+          "id": "g4_addition_large_numbers_004",
+          "prompt": "2345 + 4321",
+          "responseType": "numeric",
+          "correctAnswer": 6666
+        },
+        {
+          "id": "g4_addition_large_numbers_005",
+          "prompt": "5678 + 1234",
+          "responseType": "numeric",
+          "correctAnswer": 6912
+        },
+        {
+          "id": "g4_addition_large_numbers_006",
+          "prompt": "7890 + 1098",
+          "responseType": "numeric",
+          "correctAnswer": 8988
+        },
+        {
+          "id": "g4_addition_large_numbers_007",
+          "prompt": "9999 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_008",
+          "prompt": "4800 + 5200",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_009",
+          "prompt": "6500 + 3490",
+          "responseType": "numeric",
+          "correctAnswer": 9990
+        },
+        {
+          "id": "g4_addition_large_numbers_010",
+          "prompt": "7200 + 1800",
+          "responseType": "numeric",
+          "correctAnswer": 9000
+        },
+        {
+          "id": "g4_addition_large_numbers_011",
+          "prompt": "5555 + 3333",
+          "responseType": "numeric",
+          "correctAnswer": 8888
+        },
+        {
+          "id": "g4_addition_large_numbers_012",
+          "prompt": "8010 + 1980",
+          "responseType": "numeric",
+          "correctAnswer": 9990
+        },
+        {
+          "id": "g4_addition_large_numbers_013",
+          "prompt": "4321 + 3210",
+          "responseType": "numeric",
+          "correctAnswer": 7531
+        },
+        {
+          "id": "g4_addition_large_numbers_014",
+          "prompt": "6543 + 3456",
+          "responseType": "numeric",
+          "correctAnswer": 9999
+        },
+        {
+          "id": "g4_addition_large_numbers_015",
+          "prompt": "7777 + 1234",
+          "responseType": "numeric",
+          "correctAnswer": 9011
+        },
+        {
+          "id": "g4_addition_large_numbers_016",
+          "prompt": "8900 + 450",
+          "responseType": "numeric",
+          "correctAnswer": 9350
+        },
+        {
+          "id": "g4_addition_large_numbers_017",
+          "prompt": "7600 + 2400",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_018",
+          "prompt": "5400 + 4600",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_019",
+          "prompt": "2750 + 7250",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_020",
+          "prompt": "4100 + 5900",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g4_addition_large_numbers_021",
+          "prompt": "6800 + 3150",
+          "responseType": "numeric",
+          "correctAnswer": 9950
+        },
+        {
+          "id": "g4_addition_large_numbers_022",
+          "prompt": "7200 + 1800",
+          "responseType": "numeric",
+          "correctAnswer": 9000
+        },
+        {
+          "id": "g4_addition_large_numbers_023",
+          "prompt": "9990 + 90",
+          "responseType": "numeric",
+          "correctAnswer": 10080
+        },
+        {
+          "id": "g4_addition_large_numbers_024",
+          "prompt": "8888 + 1111",
+          "responseType": "numeric",
+          "correctAnswer": 9999
+        },
+        {
+          "id": "g4_addition_large_numbers_025",
+          "prompt": "3456 + 6543",
+          "responseType": "numeric",
+          "correctAnswer": 9999
+        },
+        {
+          "id": "g4_addition_large_numbers_026",
+          "prompt": "2100 + 3900",
+          "responseType": "numeric",
+          "correctAnswer": 6000
+        },
+        {
+          "id": "g4_addition_large_numbers_027",
+          "prompt": "4800 + 1500",
+          "responseType": "numeric",
+          "correctAnswer": 6300
+        },
+        {
+          "id": "g4_addition_large_numbers_028",
+          "prompt": "9999 + 999",
+          "responseType": "numeric",
+          "correctAnswer": 10998
+        },
+        {
+          "id": "g4_addition_large_numbers_029",
+          "prompt": "7000 + 2999",
+          "responseType": "numeric",
+          "correctAnswer": 9999
+        },
+        {
+          "id": "g4_addition_large_numbers_030",
+          "prompt": "6000 + 3999",
+          "responseType": "numeric",
+          "correctAnswer": 9999
+        }
+      ]
+    },
+    {
+      "id": "subtraction_large_numbers",
+      "label": "Subtraktion av större tal",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g4_subtraction_large_numbers_001",
+          "prompt": "9000 − 4500",
+          "responseType": "numeric",
+          "correctAnswer": 4500
+        },
+        {
+          "id": "g4_subtraction_large_numbers_002",
+          "prompt": "7000 − 2890",
+          "responseType": "numeric",
+          "correctAnswer": 4110
+        },
+        {
+          "id": "g4_subtraction_large_numbers_003",
+          "prompt": "8000 − 4560",
+          "responseType": "numeric",
+          "correctAnswer": 3440
+        },
+        {
+          "id": "g4_subtraction_large_numbers_004",
+          "prompt": "9999 − 3210",
+          "responseType": "numeric",
+          "correctAnswer": 6789
+        },
+        {
+          "id": "g4_subtraction_large_numbers_005",
+          "prompt": "6500 − 2780",
+          "responseType": "numeric",
+          "correctAnswer": 3720
+        },
+        {
+          "id": "g4_subtraction_large_numbers_006",
+          "prompt": "7200 − 3900",
+          "responseType": "numeric",
+          "correctAnswer": 3300
+        },
+        {
+          "id": "g4_subtraction_large_numbers_007",
+          "prompt": "5400 − 2100",
+          "responseType": "numeric",
+          "correctAnswer": 3300
+        },
+        {
+          "id": "g4_subtraction_large_numbers_008",
+          "prompt": "8800 − 4400",
+          "responseType": "numeric",
+          "correctAnswer": 4400
+        },
+        {
+          "id": "g4_subtraction_large_numbers_009",
+          "prompt": "6000 − 3330",
+          "responseType": "numeric",
+          "correctAnswer": 2670
+        },
+        {
+          "id": "g4_subtraction_large_numbers_010",
+          "prompt": "7500 − 4990",
+          "responseType": "numeric",
+          "correctAnswer": 2510
+        },
+        {
+          "id": "g4_subtraction_large_numbers_011",
+          "prompt": "4300 − 1290",
+          "responseType": "numeric",
+          "correctAnswer": 3010
+        },
+        {
+          "id": "g4_subtraction_large_numbers_012",
+          "prompt": "9000 − 6780",
+          "responseType": "numeric",
+          "correctAnswer": 2220
+        },
+        {
+          "id": "g4_subtraction_large_numbers_013",
+          "prompt": "8100 − 4050",
+          "responseType": "numeric",
+          "correctAnswer": 4050
+        },
+        {
+          "id": "g4_subtraction_large_numbers_014",
+          "prompt": "9999 − 8888",
+          "responseType": "numeric",
+          "correctAnswer": 1111
+        },
+        {
+          "id": "g4_subtraction_large_numbers_015",
+          "prompt": "7000 − 1999",
+          "responseType": "numeric",
+          "correctAnswer": 5001
+        },
+        {
+          "id": "g4_subtraction_large_numbers_016",
+          "prompt": "6500 − 3490",
+          "responseType": "numeric",
+          "correctAnswer": 3010
+        },
+        {
+          "id": "g4_subtraction_large_numbers_017",
+          "prompt": "5400 − 2600",
+          "responseType": "numeric",
+          "correctAnswer": 2800
+        },
+        {
+          "id": "g4_subtraction_large_numbers_018",
+          "prompt": "8800 − 5500",
+          "responseType": "numeric",
+          "correctAnswer": 3300
+        },
+        {
+          "id": "g4_subtraction_large_numbers_019",
+          "prompt": "7600 − 3400",
+          "responseType": "numeric",
+          "correctAnswer": 4200
+        },
+        {
+          "id": "g4_subtraction_large_numbers_020",
+          "prompt": "6000 − 2750",
+          "responseType": "numeric",
+          "correctAnswer": 3250
+        },
+        {
+          "id": "g4_subtraction_large_numbers_021",
+          "prompt": "5000 − 2450",
+          "responseType": "numeric",
+          "correctAnswer": 2550
+        },
+        {
+          "id": "g4_subtraction_large_numbers_022",
+          "prompt": "4300 − 2150",
+          "responseType": "numeric",
+          "correctAnswer": 2150
+        },
+        {
+          "id": "g4_subtraction_large_numbers_023",
+          "prompt": "3900 − 1800",
+          "responseType": "numeric",
+          "correctAnswer": 2100
+        },
+        {
+          "id": "g4_subtraction_large_numbers_024",
+          "prompt": "7200 − 3150",
+          "responseType": "numeric",
+          "correctAnswer": 4050
+        },
+        {
+          "id": "g4_subtraction_large_numbers_025",
+          "prompt": "8100 − 3900",
+          "responseType": "numeric",
+          "correctAnswer": 4200
+        },
+        {
+          "id": "g4_subtraction_large_numbers_026",
+          "prompt": "9000 − 4500",
+          "responseType": "numeric",
+          "correctAnswer": 4500
+        },
+        {
+          "id": "g4_subtraction_large_numbers_027",
+          "prompt": "9999 − 5555",
+          "responseType": "numeric",
+          "correctAnswer": 4444
+        },
+        {
+          "id": "g4_subtraction_large_numbers_028",
+          "prompt": "8888 − 4444",
+          "responseType": "numeric",
+          "correctAnswer": 4444
+        },
+        {
+          "id": "g4_subtraction_large_numbers_029",
+          "prompt": "7777 − 3333",
+          "responseType": "numeric",
+          "correctAnswer": 4444
+        },
+        {
+          "id": "g4_subtraction_large_numbers_030",
+          "prompt": "6000 − 1234",
+          "responseType": "numeric",
+          "correctAnswer": 4766
+        }
+      ]
+    },
+    {
+      "id": "multiplication",
+      "label": "Multiplikation",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "sourceNotes": [
+        "Tvåsiffrigt × tvåsiffrigt, uppdelning i steg"
+      ],
+      "questions": [
+        {
+          "id": "g4_multiplication_001",
+          "prompt": "45 × 12",
+          "responseType": "numeric",
+          "correctAnswer": 540
+        },
+        {
+          "id": "g4_multiplication_002",
+          "prompt": "36 × 14",
+          "responseType": "numeric",
+          "correctAnswer": 504
+        },
+        {
+          "id": "g4_multiplication_003",
+          "prompt": "25 × 25",
+          "responseType": "numeric",
+          "correctAnswer": 625
+        },
+        {
+          "id": "g4_multiplication_004",
+          "prompt": "32 × 18",
+          "responseType": "numeric",
+          "correctAnswer": 576
+        },
+        {
+          "id": "g4_multiplication_005",
+          "prompt": "48 × 16",
+          "responseType": "numeric",
+          "correctAnswer": 768
+        },
+        {
+          "id": "g4_multiplication_006",
+          "prompt": "27 × 19",
+          "responseType": "numeric",
+          "correctAnswer": 513
+        },
+        {
+          "id": "g4_multiplication_007",
+          "prompt": "56 × 22",
+          "responseType": "numeric",
+          "correctAnswer": 1232
+        },
+        {
+          "id": "g4_multiplication_008",
+          "prompt": "44 × 33",
+          "responseType": "numeric",
+          "correctAnswer": 1452
+        },
+        {
+          "id": "g4_multiplication_009",
+          "prompt": "28 × 17",
+          "responseType": "numeric",
+          "correctAnswer": 476
+        },
+        {
+          "id": "g4_multiplication_010",
+          "prompt": "39 × 15",
+          "responseType": "numeric",
+          "correctAnswer": 585
+        },
+        {
+          "id": "g4_multiplication_011",
+          "prompt": "72 × 12",
+          "responseType": "numeric",
+          "correctAnswer": 864
+        },
+        {
+          "id": "g4_multiplication_012",
+          "prompt": "64 × 14",
+          "responseType": "numeric",
+          "correctAnswer": 896
+        },
+        {
+          "id": "g4_multiplication_013",
+          "prompt": "88 × 11",
+          "responseType": "numeric",
+          "correctAnswer": 968
+        },
+        {
+          "id": "g4_multiplication_014",
+          "prompt": "96 × 13",
+          "responseType": "numeric",
+          "correctAnswer": 1248
+        },
+        {
+          "id": "g4_multiplication_015",
+          "prompt": "54 × 18",
+          "responseType": "numeric",
+          "correctAnswer": 972
+        },
+        {
+          "id": "g4_multiplication_016",
+          "prompt": "63 × 27",
+          "responseType": "numeric",
+          "correctAnswer": 1701
+        },
+        {
+          "id": "g4_multiplication_017",
+          "prompt": "42 × 24",
+          "responseType": "numeric",
+          "correctAnswer": 1008
+        },
+        {
+          "id": "g4_multiplication_018",
+          "prompt": "35 × 28",
+          "responseType": "numeric",
+          "correctAnswer": 980
+        },
+        {
+          "id": "g4_multiplication_019",
+          "prompt": "29 × 31",
+          "responseType": "numeric",
+          "correctAnswer": 899
+        },
+        {
+          "id": "g4_multiplication_020",
+          "prompt": "47 × 26",
+          "responseType": "numeric",
+          "correctAnswer": 1222
+        },
+        {
+          "id": "g4_multiplication_021",
+          "prompt": "58 × 17",
+          "responseType": "numeric",
+          "correctAnswer": 986
+        },
+        {
+          "id": "g4_multiplication_022",
+          "prompt": "69 × 14",
+          "responseType": "numeric",
+          "correctAnswer": 966
+        },
+        {
+          "id": "g4_multiplication_023",
+          "prompt": "73 × 12",
+          "responseType": "numeric",
+          "correctAnswer": 876
+        },
+        {
+          "id": "g4_multiplication_024",
+          "prompt": "81 × 15",
+          "responseType": "numeric",
+          "correctAnswer": 1215
+        },
+        {
+          "id": "g4_multiplication_025",
+          "prompt": "99 × 11",
+          "responseType": "numeric",
+          "correctAnswer": 1089
+        },
+        {
+          "id": "g4_multiplication_026",
+          "prompt": "84 × 16",
+          "responseType": "numeric",
+          "correctAnswer": 1344
+        },
+        {
+          "id": "g4_multiplication_027",
+          "prompt": "92 × 13",
+          "responseType": "numeric",
+          "correctAnswer": 1196
+        },
+        {
+          "id": "g4_multiplication_028",
+          "prompt": "75 × 22",
+          "responseType": "numeric",
+          "correctAnswer": 1650
+        },
+        {
+          "id": "g4_multiplication_029",
+          "prompt": "66 × 33",
+          "responseType": "numeric",
+          "correctAnswer": 2178
+        },
+        {
+          "id": "g4_multiplication_030",
+          "prompt": "55 × 44",
+          "responseType": "numeric",
+          "correctAnswer": 2420
+        }
+      ]
+    },
+    {
+      "id": "division",
+      "label": "Division",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g4_division_001",
+          "prompt": "240 ÷ 12",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g4_division_002",
+          "prompt": "360 ÷ 15",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g4_division_003",
+          "prompt": "480 ÷ 20",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g4_division_004",
+          "prompt": "540 ÷ 18",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_005",
+          "prompt": "720 ÷ 24",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_006",
+          "prompt": "900 ÷ 30",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_007",
+          "prompt": "810 ÷ 27",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_008",
+          "prompt": "960 ÷ 32",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_009",
+          "prompt": "1200 ÷ 25",
+          "responseType": "numeric",
+          "correctAnswer": 48
+        },
+        {
+          "id": "g4_division_010",
+          "prompt": "1500 ÷ 30",
+          "responseType": "numeric",
+          "correctAnswer": 50
+        },
+        {
+          "id": "g4_division_011",
+          "prompt": "1800 ÷ 45",
+          "responseType": "numeric",
+          "correctAnswer": 40
+        },
+        {
+          "id": "g4_division_012",
+          "prompt": "2100 ÷ 50",
+          "responseType": "numeric",
+          "correctAnswer": 42
+        },
+        {
+          "id": "g4_division_013",
+          "prompt": "2700 ÷ 90",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_014",
+          "prompt": "3600 ÷ 60",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g4_division_015",
+          "prompt": "4500 ÷ 75",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g4_division_016",
+          "prompt": "600 ÷ 12",
+          "responseType": "numeric",
+          "correctAnswer": 50
+        },
+        {
+          "id": "g4_division_017",
+          "prompt": "840 ÷ 14",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g4_division_018",
+          "prompt": "990 ÷ 18",
+          "responseType": "numeric",
+          "correctAnswer": 55
+        },
+        {
+          "id": "g4_division_019",
+          "prompt": "660 ÷ 22",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g4_division_020",
+          "prompt": "550 ÷ 25",
+          "responseType": "numeric",
+          "correctAnswer": 22
+        }
+      ]
+    },
+    {
+      "id": "statistics",
+      "label": "Statistik",
+      "questionCount": 10,
+      "declaredQuestionCount": 10,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g4_statistics_001",
+          "prompt": "Tolka stapeldiagram med antal elever",
+          "responseType": "mixed",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g4_statistics_002",
+          "prompt": "Vilken dag hade högst värde?",
+          "responseType": "mixed",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g4_statistics_003",
+          "prompt": "Vilken dag hade lägst värde?",
+          "responseType": "mixed",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g4_statistics_004",
+          "prompt": "Hur mycket ökade mellan dag 2 och 3?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_005",
+          "prompt": "Hur mycket minskade mellan dag 4 och 5?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_006",
+          "prompt": "Vad är medelvärdet av 3, 7, 9?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_007",
+          "prompt": "Vad är medianen av 2, 5, 8, 9, 11?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_008",
+          "prompt": "Vad är typvärdet i 4, 4, 7, 9, 9, 9?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_009",
+          "prompt": "Hur stor är skillnaden mellan max och min?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g4_statistics_010",
+          "prompt": "Vilken dag steg värdet mest?",
+          "responseType": "mixed"
+        }
+      ]
+    }
+  ]
+}

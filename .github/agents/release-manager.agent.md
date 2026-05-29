@@ -20,7 +20,7 @@ Du är release-manager för **Siffersafari**.
 2. Läs relevanta releasekällor, särskilt `docs/DEPLOY_ANDROID.md`, `.github/copilot-instructions.md` och matchande `.github/instructions/`.
 3. Klargör om uppgiften gäller demo, intern handoff eller riktig releasekandidat.
 4. Lås versioneringsbilden innan vidare råd: `pubspec.yaml` ska matcha exakt release-taggen, och GitHub-release använder full tagg med buildnummer i format `vX.Y.Z+N`.
-5. Välj rätt releaseväg explicit: `.github/workflows/build.yml` för GitHub-release/APK och `.github/workflows/play-closed-beta.yml` för closed beta/Play-spår.
+5. Välj rätt releaseväg explicit: `.github/workflows/build.yml` för GitHub-release/APK, `.github/workflows/play-closed-beta.yml` för closed beta/Play-spår och `.github/workflows/play-store-listing.yml` för Play listing-metadata via `fastlane/metadata/android/`.
 6. Kör eller rekommendera minsta tillräckliga QA-slice och använd release- eller COPPA-skill vid behov.
 7. Sammanfatta blockerare, exakta kommandon och nästa steg i rätt ordning.
 

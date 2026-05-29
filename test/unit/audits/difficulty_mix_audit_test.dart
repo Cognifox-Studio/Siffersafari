@@ -56,6 +56,26 @@ void main() {
               } else if (text.contains('negativ') ||
                   text.contains('under noll')) {
                 specialTypes.add('negative_numbers');
+              } else if (text.contains('ekvation = ?')) {
+                specialTypes.add('equations');
+              } else if (text.contains('potenser = ?')) {
+                specialTypes.add('powers');
+              } else if (text.contains('proportionalitet = ?')) {
+                specialTypes.add('proportionality');
+              } else if (text.contains('geometri = ?') ||
+                  text.contains('geometrisk transformation = ?')) {
+                specialTypes.add('geometry');
+              } else if (text.contains('prioriteringsregler = ?')) {
+                specialTypes.add('precedence');
+              } else if (text.contains('linjär funktion = ?')) {
+                specialTypes.add('linear_function');
+              } else if (text.contains('saknas i ordningen')) {
+                specialTypes.add('number_sense');
+              } else if (text.contains('kommer före') ||
+                  text.contains('kommer efter') ||
+                  text.contains('vilket är störst') ||
+                  text.contains('vilket är minst')) {
+                specialTypes.add('number_sense');
               } else if (text.contains('?') || text.contains('saknas')) {
                 specialTypes.add('missing_number');
               } else {
@@ -161,7 +181,6 @@ ExpectedRange _expectedRange(int grade, OperationType op) {
   // These are MINIMUM acceptable values - the generator should produce AT LEAST this much variety
   //
   // KNOWN LIMITATIONS:
-  // - M5b (Åk 7-9) addition/subtraction scaling not implemented yet (stuck at ~100)
   // - Division max values are higher than ideal due to dividend = divisor * quotient
   // - Multiplication has low uniqueness due to small factor ranges
   return switch (op) {
@@ -180,13 +199,10 @@ ExpectedRange _expectedRange(int grade, OperationType op) {
           const ExpectedRange(min: 0, max: 1000, minRange: 400), // Actual ~1000
         6 =>
           const ExpectedRange(min: 0, max: 2000, minRange: 800), // Actual ~2000
-        // M5b follow-up: Implement proper scaling for grades 7-9
-        // Currently stuck at ~100 due to missing M5b number range expansion
-        // This is a known limitation - not a regression
-        7 => const ExpectedRange(min: 0, max: 100, minRange: 20),
-        8 => const ExpectedRange(min: 0, max: 100, minRange: 20),
-        9 => const ExpectedRange(min: 0, max: 100, minRange: 20),
-        _ => const ExpectedRange(min: 0, max: 100, minRange: 20),
+        7 => const ExpectedRange(min: 0, max: 250, minRange: 50),
+        8 => const ExpectedRange(min: 0, max: 300, minRange: 60),
+        9 => const ExpectedRange(min: 0, max: 350, minRange: 70),
+        _ => const ExpectedRange(min: 0, max: 350, minRange: 50),
       },
     OperationType.multiplication => switch (grade) {
         1 => const ExpectedRange(min: 0, max: 5, minRange: 2),
@@ -215,7 +231,7 @@ ExpectedRange _expectedRange(int grade, OperationType op) {
       },
     OperationType.division => switch (grade) {
         1 => const ExpectedRange(min: 1, max: 5, minRange: 2),
-        2 => const ExpectedRange(min: 1, max: 10, minRange: 3),
+        2 => const ExpectedRange(min: 1, max: 50, minRange: 5),
         3 => const ExpectedRange(
             min: 1,
             max: 100,
@@ -276,10 +292,12 @@ void _validateSpecialTypes(
       (operation == OperationType.addition ||
           operation == OperationType.subtraction)) {
     expect(
-      types.contains('word_problem') || types.contains('missing_number'),
+      types.contains('word_problem') ||
+          types.contains('missing_number') ||
+          types.contains('number_sense'),
       isTrue,
       reason:
-          'Grades 1-3 add/sub should include word problems or missing numbers',
+          'Grades 1-3 add/sub should include word problems, missing numbers or number sense prompts',
     );
   }
 
@@ -303,7 +321,13 @@ void _validateSpecialTypes(
           t == 'probability_percent' ||
           t == 'statistics' ||
           t == 'negative_numbers' ||
-          t == 'time',
+          t == 'time' ||
+          t == 'equations' ||
+          t == 'powers' ||
+          t == 'proportionality' ||
+          t == 'geometry' ||
+          t == 'precedence' ||
+          t == 'linear_function',
     );
     expect(
       hasM5a,

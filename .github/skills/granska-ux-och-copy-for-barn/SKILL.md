@@ -1,13 +1,15 @@
 ---
 name: granska-ux-och-copy-for-barn
-description: "Reviews the current screen or flow to ensure texts are short (one verb + one target) and adult info (like settings) is isolated from child flows."
+description: "Review child-facing UI and copy so text stays short, action-driven and free from vuxeninnehåll i barnflödet. Use when a screen, dialog or flow needs a child-UX or copy pass."
 argument-hint: "Ange vilken skärm eller vilket flöde som ska granskas."
 ---
 
 # Granska UX och Copy för Barn
 
 ## När den ska användas
-När UI designas, ändras, eller när användaren ber om en UX-genomgång för barnens upplevelse i Siffersafari.
+- När en barnyta, dialog eller onboardingsekvens ska UX-granskas.
+- När copy behöver kortas till verb + mål.
+- När vuxeninnehåll eller för många val riskerar att läcka in i barnflödet.
 
 ## Syfte
 Säkerställa att gränssnittet är nedbantat till dess absolut enklaste form, utan förvirrande text-clutter eller valmöjligheter som överväldigar barnet.

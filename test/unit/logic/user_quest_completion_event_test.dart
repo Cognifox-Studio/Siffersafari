@@ -202,5 +202,66 @@ void main() {
         contains(unlockedItemId),
       );
     });
+
+    test('applicerar samma avslutade session högst en gång', () async {
+      await notifier.saveUser(
+        notifier.state.activeUser!.copyWith(
+          totalPoints: UserProgress.pointsPerLevel - 40,
+        ),
+      );
+
+      const question = Question(
+        id: 'q_idempotent_reward',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 5,
+        operand2: 4,
+        correctAnswer: 9,
+        wrongAnswers: [8, 10, 11],
+        explanation: '5 + 4 = 9',
+      );
+
+      const session = QuizSession(
+        sessionId: 's_idempotent_reward',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [question],
+        targetQuestionCount: 10,
+        correctAnswers: 10,
+        wrongAnswers: 0,
+        totalPoints: 40,
+        answers: {'q_idempotent_reward': 9},
+      );
+
+      await notifier.applyQuizResult(session);
+      final afterFirstApply = notifier.state.activeUser!;
+      final firstUnlockedItem = notifier.state.newlyUnlockedItem?.id;
+
+      await notifier.applyQuizResult(session);
+
+      final afterSecondApply = notifier.state.activeUser!;
+      expect(
+        afterSecondApply.totalQuizzesTaken,
+        afterFirstApply.totalQuizzesTaken,
+      );
+      expect(
+        afterSecondApply.totalQuestionsAnswered,
+        afterFirstApply.totalQuestionsAnswered,
+      );
+      expect(
+        afterSecondApply.totalCorrectAnswers,
+        afterFirstApply.totalCorrectAnswers,
+      );
+      expect(afterSecondApply.totalPoints, afterFirstApply.totalPoints);
+      expect(afterSecondApply.unlockedItems, afterFirstApply.unlockedItems);
+      expect(afterSecondApply.achievements, afterFirstApply.achievements);
+      expect(notifier.state.lastReward?.bonusPoints, 0);
+      expect(notifier.state.lastQuestCompletion, isNull);
+      expect(notifier.state.lastLevelUp, isNull);
+      expect(notifier.state.newlyUnlockedItem, isNull);
+      expect(firstUnlockedItem, isNotNull);
+      expect(repository.getQuizHistory('u1'), hasLength(1));
+    });
   });
 }

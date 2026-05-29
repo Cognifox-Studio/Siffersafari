@@ -8,7 +8,9 @@ import 'package:uuid/uuid.dart';
 
 import '../config/app_features.dart';
 import '../config/difficulty_config.dart';
+import 'question_mix_policy.dart';
 
+part 'question_generator_service_helpers.dart';
 part 'question_generator_service_impl.dart';
 
 /// Generates randomized math questions for quiz sessions.
@@ -22,7 +24,8 @@ part 'question_generator_service_impl.dart';
 ///
 /// Uses [Random] for reproducible testing (inject custom instance) and
 /// [Uuid] for unique question IDs.
-class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
+class QuestionGeneratorService
+    with _QuestionGeneratorServiceHelpers, _QuestionGeneratorServiceImpl {
   QuestionGeneratorService({
     Random? random,
     Uuid? uuid,
@@ -123,86 +126,18 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
           )
         : operationType;
 
-    final shouldTryMissingNumber = missingNumberEnabled &&
-        gradeLevel != null &&
-        gradeLevel >= 2 &&
-        gradeLevel <= 3 &&
-        (operation == OperationType.addition ||
-            operation == OperationType.subtraction) &&
-        _random.nextDouble() < missingNumberChance;
-
     final roll = _random.nextDouble();
-
-    // Mix distribution for M4 (Åk 4–6): keep “special” items present but not
-    // dominating, and scale them slightly with internal step.
-    final isM4Mix = operationType == OperationType.mixed &&
-        gradeLevel != null &&
-        gradeLevel >= 4 &&
-        gradeLevel <= 6;
-    final isM5aMix = operationType == OperationType.mixed &&
-        gradeLevel != null &&
-        gradeLevel >= 7 &&
-        gradeLevel <= 9;
-
-    final statsChance = clampedMixStep <= 3
-        ? 0.10
-        : clampedMixStep <= 6
-            ? 0.12
-            : 0.12;
-    final probabilityChance = clampedMixStep <= 3
-        ? 0.10
-        : clampedMixStep <= 6
-            ? 0.12
-            : 0.12;
-
-    final shouldTryM4Statistics = isM4Mix && roll < statsChance;
-    final shouldTryM4Probability = isM4Mix &&
-        roll >= statsChance &&
-        roll < (statsChance + probabilityChance);
-
-    // Skolverket (centralt innehåll Åk 4–6) inkluderar procent.
-    // Vi introducerar detta försiktigt (endast Åk 5–6, höga steps) som Mix-special.
-    final shouldTryM4Percent = isM4Mix &&
-        (gradeLevel == 5 || gradeLevel == 6) &&
-        clampedMixStep >= 9 &&
-        roll >= (statsChance + probabilityChance) &&
-        roll < (statsChance + probabilityChance + 0.06);
-
-    // Skolverket (Åk 4–6) nämner negativa tal. Vi introducerar detta sent i
-    // mellanstadiet (Åk 5–6, höga steps) som Mix-special för att inte påverka
-    // kärn-flödets +/−-regler.
-    final shouldTryM4NegativeNumbers = isM4Mix &&
-        (gradeLevel == 5 || gradeLevel == 6) &&
-        clampedMixStep >= 9 &&
-        roll >= (statsChance + probabilityChance + 0.06) &&
-        roll < (statsChance + probabilityChance + 0.10);
-
-    final shouldTryM5aPercent = isM5aMix && clampedMixStep >= 4 && roll < 0.18;
-    final shouldTryM5aPower = isM5aMix &&
-        gradeLevel >= 8 &&
-        clampedMixStep >= 7 &&
-        roll >= 0.18 &&
-        roll < 0.30;
-    final shouldTryM5aPrecedence =
-        isM5aMix && clampedMixStep >= 6 && roll >= 0.30 && roll < 0.42;
-
-    final shouldTryWordProblemAddSub = wordProblemsEnabled &&
-        gradeLevel != null &&
-        gradeLevel >= 1 &&
-        gradeLevel <= 3 &&
-        roll < wordProblemsChance &&
-        (operation == OperationType.addition ||
-            operation == OperationType.subtraction);
-
-    // Conservative rollout: only Åk 3 for ×/÷ text problems.
-    // In Mix mode, we delay these a bit so ×/÷ can be introduced first without
-    // adding extra reading load immediately.
-    final shouldTryWordProblemMulDiv = wordProblemsEnabled &&
-        gradeLevel == 3 &&
-        (operationType != OperationType.mixed || clampedMixStep >= 7) &&
-        roll < wordProblemsChance &&
-        (operation == OperationType.multiplication ||
-            operation == OperationType.division);
+    final mixPolicy = QuestionMixPolicy(
+      requestedOperation: operationType,
+      selectedOperation: operation,
+      gradeLevel: gradeLevel,
+      clampedStep: clampedMixStep,
+      roll: roll,
+      wordProblemsEnabled: wordProblemsEnabled,
+      wordProblemsChance: wordProblemsChance,
+    );
+    final shouldTryWordProblemAddSub = mixPolicy.shouldTryWordProblemAddSub;
+    final shouldTryWordProblemMulDiv = mixPolicy.shouldTryWordProblemMulDiv;
 
     final step = difficultyStepsByOperation != null
         ? (difficultyStepsByOperation[operation] ??
@@ -210,12 +145,29 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
         : (difficultyStep ??
             DifficultyConfig.initialStepForDifficulty(difficulty));
 
-    if (shouldTryM4Statistics) {
+    final shouldTryMissingNumber = missingNumberEnabled &&
+        gradeLevel != null &&
+        gradeLevel >= 2 &&
+        gradeLevel <= 3 &&
+        ((operation == OperationType.addition ||
+                operation == OperationType.subtraction) ||
+            ((operation == OperationType.multiplication ||
+                    operation == OperationType.division) &&
+                step >= 3)) &&
+        _random.nextDouble() < missingNumberChance;
+
+    final shouldTryGrade1NumberSense = gradeLevel == 1 &&
+        step <= 6 &&
+        (operation == OperationType.addition ||
+            operation == OperationType.subtraction) &&
+        _random.nextDouble() < 0.18;
+
+    if (mixPolicy.shouldTryM4Statistics) {
       // Use addition's step/range as the base for value scaling.
       final statsStep = mixBaselineStep;
 
       final statsRange = DifficultyConfig.curriculumNumberRangeForStep(
-        gradeLevel: gradeLevel,
+        gradeLevel: gradeLevel!,
         operationType: OperationType.addition,
         difficultyStep: statsStep,
       );
@@ -227,7 +179,7 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM4Probability) {
+    if (mixPolicy.shouldTryM4Probability) {
       final probStep = mixBaselineStep;
 
       return _generateM4ProbabilityQuestion(
@@ -236,7 +188,21 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM4Percent) {
+    if (mixPolicy.shouldTryLowGradeStatistics) {
+      return _generateLowGradeStatisticsQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+      );
+    }
+
+    if (mixPolicy.shouldTryLowGradeChance) {
+      return _generateLowGradeChanceQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+      );
+    }
+
+    if (mixPolicy.shouldTryM4Percent) {
       final percentStep = mixBaselineStep;
 
       // Reuse the M5a generator (quiz-format, heltalssvar).
@@ -246,7 +212,7 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM4NegativeNumbers) {
+    if (mixPolicy.shouldTryM4NegativeNumbers) {
       final negStep = mixBaselineStep;
 
       return _generateM4NegativeNumbersQuestion(
@@ -255,7 +221,7 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM5aPercent) {
+    if (mixPolicy.shouldTryM5aPercent) {
       final percentStep = mixBaselineStep;
 
       return _generateM5aPercentQuestion(
@@ -264,7 +230,7 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM5aPower) {
+    if (mixPolicy.shouldTryM5aPower) {
       final powerStep = mixBaselineStep;
 
       return _generateM5aPowerQuestion(
@@ -273,7 +239,26 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    if (shouldTryM5aPrecedence) {
+    if (mixPolicy.shouldTryM5aProportionality) {
+      final proportionalityStep = mixBaselineStep;
+
+      return _generateM5aProportionalityQuestion(
+        difficulty,
+        difficultyStep: proportionalityStep,
+      );
+    }
+
+    if (mixPolicy.shouldTryM5aEquation) {
+      final equationStep = mixBaselineStep;
+
+      return _generateM5aEquationQuestion(
+        difficulty,
+        gradeLevel: gradeLevel!,
+        difficultyStep: equationStep,
+      );
+    }
+
+    if (mixPolicy.shouldTryM5aPrecedence) {
       final precedenceStep = mixBaselineStep;
 
       return _generateM5aPrecedenceQuestion(
@@ -282,12 +267,7 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    // M5b: Introduktion av visualiserad matematik för Åk 7–9 (steg 8+).
-    // Börjar med linjära funktioner enbart i textformat.
-    final shouldTryM5bLinearFunction =
-        isM5aMix && clampedMixStep >= 8 && roll >= 0.42 && roll < 0.52;
-
-    if (shouldTryM5bLinearFunction) {
+    if (mixPolicy.shouldTryM5bLinearFunction) {
       final linearStep = mixBaselineStep;
 
       return _generateM5bLinearFunctionQuestion(
@@ -296,24 +276,17 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    // M5b delstep 2: Geometriska transformationer (spegling, rotation, translation)
-    final shouldTryM5bGeometricTransformation =
-        isM5aMix && clampedMixStep >= 8 && roll >= 0.52 && roll < 0.62;
-
-    if (shouldTryM5bGeometricTransformation) {
+    if (mixPolicy.shouldTryM5bGeometricTransformation) {
       final transformStep = mixBaselineStep;
 
       return _generateM5bGeometricTransformationQuestion(
         difficulty,
+        gradeLevel: gradeLevel!,
         difficultyStep: transformStep,
       );
     }
 
-    // M5b delstep 3: Avancerad statistik (distributioner, outliers, korrelationer)
-    final shouldTryM5bAdvancedStatistics =
-        isM5aMix && clampedMixStep >= 8 && roll >= 0.62 && roll < 0.72;
-
-    if (shouldTryM5bAdvancedStatistics) {
+    if (mixPolicy.shouldTryM5bAdvancedStatistics) {
       final statsStep = mixBaselineStep;
 
       return _generateM5bAdvancedStatisticsQuestion(
@@ -322,39 +295,12 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
       );
     }
 
-    // M4a: Tid (klockan) för Åk 2–3 i Mix-läge.
-    // Keep this rare and step-gated so Mix doesn't feel "special-heavy" when
-    // ×/÷ is first introduced (Åk 3).
-    final isM4TimeEligible =
-        operationType == OperationType.mixed && gradeLevel != null;
-
-    final timeChance = switch (gradeLevel) {
-      2 => clampedMixStep <= 4
-          ? 0.0
-          : clampedMixStep <= 7
-              ? 0.03
-              : 0.04,
-      3 => clampedMixStep <= 3
-          ? 0.0
-          : clampedMixStep <= 8
-              ? 0.02
-              : 0.03,
-      _ => 0.0,
-    };
-
-    // Use a high-roll window to keep it mostly disjoint from other Mix
-    // features that use low roll thresholds.
-    final shouldTryM4Time = isM4TimeEligible &&
-        timeChance > 0 &&
-        roll >= (0.85 - timeChance) &&
-        roll < 0.85;
-
-    if (shouldTryM4Time) {
+    if (mixPolicy.shouldTryM4Time) {
       final timeStep = mixBaselineStep;
 
       return _generateM4TimeQuestion(
         difficulty,
-        gradeLevel: gradeLevel,
+        gradeLevel: gradeLevel!,
         difficultyStep: timeStep,
       );
     }
@@ -373,6 +319,13 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
 
     switch (operation) {
       case OperationType.addition:
+        if (shouldTryGrade1NumberSense) {
+          return _generateGrade1AdditionNumberSenseQuestion(
+            range,
+            difficulty,
+            difficultyStep: step,
+          );
+        }
         if (shouldTryMissingNumber) {
           return _generateAdditionMissingNumber(
             range,
@@ -396,6 +349,13 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
           difficultyStep: step,
         );
       case OperationType.subtraction:
+        if (shouldTryGrade1NumberSense) {
+          return _generateGrade1SubtractionNumberSenseQuestion(
+            range,
+            difficulty,
+            difficultyStep: step,
+          );
+        }
         if (shouldTryMissingNumber) {
           return _generateSubtractionMissingNumber(
             range,
@@ -419,6 +379,14 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
           difficultyStep: step,
         );
       case OperationType.multiplication:
+        if (shouldTryMissingNumber) {
+          return _generateMultiplicationMissingNumber(
+            range,
+            difficulty,
+            gradeLevel: gradeLevel,
+            difficultyStep: step,
+          );
+        }
         if (shouldTryWordProblemMulDiv) {
           return _generateMultiplicationWordProblem(
             range,
@@ -441,6 +409,14 @@ class QuestionGeneratorService with _QuestionGeneratorServiceImpl {
           difficultyStep: step,
         );
       case OperationType.division:
+        if (shouldTryMissingNumber) {
+          return _generateDivisionMissingNumber(
+            range,
+            difficulty,
+            gradeLevel: gradeLevel,
+            difficultyStep: step,
+          );
+        }
         if (shouldTryWordProblemMulDiv) {
           return _generateDivisionWordProblem(
             range,

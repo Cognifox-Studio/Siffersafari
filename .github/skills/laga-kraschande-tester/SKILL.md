@@ -1,6 +1,6 @@
 ---
 name: laga-kraschande-tester
-description: "Focus on identifying root causes for timeout errors in integration tests or UI testing sync issues. Evaluates finders, timers, animations, and onboarding sync."
+description: "Identify and fix timeout, finder and sync failures in widget- or integration tests. Use when Flutter tests hang on onboarding, copy drift, timers, animations or pumpAndSettle()."
 argument-hint: "Klistra in felmeddelandet eller ange vilken testfil som kraschar."
 ---
 
@@ -8,8 +8,8 @@ argument-hint: "Klistra in felmeddelandet eller ange vilken testfil som kraschar
 
 ## När den ska användas
 - När ett integrationstest (t.ex. `app_smoke_test.dart`) failar med en `TimeoutException`.
-- När integrationstesterna fastnar meddelandet: "Timed out waiting for...".
-- När widget tester (eller integration) slänger varningar som "animation callback still active after dispose".
+- När integrationstester fastnar med meddelandet: "Timed out waiting for...".
+- När widget- eller integrationstester slänger varningar som "animation callback still active after dispose".
 - När `find.text('...')` letar efter gamla UI-titlar.
 
 ## Verktygslåda och felsökningsordning

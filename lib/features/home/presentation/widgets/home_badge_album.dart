@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/achievement_service_provider.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 
 class HomeBadgeAlbum extends ConsumerWidget {
@@ -98,6 +99,7 @@ class _BadgeTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final lockedBadgeCacheSize = imageCacheExtent(context, 24);
     final tileColor = unlocked
         ? _badgeColorFor(entry.id)
         : Colors.white.withValues(alpha: 0.08);
@@ -149,6 +151,8 @@ class _BadgeTile extends StatelessWidget {
                             'assets/images/ui/locked_badge.png',
                             key: Key('home_badge_locked_${entry.id}'),
                             fit: BoxFit.contain,
+                            cacheWidth: lockedBadgeCacheSize,
+                            cacheHeight: lockedBadgeCacheSize,
                           ),
                         ),
                 ),
@@ -175,8 +179,22 @@ class _BadgeTile extends StatelessWidget {
     switch (achievementId) {
       case AppConstants.firstQuizAchievement:
         return const Color(0xFF4E8E68);
+      case AppConstants.firstAdditionAchievement:
+        return const Color(0xFF2F9C73);
+      case AppConstants.firstSubtractionAchievement:
+        return const Color(0xFF5F82C9);
+      case AppConstants.firstMultiplicationAchievement:
+        return const Color(0xFFD58436);
+      case AppConstants.firstDivisionAchievement:
+        return const Color(0xFF3C92A8);
       case AppConstants.perfectScoreAchievement:
         return const Color(0xFFD9A326);
+      case AppConstants.hardQuizAchievement:
+        return const Color(0xFF8A5FD1);
+      case AppConstants.quiz10Achievement:
+        return const Color(0xFF8E6D3B);
+      case AppConstants.points500Achievement:
+        return const Color(0xFFD25A5A);
       case AppConstants.master100Achievement:
         return const Color(0xFF2E7BAA);
       case AppConstants.streak7Achievement:

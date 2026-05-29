@@ -1,11 +1,11 @@
 ---
 name: "release-go-no-go"
-description: "Gör en kort go/no-go-bedömning inför demo, handoff, GitHub-release, full taggning i format vX.Y.Z+N eller Play-flöde i Siffersafari med rätt QA- och policykontroller"
+description: "Use when releaseytan redan är känd och du behöver en kort go/no-go-bedömning för demo, handoff, GitHub-release eller Play-flöde med rätt QA- och policykontroller"
 argument-hint: "Beskriv om det gäller demo, intern överlämning, closed beta eller skarp release"
 agent: "agent"
 ---
 
-Gör en snabb men defensibel go/no-go-bedömning för aktuell releaseyta utan att missa policy, versionsdrift eller fel QA-nivå.
+Gör en snabb men defensibel go/no-go-bedömning för en redan identifierad releaseyta utan att missa policy, versionsdrift eller fel QA-nivå.
 
 Utgå från dessa källor:
 
@@ -18,6 +18,7 @@ Utgå från dessa källor:
 - [android/app/build.gradle.kts](../../android/app/build.gradle.kts)
 - [.github/workflows/build.yml](../workflows/build.yml)
 - [.github/workflows/play-closed-beta.yml](../workflows/play-closed-beta.yml)
+- [.github/workflows/play-store-listing.yml](../workflows/play-store-listing.yml)
 
 Arbetsordning:
 
@@ -27,6 +28,7 @@ Arbetsordning:
 4. Kontrollera att artifacts, workflow och releaseväg matchar scope:
 - `build.yml` för vanlig GitHub-release med APK på GitHub Releases.
 - `play-closed-beta.yml` för Play closed beta och AAB-/Play-spår.
+- `play-store-listing.yml` för Play listing-metadata som titel, beskrivningar, bilder och screenshots via `fastlane/metadata/android/`.
 - `.apk` är lokal/GitHub-verifieringsartefakt; `.aab` är Play-format.
 5. Om Android- eller Play-flödet berörs: gör även en liten COPPA- och policykontroll.
 6. Avsluta med `Go`, `Soft go` eller `No-go` och ange exakt vad som blockerar eller återstår.

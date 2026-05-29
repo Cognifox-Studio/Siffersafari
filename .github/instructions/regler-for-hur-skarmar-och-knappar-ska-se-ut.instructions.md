@@ -1,7 +1,7 @@
 ---
 name: "UI och presentation"
 description: "Use when editing Flutter UI, screens, dialogs, widgets, copy or layout under lib/features/**/presentation/** or lib/presentation/**. Covers feature-first ownership, Riverpod in UI, responsive layout and child-friendly UX."
-applyTo: "lib/features/**/presentation/**/*.dart, lib/presentation/**/*.dart"
+applyTo: "lib/**/presentation/**/*.dart, lib/presentation/**/*.dart"
 ---
 
 # UI, Presentation och UX-konventioner
@@ -31,8 +31,10 @@ applyTo: "lib/features/**/presentation/**/*.dart, lib/presentation/**/*.dart"
 
 ## Barnvänlig UX och copy
 - Håll copy kort: ett verb och ett mål, till exempel "Spela nu" eller "Tryck på en prick".
+- Undvik tekniska, formella eller tydligt vuxna formuleringar i barnets huvudflöde.
 - Ha en tydlig primär CTA per viktig vy. Sekundära val ska vara visuellt underordnade.
 - Lägg inte teknisk jargong, råa fel eller externa länkar i barnflödet. Sådant hör hemma i föräldraläget.
+- Lägg inställningar, dataradering, personuppgiftsnära copy och annan vuxen-UI bakom `Föräldraläge` i stället för i barnets huvudväg.
 - Skriv korrekt och enkel svenska. Lämna inte placeholders eller engelska resttexter i barnvyer.
 
 ## UI-assets och animation i presentation

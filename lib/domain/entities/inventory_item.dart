@@ -103,6 +103,14 @@ class InventoryConfig {
       ), // Knuffad ut till vänster för att hamna under utsträckta handen
       renderScale: 0.6,
     ),
+    InventoryItem(
+      id: 'item_shirt_explorer',
+      slot: 'body',
+      assetPath: 'assets/images/items/item_shirt_explorer_nobg.png',
+      name: 'Äventyrsskjorta',
+      offset: Alignment(0.0, 0.45),
+      renderScale: 0.95,
+    ),
     // --- Nyutvecklad grafik ---
     InventoryItem(
       id: 'item_camera_safari',
@@ -111,6 +119,46 @@ class InventoryConfig {
       name: 'Safariskamera',
       offset: Alignment(1.4, 0.45), // Placerad nära handen/magen
       renderScale: 0.45,
+    ),
+    InventoryItem(
+      id: 'item_camp_fruit_glade',
+      slot: 'camp',
+      assetPath: 'assets/images/story/map_fruit_glade.png',
+      name: 'Fruktgläntan',
+      renderScale: 0.58,
+      showInWardrobe: false,
+    ),
+    InventoryItem(
+      id: 'item_camp_bridge',
+      slot: 'camp',
+      assetPath: 'assets/images/story/map_bridge.png',
+      name: 'Repbron',
+      renderScale: 0.62,
+      showInWardrobe: false,
+    ),
+    InventoryItem(
+      id: 'item_camp_cartography',
+      slot: 'camp',
+      assetPath: 'assets/images/story/map_cartography_camp.png',
+      name: 'Kartlägret',
+      renderScale: 0.62,
+      showInWardrobe: false,
+    ),
+    InventoryItem(
+      id: 'item_camp_temple_gate',
+      slot: 'camp',
+      assetPath: 'assets/images/story/map_temple_gate.png',
+      name: 'Tempelporten',
+      renderScale: 0.62,
+      showInWardrobe: false,
+    ),
+    InventoryItem(
+      id: 'item_camp_treasure_cache',
+      slot: 'camp',
+      assetPath: 'assets/images/story/map_treasure_cache.png',
+      name: 'Skattgömman',
+      renderScale: 0.6,
+      showInWardrobe: false,
     ),
     InventoryItem(
       id: 'item_pet_zebra_companion',
@@ -133,7 +181,13 @@ class InventoryConfig {
     'item_hat_pirate',
     'item_glasses_nerd',
     'item_backpack_adventure',
+    'item_shirt_explorer',
     'item_camera_safari',
+    'item_camp_fruit_glade',
+    'item_camp_bridge',
+    'item_camp_cartography',
+    'item_camp_temple_gate',
+    'item_camp_treasure_cache',
     'item_pet_zebra_companion',
   ];
 
@@ -141,9 +195,43 @@ class InventoryConfig {
     for (final item in allItems) item.id: item,
   };
 
-  static final List<InventoryItem> wardrobeItems = allItems
-      .where((item) => item.showInWardrobe)
-      .toList(growable: false);
+  static final List<InventoryItem> wardrobeItems =
+      allItems.where((item) => item.showInWardrobe).toList(growable: false);
+
+  static List<String> validateRewardCatalog() {
+    final errors = <String>[];
+    final knownItemIds = <String>{};
+
+    for (final item in allItems) {
+      if (!knownItemIds.add(item.id)) {
+        errors.add('Duplicate inventory item id: ${item.id}');
+      }
+      if (item.name.trim().isEmpty) {
+        errors.add('Inventory item ${item.id} saknar namn');
+      }
+      if (item.assetPath.trim().isEmpty) {
+        errors.add('Inventory item ${item.id} saknar assetPath');
+      }
+    }
+
+    final rewardIds = levelUnlockOrderIds.toSet();
+    final unknownRewardIds = rewardIds.difference(knownItemIds);
+    final missingRewardIds = knownItemIds.difference(rewardIds);
+
+    if (levelUnlockOrderIds.length != rewardIds.length) {
+      errors.add('levelUnlockOrderIds innehåller dubbletter');
+    }
+    if (unknownRewardIds.isNotEmpty) {
+      errors.add('Okända reward ids: ${unknownRewardIds.join(', ')}');
+    }
+    if (missingRewardIds.isNotEmpty) {
+      errors.add(
+        'Items saknas i rewardordningen: ${missingRewardIds.join(', ')}',
+      );
+    }
+
+    return List<String>.unmodifiable(errors);
+  }
 
   static InventoryItem? nextLevelUnlock(Iterable<String> unlockedItemIds) {
     final unlocked = unlockedItemIds.toSet();

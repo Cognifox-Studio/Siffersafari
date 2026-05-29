@@ -15,6 +15,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/level_up_event.dart';
@@ -34,6 +35,7 @@ import 'package:siffersafari/presentation/widgets/star_rating.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 part 'results_screen_content.dart';
+part 'results_screen_practice_planner.dart';
 
 class ResultsScreen extends ConsumerStatefulWidget {
   const ResultsScreen({super.key});

@@ -5,6 +5,7 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/gen/assets.g.dart';
@@ -91,7 +92,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                   ),
                   const SizedBox(width: AppConstants.smallPadding),
                   _ReactionButton(
-                    label: 'TÃ¤nker',
+                    label: 'Tänker',
                     isSelected:
                         _selectedReaction == CharacterReaction.answerWrong,
                     onTap: () {
@@ -254,6 +255,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
       itemBuilder: (context, index) {
         final item = wardrobeItems[index];
         final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
+        final itemCacheSize = imageCacheExtent(context, 84);
 
         final poseKey = '${pose.name}_${item.id}';
         final isEquippedInPose = equippedItems.containsKey(poseKey) ||
@@ -262,6 +264,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     .any((e) => e.value == item.id && !e.key.contains('_')));
 
         return GestureDetector(
+          key: Key('wardrobe_item_${item.id}'),
           onTap: () {
             if (isUnlocked) {
               ref.read(audioServiceProvider).playClickSound();
@@ -295,7 +298,11 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Opacity(
                     opacity: isUnlocked ? 1.0 : 0.3,
-                    child: Image.asset(item.assetPath),
+                    child: Image.asset(
+                      item.assetPath,
+                      cacheWidth: itemCacheSize,
+                      cacheHeight: itemCacheSize,
+                    ),
                   ),
                 ),
                 if (!isUnlocked)

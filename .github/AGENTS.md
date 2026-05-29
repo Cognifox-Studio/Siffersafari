@@ -12,14 +12,22 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 ## Snabbstart
 
 - Om scopet är oklart: kör `.github/prompts/repo-start-routing.prompt.md` först.
-- Om en ny utvecklare eller kall agent behöver snabb repo-onboarding: kör `.github/prompts/onboard-new-dev.prompt.md`.
+- Om en ny utvecklare eller kall agent behöver snabb repo-onboarding: kör `.github/prompts/repo-start-routing.prompt.md` och be om onboardingläge.
+- Om uppgiften gäller assets, `_incoming/`, saknad grafik, app-ikoner eller Play-listingbilder: kör `.github/prompts/asset-flow-router.prompt.md`.
+- Om storykartan, home story-kortet, biome-previews eller theme bundles visar fel bild eller verkar ha fel ägare: kör `.github/prompts/story-theme-asset-pass.prompt.md`.
 - Om du behöver veta vilka instructions, skills eller prompts som faktiskt matchar en viss fil eller mapp: kör `.github/prompts/instruction-match-audit.prompt.md`.
-- Om ett analyze-, test-, emulator- eller buildfel precis klistrats in: kör `.github/prompts/qa-failure-router.prompt.md` först.
-- Om ett bygg-, test- eller appfel uppstår: kör `.github/prompts/felsok.prompt.md` först.
+- Om uppgiften gäller garderob, inventory eller `GameCharacter` och du vill få rätt call sites och QA-slice först: kör `.github/prompts/inventory-rendering-pass.prompt.md`.
+- Om uppgiften gäller garderob, inventory eller `GameCharacter`: läs `.github/instructions/regler-for-z-index-inventory.instructions.md` innan du ändrar equip-logik eller rendering.
+- Om ett analyze-, test-, emulator- eller buildfel precis klistrats in eller behöver första triage: kör `.github/prompts/qa-failure-router.prompt.md` först.
+- Om felet redan är konkret och du behöver djupare repo-felsökning efter triage: kör `.github/prompts/felsok.prompt.md`.
+- Om det är oklart om en releasefråga gäller AAB-upload, listing-sync, release notes eller GitHub-release: kör `.github/prompts/play-release-router.prompt.md` för första release-triage.
+- Om butikstext eller release notes behöver granskas: kör `.github/prompts/play-listing-copy-pass.prompt.md`.
+- Om du ska verifiera en diff, välja minsta QA före commit eller bedöma blandade ändringar: kör `.github/prompts/repo-qa-slice.prompt.md` eller `.github/skills/dubbelkolla-andrad-kod/SKILL.md`.
 - Om v1.5.0 resume- eller persistensscopet ska auditeras: kör `.github/prompts/resume-v150-persistence-audit.prompt.md`.
 - Om uppgiften bara gäller `.github/`: välj `Customization Maintainer` och använd gärna `.github/prompts/customization-audit-pass.prompt.md` eller `.github/skills/granska-github-customizations/SKILL.md`.
 - Om en read-only cleanup-audit behövs: kör `.github/prompts/night-cleanup-audit.prompt.md`.
-- Inför demo, handoff eller releasebedömning: kör `.github/prompts/release-go-no-go.prompt.md`.
+- Om du vill att ett nattpass ska göra låg-risk-cleanup automatiskt och lämna allt ocommittat: kör `.github/prompts/night-low-risk-apply.prompt.md`.
+- När releaseytan redan är känd och du behöver ett faktiskt `Go`/`Soft go`/`No-go`: kör `.github/prompts/release-go-no-go.prompt.md`.
 - Om användaren ber om verifiering eller du har en blandad diff: använd `.github/prompts/repo-qa-slice.prompt.md` eller relevant QA-skill direkt.
 
 ## Snabb routing
@@ -37,9 +45,10 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 ### QA och felsökning
 
 - `.github/skills/testa-att-appen-fungerar/SKILL.md` för repo-standardiserad QA.
+- `.github/skills/dubbelkolla-andrad-kod/SKILL.md` när aktuell diff eller staged scope ska klassificeras och få minsta tillräckliga verifiering före commit.
 - `.github/skills/laga-kraschande-tester/SKILL.md` när widget- eller integrationstester timeoutar eller tappar synk.
 - `.github/skills/hantera-flutter-test-animationer/SKILL.md` för animationstester, teardown-varningar och testrelaterade encoding-problem.
-- `.github/skills/testa-innan-vi-sparar/SKILL.md` för en liten pre-commit-verifiering.
+- `.github/skills/testa-innan-vi-sparar/SKILL.md` för sista lilla quality gate när implementationen redan är klar och du vill låsa rätt analyze-/testnivå.
 - `.github/skills/felsok-android-emulatorn/SKILL.md` för Pixel_6-, adb- och stale APK-problem.
 - `.github/skills/testa-att-quiz-sparas-ratt/SKILL.md` för resume, replay, session och resultat-merge.
 - `.github/skills/mocka-temporar-offline-session/SKILL.md` när offline- eller quizpersistensflöden behöver mockas i test.
@@ -53,7 +62,9 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 ### Audit och specialspår
 
 - `.github/skills/granska-github-customizations/SKILL.md` för path-, trigger- och dupliceringsaudit i `.github/`.
+- `.github/skills/faststall-spelar-statistik/SKILL.md` när funnel-events, payload-fält eller triggerpunkter i lokal analytics ändras.
 - `.github/skills/uppdatera-dokumentationen/SKILL.md` när docs måste spegla verkligheten exakt.
+- `.github/skills/synka-play-assets/SKILL.md` när Play Console-screenshots eller listing-bilder ska kopieras in i Fastlane-metadata.
 - `.github/skills/granska-legacy-hive-format/SKILL.md` för evidensbaserad audit innan legacy-format eller fallback-parsning städas bort.
 - `.github/skills/verifiera-coppa-regler/SKILL.md` för policy-, tracking- och barnsäkera compliancekontroller.
 - `.github/skills/kolla-om-appen-ar-redo-att-slappas/SKILL.md` för release readiness.

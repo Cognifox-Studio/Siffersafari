@@ -48,10 +48,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _checkOnboarding(String userId) {
     if (_onboardingPushInFlight || OnboardingScreen.isActive) return;
 
-    final repo = ref.read(localStorageRepositoryProvider);
-    final done = repo.isOnboardingDone(userId);
+    final done = ref.read(onboardingCompletionProvider(userId));
 
-    if (done != true) {
+    if (!done) {
       _onboardingPushInFlight = true;
       Navigator.of(context)
           .push(
@@ -266,6 +265,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return AppAudioLevel.values[index];
   }
 
+  IconData _primaryButtonIcon(HomePrimaryAction action) {
+    return switch (action) {
+      HomePrimaryAction.resumeQuiz => Icons.play_circle_fill_rounded,
+      HomePrimaryAction.openStoryMap => Icons.map_rounded,
+      HomePrimaryAction.startStoryQuest => Icons.explore_rounded,
+      HomePrimaryAction.startFreePlay => Icons.play_arrow_rounded,
+    };
+  }
+
   void _startOrResumePrimaryQuiz({
     required UserProgress user,
     required Set<OperationType> allowedOps,
@@ -366,17 +374,18 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(userProvider, (previous, next) {
-      final nextUser = next.activeUser;
-      if (nextUser != null) {
-        _checkUserData(nextUser.userId);
-      }
-    });
+    ref.listen<String?>(
+      userProvider.select((state) => state.activeUser?.userId),
+      (previousUserId, nextUserId) {
+        if (nextUserId != null) {
+          _checkUserData(nextUserId);
+        }
+      },
+    );
 
-    final userState = ref.watch(userProvider);
-    final user = userState.activeUser;
-    final quizState = ref.watch(quizProvider);
-    final storyProgress = ref.watch(storyProgressProvider);
+    final homeModel = ref.watch(homeReadModelProvider);
+    final user = homeModel.activeUser;
+    final storyProgress = homeModel.storyProgress;
 
     final themeCfg = ref.watch(appThemeConfigProvider);
     final backgroundAsset = themeCfg.backgroundAsset;
@@ -389,65 +398,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final onPrimary = scheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
 
-    final parentAllowedOps = user == null
-        ? _defaultAllowedOperations()
-        : ref.watch(parentSettingsProvider(user.userId));
-
-    final allowedOps = DifficultyConfig.effectiveAllowedOperations(
-      parentAllowedOperations: parentAllowedOps,
-      gradeLevel: user?.gradeLevel,
-    );
-    final hasPersistedInProgressSession = user == null
-        ? false
-        : ref
-                .read(localStorageRepositoryProvider)
-                .getQuizSession(user.userId) !=
-            null;
-    final hasActiveInMemorySession = user != null &&
-        quizState.userId == user.userId &&
-        quizState.session != null;
-    final hasResumableSession =
-        hasActiveInMemorySession || hasPersistedInProgressSession;
-    final isDailyChallengeCompleted = user == null
-        ? false
-        : ref.watch(dailyChallengeProvider(user.userId)).isCompleted;
-    final hasStoryQuest = user != null &&
-        storyProgress != null &&
-        userState.questStatus != null &&
-        allowedOps.contains(userState.questStatus!.quest.operation);
-    final heroEyebrow = user == null
-        ? 'Redo för safari?'
-        : hasStoryQuest
-            ? 'Hej, ${user.name}!'
-            : 'Välkommen, ${user.name}! 👋';
-    final heroTitle = user == null
-        ? 'Börja spela'
-        : hasStoryQuest
-            ? storyProgress.isEpisodeComplete
-                ? storyProgress.endingTitle
-                : storyProgress.currentObjectiveTitle
-            : 'Dags för äventyr!';
-    final heroSubtitle = user == null
-        ? 'Skapa en profil först.'
-        : hasStoryQuest
-            ? storyProgress.isEpisodeComplete
-                ? storyProgress.endingBody
-                : storyProgress.currentObjectiveDescription
-            : null;
-    final primaryButtonLabel = hasResumableSession
-        ? 'Fortsätt'
-        : hasStoryQuest
-            ? storyProgress.isEpisodeComplete
-                ? 'Se episoden'
-                : 'Spela nästa stopp'
-            : 'Spela nu';
-    final primaryButtonIcon = hasResumableSession
-        ? Icons.play_circle_fill_rounded
-        : hasStoryQuest
-            ? storyProgress.isEpisodeComplete
-                ? Icons.map_rounded
-                : Icons.explore_rounded
-            : Icons.play_arrow_rounded;
+    final allowedOps = homeModel.allowedOps;
+    final hasStoryQuest = homeModel.hasStoryQuest;
+    final heroEyebrow = homeModel.heroEyebrow;
+    final heroTitle = homeModel.heroTitle;
+    final heroSubtitle = homeModel.heroSubtitle;
+    final primaryButtonLabel = homeModel.primaryButtonLabel;
+    final primaryButtonIcon = _primaryButtonIcon(homeModel.primaryAction);
 
     final operationCards = _buildOperationCards(context, allowedOps);
 
@@ -471,13 +428,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       ? 1.0
                       : 0.95;
 
-          final devicePixelRatio = MediaQuery.devicePixelRatioOf(context);
           final questHeroLogicalWidth = isWideScreen
               ? constraints.maxWidth.clamp(0.0, 800.0).toDouble()
               : constraints.maxWidth;
           final questHeroCacheWidth =
-              (questHeroLogicalWidth * devicePixelRatio).round();
-          final questHeroCacheHeight = (110 * devicePixelRatio).round();
+              imageCacheExtent(context, questHeroLogicalWidth);
+          final questHeroCacheHeight = imageCacheExtent(context, 110);
+          final homeLogoCacheHeight = imageCacheExtent(context, 120);
+          final homeActionIconCacheSize = imageCacheExtent(context, 48);
 
           return SingleChildScrollView(
             child: Center(
@@ -500,6 +458,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   'assets/images/ui/img_logo_safari.png',
                                   height: 120,
                                   fit: BoxFit.contain,
+                                  cacheHeight: homeLogoCacheHeight,
                                 ),
                                 if (user != null)
                                   Positioned(
@@ -538,6 +497,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         'assets/images/ui/ic_ui_padlock.png',
                                         width: 48,
                                         height: 48,
+                                        cacheWidth: homeActionIconCacheSize,
+                                        cacheHeight: homeActionIconCacheSize,
                                       ),
                                     ),
                                   ),
@@ -555,9 +516,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ElevatedButton.icon(
                               key: const Key('primary_play_button'),
                               onPressed: () {
-                                if (hasStoryQuest &&
-                                    storyProgress.isEpisodeComplete &&
-                                    !hasResumableSession) {
+                                if (homeModel.primaryAction ==
+                                    HomePrimaryAction.openStoryMap) {
                                   _openStoryMap();
                                   return;
                                 }
@@ -590,7 +550,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                   icon: Icons.auto_awesome_rounded,
                                   color: accentColor,
                                 ),
-                                if (hasStoryQuest)
+                                if (hasStoryQuest && storyProgress != null)
                                   PlayfulInfoChip(
                                     label: storyProgress.isEpisodeComplete
                                         ? 'Episod klar'
@@ -598,7 +558,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     icon: Icons.explore_rounded,
                                     color: themeColors.secondaryActionColor,
                                   ),
-                                if (isDailyChallengeCompleted)
+                                if (homeModel.isDailyChallengeCompleted)
                                   PlayfulInfoChip(
                                     label: 'Dagens runda klar',
                                     icon: Icons.check_circle_rounded,
@@ -607,10 +567,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ],
                             ),
                             const SizedBox(height: AppConstants.defaultPadding),
-                            CampSceneView(
-                              mascotReaction: _mascotReaction,
-                              mascotReactionNonce: _mascotReactionNonce,
-                              isWideScreen: isWideScreen,
+                            RepaintBoundary(
+                              child: CampSceneView(
+                                mascotReaction: _mascotReaction,
+                                mascotReactionNonce: _mascotReactionNonce,
+                                isWideScreen: isWideScreen,
+                              ),
                             ),
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),
@@ -671,7 +633,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ),
                       ),
                       const SizedBox(height: AppConstants.defaultPadding),
-                      if (hasStoryQuest)
+                      if (hasStoryQuest && storyProgress != null)
                         HomeStoryProgressCard(
                           story: storyProgress,
                           heroAsset: questHeroAsset,
@@ -696,15 +658,19 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
                             _startQuiz(
                               operationType:
-                                  userState.questStatus!.quest.operation,
+                                  homeModel.questStatus!.quest.operation,
                               difficulty:
-                                  userState.questStatus!.quest.difficulty,
+                                  homeModel.questStatus!.quest.difficulty,
                             );
                           },
                           onOpenMap: _openStoryMap,
                         ),
                       const SizedBox(height: AppConstants.defaultPadding),
-                      HomeBadgeAlbum(achievementIds: user.achievements),
+                      RepaintBoundary(
+                        child: HomeBadgeAlbum(
+                          achievementIds: user.achievements,
+                        ),
+                      ),
                     ],
                     const SizedBox(height: AppConstants.defaultPadding),
                   ],
@@ -740,6 +706,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               constraints.maxHeight < 170 || constraints.maxWidth < 160;
           final iconBubbleSize = compact ? 44.0 : 72.0;
           final iconSize = compact ? 24.0 : AppConstants.largeIconSize;
+          final imageIconCacheSize = imageCacheExtent(
+            context,
+            iconBubbleSize * 0.7,
+          );
 
           return Center(
             child: Column(
@@ -768,6 +738,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               width: iconBubbleSize * 0.7,
                               height: iconBubbleSize * 0.7,
                               fit: BoxFit.contain,
+                              cacheWidth: imageIconCacheSize,
+                              cacheHeight: imageIconCacheSize,
                             ),
                           )
                         : Icon(
@@ -825,15 +797,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  Set<OperationType> _defaultAllowedOperations() {
-    return {
-      OperationType.addition,
-      OperationType.subtraction,
-      OperationType.multiplication,
-      OperationType.division,
-    };
-  }
-
   List<Widget> _buildOperationCards(
     BuildContext context,
     Set<OperationType> allowedOps,
@@ -873,232 +836,5 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         )
         .toList(growable: false);
-  }
-}
-
-class _HomeAudioLevelPicker extends StatelessWidget {
-  const _HomeAudioLevelPicker({
-    required this.title,
-    required this.subtitle,
-    required this.keyPrefix,
-    required this.icon,
-    required this.toneColor,
-    required this.sliderValue,
-    required this.isBusy,
-    required this.onChanged,
-    required this.onChangeEnd,
-  });
-
-  final String title;
-  final String subtitle;
-  final String keyPrefix;
-  final IconData icon;
-  final Color toneColor;
-  final double sliderValue;
-  final bool isBusy;
-  final ValueChanged<double> onChanged;
-  final Future<void> Function(double value) onChangeEnd;
-
-  String _labelFor(AppAudioLevel level) {
-    switch (level) {
-      case AppAudioLevel.off:
-        return 'Av';
-      case AppAudioLevel.low:
-        return 'Låg';
-      case AppAudioLevel.high:
-        return 'Hög';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final themeColors = context.appThemeColors;
-    final onPrimary = theme.colorScheme.onPrimary;
-    final subtleOnPrimary =
-        onPrimary.withValues(alpha: AppOpacities.subtleText);
-    final resolvedValue = sliderValue.clamp(0.0, 2.0);
-    final activeLevel = AppAudioLevel.values[resolvedValue.round()];
-    final background = Color.alphaBlend(
-      toneColor.withValues(alpha: 0.12),
-      themeColors.panelBackgroundColor,
-    );
-
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.defaultPadding),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            background,
-            onPrimary.withValues(alpha: AppOpacities.panelFill),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(AppConstants.borderRadius * 1.2),
-        border: Border.all(
-          color: toneColor.withValues(alpha: 0.28),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: toneColor.withValues(alpha: 0.18),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: toneColor.withValues(alpha: 0.28),
-                  ),
-                ),
-                child: Icon(icon, color: onPrimary),
-              ),
-              const SizedBox(width: AppConstants.smallPadding),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: AppConstants.microSpacing4),
-                    Text(
-                      subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: subtleOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.smallPadding,
-                  vertical: AppConstants.microSpacing6,
-                ),
-                decoration: BoxDecoration(
-                  color: toneColor.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: Text(
-                  _labelFor(activeLevel),
-                  key: Key('${keyPrefix}_value'),
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: onPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.defaultPadding),
-          SliderTheme(
-            data: theme.sliderTheme.copyWith(
-              activeTrackColor: toneColor,
-              thumbColor: toneColor,
-              overlayColor: toneColor.withValues(alpha: 0.18),
-            ),
-            child: Slider(
-              key: Key('${keyPrefix}_slider'),
-              min: 0,
-              max: 2,
-              divisions: 2,
-              label: _labelFor(activeLevel),
-              value: resolvedValue,
-              onChanged:
-                  isBusy ? null : (value) => onChanged(value.roundToDouble()),
-              onChangeEnd:
-                  isBusy ? null : (value) => onChangeEnd(value.roundToDouble()),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: _AudioSliderStopLabel(
-                  label: 'Av',
-                  icon: Icons.volume_off_rounded,
-                  active: activeLevel == AppAudioLevel.off,
-                  align: TextAlign.start,
-                  color: toneColor,
-                ),
-              ),
-              Expanded(
-                child: _AudioSliderStopLabel(
-                  label: 'Låg',
-                  icon: Icons.volume_down_rounded,
-                  active: activeLevel == AppAudioLevel.low,
-                  align: TextAlign.center,
-                  color: toneColor,
-                ),
-              ),
-              Expanded(
-                child: _AudioSliderStopLabel(
-                  label: 'Hög',
-                  icon: Icons.volume_up_rounded,
-                  active: activeLevel == AppAudioLevel.high,
-                  align: TextAlign.end,
-                  color: toneColor,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _AudioSliderStopLabel extends StatelessWidget {
-  const _AudioSliderStopLabel({
-    required this.label,
-    required this.icon,
-    required this.active,
-    required this.align,
-    required this.color,
-  });
-
-  final String label;
-  final IconData icon;
-  final bool active;
-  final TextAlign align;
-  final Color color;
-
-  @override
-  Widget build(BuildContext context) {
-    final onPrimary = Theme.of(context).colorScheme.onPrimary;
-    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-
-    return Column(
-      crossAxisAlignment: align == TextAlign.start
-          ? CrossAxisAlignment.start
-          : align == TextAlign.end
-              ? CrossAxisAlignment.end
-              : CrossAxisAlignment.center,
-      children: [
-        Icon(
-          icon,
-          size: 18,
-          color: active ? color : mutedOnPrimary,
-        ),
-        const SizedBox(height: AppConstants.microSpacing4),
-        Text(
-          label,
-          textAlign: align,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: active ? onPrimary : mutedOnPrimary,
-                fontWeight: active ? FontWeight.w800 : FontWeight.w700,
-              ),
-        ),
-      ],
-    );
   }
 }

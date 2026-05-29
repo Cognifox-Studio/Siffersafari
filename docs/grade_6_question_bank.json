@@ -1,0 +1,960 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 6 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 6,
+  "stage": "4-6",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 100000,
+      "openEnded": true
+    },
+    "operations": [
+      "addition",
+      "subtraction",
+      "multiplication",
+      "division"
+    ],
+    "centralConcepts": [
+      "procentuell_forandring",
+      "negativa_tal",
+      "diagram_linje_stapel",
+      "median_typvarde",
+      "proportionalitet",
+      "procent_pa_procent",
+      "forhallanden",
+      "flerstegsproblem"
+    ],
+    "strategies": [
+      "dela_upp_procentuell_forandring_i_steg",
+      "identifiera_proportionella_samband",
+      "tolka_grafer",
+      "kombinera_procent_multiplikation_division",
+      "hantera_negativa_tal_i_flera_steg",
+      "rimlighetsbedomning"
+    ],
+    "commonMisconceptions": [
+      "blandar_medelvarde_median",
+      "fel_vid_procentuell_forandring_t_ex_tror_att_20_och_20_tar_ut_varandra",
+      "missforstar_negativa_tal_i_textproblem",
+      "fel_vid_proportioner_t_ex_3_4_4_3",
+      "fel_vid_procent_pa_procent"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
+    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+  ],
+  "coverage": {
+    "questionCount": 130,
+    "headlineQuestionCount": 130,
+    "declaredQuestionCount": 130,
+    "countsBySection": {
+      "percentage_change": 30,
+      "negative_numbers": 20,
+      "diagram_interpretation": 20,
+      "multiplication": 20,
+      "division": 20,
+      "multi_step_word_problems": 20
+    },
+    "declaredCountsBySection": {
+      "percentage_change": 30,
+      "negative_numbers": 20,
+      "diagram_interpretation": 20,
+      "multiplication": 20,
+      "division": 20,
+      "multi_step_word_problems": 20
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": [
+      {
+        "sectionId": "percentage_change",
+        "questionCount": 30
+      },
+      {
+        "sectionId": "diagram_interpretation",
+        "questionCount": 20
+      },
+      {
+        "sectionId": "multi_step_word_problems",
+        "questionCount": 20
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "percentage_change",
+      "label": "Procentuell förändring",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric_or_text",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g6_percentage_change_001",
+          "prompt": "Priset sänks med 20% från 500",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_002",
+          "prompt": "Priset höjs med 15% från 800",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_003",
+          "prompt": "En vara kostar 300, sänks till 240 → förändring?",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_004",
+          "prompt": "En vara kostar 1200, höjs till 1500 → procentuell ökning?",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_005",
+          "prompt": "1000 → 750",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_006",
+          "prompt": "400 → 500",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_007",
+          "prompt": "900 → 810",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_008",
+          "prompt": "250 → 200",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_009",
+          "prompt": "600 → 720",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_010",
+          "prompt": "150 → 120",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_011",
+          "prompt": "80 → 100",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_012",
+          "prompt": "200 → 160",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_013",
+          "prompt": "350 → 280",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_014",
+          "prompt": "500 → 450",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_015",
+          "prompt": "700 → 840",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_016",
+          "prompt": "1200 → 960",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_017",
+          "prompt": "1500 → 1800",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_018",
+          "prompt": "2000 → 1500",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_019",
+          "prompt": "750 → 900",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_020",
+          "prompt": "900 → 720",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_021",
+          "prompt": "300 → 390",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_022",
+          "prompt": "450 → 360",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_023",
+          "prompt": "600 → 540",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_024",
+          "prompt": "800 → 640",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_025",
+          "prompt": "1000 → 1100",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_026",
+          "prompt": "200 → 260",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_027",
+          "prompt": "500 → 400",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_028",
+          "prompt": "900 → 990",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_029",
+          "prompt": "120 → 96",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g6_percentage_change_030",
+          "prompt": "75 → 90",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        }
+      ]
+    },
+    {
+      "id": "negative_numbers",
+      "label": "Negativa tal",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g6_negative_numbers_001",
+          "prompt": "−12 − (−5)",
+          "responseType": "numeric",
+          "correctAnswer": -7
+        },
+        {
+          "id": "g6_negative_numbers_002",
+          "prompt": "−3 × 4",
+          "responseType": "numeric",
+          "correctAnswer": -12
+        },
+        {
+          "id": "g6_negative_numbers_003",
+          "prompt": "−8 + 15",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g6_negative_numbers_004",
+          "prompt": "−20 + 7",
+          "responseType": "numeric",
+          "correctAnswer": -13
+        },
+        {
+          "id": "g6_negative_numbers_005",
+          "prompt": "−5 × (−4)",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g6_negative_numbers_006",
+          "prompt": "−18 ÷ 3",
+          "responseType": "numeric",
+          "correctAnswer": -6
+        },
+        {
+          "id": "g6_negative_numbers_007",
+          "prompt": "−24 ÷ (−6)",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g6_negative_numbers_008",
+          "prompt": "−9 − 9",
+          "responseType": "numeric",
+          "correctAnswer": -18
+        },
+        {
+          "id": "g6_negative_numbers_009",
+          "prompt": "−15 + 3",
+          "responseType": "numeric",
+          "correctAnswer": -12
+        },
+        {
+          "id": "g6_negative_numbers_010",
+          "prompt": "−30 ÷ 5",
+          "responseType": "numeric",
+          "correctAnswer": -6
+        },
+        {
+          "id": "g6_negative_numbers_011",
+          "prompt": "−7 + 12",
+          "responseType": "numeric",
+          "correctAnswer": 5
+        },
+        {
+          "id": "g6_negative_numbers_012",
+          "prompt": "−14 − 6",
+          "responseType": "numeric",
+          "correctAnswer": -20
+        },
+        {
+          "id": "g6_negative_numbers_013",
+          "prompt": "−2 × 9",
+          "responseType": "numeric",
+          "correctAnswer": -18
+        },
+        {
+          "id": "g6_negative_numbers_014",
+          "prompt": "−11 + 22",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g6_negative_numbers_015",
+          "prompt": "−50 + 25",
+          "responseType": "numeric",
+          "correctAnswer": -25
+        },
+        {
+          "id": "g6_negative_numbers_016",
+          "prompt": "−100 + 40",
+          "responseType": "numeric",
+          "correctAnswer": -60
+        },
+        {
+          "id": "g6_negative_numbers_017",
+          "prompt": "−60 ÷ 6",
+          "responseType": "numeric",
+          "correctAnswer": -10
+        },
+        {
+          "id": "g6_negative_numbers_018",
+          "prompt": "−45 ÷ (−9)",
+          "responseType": "numeric",
+          "correctAnswer": 5
+        },
+        {
+          "id": "g6_negative_numbers_019",
+          "prompt": "−32 + 18",
+          "responseType": "numeric",
+          "correctAnswer": -14
+        },
+        {
+          "id": "g6_negative_numbers_020",
+          "prompt": "−27 − 13",
+          "responseType": "numeric",
+          "correctAnswer": -40
+        }
+      ]
+    },
+    {
+      "id": "diagram_interpretation",
+      "label": "Diagramtolkning",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "sourceNotes": [
+        "Alla uppgifter bygger på typiska linje- och stapeldiagram"
+      ],
+      "questions": [
+        {
+          "id": "g6_diagram_interpretation_001",
+          "prompt": "Vilken dag hade högst värde?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g6_diagram_interpretation_002",
+          "prompt": "Vilken dag hade lägst värde?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g6_diagram_interpretation_003",
+          "prompt": "Hur mycket ökade mellan dag 2 och 3?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_004",
+          "prompt": "Hur mycket minskade mellan dag 4 och 5?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_005",
+          "prompt": "Vad är medelvärdet av punkterna?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_006",
+          "prompt": "Vad är medianen?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_007",
+          "prompt": "Vad är typvärdet?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_008",
+          "prompt": "Hur stor är skillnaden mellan max och min?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_009",
+          "prompt": "Vilken dag steg värdet mest?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_010",
+          "prompt": "Vilken dag sjönk värdet mest?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_011",
+          "prompt": "Hur många fler än dag 1 var dag 5?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_012",
+          "prompt": "Hur många färre än dag 3 var dag 6?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_013",
+          "prompt": "Vilka två dagar hade samma värde?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_014",
+          "prompt": "Vilken dag var närmast medelvärdet?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_015",
+          "prompt": "Vilken dag var dubbelt så hög som dag 1?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_016",
+          "prompt": "Vilken dag var hälften av dag 4?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_017",
+          "prompt": "Hur mycket ökade totalt från dag 1 till dag 7?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_018",
+          "prompt": "Hur mycket minskade totalt från dag 3 till dag 6?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g6_diagram_interpretation_019",
+          "prompt": "Vilken dag hade värdet 10% högre än dag 2?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g6_diagram_interpretation_020",
+          "prompt": "Vilken dag hade värdet 20% lägre än dag 5?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        }
+      ]
+    },
+    {
+      "id": "multiplication",
+      "label": "Multiplikation",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g6_multiplication_001",
+          "prompt": "450 × 32",
+          "responseType": "numeric",
+          "correctAnswer": 14400
+        },
+        {
+          "id": "g6_multiplication_002",
+          "prompt": "600 × 45",
+          "responseType": "numeric",
+          "correctAnswer": 27000
+        },
+        {
+          "id": "g6_multiplication_003",
+          "prompt": "720 × 25",
+          "responseType": "numeric",
+          "correctAnswer": 18000
+        },
+        {
+          "id": "g6_multiplication_004",
+          "prompt": "999 × 99",
+          "responseType": "numeric",
+          "correctAnswer": 98901
+        },
+        {
+          "id": "g6_multiplication_005",
+          "prompt": "540 × 36",
+          "responseType": "numeric",
+          "correctAnswer": 19440
+        },
+        {
+          "id": "g6_multiplication_006",
+          "prompt": "320 × 48",
+          "responseType": "numeric",
+          "correctAnswer": 15360
+        },
+        {
+          "id": "g6_multiplication_007",
+          "prompt": "150 × 75",
+          "responseType": "numeric",
+          "correctAnswer": 11250
+        },
+        {
+          "id": "g6_multiplication_008",
+          "prompt": "480 × 64",
+          "responseType": "numeric",
+          "correctAnswer": 30720
+        },
+        {
+          "id": "g6_multiplication_009",
+          "prompt": "250 × 90",
+          "responseType": "numeric",
+          "correctAnswer": 22500
+        },
+        {
+          "id": "g6_multiplication_010",
+          "prompt": "375 × 80",
+          "responseType": "numeric",
+          "correctAnswer": 30000
+        },
+        {
+          "id": "g6_multiplication_011",
+          "prompt": "210 × 45",
+          "responseType": "numeric",
+          "correctAnswer": 9450
+        },
+        {
+          "id": "g6_multiplication_012",
+          "prompt": "360 × 55",
+          "responseType": "numeric",
+          "correctAnswer": 19800
+        },
+        {
+          "id": "g6_multiplication_013",
+          "prompt": "420 × 33",
+          "responseType": "numeric",
+          "correctAnswer": 13860
+        },
+        {
+          "id": "g6_multiplication_014",
+          "prompt": "510 × 28",
+          "responseType": "numeric",
+          "correctAnswer": 14280
+        },
+        {
+          "id": "g6_multiplication_015",
+          "prompt": "630 × 24",
+          "responseType": "numeric",
+          "correctAnswer": 15120
+        },
+        {
+          "id": "g6_multiplication_016",
+          "prompt": "720 × 18",
+          "responseType": "numeric",
+          "correctAnswer": 12960
+        },
+        {
+          "id": "g6_multiplication_017",
+          "prompt": "840 × 16",
+          "responseType": "numeric",
+          "correctAnswer": 13440
+        },
+        {
+          "id": "g6_multiplication_018",
+          "prompt": "900 × 12",
+          "responseType": "numeric",
+          "correctAnswer": 10800
+        },
+        {
+          "id": "g6_multiplication_019",
+          "prompt": "990 × 15",
+          "responseType": "numeric",
+          "correctAnswer": 14850
+        },
+        {
+          "id": "g6_multiplication_020",
+          "prompt": "1000 × 19",
+          "responseType": "numeric",
+          "correctAnswer": 19000
+        }
+      ]
+    },
+    {
+      "id": "division",
+      "label": "Division",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g6_division_001",
+          "prompt": "3600 ÷ 45",
+          "responseType": "numeric",
+          "correctAnswer": 80
+        },
+        {
+          "id": "g6_division_002",
+          "prompt": "7200 ÷ 60",
+          "responseType": "numeric",
+          "correctAnswer": 120
+        },
+        {
+          "id": "g6_division_003",
+          "prompt": "5400 ÷ 90",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g6_division_004",
+          "prompt": "8100 ÷ 27",
+          "responseType": "numeric",
+          "correctAnswer": 300
+        },
+        {
+          "id": "g6_division_005",
+          "prompt": "9600 ÷ 32",
+          "responseType": "numeric",
+          "correctAnswer": 300
+        },
+        {
+          "id": "g6_division_006",
+          "prompt": "12 000 ÷ 50",
+          "responseType": "numeric",
+          "correctAnswer": 240
+        },
+        {
+          "id": "g6_division_007",
+          "prompt": "18 000 ÷ 75",
+          "responseType": "numeric",
+          "correctAnswer": 240
+        },
+        {
+          "id": "g6_division_008",
+          "prompt": "2400 ÷ 16",
+          "responseType": "numeric",
+          "correctAnswer": 150
+        },
+        {
+          "id": "g6_division_009",
+          "prompt": "3600 ÷ 24",
+          "responseType": "numeric",
+          "correctAnswer": 150
+        },
+        {
+          "id": "g6_division_010",
+          "prompt": "4500 ÷ 36",
+          "responseType": "numeric",
+          "correctAnswer": 125
+        },
+        {
+          "id": "g6_division_011",
+          "prompt": "6000 ÷ 48",
+          "responseType": "numeric",
+          "correctAnswer": 125
+        },
+        {
+          "id": "g6_division_012",
+          "prompt": "7200 ÷ 40",
+          "responseType": "numeric",
+          "correctAnswer": 180
+        },
+        {
+          "id": "g6_division_013",
+          "prompt": "8400 ÷ 70",
+          "responseType": "numeric",
+          "correctAnswer": 120
+        },
+        {
+          "id": "g6_division_014",
+          "prompt": "9000 ÷ 60",
+          "responseType": "numeric",
+          "correctAnswer": 150
+        },
+        {
+          "id": "g6_division_015",
+          "prompt": "10 000 ÷ 80",
+          "responseType": "numeric",
+          "correctAnswer": 125
+        },
+        {
+          "id": "g6_division_016",
+          "prompt": "11 000 ÷ 55",
+          "responseType": "numeric",
+          "correctAnswer": 200
+        },
+        {
+          "id": "g6_division_017",
+          "prompt": "12 000 ÷ 30",
+          "responseType": "numeric",
+          "correctAnswer": 400
+        },
+        {
+          "id": "g6_division_018",
+          "prompt": "15 000 ÷ 25",
+          "responseType": "numeric",
+          "correctAnswer": 600
+        },
+        {
+          "id": "g6_division_019",
+          "prompt": "18 000 ÷ 20",
+          "responseType": "numeric",
+          "correctAnswer": 900
+        },
+        {
+          "id": "g6_division_020",
+          "prompt": "20 000 ÷ 50",
+          "responseType": "numeric",
+          "correctAnswer": 400
+        }
+      ]
+    },
+    {
+      "id": "multi_step_word_problems",
+      "label": "Flerstegsproblem",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g6_multi_step_word_problems_001",
+          "prompt": "En butik sänker priset med 20%, sedan ytterligare 10%…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_002",
+          "prompt": "En klass samlar 450 burkar, nästa vecka 30% fler…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_003",
+          "prompt": "En cykel kostar 4000, höjs med 15%, sänks sedan med 10%…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_004",
+          "prompt": "Temperaturen går från −5 till 7, sedan ner till 2…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_005",
+          "prompt": "En sträcka ökar från 120 km till 150 km…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_006",
+          "prompt": "En låda innehåller 24 flaskor. 1/3 används. 25% av resten tappas…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_007",
+          "prompt": "En butik säljer 80 varor. 40% säljs på rea. 20% av resterande returneras…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_008",
+          "prompt": "En elev springer 2 km, sedan 50% längre, sedan 1 km till…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_009",
+          "prompt": "En tank rymmer 60 liter. 30% fylls. Sedan fylls 40% av det som saknas…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_010",
+          "prompt": "En klass har 25 elever. 20% är sjuka. 3 går hem. Hur många är kvar?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+        },
+        {
+          "id": "g6_multi_step_word_problems_011",
+          "prompt": "En bok kostar 200 kr. Rabatt 15%. Sedan höjs priset med 10%…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_012",
+          "prompt": "En låda har 90 kulor. 1/2 tas bort. 30% av resten tappas…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_013",
+          "prompt": "En butik har 500 varor. 20% säljs. 10% av resten reas ut…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_014",
+          "prompt": "En bil kör 120 km. Sedan 25% längre. Sedan 10 km till…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_015",
+          "prompt": "En elev har 40 poäng. Får +20%. Tappar sedan 10%…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_016",
+          "prompt": "En butik höjer priset 20%, sänker 20%. Är priset samma?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+        },
+        {
+          "id": "g6_multi_step_word_problems_017",
+          "prompt": "En klass ökar från 20 till 25 elever. Procentuell ökning?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+        },
+        {
+          "id": "g6_multi_step_word_problems_018",
+          "prompt": "En klass minskar från 30 till 24 elever. Procentuell minskning?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+        },
+        {
+          "id": "g6_multi_step_word_problems_019",
+          "prompt": "En vara kostar 500. Höjs 10%. Höjs 10% igen…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g6_multi_step_word_problems_020",
+          "prompt": "En vara kostar 800. Sänks 25%. Sänks 10% till…",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
+          "requiresCompletedPrompt": true
+        }
+      ]
+    }
+  ]
+}

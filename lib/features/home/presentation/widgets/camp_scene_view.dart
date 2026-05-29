@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
 import 'package:siffersafari/gen/assets.g.dart';
@@ -60,13 +61,20 @@ class CampSceneView extends ConsumerWidget {
 
   List<InventoryItem> _visibleCampRewards(List<String> unlockedItemIds) {
     final unlocked = unlockedItemIds.toSet();
-    return InventoryConfig.levelUnlockOrderIds
+    final unlockedRewards = InventoryConfig.levelUnlockOrderIds
         .where(unlocked.contains)
         .map((id) => _inventoryItemsById[id])
         .whereType<InventoryItem>()
         .where((item) => item.slot != 'pet')
-        .take(_visibleCampRewardCount)
         .toList(growable: false);
+
+    if (unlockedRewards.length <= _visibleCampRewardCount) {
+      return unlockedRewards;
+    }
+
+    return unlockedRewards.sublist(
+      unlockedRewards.length - _visibleCampRewardCount,
+    );
   }
 
   int _unlockedCampItemCount(List<String> unlockedItemIds) {
@@ -350,6 +358,8 @@ class _SceneDecoration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cacheWidth = imageCacheExtent(context, width);
+
     return DecoratedBox(
       decoration: BoxDecoration(
         boxShadow: [
@@ -364,6 +374,7 @@ class _SceneDecoration extends StatelessWidget {
         assetPath,
         width: width,
         fit: BoxFit.contain,
+        cacheWidth: cacheWidth,
       ),
     );
   }
@@ -388,6 +399,7 @@ class _CampRewardSpot extends StatelessWidget {
     final itemSize = (baseItemSize * (0.6 + (item.renderScale * 0.45)))
         .clamp(38.0, 78.0)
         .toDouble();
+    final cacheSize = imageCacheExtent(context, itemSize);
 
     return Transform.rotate(
       angle: rotation,
@@ -410,6 +422,8 @@ class _CampRewardSpot extends StatelessWidget {
               width: itemSize,
               height: itemSize,
               fit: BoxFit.contain,
+              cacheWidth: cacheSize,
+              cacheHeight: cacheSize,
             ),
           ),
           const SizedBox(height: 6),
@@ -449,6 +463,8 @@ class _CampPetSpot extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final petSize = (height * 0.2).clamp(44.0, 72.0).toDouble();
+    final cacheSize = imageCacheExtent(context, petSize);
+    final placeholderCacheSize = imageCacheExtent(context, petSize * 0.88);
 
     return Column(
       key: const Key('camp_scene_pet_slot'),
@@ -471,6 +487,8 @@ class _CampPetSpot extends StatelessWidget {
               width: petSize,
               height: petSize,
               fit: BoxFit.contain,
+              cacheWidth: cacheSize,
+              cacheHeight: cacheSize,
             ),
           )
         else
@@ -490,6 +508,8 @@ class _CampPetSpot extends StatelessWidget {
             child: Image.asset(
               'assets/images/ui/ic_reward_locked_nobg.png',
               fit: BoxFit.contain,
+              cacheWidth: placeholderCacheSize,
+              cacheHeight: placeholderCacheSize,
             ),
           ),
         const SizedBox(height: 6),

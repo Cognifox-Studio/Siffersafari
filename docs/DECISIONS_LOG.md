@@ -1,18 +1,22 @@
 ﻿<!--
 typ: explanation
 syfte: Historik, varför vi gjort vissa arkitekturval
-uppdaterad: 2026-05-16
+uppdaterad: 2026-05-26
 -->
 # Beslut och antaganden (Siffersafari)
 
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-16)
+## Gällande nuläge (2026-05-26)
 
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
+- Resultatmerge är idempotent per avslutad `sessionId` och använder quizhistoriken som guard mot dubbla rewards/progression.
+- SRS/due-planering för quizpass ligger i `QuizDueQuestionPlanner`, orkestrerad av `QuizSessionPlanner`, i stället för direkt i `QuizNotifier`.
+- Mix-sannolikheter och gate-regler ligger i `QuestionMixPolicy`, medan `QuestionGeneratorService` är facade för frågegenerering.
+- Parameteriserade Riverpod family-providers ska använda `autoDispose` om de är user-/parameter-scopeade.
 - Animation:
   - Procedurgenererade transformationer på enkla PNG-bilder prioriteras över komplicerad cut-out layout med SVG för mascots. Rive och Lottie är slopade.
 - Responsiv layout styrs av tillganglig bredd (compact < 600, medium >= 600, expanded >= 840).
@@ -25,8 +29,30 @@ Princip: senaste datum vinner vid konflikt.
 - On-device TTS är profilscopad, föräldrastyrd och läser upp fråga/kort feedback utan att blockera UI eller kräva nät.
 - Tidiga v1.8-slices för camp och storykarta hålls i presentationslagret tills tydligare produktnytta motiverar ny progression, nya providers eller nya assets.
 - Copilot-customizations i `.github/` ska vara repoanknutna, länka vidare till docs i stället för att duplicera innehåll, och använda skill-namn som matchar respektive mappnamn.
+- Curriculum-facitets kanoniska struktur ligger i `docs/curriculum_facit.json`, medan `docs/KUNSKAPSNIVA_PER_AK.md` är ett kort mänskligt nav. Runtime och audits ska synkas mot JSON, inte mot fri text i markdown.
+- Grade-bankerna används nu direkt för allt som passar nuvarande quizformat i lågstadiet: taluppfattning som `före/efter`, `störst/minst`, enkel talföljd med ett saknat tal och `saknat tal` för `×/÷` i Åk 2. Banker som kräver sortering, dubbla okända, diagram eller andra svar än ett heltal ska tills vidare stanna som seed- och auditunderlag, inte forceras in i runtime.
+- Grade-bankerna är nu låsta mot runtime för alla årskurser via en explicit auditmatris. Numeriska ekvationer i Åk 7 och Åk 9 räknas nu som stödda textbroar i dagens quizformat, medan sektioner som kräver symboliskt svar, diagram, grafer, decimal/bråkpolicy eller flera giltiga svar förblir avsiktligt senare arbete.
+- När en banksektion bara delvis passar dagens text+heltal-UI ska vi flytta just den representerbara delmängden till runtime och lämna resten explicit kvar i status-auditen. Åk 8 proportionalitet är nu första tydliga exemplet: heltalsfall med `y = kx`, `x -> y`, `y -> x` och enkla enhetsproblem är stödda, medan decimalfall, grafer och ofullständiga prompts fortfarande är deferred.
+- Samma princip gäller nu Åk 9 geometri: Pythagoras, area, omkrets och volym med heltalssvar kan gå direkt i dagens quizmodell, medan cirkel/cylinder-frågor med pi/avrundning, skala och annan figur-/kontextbunden geometri ska stanna som explicit deferred tills representation och svarspolicy finns.
 
 ## Historik (kort)
+
+### 2026-05-26
+- **Strukturerat curriculum-facit före lång fri text:** Årskursmappning, frågetypspolicyer, källhierarki och stadieindelning hålls nu i `docs/curriculum_facit.json`, medan `docs/KUNSKAPSNIVA_PER_AK.md` förklarar modellen på hög nivå. Det gör curriculumändringar lättare att testa mot `DifficultyConfig` och minskar risken att dokumentation, audits och runtime driver isär.
+- **Seed-banker används där UI:t redan räcker:** Frågebankerna för lågstadiet driver nu konkret runtime för representerbara heltalsfrågor. Åk 1-taluppfattning (`före/efter`, `störst/minst`, enkel talföljd) och Åk 2 `saknat tal` för `×/÷` lades in direkt i generatorn, medan `Sortera`, dubbla okända och graf/diagram-spår medvetet lämnas som senare representationsarbete.
+- **Övre algebra lades in bara där modellen bär:** Numeriska ekvationer i Åk 7 och Åk 9 lades till som textbaserade mixfrågor med heltalssvar. Förenkling av uttryck, full funktionstolkning och annan symbolisk algebra hålls fortfarande utanför runtime tills appen får stöd för mer än ett rent heltalssvar.
+- **Åk 8 proportionalitet följer samma princip:** Vi tog inte hela banksektionen, utan bara heltalsbara fall som passar nuvarande quizformat. Därmed blev proportionalitet delvis stödd i runtime utan att låtsas att grafer, decimalfall eller completed prompts redan har representation.
+- **Åk 9 geometri följer samma princip:** Vi lyfte in de banknära geometriuppgifter som redan kan ge ett entydigt heltalssvar, men lät cirkel/cylinder, skala och andra policy- eller kontextkrävande delar stanna utanför runtime tills UI och svarmodell räcker till.
+
+### 2026-05-25
+- **Modularisering sker bakom stabila API:er:** `ApplyQuizResultUseCase` behåller sitt publika `execute(...)`, men ansvar delas internt i progress-, quest-, history- och rewarddelar. Det minskar risken jämfört med att flytta hela resultatflödet eller byta state-modell i samma slice.
+- **Sessionplanering ägs av en service:** Due-frågor, custom/replay-planering och nästa-fråga-fallback ligger i `QuizSessionPlanner`. `QuizNotifier` ska främst orkestrera state, svar och persistens.
+- **Due-policy och Mix-policy är egna gränser:** `QuizDueQuestionPlanner` kapslar SRS/due-köer och `QuestionMixPolicy` kapslar Mix-sannolikheter, så framtida curriculumändringar kan testas utan att växa `QuizNotifier` eller generatorfacaden.
+- **Hemsidans hero/CTA är en read model:** `HomeReadModel` samlar beslut för hero-copy, primary action, story/resume och daily-completion-signal så hemskärmens build-metod inte blir produktlogikens ägare.
+- **Små guardrails före stora flyttar:** Provider-family utan `autoDispose`, core/data-importer mot features, settings-key scope och reward-katalogen skyddas med fokuserade tester/audits innan större featureflyttar görs.
+
+### 2026-05-21
+- **Mix-specialer styrs step-bundet i stället för med flata sannolikhetsfönster:** `QuestionGeneratorService` uttrycker nu lågstadiets specials, sena M4-inslag och M5a/M5b-fördelningen per step-band. Det gör progressionen lättare att finjustera mot auditutskriften och minskar risken att procent/prioriteringsregler råkar dominera sena Åk 7–9-steg.
 
 ### 2026-05-16
 - **Hybrid theme-lager i stallet for fortsatt monolit:** Semantiska farg- och surface-tokens flyttades till `AppThemeColors` som `ThemeExtension`, medan `AppThemeConfig` tills vidare behaller assetval och `ThemeData`-bygget. Det minskar direkta providerkopplingar i delade widgets och feature-UI utan att oppna en riskig assetmigrering i samma slice.

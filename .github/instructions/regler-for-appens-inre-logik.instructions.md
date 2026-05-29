@@ -1,7 +1,7 @@
 ---
 name: "Domänlogik och tjänster"
 description: "Use when editing lib/domain, services, use cases or business rules. Covers separation of concerns, pure Dart domain logic and UI-free orchestration."
-applyTo: "lib/domain/**, lib/core/services/**, **/*_service.dart, **/*_usecase.dart"
+applyTo: "lib/domain/**, lib/core/services/**, **/*_service.dart, **/*_use_case.dart"
 ---
 
 # Domain och core services

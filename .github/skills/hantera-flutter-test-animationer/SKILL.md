@@ -1,12 +1,17 @@
 ---
 name: hantera-flutter-test-animationer
-description: 'Use when fixing widget tests that timeout or fail due to continuous animations (like Confetti, looping mascots) or encoding issues in text finders.'
+description: 'Diagnose and fix widget-test failures caused by continuous animations, unstable text finders or encoding drift. Use when tests timeout on pumpAndSettle() or stop finding expected labels.'
 argument-hint: 'Beskriv vilket test som faller, vilken animation eller finder som verkar orsaka det, och om felet syns lokalt eller i CI.'
 ---
 
 # Hantera Flutter-test och animationer
 
-## Context
+## När den ska användas
+- När widgettester timeoutar på `pumpAndSettle()` eller fastnar på kontinuerliga animationer.
+- När textfinders blir sköra på grund av encoding eller copy-drift.
+- När overlays eller dekorativa lager stör hit-testing i tester.
+
+## Bakgrund
 Continuous animations prevent the Flutter test engine from ever reaching a "settled" state. Calls to `tester.pumpAndSettle()` will throw a timeout exception. Dessutom kan dynamiska textbyten och teckenkodningsfel få textbaserade sökningar att fallera plötsligt.
 
 ## Felsökningsregler

@@ -23,9 +23,10 @@ För övrigt facit:
 
 **Det som återstår innan en ny större fas öppnas:**
 
-1. Gör en manuell känslokoll på enhet för TTS-röst/tempo, storykarta och barnets huvudsakliga väg genom hem -> quiz -> resultat -> story.
-2. Landa bara små polish-slices som tydligt förbättrar begriplighet, CTA-hierarki eller device-känsla.
-3. Välj nästa committed produktmål uttryckligen i stället för att låta flera halvaktiva spår leva samtidigt.
+1. Kör automatisk guardrail för releasepolish-slicen: `flutter analyze`, berörda widget-/unit-tester och `git diff --check`.
+2. Gör en manuell känslokoll på enhet för TTS-röst/tempo, storykarta, garderob och barnets huvudsakliga väg genom hem -> quiz -> resultat -> story.
+3. Landa bara små polish-slices som tydligt förbättrar begriplighet, CTA-hierarki eller device-känsla.
+4. Välj nästa committed produktmål uttryckligen i stället för att låta flera halvaktiva spår leva samtidigt.
 
 **Vad som kan bli nästa större steg, men ännu inte är låst:**
 

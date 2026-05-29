@@ -26,8 +26,8 @@ class WordProblemsEnabledNotifier extends StateNotifier<bool> {
   }
 }
 
-final wordProblemsEnabledProvider =
-    StateNotifierProvider.family<WordProblemsEnabledNotifier, bool, String>(
+final wordProblemsEnabledProvider = StateNotifierProvider.autoDispose
+    .family<WordProblemsEnabledNotifier, bool, String>(
   (ref, userId) {
     final repository = ref.watch(localStorageRepositoryProvider);
     return WordProblemsEnabledNotifier(repository, userId);

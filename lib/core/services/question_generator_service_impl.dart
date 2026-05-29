@@ -1,113 +1,7 @@
 part of 'question_generator_service.dart';
 
-mixin _QuestionGeneratorServiceImpl {
-  Random get _random;
+mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
   Uuid get _uuid;
-
-  // region Helper Methods
-
-  int _randomInRange(DifficultyNumberRange range) {
-    return range.min + _random.nextInt(range.max - range.min + 1);
-  }
-
-  int _randomSignedValue(int maxAbs, {int minAbs = 0}) {
-    final safeMaxAbs = max(1, maxAbs);
-    final safeMinAbs = max(0, min(minAbs, safeMaxAbs));
-    final value = safeMinAbs + _random.nextInt(safeMaxAbs - safeMinAbs + 1);
-    return _random.nextBool() ? value : -value;
-  }
-
-  int _gcd(int a, int b) {
-    var x = a.abs();
-    var y = b.abs();
-    while (y != 0) {
-      final t = y;
-      y = x % y;
-      x = t;
-    }
-    return x == 0 ? 1 : x;
-  }
-
-  bool _hasCarry(int a, int b) {
-    var x = a;
-    var y = b;
-    while (x > 0 || y > 0) {
-      if ((x % 10) + (y % 10) >= 10) return true;
-      x ~/= 10;
-      y ~/= 10;
-    }
-    return false;
-  }
-
-  /// Returns true if `a - b` requires at least one borrow.
-  /// Assumes `a >= b`.
-  bool _hasBorrow(int a, int b) {
-    var x = a;
-    var y = b;
-    var borrow = 0;
-
-    while (x > 0 || y > 0) {
-      final da = (x % 10) - borrow;
-      final db = y % 10;
-      if (da < db) return true;
-      borrow = da < db ? 1 : 0;
-      x ~/= 10;
-      y ~/= 10;
-    }
-
-    return false;
-  }
-
-  List<int> _sortedCopy(List<int> values) {
-    final copy = List<int>.from(values);
-    copy.sort();
-    return copy;
-  }
-
-  List<int> _generateWrongPercentAnswers(int correctPercent, int count) {
-    final wrong = <int>{};
-    final correct = correctPercent.clamp(0, 100);
-
-    // Keep wrong answers plausible and within 0..100.
-    final deltas = <int>[
-      -50,
-      -40,
-      -30,
-      -25,
-      -20,
-      -15,
-      -10,
-      -5,
-      5,
-      10,
-      15,
-      20,
-      25,
-      30,
-      40,
-      50,
-    ];
-
-    for (var i = 0; i < 200 && wrong.length < count; i++) {
-      final delta = deltas[_random.nextInt(deltas.length)];
-      final candidate = (correct + delta).clamp(0, 100);
-      if (candidate == correct) continue;
-      wrong.add(candidate);
-    }
-
-    // Fallback if we somehow didn't fill.
-    var cursor = 0;
-    while (wrong.length < count) {
-      final candidate = (cursor * 10).clamp(0, 100);
-      cursor++;
-      if (candidate == correct) continue;
-      wrong.add(candidate);
-    }
-
-    return wrong.take(count).toList();
-  }
-
-  // endregion
 
   // region M4 Generators (Åk 4-6 Special Topics)
 
@@ -1017,6 +911,288 @@ mixin _QuestionGeneratorServiceImpl {
     );
   }
 
+  Question _generateM5aProportionalityQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final roll = _random.nextDouble();
+
+    if (step >= 9 && roll < 0.34) {
+      return _generateM5aProportionalityWordProblemQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    if (roll < 0.68) {
+      return _generateM5aProportionalityForwardQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    return _generateM5aProportionalityInverseQuestion(
+      difficulty,
+      difficultyStep: step,
+    );
+  }
+
+  Question _generateM5aProportionalityForwardQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final maxCoefficient = difficultyStep <= 8 ? 12 : 15;
+    final coefficient = 2 + _random.nextInt(maxCoefficient - 1);
+    final xValue =
+        difficultyStep <= 8 ? _random.nextInt(11) : 1 + _random.nextInt(12);
+    final correct = coefficient * xValue;
+    final prompt =
+        'Proportionalitet = ?\ny = ${coefficient}x\nOm x = $xValue, vad är y?';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: coefficient,
+      operand2: xValue,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: prompt,
+      explanation:
+          'I proportionalitet gäller y = kx. Här är k = $coefficient.\ny = $coefficient × $xValue = $correct.',
+    );
+  }
+
+  Question _generateM5aProportionalityInverseQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final maxCoefficient = difficultyStep <= 8 ? 12 : 15;
+    final coefficient = 2 + _random.nextInt(maxCoefficient - 1);
+    final solution = 1 + _random.nextInt(difficultyStep <= 8 ? 12 : 15);
+    final yValue = coefficient * solution;
+    final prompt =
+        'Proportionalitet = ?\ny = ${coefficient}x\nOm y = $yValue, vad är x?';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: coefficient,
+      operand2: yValue,
+      correctAnswer: solution,
+      wrongAnswers: _generateWrongAnswers(solution, 3),
+      promptText: prompt,
+      explanation:
+          'I proportionalitet gäller y = kx. Här är k = $coefficient.\nx = $yValue ÷ $coefficient = $solution.',
+    );
+  }
+
+  Question _generateM5aProportionalityWordProblemQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final unitValue =
+        difficultyStep <= 9 ? 4 + _random.nextInt(12) : 6 + _random.nextInt(18);
+    final quantity =
+        difficultyStep <= 9 ? 2 + _random.nextInt(8) : 3 + _random.nextInt(10);
+    final correct = unitValue * quantity;
+
+    final templateIndex = _random.nextInt(3);
+    late final String body;
+    late final String explanation;
+
+    switch (templateIndex) {
+      case 0:
+        body = '1 liter kostar $unitValue kr. Vad kostar $quantity liter?';
+        explanation =
+            '$quantity liter kostar $quantity × $unitValue = $correct kr.';
+      case 1:
+        body = '1 timme = $unitValue km. Hur långt på $quantity timmar?';
+        explanation =
+            'Vid proportionell fart blir sträckan $quantity × $unitValue = $correct km.';
+      default:
+        body = '1 burk kostar $unitValue kr. Vad kostar $quantity burkar?';
+        explanation =
+            '$quantity burkar kostar $quantity × $unitValue = $correct kr.';
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: unitValue,
+      operand2: quantity,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: 'Proportionalitet = ?\n$body',
+      explanation: explanation,
+    );
+  }
+
+  Question _generateM5aEquationQuestion(
+    DifficultyLevel difficulty, {
+    required int gradeLevel,
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+
+    if (gradeLevel >= 9 && step >= 7 && _random.nextDouble() < 0.35) {
+      return _generateM5aDivisionEquationQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    if (step >= 7 && _random.nextBool()) {
+      return _generateM5aGroupedEquationQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    return _generateM5aLinearEquationQuestion(
+      difficulty,
+      difficultyStep: step,
+    );
+  }
+
+  Question _generateM5aLinearEquationQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final maxSolution = difficultyStep <= 6
+        ? 12
+        : difficultyStep <= 8
+            ? 18
+            : 24;
+    final solution = 2 + _random.nextInt(maxSolution - 1);
+
+    final maxCoefficient = difficultyStep <= 6
+        ? 12
+        : difficultyStep <= 8
+            ? 20
+            : 30;
+    final coefficient = 2 + _random.nextInt(maxCoefficient - 1);
+
+    final maxOffset = difficultyStep <= 6
+        ? 18
+        : difficultyStep <= 8
+            ? 30
+            : 60;
+    final offset = 1 + _random.nextInt(maxOffset);
+    final useAddition = _random.nextBool();
+
+    final rhs = useAddition
+        ? coefficient * solution + offset
+        : coefficient * solution - offset;
+    final operator = useAddition ? '+' : '−';
+    final prompt = 'Ekvation = ?\n${coefficient}x $operator $offset = $rhs';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: coefficient,
+      operand2: offset,
+      correctAnswer: solution,
+      wrongAnswers: _generateWrongAnswers(solution, 3),
+      promptText: prompt,
+      explanation: useAddition
+          ? '${coefficient}x + $offset = $rhs\n${coefficient}x = ${rhs - offset}\nx = $solution'
+          : '${coefficient}x − $offset = $rhs\n${coefficient}x = ${rhs + offset}\nx = $solution',
+    );
+  }
+
+  Question _generateM5aGroupedEquationQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final maxSolution = difficultyStep <= 7 ? 10 : 16;
+    final solution = 2 + _random.nextInt(maxSolution - 1);
+    final coefficient = 2 + _random.nextInt(10);
+    final inner = 1 + _random.nextInt(difficultyStep <= 7 ? 8 : 12);
+    final useAddition = _random.nextBool();
+
+    final rhs = useAddition
+        ? coefficient * (solution + inner)
+        : coefficient * (solution - inner);
+    final operator = useAddition ? '+' : '−';
+    final prompt = 'Ekvation = ?\n$coefficient(x $operator $inner) = $rhs';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: coefficient,
+      operand2: inner,
+      correctAnswer: solution,
+      wrongAnswers: _generateWrongAnswers(solution, 3),
+      promptText: prompt,
+      explanation: useAddition
+          ? '$coefficient(x + $inner) = $rhs\nx + $inner = ${rhs ~/ coefficient}\nx = $solution'
+          : '$coefficient(x − $inner) = $rhs\nx − $inner = ${rhs ~/ coefficient}\nx = $solution',
+    );
+  }
+
+  Question _generateM5aDivisionEquationQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final useBareDivision = _random.nextBool();
+
+    if (useBareDivision) {
+      final divisor = 2 + _random.nextInt(5);
+      final solution = divisor * (2 + _random.nextInt(8));
+      final offset = 1 + _random.nextInt(difficultyStep <= 8 ? 8 : 12);
+      final useAddition = _random.nextBool();
+      final rhs = useAddition
+          ? (solution ~/ divisor) + offset
+          : (solution ~/ divisor) - offset;
+      final operator = useAddition ? '+' : '−';
+      final prompt = 'Ekvation = ?\nx/$divisor $operator $offset = $rhs';
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: divisor,
+        operand2: offset,
+        correctAnswer: solution,
+        wrongAnswers: _generateWrongAnswers(solution, 3),
+        promptText: prompt,
+        explanation: useAddition
+            ? 'x/$divisor + $offset = $rhs\nx/$divisor = ${rhs - offset}\nx = $solution'
+            : 'x/$divisor − $offset = $rhs\nx/$divisor = ${rhs + offset}\nx = $solution',
+      );
+    }
+
+    final divisor = 2 + _random.nextInt(4);
+    final coefficient = 2 + _random.nextInt(6);
+    final solution = divisor * (2 + _random.nextInt(8));
+    final offset = coefficient * solution;
+    final constant = divisor * (difficultyStep <= 8 ? 3 : 5);
+    final rhs = (offset + constant) ~/ divisor;
+    final prompt =
+        'Ekvation = ?\n($coefficient' 'x + $constant)/$divisor = $rhs';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: coefficient,
+      operand2: divisor,
+      correctAnswer: solution,
+      wrongAnswers: _generateWrongAnswers(solution, 3),
+      promptText: prompt,
+      explanation: '($coefficient'
+          'x + $constant)/$divisor = $rhs\n$coefficient'
+          'x + $constant = ${rhs * divisor}\n$coefficient'
+          'x = ${(rhs * divisor) - constant}\nx = $solution',
+    );
+  }
+
   Question _generateM5aPrecedenceQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,
@@ -1161,8 +1337,16 @@ Beräkna y när x = $testX''';
 
   Question _generateM5bGeometricTransformationQuestion(
     DifficultyLevel difficulty, {
+    required int gradeLevel,
     required int difficultyStep,
   }) {
+    if (gradeLevel >= 9) {
+      return _generateM5bGeometryQuestion(
+        difficulty,
+        difficultyStep: difficultyStep,
+      );
+    }
+
     // M5b (Åk 7–9, delstep 2): Geometriska transformationer
     // Spegling, rotation och translation i koordinatsystem.
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
@@ -1181,6 +1365,7 @@ Beräkna y när x = $testX''';
     if (beforeX == 0 && beforeY == 0) {
       return _generateM5bGeometricTransformationQuestion(
         difficulty,
+        gradeLevel: gradeLevel,
         difficultyStep: difficultyStep,
       );
     }
@@ -1272,6 +1457,228 @@ Vad är $answerType efter transformationen?''';
       promptText: prompt,
       explanation:
           '$transformName: ($beforeX, $beforeY) → ($afterX, $afterY)\nSvar: $answerType Efter transformationen är det $answerValue',
+    );
+  }
+
+  Question _generateM5bGeometryQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final roll = _random.nextDouble();
+
+    if (roll < 0.34) {
+      return _generateM5bPythagorasQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    if (roll < 0.7) {
+      return _generateM5bAreaOrPerimeterQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    return _generateM5bVolumeQuestion(
+      difficulty,
+      difficultyStep: step,
+    );
+  }
+
+  Question _generateM5bPythagorasQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    const triples = <(int, int, int)>[
+      (6, 8, 10),
+      (9, 12, 15),
+      (5, 12, 13),
+      (8, 15, 17),
+      (7, 24, 25),
+      (10, 24, 26),
+    ];
+
+    final triple = triples[_random.nextInt(triples.length)];
+    final a = triple.$1;
+    final b = triple.$2;
+    final c = triple.$3;
+    final variant =
+        difficultyStep >= 9 ? _random.nextInt(3) : _random.nextInt(2);
+
+    late final String body;
+    late final int correct;
+    late final String explanation;
+
+    switch (variant) {
+      case 0:
+        body = 'Pythagoras: c = ? när a = $a, b = $b';
+        correct = c;
+        explanation =
+            '$a^2 + $b^2 = c^2\n${a * a} + ${b * b} = ${c * c}\nc = $c';
+      case 1:
+        body = 'Pythagoras: a = ? när b = $b, c = $c';
+        correct = a;
+        explanation =
+            'a^2 + $b^2 = $c^2\na^2 = ${c * c} - ${b * b} = ${a * a}\na = $a';
+      default:
+        body = 'Pythagoras: b = ? när a = $a, c = $c';
+        correct = b;
+        explanation =
+            '$a^2 + b^2 = $c^2\nb^2 = ${c * c} - ${a * a} = ${b * b}\nb = $b';
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: a,
+      operand2: b,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: 'Geometri = ?\n$body',
+      explanation: explanation,
+    );
+  }
+
+  Question _generateM5bAreaOrPerimeterQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final variant = _random.nextInt(6);
+
+    late final String body;
+    late final int correct;
+    late final int operand1;
+    late final int operand2;
+    late final String explanation;
+
+    switch (variant) {
+      case 0:
+        final width = 8 + _random.nextInt(difficultyStep >= 9 ? 15 : 10);
+        final height = 6 + _random.nextInt(difficultyStep >= 9 ? 12 : 8);
+        body = 'Area av rektangel: $width × $height';
+        correct = width * height;
+        operand1 = width;
+        operand2 = height;
+        explanation =
+            'Arean av en rektangel är längd × bredd.\n$width × $height = $correct.';
+      case 1:
+        final side = 10 + _random.nextInt(difficultyStep >= 9 ? 16 : 10);
+        body = 'Area av kvadrat: sida = $side';
+        correct = side * side;
+        operand1 = side;
+        operand2 = side;
+        explanation =
+            'Arean av en kvadrat är sida × sida.\n$side × $side = $correct.';
+      case 2:
+        final side = 10 + _random.nextInt(difficultyStep >= 9 ? 16 : 10);
+        body = 'Omkrets av kvadrat: sida = $side';
+        correct = 4 * side;
+        operand1 = side;
+        operand2 = 4;
+        explanation =
+            'Omkretsen av en kvadrat är 4 × sida.\n4 × $side = $correct.';
+      case 3:
+        final base = 8 + 2 * _random.nextInt(difficultyStep >= 9 ? 8 : 6);
+        final height = 4 + _random.nextInt(difficultyStep >= 9 ? 10 : 6);
+        body = 'Area av triangel: b = $base, h = $height';
+        correct = (base * height) ~/ 2;
+        operand1 = base;
+        operand2 = height;
+        explanation =
+            'Arean av en triangel är b × h / 2.\n$base × $height / 2 = $correct.';
+      case 4:
+        final base = 10 + _random.nextInt(difficultyStep >= 9 ? 12 : 8);
+        final height = 6 + _random.nextInt(difficultyStep >= 9 ? 10 : 6);
+        body = 'Area av parallellogram: b = $base, h = $height';
+        correct = base * height;
+        operand1 = base;
+        operand2 = height;
+        explanation =
+            'Arean av en parallellogram är bas × höjd.\n$base × $height = $correct.';
+      default:
+        const triangles = <(int, int, int)>[
+          (7, 9, 12),
+          (9, 12, 15),
+          (8, 15, 17)
+        ];
+        final triangle = triangles[_random.nextInt(triangles.length)];
+        body =
+            'Omkrets av triangel: ${triangle.$1} + ${triangle.$2} + ${triangle.$3}';
+        correct = triangle.$1 + triangle.$2 + triangle.$3;
+        operand1 = triangle.$1;
+        operand2 = triangle.$2;
+        explanation =
+            'Omkretsen är summan av alla sidor.\n${triangle.$1} + ${triangle.$2} + ${triangle.$3} = $correct.';
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: operand1,
+      operand2: operand2,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: 'Geometri = ?\n$body',
+      explanation: explanation,
+    );
+  }
+
+  Question _generateM5bVolumeQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final variant = _random.nextInt(3);
+
+    late final String body;
+    late final int correct;
+    late final int operand1;
+    late final int operand2;
+    late final String explanation;
+
+    switch (variant) {
+      case 0:
+        final side = 4 + _random.nextInt(difficultyStep >= 9 ? 7 : 5);
+        body = 'Volym av kub: sida = $side';
+        correct = side * side * side;
+        operand1 = side;
+        operand2 = side;
+        explanation =
+            'Volymen av en kub är sida^3.\n$side × $side × $side = $correct.';
+      case 1:
+        final length = 4 + _random.nextInt(difficultyStep >= 9 ? 7 : 5);
+        final width = 5 + _random.nextInt(difficultyStep >= 9 ? 8 : 5);
+        final height = 6 + _random.nextInt(difficultyStep >= 9 ? 8 : 5);
+        body = 'Volym av rätblock: $length × $width × $height';
+        correct = length * width * height;
+        operand1 = length;
+        operand2 = width;
+        explanation =
+            'Volymen av ett rätblock är längd × bredd × höjd.\n$length × $width × $height = $correct.';
+      default:
+        final baseArea = 20 + 5 * _random.nextInt(difficultyStep >= 9 ? 8 : 5);
+        final height = 6 + _random.nextInt(difficultyStep >= 9 ? 10 : 6);
+        body = 'Volym av prisma: basarea = $baseArea, höjd = $height';
+        correct = baseArea * height;
+        operand1 = baseArea;
+        operand2 = height;
+        explanation =
+            'Volymen av ett prisma är basarea × höjd.\n$baseArea × $height = $correct.';
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: operand1,
+      operand2: operand2,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: 'Geometri = ?\n$body',
+      explanation: explanation,
     );
   }
 
@@ -1421,7 +1828,7 @@ Vilken typ av korrelation har variablerna?
     int? mixBaselineStep,
   }) {
     // IMPORTANT: In Mix mode, we must respect grade shaping.
-    // Otherwise Åk 1–2 can unexpectedly get ×/÷ which feels “too hard”.
+    // Otherwise low grades can unexpectedly get too much ×/÷ too early.
     final allowed = gradeLevel == null
         ? const <OperationType>{
             OperationType.addition,
@@ -1435,6 +1842,49 @@ Vilken typ av korrelation har variablerna?
     final step = mixBaselineStep == null
         ? null
         : DifficultyConfig.clampDifficultyStep(mixBaselineStep);
+
+    // Åk 2: open ×/÷ carefully.
+    // Direct operation choice is allowed from grade config, but Mix should still
+    // feel mostly +/− until the internal step has climbed a bit.
+    if (grade == 2 && step != null) {
+      List<OperationType> weighted;
+      if (step <= 3) {
+        weighted = <OperationType>[
+          OperationType.addition,
+          OperationType.subtraction,
+        ];
+      } else if (step <= 6) {
+        weighted = <OperationType>[
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.multiplication,
+        ];
+      } else if (step <= 8) {
+        weighted = <OperationType>[
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.multiplication,
+          OperationType.multiplication,
+          OperationType.division,
+        ];
+      } else {
+        weighted = <OperationType>[
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.multiplication,
+          OperationType.division,
+        ];
+      }
+
+      final filtered = weighted.where(allowed.contains).toList(growable: false);
+      if (filtered.isNotEmpty) {
+        return filtered[_random.nextInt(filtered.length)];
+      }
+    }
 
     // Åk 3: make Mix feel smoother when ×/÷ is introduced.
     // Default Mix ordering stays stable; we only adjust weights in Åk 3 when
@@ -1494,6 +1944,87 @@ Vilken typ av korrelation har variablerna?
     }
 
     return ordered[_random.nextInt(ordered.length)];
+  }
+
+  // endregion
+
+  // region Low-grade Mix Generators (Åk 2-3)
+
+  Question _generateLowGradeStatisticsQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final cappedMax = difficultyStep <= 6 ? 10 : 20;
+    return _generateM4StatisticsTableQuestion(
+      DifficultyNumberRange(1, cappedMax),
+      difficulty,
+      difficultyStep: 2,
+    );
+  }
+
+  Question _generateLowGradeChanceQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final candidateSets = <List<({int red, int blue})>>[
+      [
+        (red: 4, blue: 1),
+        (red: 3, blue: 2),
+        (red: 2, blue: 3),
+        (red: 1, blue: 4),
+      ],
+      [
+        (red: 3, blue: 1),
+        (red: 2, blue: 2),
+        (red: 2, blue: 3),
+        (red: 1, blue: 3),
+      ],
+      [
+        (red: 5, blue: 1),
+        (red: 3, blue: 3),
+        (red: 2, blue: 4),
+        (red: 1, blue: 5),
+      ],
+    ];
+
+    final bags = List<({int red, int blue})>.from(
+      candidateSets[_random.nextInt(candidateSets.length)],
+    )..shuffle(_random);
+
+    var bestIndex = 0;
+    var bestScore = -1.0;
+    for (var index = 0; index < bags.length; index++) {
+      final bag = bags[index];
+      final score = bag.red / (bag.red + bag.blue);
+      if (score > bestScore) {
+        bestScore = score;
+        bestIndex = index;
+      }
+    }
+
+    final prompt = 'Sannolikhet (konkret) = ?\n'
+        'Påse 1: Röda: ${bags[0].red}, Blå: ${bags[0].blue}\n'
+        'Påse 2: Röda: ${bags[1].red}, Blå: ${bags[1].blue}\n'
+        'Påse 3: Röda: ${bags[2].red}, Blå: ${bags[2].blue}\n'
+        'Påse 4: Röda: ${bags[3].red}, Blå: ${bags[3].blue}\n'
+        'I vilken påse är chansen störst att få röd? Svara med påsens nummer.';
+
+    final correctAnswer = bestIndex + 1;
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: 0,
+      operand2: 0,
+      correctAnswer: correctAnswer,
+      wrongAnswers: <int>[1, 2, 3, 4]
+          .where((value) => value != correctAnswer)
+          .toList(growable: false),
+      promptText: prompt,
+      explanation:
+          'Jämför andelen röda bollar i varje påse. Påse $correctAnswer har störst andel röda och därför störst chans.',
+    );
   }
 
   // endregion
@@ -1676,6 +2207,76 @@ Vilken typ av korrelation har variablerna?
     );
   }
 
+  Question _generateGrade1AdditionNumberSenseQuestion(
+    DifficultyNumberRange range,
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final variantRoll = _random.nextDouble();
+    final usesAfterPrompt = difficultyStep <= 3 || variantRoll < 0.45;
+
+    if (usesAfterPrompt) {
+      final target = _randomInRange(
+        DifficultyNumberRange(range.min, max(range.min, range.max - 1)),
+      );
+      final answer = target + 1;
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.addition,
+        difficulty: difficulty,
+        operand1: target,
+        operand2: 1,
+        correctAnswer: answer,
+        wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+        promptText: 'Vilket tal kommer efter $target?',
+        explanation: 'Talet efter $target är $answer.',
+      );
+    }
+
+    if (variantRoll < 0.75) {
+      final start = _randomInRange(
+        DifficultyNumberRange(range.min, max(range.min, range.max - 3)),
+      );
+      final answer = start + 2;
+      final end = start + 3;
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.addition,
+        difficulty: difficulty,
+        operand1: start,
+        operand2: end,
+        correctAnswer: answer,
+        wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+        promptText:
+            'Vilket tal saknas i ordningen: $start, ${start + 1}, __, $end',
+        explanation:
+            'Talföljden ökar med 1: $start, ${start + 1}, $answer, $end.',
+      );
+    }
+
+    final left = _randomInRange(range);
+    int right = _randomInRange(range);
+    for (var attempt = 0; attempt < 40 && right == left; attempt++) {
+      right = _randomInRange(range);
+    }
+
+    final answer = max(left, right);
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.addition,
+      difficulty: difficulty,
+      operand1: left,
+      operand2: right,
+      correctAnswer: answer,
+      wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+      promptText: 'Vilket är störst: $left eller $right?',
+      explanation: '$answer är större än ${answer == left ? right : left}.',
+    );
+  }
+
   // endregion
 
   // region Arithmetic Generators (Subtraction)
@@ -1848,6 +2449,109 @@ Vilken typ av korrelation har variablerna?
       wrongAnswers: _generateWrongAnswers(correctMissing, 3),
       explanation: '${base.operand1} - ${base.operand2} = $result',
     );
+  }
+
+  Question _generateGrade1SubtractionNumberSenseQuestion(
+    DifficultyNumberRange range,
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final variantRoll = _random.nextDouble();
+    final usesBeforePrompt = difficultyStep <= 3 || variantRoll < 0.45;
+
+    if (usesBeforePrompt) {
+      final target = _randomInRange(
+        DifficultyNumberRange(max(1, range.min + 1), max(1, range.max)),
+      );
+      final answer = target - 1;
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.subtraction,
+        difficulty: difficulty,
+        operand1: target,
+        operand2: 1,
+        correctAnswer: answer,
+        wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+        promptText: 'Vilket tal kommer före $target?',
+        explanation: 'Talet före $target är $answer.',
+      );
+    }
+
+    if (variantRoll < 0.75) {
+      final startFloor = min(range.max, max(range.min + 3, 3));
+      final start = _randomInRange(
+        DifficultyNumberRange(startFloor, max(startFloor, range.max)),
+      );
+      final answer = start - 2;
+      final end = start - 3;
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.subtraction,
+        difficulty: difficulty,
+        operand1: start,
+        operand2: end,
+        correctAnswer: answer,
+        wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+        promptText:
+            'Vilket tal saknas i ordningen: $start, ${start - 1}, __, $end',
+        explanation:
+            'Talföljden minskar med 1: $start, ${start - 1}, $answer, $end.',
+      );
+    }
+
+    final left = _randomInRange(range);
+    int right = _randomInRange(range);
+    for (var attempt = 0; attempt < 40 && right == left; attempt++) {
+      right = _randomInRange(range);
+    }
+
+    final answer = min(left, right);
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.subtraction,
+      difficulty: difficulty,
+      operand1: left,
+      operand2: right,
+      correctAnswer: answer,
+      wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
+      promptText: 'Vilket är minst: $left eller $right?',
+      explanation: '$answer är mindre än ${answer == left ? right : left}.',
+    );
+  }
+
+  List<int> _generateGrade1NumberSenseWrongAnswers(
+    int correctAnswer,
+    DifficultyNumberRange range,
+  ) {
+    final wrongAnswers = <int>{};
+    const neighborOffsets = <int>[-1, 1, -2, 2, -3, 3];
+
+    for (final offset in neighborOffsets) {
+      final candidate = correctAnswer + offset;
+      if (candidate < range.min || candidate > range.max) {
+        continue;
+      }
+      if (candidate == correctAnswer) {
+        continue;
+      }
+      wrongAnswers.add(candidate);
+      if (wrongAnswers.length == 3) {
+        return wrongAnswers.toList(growable: false);
+      }
+    }
+
+    for (var attempt = 0; attempt < 60 && wrongAnswers.length < 3; attempt++) {
+      final candidate = _randomInRange(range);
+      if (candidate == correctAnswer) {
+        continue;
+      }
+      wrongAnswers.add(candidate);
+    }
+
+    return wrongAnswers.toList(growable: false);
   }
 
   // endregion
@@ -2072,6 +2776,35 @@ Vilken typ av korrelation har variablerna?
     );
   }
 
+  Question _generateMultiplicationMissingNumber(
+    DifficultyNumberRange range,
+    DifficultyLevel difficulty, {
+    required int? gradeLevel,
+    required int difficultyStep,
+  }) {
+    final base = _generateMultiplication(
+      range,
+      difficulty,
+      gradeLevel: gradeLevel,
+      difficultyStep: difficultyStep,
+    );
+
+    final product = base.correctAnswer;
+    final missingLeft = _random.nextBool();
+
+    final prompt = missingLeft
+        ? '? × ${base.operand2} = $product'
+        : '${base.operand1} × ? = $product';
+    final correctMissing = missingLeft ? base.operand1 : base.operand2;
+
+    return base.copyWith(
+      promptText: prompt,
+      correctAnswer: correctMissing,
+      wrongAnswers: _generateWrongAnswers(correctMissing, 3),
+      explanation: '${base.operand1} × ${base.operand2} = $product',
+    );
+  }
+
   // endregion
 
   // region Arithmetic Generators (Division)
@@ -2188,6 +2921,35 @@ Vilken typ av korrelation har variablerna?
       promptText: prompt,
       explanation:
           '${base.operand1} ÷ ${base.operand2} = ${base.correctAnswer}',
+    );
+  }
+
+  Question _generateDivisionMissingNumber(
+    DifficultyNumberRange range,
+    DifficultyLevel difficulty, {
+    required int? gradeLevel,
+    required int difficultyStep,
+  }) {
+    final base = _generateDivision(
+      range,
+      difficulty,
+      gradeLevel: gradeLevel,
+      difficultyStep: difficultyStep,
+    );
+
+    final quotient = base.correctAnswer;
+    final missingLeft = _random.nextBool();
+
+    final prompt = missingLeft
+        ? '? ÷ ${base.operand2} = $quotient'
+        : '${base.operand1} ÷ ? = $quotient';
+    final correctMissing = missingLeft ? base.operand1 : base.operand2;
+
+    return base.copyWith(
+      promptText: prompt,
+      correctAnswer: correctMissing,
+      wrongAnswers: _generateWrongAnswers(correctMissing, 3),
+      explanation: '${base.operand1} ÷ ${base.operand2} = $quotient',
     );
   }
 

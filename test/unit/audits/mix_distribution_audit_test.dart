@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
+import 'package:siffersafari/core/services/question_mix_policy.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
@@ -31,12 +32,17 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Negativa tal = ?')) return 'm4_negative_numbers';
 
   // M5a features
+  if (promptText.startsWith('Ekvation = ?')) return 'm5a_equation';
   if (promptText.startsWith('Potenser = ?')) return 'm5a_power';
+  if (promptText.startsWith('Proportionalitet = ?')) {
+    return 'm5a_proportionality';
+  }
   if (promptText.startsWith('Prioriteringsregler = ?')) return 'm5a_precedence';
 
   // M5b features
   if (promptText.startsWith('Linjär funktion = ?')) return 'm5b_linear';
-  if (promptText.startsWith('Geometrisk transformation = ?')) {
+  if (promptText.startsWith('Geometrisk transformation = ?') ||
+      promptText.startsWith('Geometri = ?')) {
     return 'm5b_geometric';
   }
   if (promptText.startsWith('Statistik = ?')) return 'm5b_advanced_stats';
@@ -48,29 +54,31 @@ String _classifyPrompt(String? promptText) {
 }
 
 double _expectedStatsChanceForStep(int step) {
-  if (step <= 3) return 0.10;
-  if (step <= 6) return 0.12;
-  return 0.12;
+  return QuestionMixPolicy.m4StatsChanceForStep(step);
 }
 
 double _expectedProbChanceForStep(int step) {
-  if (step <= 3) return 0.10;
-  if (step <= 6) return 0.12;
-  return 0.12;
+  return QuestionMixPolicy.m4ProbabilityChanceForStep(step);
 }
 
 double _expectedLateM4PercentChance({
   required int grade,
   required int step,
 }) {
-  return grade >= 5 && step >= 9 ? 0.06 : 0.0;
+  return QuestionMixPolicy.m4PercentChanceFor(
+    gradeLevel: grade,
+    clampedStep: step,
+  );
 }
 
 double _expectedLateM4NegativeChance({
   required int grade,
   required int step,
 }) {
-  return grade >= 5 && step >= 9 ? 0.04 : 0.0;
+  return QuestionMixPolicy.m4NegativeChanceFor(
+    gradeLevel: grade,
+    clampedStep: step,
+  );
 }
 
 void main() {

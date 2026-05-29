@@ -26,8 +26,8 @@ class SpacedRepetitionEnabledNotifier extends StateNotifier<bool> {
   }
 }
 
-final spacedRepetitionEnabledProvider =
-    StateNotifierProvider.family<SpacedRepetitionEnabledNotifier, bool, String>(
+final spacedRepetitionEnabledProvider = StateNotifierProvider.autoDispose
+    .family<SpacedRepetitionEnabledNotifier, bool, String>(
   (ref, userId) {
     final repository = ref.watch(localStorageRepositoryProvider);
     return SpacedRepetitionEnabledNotifier(repository, userId);

@@ -1,7 +1,7 @@
 ---
 name: "Google Play publicering"
 description: "Use when editing Play release docs, Android release workflows, pubspec versioning or child-app policy relevant files. Covers version bumps, AAB, permissions and COPPA constraints."
-applyTo: "pubspec.yaml, docs/DEPLOY_ANDROID.md, .github/workflows/build.yml, .github/workflows/play-closed-beta.yml, android/app/build.gradle.kts"
+applyTo: "pubspec.yaml, docs/DEPLOY_ANDROID.md, .github/workflows/build.yml, .github/workflows/play-closed-beta.yml, .github/workflows/play-store-listing.yml, fastlane/Fastfile, fastlane/metadata/android/**, android/app/build.gradle.kts"
 ---
 
 # Google Play publishing och policy

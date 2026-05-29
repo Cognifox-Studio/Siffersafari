@@ -14,6 +14,7 @@ import 'package:siffersafari/domain/enums/app_theme.dart';
 import 'core/constants/app_constants.dart';
 import 'core/di/injection.dart';
 import 'core/providers/app_theme_provider.dart';
+import 'core/providers/audio_service_provider.dart';
 import 'core/theme/app_theme_config.dart';
 
 Future<void> main() async {
@@ -125,20 +126,56 @@ Future<T> _measureAsync<T>(String name, Future<T> Function() fn) async {
   }
 }
 
-class SiffersafariApp extends ConsumerWidget {
+class SiffersafariApp extends ConsumerStatefulWidget {
   const SiffersafariApp({super.key, required this.initError});
 
   final String? initError;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<SiffersafariApp> createState() => _SiffersafariAppState();
+}
+
+class _SiffersafariAppState extends ConsumerState<SiffersafariApp> {
+  late final AppLifecycleListener _appLifecycleListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _appLifecycleListener = AppLifecycleListener(
+      onStateChange: _handleAppLifecycleState,
+    );
+  }
+
+  void _handleAppLifecycleState(AppLifecycleState state) {
+    final audioService = ref.read(audioServiceProvider);
+    switch (state) {
+      case AppLifecycleState.resumed:
+        unawaited(audioService.resumeAfterAppForeground());
+      case AppLifecycleState.inactive:
+        return;
+      case AppLifecycleState.hidden:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        unawaited(audioService.pauseForAppBackground());
+    }
+  }
+
+  @override
+  void dispose() {
+    _appLifecycleListener.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final defaultTheme = AppThemeConfig.forTheme(AppTheme.jungle).themeData();
-    final theme =
-        (initError == null) ? ref.watch(appThemeDataProvider) : defaultTheme;
+    final theme = (widget.initError == null)
+        ? ref.watch(appThemeDataProvider)
+        : defaultTheme;
 
     final Widget home;
-    if (initError != null) {
-      home = _BootstrapErrorScreen(error: initError!);
+    if (widget.initError != null) {
+      home = _BootstrapErrorScreen(error: widget.initError!);
     } else {
       home = const StartupSplashGate(child: StartupFlowGate());
     }

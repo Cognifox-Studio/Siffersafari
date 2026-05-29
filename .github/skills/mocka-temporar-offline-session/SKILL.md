@@ -1,12 +1,16 @@
 ---
 name: mocka-temporar-offline-session
-description: 'Use when creating or updating test setups for offline-first quiz persistence, resume flows (Fortsätt spela), and interrupted app states.'
+description: 'Create or update test setups for offline-first quiz persistence, resume and interrupted app states. Use when a test needs a preloaded in-progress session or deterministic resume-underlag.'
 argument-hint: 'Beskriv vilket offline- eller resume-flöde som ska mockas och om det gäller unit-, widget- eller integrationstest.'
 ---
 
 # Mocka temporär offline-session
 
-## Context
+## När den ska användas
+- När ett test behöver en förladdad in-progress-session.
+- När `Fortsätt spela`, resume eller appavbrott ska verifieras deterministiskt.
+
+## Bakgrund
 Siffersafari tillämpar offline-first-persistens via Hive (enligt `docs/ARCHITECTURE.md`). Ett påbörjat quiz (in-progress) autosparas i bakgrunden. Om appen avbryts skall detta quiz återupptas nästa gång appen startas, för att undvika data- eller framstegsförlust för barnet.
 
 ## Spelregler för test & mockning

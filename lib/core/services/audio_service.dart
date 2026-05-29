@@ -110,6 +110,7 @@ class AudioService {
   double _musicVolume = 1.0;
   AppMusicTrack? _currentMusicTrack;
   Timer? _musicRecoveryTimer;
+  bool _pausedForAppLifecycle = false;
 
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
@@ -150,6 +151,7 @@ class AudioService {
   void setMusicEnabled(bool enabled) {
     _musicEnabled = enabled;
     if (!enabled) {
+      _pausedForAppLifecycle = false;
       unawaited(stopMusic(clearTrack: false));
       return;
     }
@@ -255,8 +257,44 @@ class AudioService {
         volume: _resolveVolume(spec.volume, _musicVolume),
       );
       _currentMusicTrack = track;
+      _pausedForAppLifecycle = false;
     } catch (_) {
       // Handle error silently for now
+    }
+  }
+
+  Future<void> pauseForAppBackground() async {
+    _musicRecoveryTimer?.cancel();
+
+    if (_musicPlayer.state != PlayerState.playing) {
+      _pausedForAppLifecycle = false;
+      return;
+    }
+
+    try {
+      await _musicPlayer.pause();
+      _pausedForAppLifecycle = true;
+    } catch (_) {
+      _pausedForAppLifecycle = false;
+    }
+  }
+
+  Future<void> resumeAfterAppForeground() async {
+    if (!_musicEnabled || !_pausedForAppLifecycle) return;
+
+    final currentTrack = _currentMusicTrack;
+    _pausedForAppLifecycle = false;
+    if (currentTrack == null) return;
+
+    try {
+      if (_musicPlayer.state == PlayerState.paused) {
+        await _musicPlayer.resume();
+        return;
+      }
+
+      await playMusicTrack(currentTrack);
+    } catch (_) {
+      await playMusicTrack(currentTrack);
     }
   }
 
@@ -313,6 +351,8 @@ class AudioService {
 
   /// Stop background music
   Future<void> stopMusic({bool clearTrack = true}) async {
+    _musicRecoveryTimer?.cancel();
+    _pausedForAppLifecycle = false;
     if (clearTrack) {
       _currentMusicTrack = null;
     }

@@ -847,6 +847,7 @@ class _CharacterPickerTile extends ConsumerWidget {
     final primaryActionColor = Theme.of(context).colorScheme.primary;
     final accentColor = Theme.of(context).colorScheme.secondary;
     final secondaryActionColor = accentColor.withValues(alpha: 0.88);
+    final characterCacheHeight = imageCacheExtent(context, 62);
 
     final user = ref.watch(userProvider).activeUser;
     if (user == null || user.userId != userId) return const SizedBox.shrink();
@@ -1016,6 +1017,7 @@ class _CharacterPickerTile extends ConsumerWidget {
                                   child: Image.asset(
                                     assetPath,
                                     fit: BoxFit.contain,
+                                    cacheHeight: characterCacheHeight,
                                     errorBuilder: (context, error, stackTrace) {
                                       return Icon(
                                         Icons.person_rounded,

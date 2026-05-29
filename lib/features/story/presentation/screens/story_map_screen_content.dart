@@ -654,6 +654,7 @@ class _BiomePreviewBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final assetPath = _storyBiomePreviewAssetPath(biome);
+    final cacheSize = imageCacheExtent(context, size);
 
     return Container(
       width: size,
@@ -673,6 +674,8 @@ class _BiomePreviewBubble extends StatelessWidget {
               assetPath,
               fit: BoxFit.cover,
               excludeFromSemantics: true,
+              cacheWidth: cacheSize,
+              cacheHeight: cacheSize,
               errorBuilder: (_, __, ___) {
                 return Icon(Icons.landscape_rounded, color: accentColor);
               },
@@ -734,6 +737,7 @@ class _StopCard extends StatelessWidget {
       StoryNodeState.current => currentColor.withValues(alpha: 0.18),
       StoryNodeState.upcoming => onPrimary.withValues(alpha: 0.08),
     };
+    final visualCacheSize = imageCacheExtent(context, 28);
 
     return Container(
       padding: const EdgeInsets.all(AppConstants.defaultPadding),
@@ -761,8 +765,13 @@ class _StopCard extends StatelessWidget {
             ),
             child: visual.assetPath != null
                 ? Center(
-                    child:
-                        Image.asset(visual.assetPath!, width: 28, height: 28),
+                    child: Image.asset(
+                      visual.assetPath!,
+                      width: 28,
+                      height: 28,
+                      cacheWidth: visualCacheSize,
+                      cacheHeight: visualCacheSize,
+                    ),
                   )
                 : Icon(visual.icon, color: onPrimary),
           ),

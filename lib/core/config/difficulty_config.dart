@@ -177,26 +177,17 @@ class DifficultyConfig {
   /// Parent settings are still the hard limit; this mapping only further
   /// constrains what the child sees when a grade is set.
   ///
-  /// Note: Skolverket's central content for Åk 1–3 includes the four operations,
-  /// but many children benefit from a gentler progression early on.
+  /// Note: Skolverket's central content for Åk 1–3 includes the four operations.
+  /// We still keep Åk 1 focused on +/−, but open a gentle ×/÷ introduction from
+  /// Åk 2 and up.
   static Set<OperationType> visibleOperationsForGrade(int gradeLevel) {
     final grade = gradeLevel.clamp(1, 9);
 
-    // Keep early grades focused (avoid overwhelming choice).
-    if (grade <= 2) {
+    // Keep the very first school year tightly focused.
+    if (grade == 1) {
       return const {
         OperationType.addition,
         OperationType.subtraction,
-      };
-    }
-
-    // Åk 3: include all four operations (Skolverket: "de fyra räknesätten").
-    if (grade == 3) {
-      return const {
-        OperationType.addition,
-        OperationType.subtraction,
-        OperationType.multiplication,
-        OperationType.division,
       };
     }
 
@@ -259,8 +250,9 @@ class DifficultyConfig {
     final t =
         (step - minDifficultyStep) / (maxDifficultyStep - minDifficultyStep);
 
-    // For Åk 3–6 (+/−) we use step-tables to avoid big "jumps".
-    // A pure linear interpolation becomes too steep too early.
+    // For Åk 3–9 (+/−) we use step-tables to avoid big "jumps".
+    // A pure linear interpolation becomes too steep too early, especially in
+    // high grades where the general cap is intentionally much larger.
     if (operationType == OperationType.addition ||
         operationType == OperationType.subtraction) {
       final stepTable = switch (grade) {
@@ -311,6 +303,42 @@ class DifficultyConfig {
             20000,
             50000,
             100000,
+          ],
+        7 => const <int>[
+            10,
+            20,
+            40,
+            80,
+            120,
+            180,
+            300,
+            500,
+            750,
+            1000,
+          ],
+        8 => const <int>[
+            10,
+            25,
+            50,
+            100,
+            160,
+            240,
+            360,
+            550,
+            800,
+            1000,
+          ],
+        9 => const <int>[
+            10,
+            30,
+            60,
+            120,
+            180,
+            280,
+            420,
+            650,
+            900,
+            1000,
           ],
         _ => null,
       };

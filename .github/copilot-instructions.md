@@ -79,6 +79,7 @@ Arbetsstandard:
 - Pixel_6 kan fastna offline i adb. Prioritera cold boot utan snapshot: `emulator.exe -avd Pixel_6 -no-snapshot-load`.
 - Stale APK efter rebuild löses ofta med `scripts/flutter_pixel6.ps1 -Action install` eller `-Action sync`.
 - Historiska docs och artifacts kan vara stale. Kontrollera alltid mot `docs/ARCHITECTURE.md` och aktuell kod.
+- Garderob och inventory bygger pa fri mix via Z-index, inte harda slot-begransningar. Las `.github/instructions/regler-for-z-index-inventory.instructions.md` innan du andrar `GameCharacter`, `WardrobeScreen` eller `InventoryItem`.
 - Legacy-spår för mascot i docs, artifacts eller äldre customizations kan fortfarande nämna SVG/Rive. Följ alltid PNG-first-regeln ovan.
 - Vid progression- eller difficulty-ändringar: verifiera att session-state mergas tillbaka till `UserProgress` när quizet avslutas.
 - Vid parsningslogik/formatering (t.ex. SRS-nycklar): packa data med formatversion (t.ex. `v2|`) stället för regex-gissningar på varierande display-text.

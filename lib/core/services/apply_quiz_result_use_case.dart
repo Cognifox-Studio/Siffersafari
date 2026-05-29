@@ -7,6 +7,12 @@ import 'package:siffersafari/domain/entities/quest.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 
+part 'apply_quiz_result_history_writer.dart';
+part 'apply_quiz_result_level_reward_unlocker.dart';
+part 'apply_quiz_result_progress_merger.dart';
+part 'apply_quiz_result_quest_coordinator.dart';
+part 'apply_quiz_result_use_case_helpers.dart';
+
 class QuestCompletionSummary {
   const QuestCompletionSummary({
     required this.completedQuestId,
@@ -58,195 +64,71 @@ class ApplyQuizResultUseCase {
     required UserProgress user,
     required QuizSession session,
   }) async {
-    QuestCompletionSummary? questCompletion;
-    final now = DateTime.now();
-    final oldLevel = user.level;
-
-    final updatedStreak = _calculateStreak(
-      currentStreak: user.currentStreak,
-      lastSessionDate: user.lastSessionDate,
-      now: now,
+    final existingHistory = _repository.getCompletedQuizSessionById(
+      userId: user.userId,
+      sessionId: session.sessionId,
     );
+    if (existingHistory != null) {
+      return _buildAlreadyAppliedResult(user.userId);
+    }
 
-    final updatedLongestStreak =
-        updatedStreak > user.longestStreak ? updatedStreak : user.longestStreak;
-
-    final updatedMastery = _updateMastery(
-      current: user.masteryLevels,
+    final merge = _QuizProgressMerger(_achievementService).merge(
+      user: user,
       session: session,
     );
+    final questResult = await _QuestResultCoordinator(_questStateService).apply(
+      previousUser: user,
+      updatedUser: merge.updatedUser,
+    );
+    final unlockResult = _LevelRewardUnlocker().apply(
+      user: merge.updatedUser,
+      oldLevel: merge.oldLevel,
+    );
 
-    final reward = _achievementService.evaluate(
-      user: user.copyWith(currentStreak: updatedStreak),
+    await _QuizResultHistoryWriter(_repository).saveCompletedSession(
+      userId: user.userId,
       session: session,
+      reward: merge.reward,
+      completedAt: merge.completedAt,
     );
 
-    final updatedAchievements = [
-      ...user.achievements,
-      ...reward.unlockedIds.where((id) => !user.achievements.contains(id)),
-    ];
+    try {
+      await _repository.saveUserProgress(unlockResult.finalUser);
+    } catch (_) {
+      await _repository.deleteQuizSession(session.sessionId);
+      rethrow;
+    }
 
-    final updatedDifficultySteps = {
-      ...user.operationDifficultySteps,
-      ...session.difficultyStepsByOperation
-          .map((op, step) => MapEntry(op.name, step)),
-    };
-
-    final updatedUser = user.copyWith(
-      totalQuizzesTaken: user.totalQuizzesTaken + 1,
-      totalQuestionsAnswered:
-          user.totalQuestionsAnswered + session.totalQuestions,
-      totalCorrectAnswers: user.totalCorrectAnswers + session.correctAnswers,
-      currentStreak: updatedStreak,
-      longestStreak: updatedLongestStreak,
-      totalPoints: user.totalPoints + session.totalPoints + reward.bonusPoints,
-      lastSessionDate: now,
-      masteryLevels: updatedMastery,
-      achievements: updatedAchievements,
-      operationDifficultySteps: updatedDifficultySteps,
+    return ApplyQuizResultResult(
+      finalUser: unlockResult.finalUser,
+      reward: merge.reward,
+      questStatus: questResult.questStatus,
+      questCompletion: questResult.resolvedQuestCompletion,
+      newlyUnlockedItem: unlockResult.newlyUnlockedItem,
+      levelUpEvent: unlockResult.levelUpEvent,
+      questNotice: questResult.questNotice,
     );
+  }
 
-    final initialReconciliation =
-        await _questStateService.reconcileQuestPointer(user);
-    final completedQuestIds = _questStateService.readCompletedQuestIds(
-      user.userId,
-    );
-    final currentQuestId = _questStateService.readCurrentQuestId(user.userId) ??
-        _questStateService.firstQuestIdFor(user);
-
-    final beforeQuestStatus = _questStateService.getQuestStatusWith(
-      user: updatedUser,
-      currentQuestId: currentQuestId,
-      completedQuestIds: completedQuestIds,
-    );
-
-    if (beforeQuestStatus.isCompleted &&
-        !completedQuestIds.contains(beforeQuestStatus.quest.id)) {
-      final updatedCompleted = {
-        ...completedQuestIds,
-        beforeQuestStatus.quest.id,
-      };
-      final nextId = _questStateService.nextQuestIdFor(
-        user: updatedUser,
-        currentQuestId: beforeQuestStatus.quest.id,
-      );
-      await _questStateService.setQuestState(
-        userId: user.userId,
-        currentQuestId: nextId ?? beforeQuestStatus.quest.id,
-        completedQuestIds: updatedCompleted,
-      );
-      questCompletion = QuestCompletionSummary(
-        completedQuestId: beforeQuestStatus.quest.id,
-        completedQuestTitle: beforeQuestStatus.quest.title,
-        completedQuestDescription: beforeQuestStatus.quest.description,
+  Future<ApplyQuizResultResult> _buildAlreadyAppliedResult(
+    String userId,
+  ) async {
+    final finalUser = _repository.getUserProgress(userId);
+    if (finalUser == null) {
+      throw StateError(
+        'Cannot resolve already applied quiz result for $userId',
       );
     }
 
-    final finalReconciliation =
-        await _questStateService.reconcileQuestPointer(updatedUser);
-    final questStatus = finalReconciliation.questStatus;
-
-    await _repository.saveQuizSession({
-      'sessionId': session.sessionId,
-      'userId': user.userId,
-      'operationType': session.operationType.name,
-      'difficulty': session.difficulty.name,
-      'correctAnswers': session.correctAnswers,
-      'totalQuestions': session.totalQuestions,
-      'successRate': session.successRate,
-      'points': session.totalPoints,
-      'bonusPoints': reward.bonusPoints,
-      'pointsWithBonus': session.totalPoints + reward.bonusPoints,
-      'startTime': (session.startTime ?? now).toIso8601String(),
-      'endTime': (session.endTime ?? now).toIso8601String(),
-      'isComplete': true,
-    });
-
-    await _repository.deleteQuizSession(
-      _repository.inProgressQuizSessionId(
-        userId: user.userId,
-        operationTypeName: session.operationType.name,
-      ),
+    final reconciliation = await _questStateService.reconcileQuestPointer(
+      finalUser,
     );
-
-    InventoryItem? newlyUnlockedItem;
-    var finalUnlockedItems = updatedUser.unlockedItems;
-
-    if (updatedUser.level > oldLevel) {
-      newlyUnlockedItem = InventoryConfig.nextLevelUnlock(finalUnlockedItems);
-      if (newlyUnlockedItem != null) {
-        finalUnlockedItems = [...finalUnlockedItems, newlyUnlockedItem.id];
-      }
-    }
-
-    final finalUser = updatedUser.copyWith(unlockedItems: finalUnlockedItems);
-    await _repository.saveUserProgress(finalUser);
-
-    final resolvedQuestCompletion = questCompletion == null
-        ? null
-        : QuestCompletionSummary(
-            completedQuestId: questCompletion.completedQuestId,
-            completedQuestTitle: questCompletion.completedQuestTitle,
-            completedQuestDescription:
-                questCompletion.completedQuestDescription,
-            nextQuestTitle:
-                questStatus.quest.id == questCompletion.completedQuestId
-                    ? null
-                    : questStatus.quest.title,
-          );
 
     return ApplyQuizResultResult(
       finalUser: finalUser,
-      reward: reward,
-      questStatus: questStatus,
-      questCompletion: resolvedQuestCompletion,
-      newlyUnlockedItem: newlyUnlockedItem,
-      levelUpEvent: finalUser.level > oldLevel
-          ? LevelUpEvent(
-              oldLevel: oldLevel,
-              newLevel: finalUser.level,
-              newTitle: finalUser.levelTitle,
-            )
-          : null,
-      questNotice:
-          finalReconciliation.questNotice ?? initialReconciliation.questNotice,
+      reward: _emptyAchievementReward,
+      questStatus: reconciliation.questStatus,
+      questNotice: reconciliation.questNotice,
     );
-  }
-
-  int _calculateStreak({
-    required int currentStreak,
-    required DateTime? lastSessionDate,
-    required DateTime now,
-  }) {
-    if (lastSessionDate == null) return 1;
-
-    final lastDate = DateTime(
-      lastSessionDate.year,
-      lastSessionDate.month,
-      lastSessionDate.day,
-    );
-    final today = DateTime(now.year, now.month, now.day);
-
-    final difference = today.difference(lastDate).inDays;
-
-    if (difference == 0) return currentStreak;
-    if (difference == 1) return currentStreak + 1;
-    return 1;
-  }
-
-  Map<String, double> _updateMastery({
-    required Map<String, double> current,
-    required QuizSession session,
-  }) {
-    final key = '${session.operationType.name}_${session.difficulty.name}';
-    final previousRate = current[key] ?? 0.0;
-    final newRate = session.successRate;
-    final updatedRate =
-        previousRate == 0.0 ? newRate : (previousRate + newRate) / 2;
-
-    return {
-      ...current,
-      key: updatedRate,
-    };
   }
 }

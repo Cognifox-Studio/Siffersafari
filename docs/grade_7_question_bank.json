@@ -1,0 +1,888 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 7 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 7,
+  "stage": "7-9",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 1000
+    },
+    "operations": [
+      "addition",
+      "subtraction",
+      "multiplication",
+      "division",
+      "algebraic_reasoning"
+    ],
+    "centralConcepts": [
+      "prioriteringsregler",
+      "algebraiska_uttryck",
+      "ekvationer",
+      "proportioner",
+      "procent",
+      "variabler",
+      "parenteser",
+      "forenkling"
+    ],
+    "strategies": [
+      "forenkla_uttryck_stegvis",
+      "losa_ekvationer_genom_balansmetoden",
+      "hantera_parenteser_korrekt",
+      "identifiera_proportionella_samband",
+      "kombinera_procent_algebra",
+      "rimlighetsbedomning"
+    ],
+    "commonMisconceptions": [
+      "missar_parenteser",
+      "fel_ordning_i_uttryck",
+      "blandar_variabler",
+      "fel_vid_ekvationslosning",
+      "fel_vid_procentuell_forandring",
+      "blandar_proportioner_med_skillnader"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records."
+  ],
+  "coverage": {
+    "questionCount": 140,
+    "headlineQuestionCount": 140,
+    "declaredQuestionCount": 140,
+    "countsBySection": {
+      "order_of_operations": 40,
+      "equations": 40,
+      "simplify_expressions": 30,
+      "percentage": 30
+    },
+    "declaredCountsBySection": {
+      "order_of_operations": 40,
+      "equations": 40,
+      "simplify_expressions": 30,
+      "percentage": 30
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": []
+  },
+  "sections": [
+    {
+      "id": "order_of_operations",
+      "label": "Prioriteringsregler",
+      "questionCount": 40,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g7_order_of_operations_001",
+          "prompt": "3 + 4 × 2",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g7_order_of_operations_002",
+          "prompt": "(5 + 3) × 2",
+          "responseType": "numeric",
+          "correctAnswer": 16
+        },
+        {
+          "id": "g7_order_of_operations_003",
+          "prompt": "20 ÷ 5 × 4",
+          "responseType": "numeric",
+          "correctAnswer": 16
+        },
+        {
+          "id": "g7_order_of_operations_004",
+          "prompt": "(12 − 4) × 3",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g7_order_of_operations_005",
+          "prompt": "6 × (2 + 7)",
+          "responseType": "numeric",
+          "correctAnswer": 54
+        },
+        {
+          "id": "g7_order_of_operations_006",
+          "prompt": "18 ÷ (3 × 3)",
+          "responseType": "numeric",
+          "correctAnswer": 2
+        },
+        {
+          "id": "g7_order_of_operations_007",
+          "prompt": "(10 − 2) × (8 − 5)",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g7_order_of_operations_008",
+          "prompt": "4 × 3 + 2",
+          "responseType": "numeric",
+          "correctAnswer": 14
+        },
+        {
+          "id": "g7_order_of_operations_009",
+          "prompt": "4 × (3 + 2)",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g7_order_of_operations_010",
+          "prompt": "(6 + 6) ÷ 3",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g7_order_of_operations_011",
+          "prompt": "(9 − 3) × (4 − 1)",
+          "responseType": "numeric",
+          "correctAnswer": 18
+        },
+        {
+          "id": "g7_order_of_operations_012",
+          "prompt": "2 × 2 × 2 × 2",
+          "responseType": "numeric",
+          "correctAnswer": 16
+        },
+        {
+          "id": "g7_order_of_operations_013",
+          "prompt": "(5 × 5) − (3 × 3)",
+          "responseType": "numeric",
+          "correctAnswer": 16
+        },
+        {
+          "id": "g7_order_of_operations_014",
+          "prompt": "(12 ÷ 3) + 7",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g7_order_of_operations_015",
+          "prompt": "(20 − 5) ÷ 5",
+          "responseType": "numeric",
+          "correctAnswer": 3
+        },
+        {
+          "id": "g7_order_of_operations_016",
+          "prompt": "30 ÷ (5 × 3)",
+          "responseType": "numeric",
+          "correctAnswer": 2
+        },
+        {
+          "id": "g7_order_of_operations_017",
+          "prompt": "(8 × 4) − (6 ÷ 3)",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g7_order_of_operations_018",
+          "prompt": "(7 × 6) + (12 ÷ 4)",
+          "responseType": "numeric",
+          "correctAnswer": 45
+        },
+        {
+          "id": "g7_order_of_operations_019",
+          "prompt": "(9 × 9) − (8 × 8)",
+          "responseType": "numeric",
+          "correctAnswer": 17
+        },
+        {
+          "id": "g7_order_of_operations_020",
+          "prompt": "(50 ÷ 10) + 3",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g7_order_of_operations_021",
+          "prompt": "6 + 4 × 5",
+          "responseType": "numeric",
+          "correctAnswer": 26
+        },
+        {
+          "id": "g7_order_of_operations_022",
+          "prompt": "(6 + 4) × 5",
+          "responseType": "numeric",
+          "correctAnswer": 50
+        },
+        {
+          "id": "g7_order_of_operations_023",
+          "prompt": "12 ÷ 3 + 7",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g7_order_of_operations_024",
+          "prompt": "12 ÷ (3 + 7)",
+          "responseType": "numeric",
+          "correctAnswer": 1.2
+        },
+        {
+          "id": "g7_order_of_operations_025",
+          "prompt": "2 × (3 × 4)",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g7_order_of_operations_026",
+          "prompt": "(2 × 3) × 4",
+          "responseType": "numeric",
+          "correctAnswer": 24
+        },
+        {
+          "id": "g7_order_of_operations_027",
+          "prompt": "5 × (6 − 2)",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g7_order_of_operations_028",
+          "prompt": "(5 × 6) − 2",
+          "responseType": "numeric",
+          "correctAnswer": 28
+        },
+        {
+          "id": "g7_order_of_operations_029",
+          "prompt": "9 × (8 ÷ 4)",
+          "responseType": "numeric",
+          "correctAnswer": 18
+        },
+        {
+          "id": "g7_order_of_operations_030",
+          "prompt": "(9 × 8) ÷ 4",
+          "responseType": "numeric",
+          "correctAnswer": 18
+        },
+        {
+          "id": "g7_order_of_operations_031",
+          "prompt": "7 + 3 × 9",
+          "responseType": "numeric",
+          "correctAnswer": 34
+        },
+        {
+          "id": "g7_order_of_operations_032",
+          "prompt": "(7 + 3) × 9",
+          "responseType": "numeric",
+          "correctAnswer": 90
+        },
+        {
+          "id": "g7_order_of_operations_033",
+          "prompt": "20 − 4 × 3",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g7_order_of_operations_034",
+          "prompt": "(20 − 4) × 3",
+          "responseType": "numeric",
+          "correctAnswer": 48
+        },
+        {
+          "id": "g7_order_of_operations_035",
+          "prompt": "100 ÷ 5 ÷ 2",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g7_order_of_operations_036",
+          "prompt": "100 ÷ (5 ÷ 2)",
+          "responseType": "numeric",
+          "correctAnswer": 40
+        },
+        {
+          "id": "g7_order_of_operations_037",
+          "prompt": "(30 ÷ 3) × 6",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g7_order_of_operations_038",
+          "prompt": "30 ÷ (3 × 6)",
+          "responseType": "numeric",
+          "correctAnswer": 1.6666666666666667
+        },
+        {
+          "id": "g7_order_of_operations_039",
+          "prompt": "4 × 4 × 4",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        },
+        {
+          "id": "g7_order_of_operations_040",
+          "prompt": "(4 × 4) × 4",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        }
+      ]
+    },
+    {
+      "id": "equations",
+      "label": "Ekvationer",
+      "questionCount": 40,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g7_equations_001",
+          "prompt": "2x + 5 = 17",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_002",
+          "prompt": "3x − 4 = 11",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_003",
+          "prompt": "5x + 3 = 28",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_004",
+          "prompt": "7x − 9 = 12",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_005",
+          "prompt": "4x + 12 = 40",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_006",
+          "prompt": "6x − 18 = 24",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_007",
+          "prompt": "9x + 6 = 33",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_008",
+          "prompt": "8x − 16 = 32",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_009",
+          "prompt": "3(x + 4) = 27",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_010",
+          "prompt": "2(x − 5) = 18",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_011",
+          "prompt": "5(x + 2) = 35",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_012",
+          "prompt": "7(x − 3) = 28",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_013",
+          "prompt": "4(x + 6) = 40",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_014",
+          "prompt": "6(x − 2) = 24",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_015",
+          "prompt": "9(x − 1) = 72",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_016",
+          "prompt": "10(x + 3) = 80",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_017",
+          "prompt": "12(x − 4) = 48",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_018",
+          "prompt": "3x + 7 = 25",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_019",
+          "prompt": "4x − 9 = 15",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_020",
+          "prompt": "8x + 5 = 37",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_021",
+          "prompt": "11x − 22 = 33",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_022",
+          "prompt": "15x + 30 = 90",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_023",
+          "prompt": "20x − 40 = 60",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_024",
+          "prompt": "14x + 7 = 63",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_025",
+          "prompt": "16x − 8 = 40",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_026",
+          "prompt": "18x + 9 = 45",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_027",
+          "prompt": "21x − 14 = 28",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_028",
+          "prompt": "24x + 12 = 60",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_029",
+          "prompt": "30x − 15 = 45",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_030",
+          "prompt": "25x + 50 = 100",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_031",
+          "prompt": "5(x − 4) = 25",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_032",
+          "prompt": "6(x + 3) = 54",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_033",
+          "prompt": "7(x − 2) = 35",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_034",
+          "prompt": "8(x + 5) = 96",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_035",
+          "prompt": "9(x − 6) = 27",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_036",
+          "prompt": "10(x + 4) = 140",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_037",
+          "prompt": "11(x − 3) = 55",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_038",
+          "prompt": "12(x + 2) = 96",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_039",
+          "prompt": "13(x − 1) = 78",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g7_equations_040",
+          "prompt": "14(x + 6) = 140",
+          "responseType": "numeric"
+        }
+      ]
+    },
+    {
+      "id": "simplify_expressions",
+      "label": "Förenkla uttryck",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric_or_text",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g7_simplify_expressions_001",
+          "prompt": "3x + 2x − 4",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_002",
+          "prompt": "7x − 3x + 9",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_003",
+          "prompt": "5x + 4 − 2x − 1",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_004",
+          "prompt": "9x − (3x + 2)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_005",
+          "prompt": "4(2x + 3)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_006",
+          "prompt": "3(x − 5)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_007",
+          "prompt": "2(3x + 4) − 5",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_008",
+          "prompt": "6x − 2(x + 3)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_009",
+          "prompt": "10x − (4x − 6)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_010",
+          "prompt": "8(x − 2) + 4",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_011",
+          "prompt": "12x + 3x − 9",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_012",
+          "prompt": "15x − 5x + 10",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_013",
+          "prompt": "20x − (10x + 5)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_014",
+          "prompt": "9(2x − 1)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_015",
+          "prompt": "7(3x + 2)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_016",
+          "prompt": "5(4x − 3)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_017",
+          "prompt": "6(3x + 1) − 2",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_018",
+          "prompt": "4(5x − 2) + 8",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_019",
+          "prompt": "3(7x − 4)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_020",
+          "prompt": "2(9x + 5)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_021",
+          "prompt": "(x + x + x) + 5",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_022",
+          "prompt": "(2x + 3x) − (x − 2)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_023",
+          "prompt": "4x − 2x + 6 − 3",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_024",
+          "prompt": "12x − 4(2x − 3)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_025",
+          "prompt": "15x + 5(3 − x)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_026",
+          "prompt": "8x − 3(2x + 1)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_027",
+          "prompt": "10x + 2(5 − x)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_028",
+          "prompt": "9x − (x + x + x)",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_029",
+          "prompt": "7x + 14 − 2x",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g7_simplify_expressions_030",
+          "prompt": "6(2x − 3) + 12",
+          "responseType": "numeric_or_text"
+        }
+      ]
+    },
+    {
+      "id": "percentage",
+      "label": "Procent",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g7_percentage_001",
+          "prompt": "30% av 250",
+          "responseType": "numeric",
+          "correctAnswer": 75
+        },
+        {
+          "id": "g7_percentage_002",
+          "prompt": "40% av 900",
+          "responseType": "numeric",
+          "correctAnswer": 360
+        },
+        {
+          "id": "g7_percentage_003",
+          "prompt": "12% av 600",
+          "responseType": "numeric",
+          "correctAnswer": 72
+        },
+        {
+          "id": "g7_percentage_004",
+          "prompt": "80% av 120",
+          "responseType": "numeric",
+          "correctAnswer": 96
+        },
+        {
+          "id": "g7_percentage_005",
+          "prompt": "15% av 200",
+          "responseType": "numeric",
+          "correctAnswer": 30
+        },
+        {
+          "id": "g7_percentage_006",
+          "prompt": "25% av 360",
+          "responseType": "numeric",
+          "correctAnswer": 90
+        },
+        {
+          "id": "g7_percentage_007",
+          "prompt": "60% av 450",
+          "responseType": "numeric",
+          "correctAnswer": 270
+        },
+        {
+          "id": "g7_percentage_008",
+          "prompt": "10% av 780",
+          "responseType": "numeric",
+          "correctAnswer": 78
+        },
+        {
+          "id": "g7_percentage_009",
+          "prompt": "35% av 400",
+          "responseType": "numeric",
+          "correctAnswer": 140
+        },
+        {
+          "id": "g7_percentage_010",
+          "prompt": "5% av 900",
+          "responseType": "numeric",
+          "correctAnswer": 45
+        },
+        {
+          "id": "g7_percentage_011",
+          "prompt": "70% av 300",
+          "responseType": "numeric",
+          "correctAnswer": 210
+        },
+        {
+          "id": "g7_percentage_012",
+          "prompt": "55% av 200",
+          "responseType": "numeric",
+          "correctAnswer": 110
+        },
+        {
+          "id": "g7_percentage_013",
+          "prompt": "90% av 500",
+          "responseType": "numeric",
+          "correctAnswer": 450
+        },
+        {
+          "id": "g7_percentage_014",
+          "prompt": "22% av 450",
+          "responseType": "numeric",
+          "correctAnswer": 99
+        },
+        {
+          "id": "g7_percentage_015",
+          "prompt": "18% av 600",
+          "responseType": "numeric",
+          "correctAnswer": 108
+        },
+        {
+          "id": "g7_percentage_016",
+          "prompt": "12% av 900",
+          "responseType": "numeric",
+          "correctAnswer": 108
+        },
+        {
+          "id": "g7_percentage_017",
+          "prompt": "48% av 250",
+          "responseType": "numeric",
+          "correctAnswer": 120
+        },
+        {
+          "id": "g7_percentage_018",
+          "prompt": "64% av 125",
+          "responseType": "numeric",
+          "correctAnswer": 80
+        },
+        {
+          "id": "g7_percentage_019",
+          "prompt": "75% av 80",
+          "responseType": "numeric",
+          "correctAnswer": 60
+        },
+        {
+          "id": "g7_percentage_020",
+          "prompt": "33% av 300",
+          "responseType": "numeric",
+          "correctAnswer": 99
+        },
+        {
+          "id": "g7_percentage_021",
+          "prompt": "28% av 400",
+          "responseType": "numeric",
+          "correctAnswer": 112
+        },
+        {
+          "id": "g7_percentage_022",
+          "prompt": "16% av 500",
+          "responseType": "numeric",
+          "correctAnswer": 80
+        },
+        {
+          "id": "g7_percentage_023",
+          "prompt": "14% av 350",
+          "responseType": "numeric",
+          "correctAnswer": 49
+        },
+        {
+          "id": "g7_percentage_024",
+          "prompt": "52% av 600",
+          "responseType": "numeric",
+          "correctAnswer": 312
+        },
+        {
+          "id": "g7_percentage_025",
+          "prompt": "68% av 250",
+          "responseType": "numeric",
+          "correctAnswer": 170
+        },
+        {
+          "id": "g7_percentage_026",
+          "prompt": "81% av 900",
+          "responseType": "numeric",
+          "correctAnswer": 729
+        },
+        {
+          "id": "g7_percentage_027",
+          "prompt": "95% av 200",
+          "responseType": "numeric",
+          "correctAnswer": 190
+        },
+        {
+          "id": "g7_percentage_028",
+          "prompt": "7% av 700",
+          "responseType": "numeric",
+          "correctAnswer": 49
+        },
+        {
+          "id": "g7_percentage_029",
+          "prompt": "3% av 900",
+          "responseType": "numeric",
+          "correctAnswer": 27
+        },
+        {
+          "id": "g7_percentage_030",
+          "prompt": "1% av 1000",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        }
+      ]
+    }
+  ]
+}

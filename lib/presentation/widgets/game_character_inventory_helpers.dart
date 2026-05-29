@@ -127,6 +127,8 @@ double? _getInteractiveItemHitScore(
       return (widthFactor: 0.72, heightFactor: 0.58, paddingFactor: 0.02);
     case 'item_backpack_adventure':
       return (widthFactor: 0.72, heightFactor: 0.78, paddingFactor: 0.02);
+    case 'item_shirt_explorer':
+      return (widthFactor: 0.84, heightFactor: 0.92, paddingFactor: 0.02);
     case 'item_shoes_safari':
       return (widthFactor: 0.78, heightFactor: 0.4, paddingFactor: 0.02);
   }

@@ -1,300 +1,152 @@
+<!--
+typ: reference
+syfte: Kunskapsdatabas for arskursmappning, fragetyper och quizprogression
+uppdaterad: 2026-05-26
+-->
+
 # Kunskapsnivå per årskurs (Åk 1–9)
 
-En intern **spec** och **implementationsplan** för vilken kunskapsnivå som är rimlig per årskurs och hur den mappas till appens logik (talområden, räknesätt, feature-gates och frågegeneration).
+Detta dokument är det mänskliga navet för kunskapsfacit. Den kanoniska, maskinläsbara källan är [curriculum_facit.json](curriculum_facit.json). Audit-tester ska hålla JSON, kod och detta dokument i synk.
 
-## Syfte & Målbild
+## Kanonisk struktur
 
-Använd årskurs-informationen (Åk 1–9) för att:
-- Generera frågor med rätt **talområde**
-- Gradvis introducera rätt **strategier** (t.ex. tiokompisar, tiotalsövergång)
-- Senare kunna lägga till nya **frågetyper** (textuppgifter, pengar, tid, geometri) utan att bygga om appen i ett steg
+- Maskinläsbar källa: [curriculum_facit.json](curriculum_facit.json)
+- Mänskligt nav: [KUNSKAPSNIVA_PER_AK.md](KUNSKAPSNIVA_PER_AK.md)
+- Runtime-ankare: `DifficultyConfig`, `QuestionGeneratorService`, `QuestionMixPolicy`
+- Audit-ankare: `curriculum_facit_consistency_audit_test.dart`, `curriculum_logic_coverage_test.dart`, `difficulty_mix_audit_test.dart`, `mix_distribution_audit_test.dart`, `question_step_profile_audit_test.dart`
 
-**Målbild:**
-- När en förälder sätter barnets Åk ska quizet automatiskt välja rimliga tal och "typiska" strategier för den Åk
-- Föräldern kan alltid överstyra räknesätt och svårighet; Åk är en **guide**, inte ett tak
-- Målet är "rimliga" frågor som tränar rätt strategi, inte en exakt läroplanssimulation
+Konsekvens: detaljerad per-årskursmappning, step-tabeller, frågetypspolicys och källhierarki ska i första hand uppdateras i `curriculum_facit.json`. Den här filen ska förklara hur facit ska läsas och användas.
 
-## Grundprinciper
+## Källhierarki
 
-- **Förståelse före hastighet** (särskilt Åk 1–2)
-- **Stabil progression**: små steg, tydliga nivåer
-- **Föräldern har sista ordet**: förälderns val av räknesätt begränsar alltid
-- **Fallback**: om Åk saknas eller data saknas → använd nuvarande logik
+1. **Skolverket Lgr22, Matematik (`GRGRMAT01`)**: högsta facit. Officiellt centralt innehåll är grupperat per stadie, inte per enskild årskurs.
+2. **Skolverkets kommentarmaterial för matematik**: stöd för progression, urval och bedömning.
+3. **Skolverkets kriterier, nationella prov, bedömningsstöd och `Hitta matematiken`**: svenska kontrollkällor för bredd, tidiga färdigheter och stadieavstämning.
+4. **Appens runtime-facit**: `DifficultyConfig`, `QuestionGeneratorService` och `QuestionMixPolicy` bestämmer exakt vad Siffersafari genererar i dag.
+5. **Audit-tester**: skyddar att JSON-facit, dokumentation och faktisk frågemix inte driver isär.
 
-## Taggar
-- `NU (stöds i appen)`: kan uttryckas i nuvarande quiz-format (text + heltalssvar och/eller befintliga Mix-typer).
-- `SEN (kräver UI/representation)`: kräver nya widgets/visualisering (klocka, pengar, figurer, grafer/diagram, bråkbitar, koordinatsystem osv.).
+## Så ska facit läsas
 
-## Adaptiv svårighetsgrad (hybrid-modell)
+- **Skolverket är stadiebaserat**: officiellt innehåll anges för `1–3`, `4–6` och `7–9`.
+- **Appen är årskursbaserad**: Åk 1–9 i facit är en konservativ produktmappning ovanpå Skolverkets stadier.
+- **`NU` betyder generatorstöd i nuvarande quizformat**: text + heltalssvar och befintliga Mix-typer.
+- **`SEN` betyder att representation saknas**: t.ex. bråk, figurer, diagram, koordinatsystem eller andra uttrycksformer som kräver egen UI-modul.
+- **Svårare ska inte bara betyda större tal**: progression ska helst addera strategi, samband, problemlösning eller representation.
 
-**System:** Appen använder ett hybrid-adaptivt system som kombinerar **mikro-signaler** (snabba streaks) med **makro-bekräftelse** (rullande 5-fråge-fönster) för att justera `difficultyStep` per räknesätt under quiz.
+## Officiell modell vi följer
 
-**Regler:**
-- **Mikro-signal uppåt:** 3 rätt i rad → föreslår +1 step
-- **Mikro-signal nedåt:** 2 fel i rad → föreslår −1 step
-- **Makro-bekräftelse:** Rullande 5-fråge-fönster med trösklar:
-  - ≥ 85% rätt → föreslår +1 step
-  - ≤ 60% rätt → föreslår −1 step
-- **Konfliktlösning:** Steg ändras endast när mikro och makro är överens, **eller** när mikro är neutral (0) och makro har ett förslag
-- **Cooldown:** 2 frågor måste passera efter varje step-ändring innan nästa justering tillåts (förhindrar thrashing)
+### Fem förmågor
 
-**Resultat:** Barn som svarar snabbt och korrekt får snabbare progression utan att vänta på 5-fråge-fönstret (mikro), men långsamma fel eller jämn blandad prestanda regleras fortfarande av makro-fönstret. Steg persisteras per räknesätt i `UserProgress.operationDifficultySteps` och fortsätter mellan quiz-sessioner.
+Lgr22 beskriver fem förmågor som facit måste stödja över tid:
 
-**Implementation:**
-- Service-lager: `AdaptiveDifficultyService.suggestDifficultyStep`
-- Runtime: `QuizNotifier.submitAnswer` räknar streaks och updaterar steg
-- Persistence: `UserNotifier.applyQuizResult` sparar steg till profildata
+- begrepp och samband mellan begrepp
+- metoder och rutinuppgifter
+- problemlösning och värdering av strategier
+- resonemang
+- matematikens uttrycksformer
 
-## Snabböversikt (exakt app-mappning)
+### Sex kunskapsområden
 
-Tabellen visar **caps vid step 10** (maxnivå) för respektive räknesätt enligt `DifficultyConfig.curriculumNumberRangeForStep`.
+Skolverket återkommer till samma sex huvudområden i alla stadier. Varje ny frågetyp ska mappas till ett av dem i `curriculum_facit.json`.
 
-| Åk | Synliga räknesätt (default) | Förv. step +/− | Förv. step ×/÷ | +/− cap | × cap | ÷ cap | Mix cap |
+| Område | Nuvarande stöd i appen | Största lucka |
+|---|---|---|
+| Taluppfattning och tals användning | Heltalsaritmetik, procent med heltalssvar, negativa tal, potenser | Bråk- och decimalrepresentation |
+| Algebra | Saknat tal, vissa textbaserade funktionsfrågor | Ekvationer och symboliskt svarsstöd |
+| Geometri | Begränsat textstöd | Figurer, mätverktyg, area/omkrets/volym som riktig visualisering |
+| Sannolikhet och statistik | Lågstadie-statistik/chans, M4-statistik/sannolikhet, M5 avancerad statistik i text | Diagram, datavisualisering och rikare tolkning |
+| Samband och förändring | Dubbelt/hälften som policyspår, procent, vissa textfunktioner | Koordinatsystem, grafer, modeller |
+| Problemlösning | Korta textuppgifter | Rimlighetsbedömning, strategi-val och modellering |
+
+### Svenska kontrollkällor
+
+Utöver kursplanen använder vi svenska kontrollkällor för att undvika att frågelogiken reduceras till operandstorlek.
+
+| Källa | Hur den används |
+|---|---|
+| Skolverkets kriterier för Åk 3/6/9 | Stadieavstämning av luckor, inte som exakt generatorregel |
+| Skolverkets nationella prov | Kontroll att facitet täcker bredd vid stadieslut |
+| Skolverkets bedömningsstöd | Kontroll av om en frågetyp tränar begrepp, metod, problemlösning eller representation |
+| `Hitta matematiken` och garantin för tidiga stödinsatser | Kontroll av lågstadiets grundläggande taluppfattning, jämförelser, mönster och tidigt matematiskt tänkande |
+| NCM | Didaktisk sanity check, aldrig högre facit än Skolverket |
+
+## Appens tolkning just nu
+
+### Snabböversikt
+
+Tabellen visar aktuella `step 10`-caps enligt `DifficultyConfig.curriculumNumberRangeForStep`. Detaljerade step-tabeller per årskurs ligger i `curriculum_facit.json`.
+
+| Åk | Synliga räknesätt | Förv. step +/− | Förv. step ×/÷ | +/− cap | × cap | ÷ cap | Mix cap |
 |---:|---|---:|---:|---:|---:|---:|---:|
 | 1 | +, − | 2 | 1 | 20 | 5 | 5 | 5 |
-| 2 | +, − | 2 | 1 | 100 | 10 | 10 | 10 |
-| 3 | +, −, ×, ÷ | 3 | 2 | 1000* | 10 | 10 | 10 |
-| 4 | +, −, ×, ÷ | 4 | 3 | 10000* | 99 | 20 | 20 |
-| 5 | +, −, ×, ÷ | 5 | 4 | 100000* | 199 | 50 | 30 |
-| 6 | +, −, ×, ÷ | 6 | 5 | 100000* | 299 | 100 | 60 |
-| 7 | +, −, ×, ÷ | 6 | 5 | 1000000 | 299 | 100 | 60 |
-| 8 | +, −, ×, ÷ | 7 | 6 | 1000000 | 299 | 100 | 60 |
-| 9 | +, −, ×, ÷ | 7 | 6 | 1000000 | 299 | 100 | 60 |
+| 2 | +, −, ×, ÷ | 2 | 1 | 100 | 10 | 10 | 10 |
+| 3 | +, −, ×, ÷ | 3 | 2 | 1000 | 10 | 10 | 10 |
+| 4 | +, −, ×, ÷ | 4 | 3 | 10000 | 99 | 20 | 20 |
+| 5 | +, −, ×, ÷ | 5 | 4 | 100000 | 199 | 50 | 30 |
+| 6 | +, −, ×, ÷ | 6 | 5 | 100000 | 299 | 100 | 60 |
+| 7 | +, −, ×, ÷ | 6 | 5 | 1000 | 299 | 100 | 60 |
+| 8 | +, −, ×, ÷ | 7 | 6 | 1000 | 299 | 100 | 60 |
+| 9 | +, −, ×, ÷ | 7 | 6 | 1000 | 299 | 100 | 60 |
 
-\* Åk 3–6 (+/−) använder en **step-tabell** (inte linjär interpolation) för att undvika stora “hopp”.
+### Fokus per block
 
-Notiser:
-- `Synliga räknesätt (default)` kommer från `visibleOperationsForGrade` och kan fortfarande begränsas av förälderns val.
-- `÷ cap` används för *kvot + divisor*; dividend byggs som `kvot * divisor` (heltal utan rest i standardläget).
-- Talområdena i `DifficultyConfig` är 0..cap. Negativa heltal (M5a) hanteras i generatorn och är ett separat lager.
+| Block | Fokus i appen | Inte standard ännu |
+|---|---|---|
+| Åk 1–3 | Taluppfattning (före/efter, jämföra tal, enkla talföljder), +/−, mjuk ×/÷-introduktion, saknat tal inklusive vissa ×/÷-varianter, korta textproblem, sparsam statistik/chans/tid | Bråk, geometri, mätning, tabeller/diagram som riktig UI |
+| Åk 4–6 | Större aritmetik, tabellnära ×/÷, M4-statistik/sannolikhet, sen procent och negativa tal | Bråk, decimaler, koordinater, grafer, geometri med figur |
+| Åk 7–9 | Negativa tal, procent, potenser, prioriteringsregler, enkla numeriska ekvationer, heltalsbar proportionalitet, delar av geometri med heltalssvar och textbaserade M5-brofrågor | Symbolisk förenkling, funktioner med graf/formelinput, proportionalitet med decimal-/grafkrav, modeller, diagram, koordinatsystem, full geometri |
 
----
+### Adaptiv svårighetsgrad
 
-## Åk 1
+`difficultyStep` är appens interna progressionsmotor per räknesätt.
 
-### Kunna
-- `NU`: Taluppfattning 0–20, jämföra tal.
-- `NU`: +/− inom 10 som “lägga till/ta bort”, samt tiokompisar.
-- `SEN`: Former/lägesord (behöver visuell representation).
+- **Mikro-signal**: 3 rätt i rad föreslår +1, 2 fel i rad föreslår −1.
+- **Makro-signal**: rullande 5-fråge-fönster över/under trösklar bekräftar upp eller ner.
+- **Cooldown**: 2 frågor mellan step-ändringar.
+- **Persistens**: steg sparas per räknesätt i `UserProgress.operationDifficultySteps`.
 
-### Introducera
-- `NU`: +/− upp till 20.
-- `NU`: Enkla textuppgifter för +/− (kort, 1 steg).
+## Regler för ny frågetyp
 
-### App-logik (exakt)
-- Räknesätt (default): `+`, `−`.
-- Benchmark-step: `+`/`−`=2, `×`/`÷`=1.
-- Caps vid step 10: +/− 20, Mix 5.
-- Feature-gates:
-  - Textuppgift +/−: Åk 1–3 (om påslaget).
-  - Saknat tal: ej i Åk 1.
+Varje ny frågetyp ska först läggas in i `curriculum_facit.json` med:
 
-### Vanliga fel
-- Tolkning av text (“fler” vs “kvar”) och blandar +/−.
+1. `skolverketAreaId`
+2. `stage`
+3. `appStatus` (`NU`, `SEN` eller `SAKNAS`)
+4. tydlig `gate`
+5. minst ett `minAuditTests`
 
-## Åk 2
+Om frågetypen är `SEN` får den inte bli standard i Mix förrän representationen finns och ett audit-/testspår verifierar den.
 
-### Kunna
-- `NU`: Tal 0–100, tiotal/ental, räkna i tiosteg.
-- `NU`: +/− inom 100 med enkla strategier.
-- `SEN`: Klockan/pengar (kräver UI).
+## Kända luckor
 
-### Introducera
-- `NU`: Tiotalsövergång i lugn progression.
-- `NU`: “Saknat tal” som begrepp.
+- bråk och decimaler som riktig representation
+- geometri och mätning med figurer och verktyg
+- koordinatsystem, grafer och diagram
+- resonemang, modellering och svar som kräver mer än heltal
 
-### App-logik (exakt)
-- Räknesätt (default): `+`, `−`.
-- Benchmark-step: `+`/`−`=2, `×`/`÷`=1.
-- Caps vid step 10: +/− 100, Mix 10.
-- Feature-gates:
-  - Saknat tal: Åk 2–3, endast +/−.
-  - Textuppgift +/−: Åk 1–3.
+## Repoankare
 
-### Vanliga fel
-- Likhetstecknet blir “nu kommer svaret” istället för “lika på båda sidor”.
-
-## Åk 3
-
-### Kunna
-- `NU`: Tal 0–1000 (positionssystem).
-- `NU`: +/− upp till 1000.
-- `NU`: ×/÷ som kopplade operationer (tabeller 2–10 gradvis).
-
-### Introducera
-- `NU`: Enkla textuppgifter även för ×/÷ (konservativ rollout i appen).
-- `SEN`: Bråk som del av helhet (behöver representation).
-
-### App-logik (exakt)
-- Räknesätt (default): `+`, `−`, `×`, `÷`.
-- Benchmark-step: +/−=3, ×/÷=2.
-- +/− step-tabell (Åk 3, min=0):
-  - step 1..10 max = `[10, 20, 50, 100, 200, 350, 500, 700, 850, 1000]`
-- Caps vid step 10: +/− 1000, × 12, ÷ 12, Mix 12.
-- Feature-gates:
-  - Textuppgift +/−: Åk 1–3.
-  - Textuppgift ×/÷: endast Åk 3.
-  - Saknat tal: Åk 2–3.
-
-### Vanliga fel
-- Division blir svår om tabellerna inte sitter; håll ÷ kopplad till tabellträning.
-
-## Åk 4
-
-### Kunna
-- `NU`: Stabil +/− med större tal.
-- `NU`: ×/÷ skalar upp, men fortfarande “hanterbart”.
-- `NU`: Mix kan inkludera M4 (statistik/sannolikhet) med låg andel.
-- `SEN`: Bråk/decimaler/geometri i visuellt format.
-
-### Introducera
-- `NU`: Problemlösning 1–2 steg (kort text).
-
-### App-logik (exakt)
-- Benchmark-step: +/−=4, ×/÷=3.
-- +/− step-tabell (Åk 4, min=0):
-  - step 1..10 max = `[20, 50, 100, 200, 500, 1000, 2000, 4000, 7000, 10000]`
-- Caps vid step 10: × 99, ÷ 20, Mix 20.
-- Mix feature-gates (Åk 4–6):
-  - M4 statistik: roll < `statsChance` (0.10 vid step≤3, annars 0.12).
-  - M4 sannolikhet: roll i `[statsChance, statsChance+probabilityChance)` (samma 0.10/0.12).
-
-### Vanliga fel
-- Svårighets-hopp om vi inte använder step-tabellen för +/−.
-
-## Åk 5
-
-### Kunna
-- `NU`: +/− med stora tal (växling/lån ska kännas begripligt).
-- `NU`: ×/÷ med större tal i gradvis progression.
-- `SEN`: Procent/bråk/decimaler som representation.
-
-### App-logik (exakt)
-- Benchmark-step: +/−=5, ×/÷=4.
-- +/− step-tabell (Åk 5, min=0):
-  - step 1..10 max = `[50, 100, 200, 500, 1000, 2000, 5000, 10000, 30000, 100000]`
-- Caps vid step 10: × 199, ÷ 50, Mix 30.
-- Mix M4: samma regler som Åk 4.
-
-## Åk 6
-
-### Kunna
-- `NU`: Robust aritmetik (större tal).
-- `NU`: Kunna tolka enklare statistik/sannolikhet när M4 dyker upp i Mix.
-- `SEN`: Bråk/decimal/procent som vardagsmat, geometri/koordinater.
-
-### App-logik (exakt)
-- Benchmark-step: +/−=6, ×/÷=5.
-- +/− step-tabell (Åk 6, min=0):
-  - step 1..10 max = `[100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000]`
-- Caps vid step 10: × 299, ÷ 100, Mix 60.
-- Mix M4: samma regler som Åk 4.
-
-## Åk 7
-
-### Kunna
-- `NU`: Fortsatt aritmetik + börja möta svårare Mix.
-- `NU`: Procent/prioriteringsregler kan dyka upp i Mix (M5a).
-- `SEN`: Algebra/funktioner med tydlig representation.
-
-### App-logik (exakt)
-- Benchmark-step: +/−=6, ×/÷=5.
-- Caps vid step 10: +/− 1 000 000, × 299, ÷ 100, Mix 60.
-- Mix feature-gates (Åk 7–9):
-  - Signed +/− i kärnflödet: introduceras från step 4.
-  - M5a procent: från step 4, roll < 0.18.
-  - M5a potenser: bara Åk 8–9 (se nästa).
-  - M5a prioriteringsregler: från step 6, roll i `[0.30, 0.42)`.
-  - M5b (extra typer): endast om `mixBaselineStep` (clamped) ≥ 8:
-    - Linjär funktion (textformat): roll i `[0.42, 0.52)`.
-    - Geometrisk transformation (textformat): roll i `[0.52, 0.62)`.
-    - Avancerad statistik (textformat): roll i `[0.62, 0.72)`.
-
-## Åk 8
-
-### Kunna
-- `NU`: M5a procent + potenser + prioritering i Mix.
-- `NU`: M5b-typer kan dyka upp i Mix vid step≥8.
-- `SEN`: Fullt algebraspår (kräver mer än heltalssvar i många uppgifter).
-
-### App-logik (exakt)
-- Benchmark-step: +/−=7, ×/÷=6.
-- Samma caps som Åk 7.
-- Signed +/− i kärnflödet: från step 4.
-- M5a procent: från step 4.
-- M5a potenser: från step 7, roll i `[0.18, 0.30)` (endast Åk≥8).
-- M5a prioriteringsregler: från step 6.
-- M5b: samma rollfönster som Åk 7 när step≥8.
-
-## Åk 9
-
-### Kunna
-- `NU`: Stabil aritmetik + M5a/M5b i Mix enligt gates.
-- `SEN`: Resonemang, modeller, algebra, funktioner, geometri med figurer.
-
-### App-logik (exakt)
-- Benchmark-step: +/−=7, ×/÷=6.
-- Samma caps som Åk 7.
-- Signed +/− i kärnflödet: från step 4.
-- M5a procent: från step 4.
-- M5a prioriteringsregler: från step 6.
-- M5a potenser: från step 7.
-
----
+- Strukturerad källa: [curriculum_facit.json](curriculum_facit.json)
+- Runtime-konfig: `lib/core/config/difficulty_config.dart`
+- Generatorfacad: `lib/core/services/question_generator_service.dart`
+- Mix-policy: `lib/core/services/question_mix_policy.dart`
+- Synk-audit: `test/unit/audits/curriculum_facit_consistency_audit_test.dart`
+- Coverage-audit: `test/unit/logic/curriculum_logic_coverage_test.dart`
+- Grade-bank-statusaudit: `test/unit/audits/question_bank_runtime_status_audit_test.dart`
 
 ## Källor & avgränsningar
 
-Pedagogiska “progressionssignaler” (kompletterande, ej maskin-exakt):
-- Rik Matematik: https://www.rikmatematik.se/prova
-- Matematik ABG (film-översikt): https://www.matematikabg.se/elever/filmer.html
-- Skolmagi.nu: blockerade automatiserad hämtning (HTTP 403) vid insamling.
+Officiella svenska källor:
 
-Exakta app-regler i repo (detta dokument speglar dessa):
-- Talspann + benchmark + synliga räknesätt: `lib/core/config/difficulty_config.dart`
-- Feature-gates + Mix-fördelning: `lib/core/services/question_generator_service.dart`
+- Skolverket Lgr22, matematik (`GRGRMAT01`)
+- Skolverket Syllabus API v2 (`/v2/subjects/GRGRMAT01`)
+- Skolverkets kommentarmaterial till kursplanen i matematik
+- Skolverkets nationella prov
+- Skolverkets digitala betygsstödjande bedömningsstöd
+- Skolverkets kartläggningsmaterial `Hitta matematiken`
 
-Skolverkets kursplan för matematik (Lgr22):
-- https://www.skolverket.se/undervisning/grundskolan/laroplan-lgr22-for-grundskolan-samt-for-forskoleklassen-och-fritidshemmet
-- Kursplan i matematik: https://www.skolverket.se/undervisning/grundskolan/laroplan-lgr22-for-grundskolan-samt-for-forskoleklassen-och-fritidshemmet#/curriculums/LGR22/GRGRMAT01
+Kompletterande, ej överordnade kontrollkällor:
 
----
-
-## Implementationsstatus (2026-03-05)
-
-- ✅ UI-svårighet: 3 nivåer (lätt/medel/svår)
-- ✅ Intern svårighet: step 1–10 per räknesätt (adaptiv), sparas per barnprofil
-- ✅ Åk-styrning: används som talområde + constraints, med fallback om data saknas
-- ✅ Textuppgifter v1: finns och är per barn (på/av)
-- ✅ "Saknat tal" (t.ex. `? + 3 = 7`): finns och är per barn (på/av)
-- ✅ M3 (Åk 4–6): +/− har jämnare talområde per step + gradvis växling; ×/÷ har "tabeller först"-formning
-- ✅ M4 (påbörjad): enkla statistik- och sannolikhetsfrågor + enkel kombinatorik kan dyka upp i Mix för Åk 4–6
-- ⚠️ Division med rest: **avstängt** i nuvarande quiz-format (heltal utan rest)
-
-## Milstolpar (framtida utveckling)
-
-### M2 — Textuppgifter v2 (Åk 1–3, utökade mallar)
-- Utöka textuppgifts-generator med fler mallar
-- 1–2 steg, kort text, låg kognitiv last
-- Acceptance: Textuppgifter fungerar i quizflödet utan ny skärm
-
-### M3 — Åk 4–6: fler strategier och större tal
-- Utöka talområde + constraints (mer växling, division med rest som option)
-- Acceptance: Talområde skalar upp utan stora "hopp", step 1–10 känns jämn
-
-### M4 — Geometri/Mätning/Diagram (separata moduler)
-- Implementera en modul i taget med visuell representation
-- Varje modul behöver: datamodell, generator, rendering, test
-- Acceptance: Varje modul kan slås av/på och har fallback
-
-### M5a — Åk 7–9: utan ny UI
-- Negativa tal: +/−/×/÷ med heltal
-- Prioriteringsregler: enkla uttryck med parenteser
-- Procent: "x % av y", procentuell förändring
-- Potenser: kvadrattal/kubiktal
-- Acceptance: Kan köras i quizflödet utan ny skärm
-
-### M5b — Åk 7–9: kräver ny UI/representation
-- Funktioner & grafer (koordinatsystem, lutning)
-- Geometri med figur (Pythagoras, cirkel-omkrets/area)
-- Statistik/sannolikhet med diagram
-- Acceptance: Varje modul har egen minimal rendering + enhetstester
+- NCM, Nationellt centrum för matematikutbildning
+- Rik Matematik
+- Matematik ABG

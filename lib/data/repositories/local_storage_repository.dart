@@ -62,6 +62,13 @@ class LocalStorageRepository {
     return session;
   }
 
+  Iterable<Map<String, dynamic>> _validQuizSessions() sync* {
+    for (final value in _quizHistoryBox.values) {
+      final session = _validateQuizSession(value);
+      if (session != null) yield session;
+    }
+  }
+
   /// Save user progress
   Future<void> saveUserProgress(UserProgress progress) async {
     await _userProgressBox.put(progress.userId, progress);
@@ -89,9 +96,7 @@ class LocalStorageRepository {
 
     final keys = _settingsBox.keys.toList(growable: false);
     for (final rawKey in keys) {
-      final key = rawKey.toString();
-      if (SettingsKeys.userScopedKeyPrefixes(userId)
-          .any((prefix) => key.startsWith(prefix))) {
+      if (SettingsKeys.isUserScopedKey(userId, rawKey)) {
         await _settingsBox.delete(rawKey);
       }
     }
@@ -121,6 +126,21 @@ class LocalStorageRepository {
     }
   }
 
+  /// Get a completed history record by ID when it belongs to the user.
+  Map<String, dynamic>? getCompletedQuizSessionById({
+    required String userId,
+    required String sessionId,
+  }) {
+    if (userId.isEmpty || sessionId.isEmpty) return null;
+
+    final session = _validateQuizSession(_quizHistoryBox.get(sessionId));
+    if (session == null) return null;
+    if (session['userId'] != userId) return null;
+    if (session['isComplete'] != true) return null;
+
+    return session;
+  }
+
   /// Get an in-progress quiz session for the user, if one exists
   Map<String, dynamic>? getQuizSession(
     String userId, {
@@ -129,11 +149,7 @@ class LocalStorageRepository {
     try {
       final candidates = <Map<String, dynamic>>[];
 
-      final keys = _quizHistoryBox.keys;
-      for (final key in keys) {
-        final value = _quizHistoryBox.get(key);
-        final session = _validateQuizSession(value);
-        if (session == null) continue;
+      for (final session in _validQuizSessions()) {
         if (session['userId'] != userId) continue;
         if (session['isComplete'] != false) continue;
         if (operationTypeName != null &&
@@ -219,9 +235,7 @@ class LocalStorageRepository {
     final allSessions = <Map<String, dynamic>>[];
 
     // Hämta och filtrera alla giltiga sessioner
-    for (final value in _quizHistoryBox.values) {
-      final session = _validateQuizSession(value);
-      if (session == null) continue;
+    for (final session in _validQuizSessions()) {
       if (session['userId'] != userId) continue;
 
       // Complete lightweight history records are intentional, but old

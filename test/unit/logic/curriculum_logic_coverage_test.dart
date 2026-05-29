@@ -374,9 +374,22 @@ void main() {
         );
 
         // --- Base operation visibility rules (Mix)
-        if (grade <= 2) {
+        if (grade == 1) {
           expectNever(obs.mul, '×', context: ctx);
           expectNever(obs.div, '÷', context: ctx);
+        }
+
+        if (grade == 2) {
+          if (step <= 3) {
+            expectNever(obs.mul, '×', context: ctx);
+            expectNever(obs.div, '÷', context: ctx);
+          } else if (step <= 6) {
+            expectSometimes(obs.mul, '×', context: ctx);
+            expectNever(obs.div, '÷', context: ctx);
+          } else {
+            expectSometimes(obs.mul, '×', context: ctx);
+            expectSometimes(obs.div, '÷', context: ctx);
+          }
         }
 
         if (grade == 3) {
@@ -395,7 +408,7 @@ void main() {
 
         // --- Time questions (M4a) gating
         if (grade == 2) {
-          if (step <= 4) {
+          if (step <= 3) {
             expectNever(obs.time, 'Tid (Klockan)', context: ctx);
           } else {
             expectSometimes(obs.time, 'Tid (Klockan)', context: ctx);
@@ -412,6 +425,51 @@ void main() {
           expectNever(obs.time, 'Tid (Klockan)', context: ctx);
         }
 
+        // --- Lågstadie-Mix: enkel tabelläsning och konkret sannolikhet
+        if (grade == 2) {
+          if (step <= 4) {
+            expectNever(obs.m4Statistics, 'Enkel tabelläsning', context: ctx);
+          } else {
+            expectSometimes(
+              obs.m4Statistics,
+              'Enkel tabelläsning',
+              context: ctx,
+            );
+          }
+
+          if (step <= 5) {
+            expectNever(obs.m4Probability, 'Konkret sannolikhet', context: ctx);
+          } else {
+            expectSometimes(
+              obs.m4Probability,
+              'Konkret sannolikhet',
+              context: ctx,
+            );
+          }
+        }
+
+        if (grade == 3) {
+          if (step <= 4) {
+            expectNever(obs.m4Statistics, 'Enkel tabelläsning', context: ctx);
+          } else {
+            expectSometimes(
+              obs.m4Statistics,
+              'Enkel tabelläsning',
+              context: ctx,
+            );
+          }
+
+          if (step <= 5) {
+            expectNever(obs.m4Probability, 'Konkret sannolikhet', context: ctx);
+          } else {
+            expectSometimes(
+              obs.m4Probability,
+              'Konkret sannolikhet',
+              context: ctx,
+            );
+          }
+        }
+
         // --- M4 (Åk 4–6) special Mix types should exist; M5 should not.
         if (grade >= 4 && grade <= 6) {
           expectSometimes(
@@ -423,20 +481,24 @@ void main() {
           );
 
           // Skolverket inkluderar procent och negativa tal i Åk 4–6.
-          // Vi introducerar detta försiktigt: endast Åk 5–6, och bara på höga steps.
-          if (grade >= 5 && step >= 9) {
+          // Vi introducerar dem försiktigt men tidigare än förut.
+          if ((grade == 4 && step >= 8) || (grade >= 5 && step >= 6)) {
             expectSometimes(
               obs.m4Percent,
-              'M4 procent (Åk 5–6, sent)',
-              context: ctx,
-            );
-            expectSometimes(
-              obs.m4NegativeNumbers,
-              'M4 negativa tal (Åk 5–6, sent)',
+              'M4 procent',
               context: ctx,
             );
           } else {
             expectNever(obs.m4Percent, 'M4 procent', context: ctx);
+          }
+
+          if ((grade == 4 && step >= 9) || (grade >= 5 && step >= 7)) {
+            expectSometimes(
+              obs.m4NegativeNumbers,
+              'M4 negativa tal',
+              context: ctx,
+            );
+          } else {
             expectNever(obs.m4NegativeNumbers, 'M4 negativa tal', context: ctx);
           }
 

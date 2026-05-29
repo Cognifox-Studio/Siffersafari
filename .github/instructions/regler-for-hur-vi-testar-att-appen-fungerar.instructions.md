@@ -14,7 +14,7 @@ test/
 ├── unit/
 │   ├── logic/               ← rena logiktester utan Flutter-beroenden
 │   └── services/            ← domäntjänstertester
-└── widget/                  ← full widget-träd via MathGameApp + ProviderScope
+└── widget/                  ← full widget-träd via SiffersafariApp + ProviderScope
 ```
 
 ## Widget-test setup (standard)
@@ -42,9 +42,9 @@ setUp(() async {
 
 ## ScreenUtil – ingen separat init krävs
 
-`ScreenUtil.init()` sker via `MathGameApp`. Widget-tester som pumpar `MathGameApp` behöver **inte** anropa `ScreenUtil.init()` i setUp.
+`ScreenUtil.init()` sker via `SiffersafariApp`. Widget-tester som pumpar `SiffersafariApp` behöver **inte** anropa `ScreenUtil.init()` i setUp.
 
-Om du testar en isolerad widget (inte via `MathGameApp`), wrappa med:
+Om du testar en isolerad widget (inte via `SiffersafariApp`), wrappa med:
 
 ```dart
 await tester.pumpWidget(
@@ -104,8 +104,8 @@ testWidgets('[Widget] SkärmNamn – flöde som testas', (tester) async { ... })
 
 Läs alltid `/memories/repo/testing.md` och `/memories/repo/test_standardization_2026-03-05.md` vid återkommande problem innan du gissar felet.
 
-- **ScreenUtil-kraschar**: uppstår om en widget som använder `.w`/`.h` pumpas utan `MathGameApp` eller `ScreenUtilInit`. Lägg till wrappern via Helper.
-- **ProviderScope saknas för ConsumerWidgets**: om en enskild widget pumpas i ett widget-test (utan `MathGameApp`) och den har konverterats till en Riverpod `ConsumerWidget`, måste den wrappas i en `ProviderScope`. Ofta krävs också anrop till `setupWidgetTestDependencies()` i `setUp` så att underliggande repository-providers faktiskt har data.
+- **ScreenUtil-kraschar**: uppstår om en widget som använder `.w`/`.h` pumpas utan `SiffersafariApp` eller `ScreenUtilInit`. Lägg till wrappern via Helper.
+- **ProviderScope saknas för ConsumerWidgets**: om en enskild widget pumpas i ett widget-test (utan `SiffersafariApp`) och den har konverterats till en Riverpod `ConsumerWidget`, måste den wrappas i en `ProviderScope`. Ofta krävs också anrop till `setupWidgetTestDependencies()` i `setUp` så att underliggande repository-providers faktiskt har data.
 - **`getIt` är inte resetad**: om ett test registrerar något utan att anropa `getIt.reset()` smittar det nästa test. `setupWidgetTestDependencies()` hanterar detta.
 - **Onboarding blockerar flödet**: kalla `skipOnboardingIfPresent` eller sätt `onboarding_done_<userId>` = true i repositoryt innan pumpning.
 - **Animationer avslutas inte**: använd `pumpFor(tester, AppConstants.mediumAnimationDuration + const Duration(milliseconds: 150))` efter att ha tryckt på knappar.

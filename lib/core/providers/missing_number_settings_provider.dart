@@ -26,8 +26,8 @@ class MissingNumberEnabledNotifier extends StateNotifier<bool> {
   }
 }
 
-final missingNumberEnabledProvider =
-    StateNotifierProvider.family<MissingNumberEnabledNotifier, bool, String>(
+final missingNumberEnabledProvider = StateNotifierProvider.autoDispose
+    .family<MissingNumberEnabledNotifier, bool, String>(
   (ref, userId) {
     final repository = ref.watch(localStorageRepositoryProvider);
     return MissingNumberEnabledNotifier(repository, userId);

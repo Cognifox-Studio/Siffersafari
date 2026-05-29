@@ -4,7 +4,7 @@ description: 'Audit and update Siffersafari documentation. Use when the user say
 argument-hint: 'Beskriv vilka kod-, struktur-, workflow- eller assetändringar som ska speglas i dokumentationen.'
 ---
 
-# Documentation
+# Uppdatera dokumentationen
 
 ## När den ska användas
 - När användaren ber om dokumentation, docs-audit eller Diataxis-städning.

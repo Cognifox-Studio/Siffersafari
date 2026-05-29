@@ -74,23 +74,18 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final subtleOnPrimary =
         onPrimary.withValues(alpha: AppOpacities.subtleText);
     final userId = widget.userId;
-    final user = ref.watch(userProvider).activeUser!;
-    final repo = ref.read(localStorageRepositoryProvider);
-    final recentHistory = repo.getQuizHistory(userId, limit: 50);
-    final history = recentHistory
-        .where((s) => s['isComplete'] != false)
-        .take(5)
-        .toList(growable: false);
-    final visibleHistory = history.take(2).toList(growable: false);
-    final remainingHistory = history.skip(2).toList(growable: false);
-    final parentSummary = history.isEmpty
-        ? 'Barnet har inte spelat klart något quiz ännu.'
-        : user.successRate >= 0.85
-            ? 'Det flyter på bra just nu. Fortsätt i samma lugna takt.'
-            : user.successRate >= 0.65
-                ? 'Lagom nivå just nu. Lite mer träning bygger säkerhet.'
-                : 'Det är lite kämpigt just nu. Kortare pass kan hjälpa.';
-    final weakestAreas = _computeWeakestAreas(user.masteryLevels);
+    final user = ref.watch(
+      userProvider.select((state) => state.activeUser),
+    )!;
+    final history = ref.watch(parentRecentCompletedQuizHistoryProvider(userId));
+    final readModel = _ParentDashboardReadModel.from(
+      user: user,
+      history: history,
+    );
+    final visibleHistory = readModel.visibleHistory;
+    final remainingHistory = readModel.remainingHistory;
+    final parentSummary = readModel.parentSummary;
+    final weakestAreas = readModel.weakestAreas;
 
     final settingsNotifier = ref.read(parentSettingsProvider(userId).notifier);
     final allowedOps = ref.watch(parentSettingsProvider(userId));
@@ -631,7 +626,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             gradeLevel: user.gradeLevel!,
             allowedOperations: allowedOps,
             storedSteps: user.operationDifficultySteps,
-            quizHistory: recentHistory,
+            quizHistory: history,
           );
 
     final recommendationSectionContent = weakestAreas.isEmpty
@@ -851,33 +846,6 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         );
       },
     );
-  }
-
-  List<_WeakArea> _computeWeakestAreas(Map<String, double> masteryLevels) {
-    if (masteryLevels.isEmpty) return const [];
-
-    final entries = masteryLevels.entries
-        .where((e) => e.value.isFinite)
-        .map(
-          (e) => _WeakArea(
-            key: e.key,
-            rate: e.value.clamp(0.0, 1.0),
-            label: _prettyMasteryKey(e.key),
-          ),
-        )
-        .toList();
-
-    entries.sort((a, b) => a.rate.compareTo(b.rate));
-    return entries.take(3).toList();
-  }
-
-  String _prettyMasteryKey(String key) {
-    final parts = key.split('_');
-    if (parts.length < 2) return key;
-    final operation = parts[0];
-    final difficulty = parts[1];
-
-    return '${_prettyEnumLabel(operation)} • ${_prettyEnumLabel(difficulty)}';
   }
 
   List<OperationType> _baseOps() {

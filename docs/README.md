@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-05-18
+uppdaterad: 2026-05-26
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-18.
+Senast uppdaterad: 2026-05-26.
 
 ## Naming-baseline
 
@@ -33,7 +33,9 @@ Senast uppdaterad: 2026-05-18.
 - `ARCHITECTURE.md` – Systemets faktiska implementation
 - `PROJECT_STRUCTURE.md` – Repo-struktur
 - `SERVICES_API.md` – Servicekontrakt
-- `KUNSKAPSNIVA_PER_AK.md` – Nivåspecifikationer
+- `KUNSKAPSNIVA_PER_AK.md` – Mänskligt nav för kunskapsfacit och årskurstolkning
+- `curriculum_facit.json` – Kanonisk maskinläsbar facitkälla för årskursmappning, frågetypspolicyer och källhierarki
+- `grade_1_question_bank.json`–`grade_9_question_bank.json` – Strukturerade årskursbanker för exempeluppgifter, manuell granskning och framtida generator-audits
 
 ### Explanation (förklaringar, design, varför)
 - `ACTIVE_PLAN.md` – Aktiv prioriteringsyta för polish och nästa committed steg; nuläge och beslut hålls i `SESSION_BRIEF.md` och `DECISIONS_LOG.md`

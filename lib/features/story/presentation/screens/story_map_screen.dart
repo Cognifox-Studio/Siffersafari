@@ -14,6 +14,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
@@ -23,6 +24,7 @@ import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dar
 
 part 'story_map_screen_content.dart';
 part 'story_map_screen_map_canvas.dart';
+part 'story_map_screen_read_model.dart';
 
 class StoryMapScreen extends ConsumerWidget {
   const StoryMapScreen({super.key});
@@ -69,8 +71,9 @@ class StoryMapScreen extends ConsumerWidget {
       );
     }
 
-    final currentNode = story.currentNode;
-    final nextNode = _nextNode(story);
+    final mapModel = _StoryMapReadModel.from(story);
+    final currentNode = mapModel.currentNode;
+    final nextNode = mapModel.nextNode;
     final completedColor = themeColors.progressCompletedColor;
     final currentColor = themeColors.progressCurrentColor;
     final nextColor = themeColors.progressNextColor;
@@ -177,9 +180,7 @@ class StoryMapScreen extends ConsumerWidget {
               children: [
                 PlayfulSectionHeading(
                   title: 'Djungelkartan',
-                  subtitle: story.isEpisodeComplete
-                      ? story.endingBody
-                      : '${story.actLabel}: ${story.actTitle}',
+                  subtitle: mapModel.headingSubtitle,
                 ),
                 const SizedBox(height: AppConstants.defaultPadding),
                 _MapHeroCard(
@@ -203,7 +204,7 @@ class StoryMapScreen extends ConsumerWidget {
                   mutedOnPrimary: mutedOnPrimary,
                   onContinue: startCurrentQuest,
                 ),
-                if (story.nextBiome != null) ...[
+                if (mapModel.hasNextBiomePreview) ...[
                   const SizedBox(height: AppConstants.defaultPadding),
                   _LockedBiomeTeaser(
                     biome: story.nextBiome!,
@@ -263,13 +264,5 @@ class StoryMapScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  StoryNode? _nextNode(StoryProgress story) {
-    final nextIndex = story.currentNodeIndex + 1;
-    if (nextIndex < 0 || nextIndex >= story.nodes.length) {
-      return null;
-    }
-    return story.nodes[nextIndex];
   }
 }

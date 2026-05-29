@@ -131,8 +131,8 @@ class DailyChallengeNotifier extends StateNotifier<DailyChallengeState> {
 }
 
 /// Daily challenge state (completion + streak) for [userId].
-final dailyChallengeProvider = StateNotifierProvider.family<
-    DailyChallengeNotifier, DailyChallengeState, String>(
+final dailyChallengeProvider = StateNotifierProvider.autoDispose
+    .family<DailyChallengeNotifier, DailyChallengeState, String>(
   (ref, userId) => DailyChallengeNotifier(
     service: ref.watch(dailyChallengeServiceProvider),
     repository: ref.watch(localStorageRepositoryProvider),

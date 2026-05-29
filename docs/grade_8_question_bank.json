@@ -1,0 +1,949 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 8 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 8,
+  "stage": "7-9",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 1000
+    },
+    "operations": [
+      "addition",
+      "subtraction",
+      "multiplication",
+      "division",
+      "algebraic_reasoning",
+      "functional_reasoning"
+    ],
+    "centralConcepts": [
+      "potenser",
+      "exponenter",
+      "grundtal",
+      "proportionalitet",
+      "linjara_samband",
+      "funktioner_i_text",
+      "forandringsfaktor",
+      "procent_pa_procent",
+      "lutning_k_varde",
+      "startvarde_m_varde"
+    ],
+    "strategies": [
+      "forenkla_potenser",
+      "identifiera_proportionella_samband",
+      "tolka_text_funktion",
+      "tolka_tabell_funktion",
+      "tolka_graf_funktion",
+      "berakna_lutning",
+      "kombinera_procent_pa_procent",
+      "modellera_verkliga_situationer"
+    ],
+    "commonMisconceptions": [
+      "blandar_potens_exponent",
+      "tror_att_2_2_3",
+      "missforstar_lutning_t_ex_tror_att_m_ar_lutningen",
+      "blandar_proportioner_med_linjara_samband",
+      "fel_vid_procent_pa_procent",
+      "blandar_forandringsfaktor_och_procent"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
+    "Section powers declares 40 questions in source text but 39 prompts were found.",
+    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+  ],
+  "coverage": {
+    "questionCount": 139,
+    "headlineQuestionCount": 140,
+    "declaredQuestionCount": 140,
+    "countsBySection": {
+      "powers": 39,
+      "proportionality": 40,
+      "linear_relationships": 40,
+      "compound_percent_change": 20
+    },
+    "declaredCountsBySection": {
+      "powers": 40,
+      "proportionality": 40,
+      "linear_relationships": 40,
+      "compound_percent_change": 20
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": [
+      {
+        "sectionId": "proportionality",
+        "questionCount": 8
+      },
+      {
+        "sectionId": "linear_relationships",
+        "questionCount": 40
+      },
+      {
+        "sectionId": "compound_percent_change",
+        "questionCount": 20
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "powers",
+      "label": "Potenser",
+      "questionCount": 39,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g8_powers_001",
+          "prompt": "3²",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g8_powers_002",
+          "prompt": "4³",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        },
+        {
+          "id": "g8_powers_003",
+          "prompt": "2⁵",
+          "responseType": "numeric",
+          "correctAnswer": 32
+        },
+        {
+          "id": "g8_powers_004",
+          "prompt": "5²",
+          "responseType": "numeric",
+          "correctAnswer": 25
+        },
+        {
+          "id": "g8_powers_005",
+          "prompt": "6²",
+          "responseType": "numeric",
+          "correctAnswer": 36
+        },
+        {
+          "id": "g8_powers_006",
+          "prompt": "7²",
+          "responseType": "numeric",
+          "correctAnswer": 49
+        },
+        {
+          "id": "g8_powers_007",
+          "prompt": "8²",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        },
+        {
+          "id": "g8_powers_008",
+          "prompt": "9²",
+          "responseType": "numeric",
+          "correctAnswer": 81
+        },
+        {
+          "id": "g8_powers_009",
+          "prompt": "10²",
+          "responseType": "numeric",
+          "correctAnswer": 100
+        },
+        {
+          "id": "g8_powers_010",
+          "prompt": "11²",
+          "responseType": "numeric",
+          "correctAnswer": 121
+        },
+        {
+          "id": "g8_powers_011",
+          "prompt": "12²",
+          "responseType": "numeric",
+          "correctAnswer": 144
+        },
+        {
+          "id": "g8_powers_012",
+          "prompt": "2³",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g8_powers_013",
+          "prompt": "3³",
+          "responseType": "numeric",
+          "correctAnswer": 27
+        },
+        {
+          "id": "g8_powers_014",
+          "prompt": "4³",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        },
+        {
+          "id": "g8_powers_015",
+          "prompt": "5³",
+          "responseType": "numeric",
+          "correctAnswer": 125
+        },
+        {
+          "id": "g8_powers_016",
+          "prompt": "2⁶",
+          "responseType": "numeric",
+          "correctAnswer": 64
+        },
+        {
+          "id": "g8_powers_017",
+          "prompt": "2⁷",
+          "responseType": "numeric",
+          "correctAnswer": 128
+        },
+        {
+          "id": "g8_powers_018",
+          "prompt": "3⁴",
+          "responseType": "numeric",
+          "correctAnswer": 81
+        },
+        {
+          "id": "g8_powers_019",
+          "prompt": "4⁴",
+          "responseType": "numeric",
+          "correctAnswer": 256
+        },
+        {
+          "id": "g8_powers_020",
+          "prompt": "5⁴",
+          "responseType": "numeric",
+          "correctAnswer": 625
+        },
+        {
+          "id": "g8_powers_021",
+          "prompt": "6³",
+          "responseType": "numeric",
+          "correctAnswer": 216
+        },
+        {
+          "id": "g8_powers_022",
+          "prompt": "7³",
+          "responseType": "numeric",
+          "correctAnswer": 343
+        },
+        {
+          "id": "g8_powers_023",
+          "prompt": "8³",
+          "responseType": "numeric",
+          "correctAnswer": 512
+        },
+        {
+          "id": "g8_powers_024",
+          "prompt": "9³",
+          "responseType": "numeric",
+          "correctAnswer": 729
+        },
+        {
+          "id": "g8_powers_025",
+          "prompt": "10³",
+          "responseType": "numeric",
+          "correctAnswer": 1000
+        },
+        {
+          "id": "g8_powers_026",
+          "prompt": "2⁸",
+          "responseType": "numeric",
+          "correctAnswer": 256
+        },
+        {
+          "id": "g8_powers_027",
+          "prompt": "3⁵",
+          "responseType": "numeric",
+          "correctAnswer": 243
+        },
+        {
+          "id": "g8_powers_028",
+          "prompt": "4⁵",
+          "responseType": "numeric",
+          "correctAnswer": 1024
+        },
+        {
+          "id": "g8_powers_029",
+          "prompt": "5⁵",
+          "responseType": "numeric",
+          "correctAnswer": 3125
+        },
+        {
+          "id": "g8_powers_030",
+          "prompt": "2⁹",
+          "responseType": "numeric",
+          "correctAnswer": 512
+        },
+        {
+          "id": "g8_powers_031",
+          "prompt": "3⁶",
+          "responseType": "numeric",
+          "correctAnswer": 729
+        },
+        {
+          "id": "g8_powers_032",
+          "prompt": "10⁴",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        },
+        {
+          "id": "g8_powers_033",
+          "prompt": "10⁵",
+          "responseType": "numeric",
+          "correctAnswer": 100000
+        },
+        {
+          "id": "g8_powers_034",
+          "prompt": "15²",
+          "responseType": "numeric",
+          "correctAnswer": 225
+        },
+        {
+          "id": "g8_powers_035",
+          "prompt": "20²",
+          "responseType": "numeric",
+          "correctAnswer": 400
+        },
+        {
+          "id": "g8_powers_036",
+          "prompt": "25²",
+          "responseType": "numeric",
+          "correctAnswer": 625
+        },
+        {
+          "id": "g8_powers_037",
+          "prompt": "30²",
+          "responseType": "numeric",
+          "correctAnswer": 900
+        },
+        {
+          "id": "g8_powers_038",
+          "prompt": "50²",
+          "responseType": "numeric",
+          "correctAnswer": 2500
+        },
+        {
+          "id": "g8_powers_039",
+          "prompt": "100²",
+          "responseType": "numeric",
+          "correctAnswer": 10000
+        }
+      ]
+    },
+    {
+      "id": "proportionality",
+      "label": "Proportionalitet",
+      "questionCount": 40,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "sourceNotes": [
+        "Alla bygger på y = kx"
+      ],
+      "questions": [
+        {
+          "id": "g8_proportionality_001",
+          "prompt": "y = 3x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_002",
+          "prompt": "y = 5x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_003",
+          "prompt": "y = 0.5x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_004",
+          "prompt": "y = 10x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_005",
+          "prompt": "y = 2.5x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_006",
+          "prompt": "Om x = 4, vad är y?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_007",
+          "prompt": "Om y = 30, vad är x?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_008",
+          "prompt": "Tabell → är det proportionellt?",
+          "responseType": "mixed",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g8_proportionality_009",
+          "prompt": "Graf → är det proportionellt?",
+          "responseType": "mixed",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g8_proportionality_010",
+          "prompt": "Pris per kg är 40 kr…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_011",
+          "prompt": "Taxi kostar 12 kr/km…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_012",
+          "prompt": "En maskin producerar 5 delar/min…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_013",
+          "prompt": "En pump fyller 3 liter/min…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_014",
+          "prompt": "En bil kör 0.6 liter/mil…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_015",
+          "prompt": "En cyklist håller 25 km/h…",
+          "responseType": "mixed",
+          "requiresCompletedPrompt": true
+        },
+        {
+          "id": "g8_proportionality_016",
+          "prompt": "y = 7x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_017",
+          "prompt": "y = 9x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_018",
+          "prompt": "y = 0.2x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_019",
+          "prompt": "y = 1.5x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_020",
+          "prompt": "y = 12x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_021",
+          "prompt": "Om x = 10, vad är y?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_022",
+          "prompt": "Om x = 0, vad är y?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_023",
+          "prompt": "Om y = 100, vad är x?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_024",
+          "prompt": "Om y = 12, x = ?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_025",
+          "prompt": "1 liter kostar 15 kr. Vad kostar 7 liter?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_026",
+          "prompt": "1 meter tyg kostar 80 kr. Vad kostar 3.5 meter?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_027",
+          "prompt": "1 timme = 12 km. Hur långt på 5 timmar?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_028",
+          "prompt": "1 låda väger 2.4 kg. Vad väger 8 lådor?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_029",
+          "prompt": "1 burk kostar 9 kr. Vad kostar 12 burkar?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_030",
+          "prompt": "1 elev äter 0.3 pizza. Hur mycket äter 20 elever?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_031",
+          "prompt": "y = 4x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_032",
+          "prompt": "y = 11x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_033",
+          "prompt": "y = 0.75x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_034",
+          "prompt": "y = 0.1x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_035",
+          "prompt": "y = 13x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_036",
+          "prompt": "y = 14x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_037",
+          "prompt": "y = 0.9x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_038",
+          "prompt": "y = 1.2x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_039",
+          "prompt": "y = 2.2x",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g8_proportionality_040",
+          "prompt": "y = 3.3x",
+          "responseType": "mixed"
+        }
+      ]
+    },
+    {
+      "id": "linear_relationships",
+      "label": "Linjära samband",
+      "questionCount": 40,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "sourceNotes": [
+        "Alla bygger på y = kx + m"
+      ],
+      "questions": [
+        {
+          "id": "g8_linear_relationships_001",
+          "prompt": "y = 2x + 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_002",
+          "prompt": "y = −3x + 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_003",
+          "prompt": "y = 4x − 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_004",
+          "prompt": "y = 0.5x + 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_005",
+          "prompt": "y = 10 − x",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_006",
+          "prompt": "y = 3x − 9",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_007",
+          "prompt": "y = 5x + 1",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_008",
+          "prompt": "y = 7x − 14",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_009",
+          "prompt": "y = 9x + 3",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_010",
+          "prompt": "y = 8x − 16",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_011",
+          "prompt": "Bestäm k‑värde",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_012",
+          "prompt": "Bestäm m‑värde",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_013",
+          "prompt": "När är y = 0?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_014",
+          "prompt": "När är y = 20?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_015",
+          "prompt": "När är x = 10?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_016",
+          "prompt": "Tolka tabell → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g8_linear_relationships_017",
+          "prompt": "Tolka text → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_018",
+          "prompt": "Tolka graf → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g8_linear_relationships_019",
+          "prompt": "Rita graf från formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g8_linear_relationships_020",
+          "prompt": "Jämför två funktioner",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_021",
+          "prompt": "När skär de varandra?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_022",
+          "prompt": "Vilken har störst lutning?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_023",
+          "prompt": "Vilken växer snabbast?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_024",
+          "prompt": "Vilken är mest negativ?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_025",
+          "prompt": "När är funktionerna lika?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_026",
+          "prompt": "När är skillnaden 10?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_027",
+          "prompt": "När är y dubbelt så stort som x?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_028",
+          "prompt": "y = 6x + 4",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_029",
+          "prompt": "y = −2x + 3",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_030",
+          "prompt": "y = 0.25x + 8",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_031",
+          "prompt": "y = 12x − 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_032",
+          "prompt": "y = 1.5x + 2",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_033",
+          "prompt": "y = 0.8x − 1",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_034",
+          "prompt": "y = 3.5x + 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_035",
+          "prompt": "y = 4.2x − 9",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_036",
+          "prompt": "y = 10x + 100",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_037",
+          "prompt": "y = −5x + 50",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_038",
+          "prompt": "y = 2x − 20",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_039",
+          "prompt": "y = 0.1x + 0.5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g8_linear_relationships_040",
+          "prompt": "y = 0.01x + 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        }
+      ]
+    },
+    {
+      "id": "compound_percent_change",
+      "label": "Procent på procent",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric_or_text",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g8_compound_percent_change_001",
+          "prompt": "25% rabatt + 10% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_002",
+          "prompt": "20% höjning + 10% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_003",
+          "prompt": "50% rabatt + 20% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_004",
+          "prompt": "10% höjning + 10% sänkning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_005",
+          "prompt": "30% rabatt + 30% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_006",
+          "prompt": "15% höjning + 5% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_007",
+          "prompt": "40% rabatt + 10% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_008",
+          "prompt": "10% rabatt + 10% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_009",
+          "prompt": "5% höjning + 5% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_010",
+          "prompt": "60% rabatt + 10% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_011",
+          "prompt": "20% rabatt + 20% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_012",
+          "prompt": "12% höjning + 12% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_013",
+          "prompt": "8% rabatt + 8% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_014",
+          "prompt": "25% höjning + 25% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_015",
+          "prompt": "50% höjning + 10% höjning",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_016",
+          "prompt": "10% rabatt + 20% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_017",
+          "prompt": "30% höjning + 10% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_018",
+          "prompt": "15% rabatt + 15% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_019",
+          "prompt": "5% rabatt + 5% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        },
+        {
+          "id": "g8_compound_percent_change_020",
+          "prompt": "75% rabatt + 10% rabatt",
+          "responseType": "numeric_or_text",
+          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+        }
+      ]
+    }
+  ]
+}

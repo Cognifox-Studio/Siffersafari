@@ -6,7 +6,7 @@
 
 ---
 
-## Nuläge (2026-05-16)
+## Nuläge (2026-05-26)
 
 **Version:** 1.4.3+20
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
@@ -14,6 +14,54 @@
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
 
 ### Senaste leveranser
+
+**2026-05-26 – Åk 9 geometri fick en första banknära runtime-bro**
+- **Heltalsbar geometri går nu direkt i Mix:** Åk 9 kan nu generera textbaserade geometriuppgifter för Pythagoras, area, omkrets och volym när svaret kan hållas som heltal i nuvarande quizformat.
+- **Bankstatusen flyttades från ren deferred till delvis stödd:** `geometry` i Åk 9 är nu låst som `supported_prompt_family_with_exceptions`, medan cirklar/cylindrar med avrundning, skala och andra kontextkrävande delar fortfarande ligger kvar som senare arbete.
+- **Verifiering:** `question_generator_geometry_bank_test.dart`, `question_bank_runtime_status_audit_test.dart` och `flutter analyze` passerar.
+
+**2026-05-26 – Åk 8 proportionalitet fick en första banknära runtime-bro**
+- **Heltalsbar delmängd går nu direkt i Mix:** Åk 8 kan nu generera textbaserad proportionalitet för heltalsfall som `y = kx`, `Om x = ...`, `Om y = ...` och enkla enhetsproblem utan grafer, decimalpolicy eller ofullständiga prompts.
+- **Bankstatusen flyttades från ren deferred till delvis stödd:** `proportionality` i Åk 8 är nu låst som `supported_prompt_family_with_exceptions`, medan sektionens decimalfall, grafer och andra representationskrav fortfarande ligger kvar som senare arbete.
+- **Verifiering:** `question_generator_proportionality_bank_test.dart`, `question_bank_runtime_status_audit_test.dart`, `question_step_profile_audit_test.dart`, `difficulty_mix_audit_test.dart`, `mix_distribution_audit_test.dart` och `flutter analyze` passerar.
+
+**2026-05-26 – alla årskurser fick nu explicit runtime-status mot bankerna**
+- **Övre årskurser fick en riktig algebra-bro:** Mix i Åk 7 och Åk 9 kan nu generera banknära numeriska ekvationer med heltalssvar, så ekvationssektionerna inte längre bara lever som seed-data.
+- **Alla grade-banksektioner är nu klassade mot runtime:** En ny all-grade audit låser vilka sektioner som är direkt stödda, vilka som bara stöds delvis i dagens text/heltal-format och vilka som kräver ny representation eller tydligare svarspolicy.
+- **Verifiering:** `question_generator_equation_bank_test.dart`, `question_bank_runtime_status_audit_test.dart`, `question_step_profile_audit_test.dart`, `difficulty_mix_audit_test.dart`, `mix_distribution_audit_test.dart` och `flutter analyze` passerar.
+
+**2026-05-26 – grade-bankerna driver nu allt som passar nuvarande quizformat**
+- **Representerbara lågstadiefamiljer är nu inkopplade i runtime:** Åk 1 kan nu generera banknära taluppfattningsfrågor som `före/efter`, `störst/minst` och enkel talföljd med ett saknat tal. Åk 2 kan generera `saknat tal` även för `×/÷`.
+- **Seed-bankerna markerar nu den verkliga representationsgränsen:** promptfamiljer som `Sortera`, dubbla okända som `? + ? = 10`, diagram/grafer och andra svar som kräver mer än ett heltal ligger kvar som audit- och roadmapunderlag tills appen får ny representation.
+- **Verifiering:** `question_generator_missing_number_bank_test.dart`, `question_bank_runtime_coverage_audit_test.dart`, `question_step_profile_audit_test.dart` och `difficulty_mix_audit_test.dart` passerar.
+
+**2026-05-26 – curriculum-facit byggdes om till strukturerad källa + mänskligt nav**
+- **Maskinläsbart facit är nu förstahandskälla:** `docs/curriculum_facit.json` bär nu källhierarki, stadier, kunskapsområden, årskursmappning, step-caps och frågetypspolicys i ett format som är lätt att testa och hålla i synk med runtime.
+- **Mänsklig docs-yta blev kortare och tydligare:** `docs/KUNSKAPSNIVA_PER_AK.md` är nu ett nav som förklarar hur facit ska läsas, vad som är officiell svensk baslinje och vilka luckor som fortfarande kräver ny representation i appen.
+- **Verifiering:** `test/unit/audits/curriculum_facit_consistency_audit_test.dart` passerar och JSON-filen parse:ar utan fel.
+
+**2026-05-25 – repo-brett ROI-hardeningpass över UI, planering och guardrails**
+- **Bildtunga ytor dekodar snålare:** `imageCacheExtent(...)` används nu även i resultat, storykarta, garderob, profilval och parent character picker, så små PNG:er inte onödigt decode:as stort på hög-DPR-enheter.
+- **Stora skärmar fick smalare ansvar:** generatorhjälpare, resultatskärmens replay-planering, storykartans current/next-node-härledning, parent dashboard-summary och Home-ljudkontroller ligger nu i separata part-/helperfiler med samma publika beteende.
+- **Garderoben blev starkare:** mojibake-copyt `TÃ¤nker` är rättat till `Tänker`, item-rutor har stabila testnycklar och ett nytt widgettest verifierar att ett upplåst item kan väljas och sparas.
+- **Verifiering:** `flutter analyze`, fokuserade widget/unit/audit-tester, full `flutter test` (289 tester) och `scripts/verify_git_changes.ps1` passerar. Repo-checken visar endast befintliga CRLF-varningar i den stora dirty worktreen.
+
+**2026-05-25 – repo-brett modularitetspass fortsatte med tydligare policygränser**
+- **Feature-state flyttades ut ur skärmar:** home-, onboarding- och parent-vyer använder featureägda providers för sessionstatus, onboardingkommandon och quizhistorik i stället för att bära all härledning i widgetbuilden.
+- **Resultat och quizplanering är mer uppdelade:** `ApplyQuizResultUseCase` har separata interna collaborators för progress, quest, history och level rewards. `QuizSessionPlanner` delegerar SRS/due-frågor till `QuizDueQuestionPlanner`.
+- **Mix-sannolikheter är en policy:** `QuestionMixPolicy` äger gate- och sannolikhetsregler för Mix-specialer, medan `QuestionGeneratorService` fortsätter vara facade för faktisk frågegenerering.
+- **Verifiering:** fokuserade provider-/widget-/quiz-/mix-tester passerar. Full slutverifiering körs som sista steg i passet.
+
+**2026-05-25 – modulärt resultat-, session- och home-pass landat**
+- **Resultatmerge är idempotent:** `ApplyQuizResultUseCase` stoppar dubbelapplicering av samma avslutade `sessionId` via complete history i `LocalStorageRepository`, och dess ansvar är uppdelat i privata helpers för progress, quest, history och level rewards.
+- **Quizplanering och home-copy är lättare att bygga vidare på:** `QuizSessionPlanner` äger sessionkomposition för vanliga pass, custom/replay-pass och nästa fråga. `HomeReadModel` bär hemskärmens hero/CTA-beslut utanför widgetbuilden.
+- **Guardrails för modulär tillväxt:** User-scopeade Riverpod family-providers använder nu `autoDispose`, `SettingsKeys` har en central user-scope-registry, reward-katalogen har validering och nya audits skyddar provider- och core/data-gränser.
+- **Verifiering:** `flutter analyze` passerar, riktade unit/widget/audit-tester passerar och full `flutter test` passerar med 284 tester.
+
+**2026-05-21 – Mix-progressionen finjusterades med step-bundna sannolikheter**
+- **Lugnare ramp i låg- och mellanstadiet:** `question_generator_service.dart` använder nu tydligare step-band för lågstadiets tid/statistik/sannolikhet och för Åk 4–6:s sena introduktion av procent och negativa tal i Mix.
+- **Mer plats för senare matematik i Åk 7–9:** M5a- och M5b-fönstren är nu step-bundna så att procent och prioriteringsregler inte tränger undan linjära funktioner, geometri och avancerad statistik i sena steg.
+- **Verifiering:** `test/unit/audits/mix_distribution_audit_test.dart`, `test/unit/audits/question_step_profile_audit_test.dart`, `test/unit/audits/difficulty_mix_audit_test.dart` och `flutter analyze` passerar.
 
 **2026-05-21 – Play-automationen delades upp i release-upload och butikssides-sync**
 - **Separata workflows for mindre risk:** `.github/workflows/play-closed-beta.yml` skickar nu med release notes fran `play/release-notes/`, medan nya `.github/workflows/play-store-listing.yml` syncar listing-copy separat fran `fastlane/metadata/android/`.

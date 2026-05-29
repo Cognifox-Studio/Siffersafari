@@ -5,6 +5,30 @@ import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 
 void main() {
+  group('[Unit] DifficultyConfig – Visible operations by grade', () {
+    test(
+        'Åk 1 hålls till plus och minus, men Åk 2 öppnar alla fyra räknesätten',
+        () {
+      expect(
+        DifficultyConfig.visibleOperationsForGrade(1),
+        equals(const {
+          OperationType.addition,
+          OperationType.subtraction,
+        }),
+      );
+
+      expect(
+        DifficultyConfig.visibleOperationsForGrade(2),
+        equals(const {
+          OperationType.addition,
+          OperationType.subtraction,
+          OperationType.multiplication,
+          OperationType.division,
+        }),
+      );
+    });
+  });
+
   group('[Unit] DifficultyConfig – Curriculum number ranges (Åk 3–6)', () {
     test('Åk 3 (+): step-tabell mjukar ut vägen mot 1000', () {
       final maxByStep = List<int>.generate(
@@ -99,6 +123,26 @@ void main() {
         difficultyStep: DifficultyConfig.maxDifficultyStep,
       );
       expect(r6.max, 100);
+    });
+
+    test('Åk 7 (+): step-tabell undviker stora tidiga hopp och slutar på 1000',
+        () {
+      final maxByStep = List<int>.generate(
+        10,
+        (i) => DifficultyConfig.curriculumNumberRangeForStep(
+          gradeLevel: 7,
+          operationType: OperationType.addition,
+          difficultyStep: i + 1,
+        ).max,
+      );
+
+      expect(maxByStep.first, 10);
+      expect(maxByStep[1], lessThanOrEqualTo(20));
+      expect(maxByStep[3], lessThanOrEqualTo(80));
+      expect(maxByStep.last, 1000);
+      for (var i = 1; i < maxByStep.length; i++) {
+        expect(maxByStep[i], greaterThanOrEqualTo(maxByStep[i - 1]));
+      }
     });
   });
 

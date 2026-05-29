@@ -1,4 +1,5 @@
 ﻿---
+name: "Bildfiler och asset-inkorg"
 description: "Use when handling raw art in _incoming/, promoting approved images into assets/, or updating asset-bound code for inventory, story maps, theme bundles or character overlays."
 applyTo: "_incoming/**, assets/**/*.png, lib/domain/entities/inventory_item.dart, lib/presentation/widgets/game_character.dart, lib/core/theme/app_theme_config.dart, lib/features/story/presentation/screens/story_map_screen.dart, pubspec.yaml"
 ---

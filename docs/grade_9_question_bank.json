@@ -1,0 +1,1027 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 9 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 9,
+  "stage": "7-9",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 1000
+    },
+    "operations": [
+      "addition",
+      "subtraction",
+      "multiplication",
+      "division",
+      "algebraic_reasoning",
+      "functional_reasoning",
+      "geometry_reasoning",
+      "probability_reasoning"
+    ],
+    "centralConcepts": [
+      "funktioner_tabell_graf_formel",
+      "linjara_modeller",
+      "ekvationer_ett_steg_tva_steg_parenteser",
+      "pythagoras_sats",
+      "area_omkrets_volym",
+      "sannolikhet_kombinationer_flera_steg",
+      "statistik_median_typvarde_spridning",
+      "procentuell_forandring",
+      "forandringsfaktor",
+      "modellering_av_verkliga_situationer"
+    ],
+    "strategies": [
+      "identifiera_k_varde_och_m_varde",
+      "losa_ekvationer_med_balansmetoden",
+      "anvanda_pythagoras_i_bada_riktningar",
+      "kombinera_algebra_geometri",
+      "rakna_sannolikhet_med_multiplikation_och_addition",
+      "tolka_diagram_och_tabeller",
+      "modellera_text_funktion",
+      "rimlighetsbedomning"
+    ],
+    "commonMisconceptions": [
+      "blandar_k_varde_och_m_varde",
+      "missar_samband_tabell_graf_formel",
+      "fel_vid_ekvationslosning_med_parenteser",
+      "fel_vid_sannolikhetskombinationer",
+      "blandar_area_omkrets",
+      "fel_vid_pythagoras_t_ex_adderar_fel_sida"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
+    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+  ],
+  "coverage": {
+    "questionCount": 150,
+    "headlineQuestionCount": 150,
+    "declaredQuestionCount": 150,
+    "countsBySection": {
+      "functions": 50,
+      "equations": 40,
+      "geometry": 30,
+      "probability": 30
+    },
+    "declaredCountsBySection": {
+      "functions": 50,
+      "equations": 40,
+      "geometry": 30,
+      "probability": 30
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": [
+      {
+        "sectionId": "functions",
+        "questionCount": 50
+      },
+      {
+        "sectionId": "geometry",
+        "questionCount": 30
+      },
+      {
+        "sectionId": "probability",
+        "questionCount": 30
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "functions",
+      "label": "Funktioner",
+      "questionCount": 50,
+      "declaredQuestionCount": 50,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g9_functions_001",
+          "prompt": "Bestäm k i y = 3x + 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_002",
+          "prompt": "Bestäm m i y = 3x + 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_003",
+          "prompt": "Bestäm k i y = −2x + 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_004",
+          "prompt": "Bestäm m i y = −2x + 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_005",
+          "prompt": "När är y = 0 i y = 4x − 20?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_006",
+          "prompt": "När är y = 20 i y = 4x − 20?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_007",
+          "prompt": "När är x = 10 i y = 2x + 5?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_008",
+          "prompt": "Rita grafen till y = 3x − 9",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_009",
+          "prompt": "Rita grafen till y = −x + 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_010",
+          "prompt": "Rita grafen till y = 0.5x + 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_011",
+          "prompt": "Tolka tabell → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_012",
+          "prompt": "Tolka text → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_013",
+          "prompt": "Tolka graf → skriv formel",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_014",
+          "prompt": "Jämför funktionerna y = 2x + 3 och y = 3x + 1",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_015",
+          "prompt": "När skär de varandra?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_016",
+          "prompt": "Vilken har störst lutning?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_017",
+          "prompt": "Vilken växer snabbast?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_018",
+          "prompt": "Vilken är mest negativ?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_019",
+          "prompt": "När är funktionerna lika?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_020",
+          "prompt": "När är skillnaden 10?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_021",
+          "prompt": "När är y dubbelt så stort som x?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_022",
+          "prompt": "y = 6x + 4 → bestäm y när x = 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_023",
+          "prompt": "y = −2x + 3 → bestäm y när x = −1",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_024",
+          "prompt": "y = 0.25x + 8 → bestäm y när x = 20",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_025",
+          "prompt": "y = 12x − 5 → bestäm y när x = 2",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_026",
+          "prompt": "y = 1.5x + 2 → bestäm y när x = 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_027",
+          "prompt": "y = 0.8x − 1 → bestäm y när x = 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_028",
+          "prompt": "y = 3.5x + 7 → bestäm y när x = 4",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_029",
+          "prompt": "y = 4.2x − 9 → bestäm y när x = 3",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_030",
+          "prompt": "y = 10x + 100 → bestäm y när x = 0",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_031",
+          "prompt": "y = −5x + 50 → bestäm y när x = 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_032",
+          "prompt": "y = 2x − 20 → bestäm y när x = 15",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_033",
+          "prompt": "y = 0.1x + 0.5 → bestäm y när x = 100",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_034",
+          "prompt": "y = 0.01x + 10 → bestäm y när x = 200",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_035",
+          "prompt": "Skriv formeln till en linje med k = 4 och m = −3",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_036",
+          "prompt": "Skriv formeln till en linje med k = −2 och m = 8",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_037",
+          "prompt": "Skriv formeln till en linje som går genom (0,5) och (2,9)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_038",
+          "prompt": "Skriv formeln till en linje som går genom (1,3) och (3,7)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_039",
+          "prompt": "Bestäm k från två punkter: (2,4) och (6,12)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_040",
+          "prompt": "Bestäm m från punkterna (0,−3) och (4,5)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_041",
+          "prompt": "Är sambandet proportionellt? (tabell)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_042",
+          "prompt": "Är sambandet linjärt? (graf)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_functions_043",
+          "prompt": "Är sambandet linjärt? (text)",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_044",
+          "prompt": "När är y = 50 i y = 5x?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_045",
+          "prompt": "När är y = −10 i y = −2x + 5?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_046",
+          "prompt": "När är y = 100 i y = 10x − 20?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_047",
+          "prompt": "När är y = 0 i y = −4x + 16?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_048",
+          "prompt": "När är y = 30 i y = 3x + 3?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_049",
+          "prompt": "När är y = 1 i y = 0.5x − 3?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_functions_050",
+          "prompt": "När är y = 10 i y = 0.2x + 2?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        }
+      ]
+    },
+    {
+      "id": "equations",
+      "label": "Ekvationer",
+      "questionCount": 40,
+      "declaredQuestionCount": 40,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g9_equations_001",
+          "prompt": "3x − 7 = 11",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_002",
+          "prompt": "2(x − 3) = 14",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_003",
+          "prompt": "4(x + 5) = 36",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_004",
+          "prompt": "5x − 15 = 40",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_005",
+          "prompt": "6x + 12 = 48",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_006",
+          "prompt": "7x − 21 = 28",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_007",
+          "prompt": "8x + 16 = 64",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_008",
+          "prompt": "9x − 18 = 45",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_009",
+          "prompt": "10x + 30 = 80",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_010",
+          "prompt": "12x − 24 = 60",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_011",
+          "prompt": "3(x + 4) = 27",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_012",
+          "prompt": "4(x − 6) = 20",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_013",
+          "prompt": "5(x + 3) = 40",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_014",
+          "prompt": "6(x − 2) = 30",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_015",
+          "prompt": "7(x + 1) = 56",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_016",
+          "prompt": "8(x − 4) = 32",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_017",
+          "prompt": "9(x + 5) = 86",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_018",
+          "prompt": "10(x − 3) = 50",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_019",
+          "prompt": "11x + 22 = 77",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_020",
+          "prompt": "12x − 36 = 48",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_021",
+          "prompt": "2x + 3 = 19",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_022",
+          "prompt": "4x − 5 = 27",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_023",
+          "prompt": "6x + 7 = 31",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_024",
+          "prompt": "8x − 9 = 23",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_025",
+          "prompt": "10x + 11 = 51",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_026",
+          "prompt": "12x − 13 = 35",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_027",
+          "prompt": "14x + 15 = 71",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_028",
+          "prompt": "16x − 17 = 47",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_029",
+          "prompt": "18x + 19 = 73",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_030",
+          "prompt": "20x − 21 = 59",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_031",
+          "prompt": "x/3 + 5 = 12",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_032",
+          "prompt": "x/4 − 2 = 6",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_033",
+          "prompt": "2x/5 + 3 = 11",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_034",
+          "prompt": "3x/4 − 1 = 5",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_035",
+          "prompt": "(x + 5)/3 = 7",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_036",
+          "prompt": "(x − 4)/2 = 6",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_037",
+          "prompt": "(2x + 6)/4 = 5",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_038",
+          "prompt": "(3x − 9)/3 = 8",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_039",
+          "prompt": "(5x + 10)/5 = 9",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g9_equations_040",
+          "prompt": "(6x − 12)/6 = 7",
+          "responseType": "numeric"
+        }
+      ]
+    },
+    {
+      "id": "geometry",
+      "label": "Geometri",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "sourceNotes": [
+        "Pythagoras, area, omkrets, volym, skala"
+      ],
+      "questions": [
+        {
+          "id": "g9_geometry_001",
+          "prompt": "Pythagoras: 3² + 4² = ?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_002",
+          "prompt": "Pythagoras: 5² + 12² = ?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_003",
+          "prompt": "Pythagoras: 8² + 15² = ?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_004",
+          "prompt": "Beräkna hypotenusan: a = 6, b = 8",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_005",
+          "prompt": "Beräkna hypotenusan: a = 9, b = 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_006",
+          "prompt": "Beräkna katet: c = 13, a = 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_007",
+          "prompt": "Beräkna katet: c = 25, a = 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_008",
+          "prompt": "Area av triangel: b = 12, h = 8",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_009",
+          "prompt": "Area av cirkel: r = 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_010",
+          "prompt": "Omkrets av cirkel: r = 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_011",
+          "prompt": "Area av rektangel: 12 × 15",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_012",
+          "prompt": "Area av parallellogram: b = 14, h = 9",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_013",
+          "prompt": "Volym av kub: sida = 6",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_014",
+          "prompt": "Volym av rätblock: 5 × 8 × 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_015",
+          "prompt": "Volym av cylinder: r = 4, h = 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_016",
+          "prompt": "Skala 1:100 → verklig längd?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_geometry_017",
+          "prompt": "Skala 1:20 → ritad längd?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_geometry_018",
+          "prompt": "Skala 1:500 → verklig höjd?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_geometry_019",
+          "prompt": "Omkrets av triangel: 7 + 9 + 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_020",
+          "prompt": "Area av trapets: (a + b)/2 × h",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_021",
+          "prompt": "Pythagoras: c = ? när a = 10, b = 24",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_022",
+          "prompt": "Pythagoras: a = ? när b = 9, c = 15",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_023",
+          "prompt": "Pythagoras: b = ? när a = 8, c = 17",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_024",
+          "prompt": "Area av cirkel: r = 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_025",
+          "prompt": "Omkrets av cirkel: r = 3",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_026",
+          "prompt": "Volym av cylinder: r = 5, h = 20",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_027",
+          "prompt": "Volym av prisma: basarea = 30, höjd = 12",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_028",
+          "prompt": "Area av kvadrat: sida = 19",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_029",
+          "prompt": "Omkrets av kvadrat: sida = 25",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_geometry_030",
+          "prompt": "Area av rektangel: 17 × 23",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        }
+      ]
+    },
+    {
+      "id": "probability",
+      "label": "Sannolikhet",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g9_probability_001",
+          "prompt": "Två tärningar kastas → sannolikhet för summa 7",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_002",
+          "prompt": "Sannolikhet för två sexor",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_003",
+          "prompt": "Sannolikhet för minst en femma",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_004",
+          "prompt": "Kortlek: sannolikhet att dra hjärter",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_005",
+          "prompt": "Kortlek: sannolikhet att dra ess",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_006",
+          "prompt": "Påse: 3 röda, 2 blå, 1 grön → röd?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_007",
+          "prompt": "Påse: röd eller blå?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_008",
+          "prompt": "Påse: inte blå?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_009",
+          "prompt": "Två drag med återläggning → röd + röd",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_010",
+          "prompt": "Två drag utan återläggning → röd + blå",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_011",
+          "prompt": "Tärning: sannolikhet för jämnt tal",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_012",
+          "prompt": "Tärning: sannolikhet för tal > 4",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_013",
+          "prompt": "Tärning: sannolikhet för 1 eller 6",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_014",
+          "prompt": "Två tärningar: sannolikhet för lika",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_015",
+          "prompt": "Två tärningar: sannolikhet för summa 10",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_016",
+          "prompt": "Kortlek: sannolikhet för svart kort",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_017",
+          "prompt": "Kortlek: sannolikhet för klädkort",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_018",
+          "prompt": "Kortlek: sannolikhet för röd kung",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_019",
+          "prompt": "Påse: 5 gula, 5 blå → blå?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_020",
+          "prompt": "Påse: 5 gula, 5 blå → två blå i rad",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_021",
+          "prompt": "Påse: 4 röda, 1 blå → blå?",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_022",
+          "prompt": "Påse: 4 röda, 1 blå → röd + blå",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_023",
+          "prompt": "Påse: 4 röda, 1 blå → blå + blå",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_024",
+          "prompt": "Tärning: sannolikhet för 3 följt av 5",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_025",
+          "prompt": "Tärning: sannolikhet för två jämna",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_026",
+          "prompt": "Tärning: sannolikhet för två udda",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_027",
+          "prompt": "Tärning: sannolikhet för 1, sedan 1",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_028",
+          "prompt": "Tärning: sannolikhet för 6, sedan inte 6",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space."
+        },
+        {
+          "id": "g9_probability_029",
+          "prompt": "Kortlek: sannolikhet för ess, sedan ess",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g9_probability_030",
+          "prompt": "Kortlek: sannolikhet för hjärter, sedan hjärter",
+          "responseType": "mixed",
+          "answerPolicyNote": "Requires supporting visual data, formula policy, rounding policy or exact outcome space.",
+          "requiresSupportingContext": true
+        }
+      ]
+    }
+  ]
+}

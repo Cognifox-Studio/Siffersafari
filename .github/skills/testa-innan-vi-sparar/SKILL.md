@@ -13,3 +13,4 @@ Använd skillen som slutgrind innan du föreslår commit eller säger att en st�
 2. Kör `powershell -ExecutionPolicy Bypass -File scripts/verify_git_changes.ps1` när diffen inte är trivial docs-only.
 3. Kör minst den närmast relaterade testfilen. Eskalera till bredare testning när ändringen rör providers, persistens, navigation eller flera huvudflöden.
 4. Om analyze eller test fallerar: stoppa, förklara felet och fixa det innan arbetet betraktas som klart.
+5. Om ändringen rör question generation, grade balancing eller audit-toleranser: kör även `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md` som extra grind i stället för att nöja dig med generell QA.

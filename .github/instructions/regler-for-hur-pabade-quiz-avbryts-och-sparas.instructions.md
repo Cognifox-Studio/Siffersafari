@@ -1,7 +1,7 @@
 ---
 name: "Quiz-persistens"
 description: "Use when editing quiz start, answer persistence, resume, replay, results merge or quiz history. Covers deterministic in-progress state and merge back to permanent user progress."
-applyTo: "lib/core/providers/quiz_provider.dart, lib/core/providers/user_provider.dart, lib/data/repositories/local_storage_repository.dart, lib/features/quiz/presentation/screens/results_screen.dart, test/unit/logic/quiz_progression_edge_cases_test.dart, test/unit/logic/user_quest_completion_event_test.dart, test/widget/app_quiz_flow_test.dart"
+applyTo: "lib/core/providers/quiz_provider.dart, lib/core/providers/user_provider.dart, lib/core/services/quiz_session_planner.dart, lib/core/services/quiz_due_question_planner.dart, lib/core/services/quiz_session_storage_service.dart, lib/data/repositories/local_storage_repository.dart, lib/features/quiz/presentation/screens/results_screen*.dart, test/unit/logic/quiz_progression_edge_cases_test.dart, test/unit/logic/user_quest_completion_event_test.dart, test/unit/services/quiz_session_planner_test.dart, test/widget/app_quiz_flow_test.dart"
 ---
 
 # Quiz Persistence (Data & Pausade Flöden)

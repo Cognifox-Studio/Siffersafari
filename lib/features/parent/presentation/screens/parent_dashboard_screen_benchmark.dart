@@ -162,9 +162,8 @@ class _BenchmarkSection extends ConsumerWidget {
         ..writeln(underlagText)
         ..writeln(stepText)
         ..writeln()
-        ..writeln(
-          'Obs: Steg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
-        );
+        ..writeln('Obs: Quizet finjusterar steg försiktigt efter svaren.')
+        ..writeln('Du kan också själv trycka Lättare eller Svårare.');
 
       if (recommendationText.isNotEmpty) {
         detailsMessage
@@ -213,7 +212,7 @@ class _BenchmarkSection extends ConsumerWidget {
               onPressed: () => showInfoDialog(
                 title: 'Skolverket-indikator',
                 message:
-                    'Detta är en enkel “Under / I linje / Över”-indikator baserad på appens nivå (steg 1–10) per räknesätt.\n\nFörslag bygger på de senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågorna (mål: 85% rätt).\n\nSteg ändras aldrig automatiskt — du väljer själv Lättare/Svårare.',
+                    'Detta är en enkel “Under / I linje / Över”-indikator baserad på appens nivå (steg 1–10) per räknesätt.\n\nFörslag bygger på de senaste ${DifficultyConfig.trainingRecommendationMinQuestions} frågorna (mål: 85% rätt).\n\nQuizet finjusterar steg försiktigt efter svaren. Du kan också själv trycka Lättare eller Svårare.',
               ),
               icon: Icon(Icons.help_outline, color: onPrimary),
             ),

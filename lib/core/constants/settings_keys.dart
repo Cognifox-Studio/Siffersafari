@@ -68,4 +68,25 @@ class SettingsKeys {
   static List<String> userScopedKeyPrefixes(String userId) => [
         'daily_challenge_${userId}_',
       ];
+
+  static List<String> userScopedSampleKeys(String userId) => [
+        ...userScopedExactKeys(userId),
+        dailyChallengeCompletion(userId, '2026-01-02'),
+      ];
+
+  static bool isUserScopedKey(String userId, Object rawKey) {
+    final key = rawKey.toString();
+    if (userScopedExactKeys(userId).contains(key)) return true;
+    return userScopedKeyPrefixes(userId)
+        .any((prefix) => key.startsWith(prefix));
+  }
+
+  static List<String> globalKeys() => const [
+        activeUserId,
+        parentPinHash,
+        parentPinFailedAttempts,
+        parentPinLockoutUntil,
+        parentPinRecoveryConfig,
+        analyticsEvents,
+      ];
 }

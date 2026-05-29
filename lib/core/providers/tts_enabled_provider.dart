@@ -27,7 +27,7 @@ class TtsEnabledNotifier extends StateNotifier<bool> {
 }
 
 final ttsEnabledProvider =
-    StateNotifierProvider.family<TtsEnabledNotifier, bool, String>(
+    StateNotifierProvider.autoDispose.family<TtsEnabledNotifier, bool, String>(
   (ref, userId) {
     final repository = ref.watch(localStorageRepositoryProvider);
     return TtsEnabledNotifier(repository, userId);

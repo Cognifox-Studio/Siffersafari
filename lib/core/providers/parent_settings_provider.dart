@@ -88,8 +88,8 @@ class ParentSettingsNotifier extends StateNotifier<Set<OperationType>> {
   }
 }
 
-final parentSettingsProvider = StateNotifierProvider.family<
-    ParentSettingsNotifier, Set<OperationType>, String>((ref, userId) {
+final parentSettingsProvider = StateNotifierProvider.autoDispose
+    .family<ParentSettingsNotifier, Set<OperationType>, String>((ref, userId) {
   final repository = ref.watch(localStorageRepositoryProvider);
   return ParentSettingsNotifier(repository, userId);
 });

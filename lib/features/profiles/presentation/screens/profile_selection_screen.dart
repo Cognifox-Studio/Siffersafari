@@ -4,6 +4,7 @@ import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
@@ -182,6 +183,7 @@ class _ProfileAvatar extends StatelessWidget {
       'assets/images/ui/img_avatar_zebra.png',
     ];
     final avatarAsset = avatars[avatarEmoji.hashCode % avatars.length];
+    final avatarCacheSize = imageCacheExtent(context, 84);
 
     return Container(
       width: 84,
@@ -201,6 +203,8 @@ class _ProfileAvatar extends StatelessWidget {
           width: 84,
           height: 84,
           fit: BoxFit.cover,
+          cacheWidth: avatarCacheSize,
+          cacheHeight: avatarCacheSize,
         ),
       ),
     );

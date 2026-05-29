@@ -1,0 +1,700 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Structured grade 1 seed bank for manual review, example prompts and future generator audits.",
+  "grade": 1,
+  "stage": "1-3",
+  "language": "sv-SE",
+  "sourceType": "manual_seed_bank",
+  "sourceFile": "c:/Users/Ropbe/Desktop/Uppgitstabell.txt",
+  "notCanonicalFacit": true,
+  "alignment": {
+    "numberRange": {
+      "min": 0,
+      "max": 20
+    },
+    "operations": [
+      "addition",
+      "subtraction"
+    ],
+    "centralConcepts": [
+      "tiokompisar",
+      "antal",
+      "ordningstal",
+      "jamfora_tal",
+      "fler_farre",
+      "dubbelt_halften_introduktion"
+    ],
+    "strategies": [
+      "rakna_uppat_nedat",
+      "dela_upp_tal",
+      "subitisering",
+      "hoppa_i_steg",
+      "anvanda_tiokompisar"
+    ],
+    "commonMisconceptions": [
+      "blandar_fler_farre",
+      "ser_likhetstecknet_som_nu_kommer_svaret",
+      "raknar_alla_steg_istallet_for_att_hoppa",
+      "blandar_addition_subtraktion_i_textproblem"
+    ]
+  },
+  "qualityNotes": [
+    "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
+    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+  ],
+  "coverage": {
+    "questionCount": 100,
+    "headlineQuestionCount": 100,
+    "declaredQuestionCount": 100,
+    "countsBySection": {
+      "addition": 30,
+      "subtraction": 25,
+      "number_bonds_to_10": 20,
+      "compare_numbers": 10,
+      "word_problems": 15
+    },
+    "declaredCountsBySection": {
+      "addition": 30,
+      "subtraction": 25,
+      "number_bonds_to_10": 20,
+      "compare_numbers": 10,
+      "word_problems": 15
+    },
+    "undercoveredConcepts": [],
+    "requiresSupportingContext": [
+      {
+        "sectionId": "word_problems",
+        "questionCount": 1
+      }
+    ]
+  },
+  "sections": [
+    {
+      "id": "addition",
+      "label": "Addition",
+      "questionCount": 30,
+      "declaredQuestionCount": 30,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g1_addition_001",
+          "prompt": "1 + 3",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_addition_002",
+          "prompt": "2 + 5",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_addition_003",
+          "prompt": "4 + 4",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g1_addition_004",
+          "prompt": "7 + 2",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_addition_005",
+          "prompt": "8 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_addition_006",
+          "prompt": "9 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_007",
+          "prompt": "6 + 3",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_addition_008",
+          "prompt": "5 + 5",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_009",
+          "prompt": "10 + 0",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_010",
+          "prompt": "3 + 7",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_011",
+          "prompt": "4 + 6",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_012",
+          "prompt": "2 + 8",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_013",
+          "prompt": "1 + 9",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_addition_014",
+          "prompt": "11 + 2",
+          "responseType": "numeric",
+          "correctAnswer": 13
+        },
+        {
+          "id": "g1_addition_015",
+          "prompt": "12 + 3",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        },
+        {
+          "id": "g1_addition_016",
+          "prompt": "13 + 4",
+          "responseType": "numeric",
+          "correctAnswer": 17
+        },
+        {
+          "id": "g1_addition_017",
+          "prompt": "14 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        },
+        {
+          "id": "g1_addition_018",
+          "prompt": "15 + 2",
+          "responseType": "numeric",
+          "correctAnswer": 17
+        },
+        {
+          "id": "g1_addition_019",
+          "prompt": "16 + 3",
+          "responseType": "numeric",
+          "correctAnswer": 19
+        },
+        {
+          "id": "g1_addition_020",
+          "prompt": "17 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 18
+        },
+        {
+          "id": "g1_addition_021",
+          "prompt": "18 + 2",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g1_addition_022",
+          "prompt": "19 + 1",
+          "responseType": "numeric",
+          "correctAnswer": 20
+        },
+        {
+          "id": "g1_addition_023",
+          "prompt": "6 + 6",
+          "responseType": "numeric",
+          "correctAnswer": 12
+        },
+        {
+          "id": "g1_addition_024",
+          "prompt": "7 + 7",
+          "responseType": "numeric",
+          "correctAnswer": 14
+        },
+        {
+          "id": "g1_addition_025",
+          "prompt": "8 + 8",
+          "responseType": "numeric",
+          "correctAnswer": 16
+        },
+        {
+          "id": "g1_addition_026",
+          "prompt": "9 + 9",
+          "responseType": "numeric",
+          "correctAnswer": 18
+        },
+        {
+          "id": "g1_addition_027",
+          "prompt": "10 + 5",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        },
+        {
+          "id": "g1_addition_028",
+          "prompt": "5 + 10",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        },
+        {
+          "id": "g1_addition_029",
+          "prompt": "3 + 12",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        },
+        {
+          "id": "g1_addition_030",
+          "prompt": "4 + 11",
+          "responseType": "numeric",
+          "correctAnswer": 15
+        }
+      ]
+    },
+    {
+      "id": "subtraction",
+      "label": "Subtraktion",
+      "questionCount": 25,
+      "declaredQuestionCount": 25,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g1_subtraction_001",
+          "prompt": "9 − 3",
+          "responseType": "numeric",
+          "correctAnswer": 6
+        },
+        {
+          "id": "g1_subtraction_002",
+          "prompt": "8 − 2",
+          "responseType": "numeric",
+          "correctAnswer": 6
+        },
+        {
+          "id": "g1_subtraction_003",
+          "prompt": "14 − 5",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_004",
+          "prompt": "12 − 7",
+          "responseType": "numeric",
+          "correctAnswer": 5
+        },
+        {
+          "id": "g1_subtraction_005",
+          "prompt": "15 − 9",
+          "responseType": "numeric",
+          "correctAnswer": 6
+        },
+        {
+          "id": "g1_subtraction_006",
+          "prompt": "18 − 4",
+          "responseType": "numeric",
+          "correctAnswer": 14
+        },
+        {
+          "id": "g1_subtraction_007",
+          "prompt": "19 − 8",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g1_subtraction_008",
+          "prompt": "17 − 6",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g1_subtraction_009",
+          "prompt": "16 − 5",
+          "responseType": "numeric",
+          "correctAnswer": 11
+        },
+        {
+          "id": "g1_subtraction_010",
+          "prompt": "13 − 9",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_subtraction_011",
+          "prompt": "11 − 3",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g1_subtraction_012",
+          "prompt": "10 − 1",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_013",
+          "prompt": "20 − 10",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_subtraction_014",
+          "prompt": "18 − 9",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_015",
+          "prompt": "14 − 7",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_subtraction_016",
+          "prompt": "19 − 10",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_017",
+          "prompt": "17 − 8",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_018",
+          "prompt": "16 − 9",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_subtraction_019",
+          "prompt": "15 − 6",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_subtraction_020",
+          "prompt": "14 − 4",
+          "responseType": "numeric",
+          "correctAnswer": 10
+        },
+        {
+          "id": "g1_subtraction_021",
+          "prompt": "13 − 5",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g1_subtraction_022",
+          "prompt": "12 − 8",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_subtraction_023",
+          "prompt": "11 − 7",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_subtraction_024",
+          "prompt": "10 − 3",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_subtraction_025",
+          "prompt": "9 − 4",
+          "responseType": "numeric",
+          "correctAnswer": 5
+        }
+      ]
+    },
+    {
+      "id": "number_bonds_to_10",
+      "label": "Tiokompisar",
+      "questionCount": 20,
+      "declaredQuestionCount": 20,
+      "defaultResponseType": "numeric",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g1_number_bonds_to_10_001",
+          "prompt": "? + 7 = 10",
+          "responseType": "numeric",
+          "correctAnswer": 3
+        },
+        {
+          "id": "g1_number_bonds_to_10_002",
+          "prompt": "3 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_number_bonds_to_10_003",
+          "prompt": "6 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_number_bonds_to_10_004",
+          "prompt": "1 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_number_bonds_to_10_005",
+          "prompt": "9 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 1
+        },
+        {
+          "id": "g1_number_bonds_to_10_006",
+          "prompt": "4 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 6
+        },
+        {
+          "id": "g1_number_bonds_to_10_007",
+          "prompt": "5 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 5
+        },
+        {
+          "id": "g1_number_bonds_to_10_008",
+          "prompt": "2 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 8
+        },
+        {
+          "id": "g1_number_bonds_to_10_009",
+          "prompt": "8 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 2
+        },
+        {
+          "id": "g1_number_bonds_to_10_010",
+          "prompt": "7 + ? = 10",
+          "responseType": "numeric",
+          "correctAnswer": 3
+        },
+        {
+          "id": "g1_number_bonds_to_10_011",
+          "prompt": "10 − ? = 6",
+          "responseType": "numeric",
+          "correctAnswer": 4
+        },
+        {
+          "id": "g1_number_bonds_to_10_012",
+          "prompt": "10 − ? = 4",
+          "responseType": "numeric",
+          "correctAnswer": 6
+        },
+        {
+          "id": "g1_number_bonds_to_10_013",
+          "prompt": "10 − ? = 3",
+          "responseType": "numeric",
+          "correctAnswer": 7
+        },
+        {
+          "id": "g1_number_bonds_to_10_014",
+          "prompt": "10 − ? = 1",
+          "responseType": "numeric",
+          "correctAnswer": 9
+        },
+        {
+          "id": "g1_number_bonds_to_10_015",
+          "prompt": "10 − ? = 9",
+          "responseType": "numeric",
+          "correctAnswer": 1
+        },
+        {
+          "id": "g1_number_bonds_to_10_016",
+          "prompt": "? + ? = 10 (exempel 1)",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g1_number_bonds_to_10_017",
+          "prompt": "? + ? = 10 (exempel 2)",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g1_number_bonds_to_10_018",
+          "prompt": "? + ? = 10 (exempel 3)",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g1_number_bonds_to_10_019",
+          "prompt": "? + ? = 10 (exempel 4)",
+          "responseType": "numeric"
+        },
+        {
+          "id": "g1_number_bonds_to_10_020",
+          "prompt": "? + ? = 10 (exempel 5)",
+          "responseType": "numeric"
+        }
+      ]
+    },
+    {
+      "id": "compare_numbers",
+      "label": "Jämföra tal",
+      "questionCount": 10,
+      "declaredQuestionCount": 10,
+      "defaultResponseType": "mixed",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g1_compare_numbers_001",
+          "prompt": "Vilket är störst: 12 eller 15",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_002",
+          "prompt": "Vilket är störst: 7 eller 9",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_003",
+          "prompt": "Vilket är minst: 3 eller 8",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_004",
+          "prompt": "Sortera: 4, 9, 2, 7",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_005",
+          "prompt": "Sortera: 15, 11, 19, 13",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_006",
+          "prompt": "Vilket tal saknas i ordningen: 5, 6, __, 8",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_007",
+          "prompt": "Vilket tal kommer före 14?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_008",
+          "prompt": "Vilket tal kommer efter 9?",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_009",
+          "prompt": "Vilket är störst: 18 eller 16",
+          "responseType": "mixed"
+        },
+        {
+          "id": "g1_compare_numbers_010",
+          "prompt": "Sortera: 1, 10, 5, 7",
+          "responseType": "mixed"
+        }
+      ]
+    },
+    {
+      "id": "word_problems",
+      "label": "Textproblem",
+      "questionCount": 15,
+      "declaredQuestionCount": 15,
+      "defaultResponseType": "numeric_or_text",
+      "defaultConceptTags": [],
+      "defaultStrategyTags": [],
+      "questions": [
+        {
+          "id": "g1_word_problems_001",
+          "prompt": "Lisa har 4 äpplen och får 3 till. Hur många har hon nu?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_002",
+          "prompt": "Det ligger 9 kulor i burken. 2 rullar bort. Hur många är kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_003",
+          "prompt": "En låda har 5 pennor. Ali lägger i 3 till. Hur många finns nu?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_004",
+          "prompt": "Emma har 10 kakor och ger bort 4. Hur många har hon kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_005",
+          "prompt": "En buss har 6 barn. 3 kliver på. Hur många är på bussen nu?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_006",
+          "prompt": "Sara har 7 klossar. Hon tappar 2. Hur många har hon kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_007",
+          "prompt": "Det finns 8 glassar. 4 äts upp. Hur många är kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_008",
+          "prompt": "En påse har 10 godisar. 1 äts upp. Hur många är kvar?",
+          "responseType": "numeric_or_text",
+          "requiresSupportingContext": true
+        },
+        {
+          "id": "g1_word_problems_009",
+          "prompt": "Leo har 3 bilar. Han får 6 till. Hur många har han nu?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_010",
+          "prompt": "Maja har 12 sudd. Hon ger bort 5. Hur många har hon kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_011",
+          "prompt": "I en skål finns 14 jordgubbar. 3 äts upp. Hur många är kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_012",
+          "prompt": "En burk har 15 knappar. 4 tappas bort. Hur många är kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_013",
+          "prompt": "Ett träd har 10 äpplen. 7 plockas. Hur många sitter kvar?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_014",
+          "prompt": "En elev har 9 klistermärken. Får 1 till. Hur många har hen nu?",
+          "responseType": "numeric_or_text"
+        },
+        {
+          "id": "g1_word_problems_015",
+          "prompt": "En låda har 20 kritor. 10 går sönder. Hur många är hela?",
+          "responseType": "numeric_or_text"
+        }
+      ]
+    }
+  ]
+}

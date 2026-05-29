@@ -35,7 +35,11 @@ void main() {
       );
 
       final reward = service.evaluate(user: user, session: session);
-      expect(reward.unlockedIds.isNotEmpty, true);
+      expect(reward.unlockedIds, contains(AppConstants.firstQuizAchievement));
+      expect(
+        reward.unlockedIds,
+        contains(AppConstants.firstAdditionAchievement),
+      );
     });
 
     test('låser inte upp redan upplåst achievement igen', () {
@@ -100,7 +104,14 @@ void main() {
         entries.map((entry) => entry.id),
         orderedEquals(const [
           AppConstants.firstQuizAchievement,
+          AppConstants.firstAdditionAchievement,
+          AppConstants.firstSubtractionAchievement,
+          AppConstants.firstMultiplicationAchievement,
+          AppConstants.firstDivisionAchievement,
           AppConstants.perfectScoreAchievement,
+          AppConstants.hardQuizAchievement,
+          AppConstants.quiz10Achievement,
+          AppConstants.points500Achievement,
           AppConstants.master100Achievement,
           AppConstants.streak7Achievement,
           AppConstants.streak30Achievement,
@@ -114,6 +125,39 @@ void main() {
         service.getBadgeEmoji(AppConstants.firstQuizAchievement),
         '🧭',
       );
+    });
+
+    test('låser upp sen quiz-, poäng- och svårnivåbadge när gränser passeras',
+        () {
+      const user = UserProgress(
+        userId: 'u10',
+        name: 'Rut',
+        ageGroup: AgeGroup.older,
+        totalQuizzesTaken: 9,
+        totalPoints: 470,
+      );
+
+      const session = QuizSession(
+        sessionId: 's10',
+        ageGroup: AgeGroup.older,
+        operationType: OperationType.division,
+        difficulty: DifficultyLevel.hard,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 40,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+      expect(
+        reward.unlockedIds,
+        contains(AppConstants.firstDivisionAchievement),
+      );
+      expect(reward.unlockedIds, contains(AppConstants.hardQuizAchievement));
+      expect(reward.unlockedIds, contains(AppConstants.quiz10Achievement));
+      expect(reward.unlockedIds, contains(AppConstants.points500Achievement));
     });
   });
 }

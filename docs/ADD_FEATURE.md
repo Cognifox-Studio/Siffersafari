@@ -4,6 +4,24 @@ Denna guide visar **steg-för-steg** hur du lägger till en ny feature i Siffers
 
 Repoets aktuella standard är feature-first. Ny UI ska normalt hamna under `lib/features/<feature>/presentation/...`, medan `lib/presentation/widgets/` bara används för verkligt delad UI.
 
+## Modulgränser och feature-anatomi
+
+En feature får växa stegvis. Börja med den minsta mappen som faktiskt behövs:
+
+- `presentation/` för skärmar, dialoger, widgets och lokala read models som bara formar UI-beslut.
+- `providers/` när feature-UI behöver härledd state, repository-läsningar, submission-status eller kommandon som annars skulle hamna i widgeten.
+- `domain/` först när featuren äger rena regler eller modeller som inte hör hemma i global `domain/`.
+- `data/` först när featuren har ett eget lagrings- eller adapterkontrakt bakom repository-facaden.
+
+Modulreglerna som testas i `test/unit/audits/modular_boundaries_audit_test.dart` är:
+
+- `core/` och `data/` importerar inte `features/`.
+- Feature-till-feature-importer ska vara avsiktliga och små; Home är hubb för barnflödet, övriga korsimporter ska helst vara navigation eller befintliga dialog-/providerkontrakt.
+- Presentation läser feature- eller core-providers och skickar kommandon, men importerar inte `LocalStorageRepository` eller storage-providern direkt.
+- Parameteriserade Riverpod-providers använder `autoDispose.family` om de är user- eller parameter-scopeade.
+
+Tester följer samma anatomi: ren logik i `test/unit/logic/`, services i `test/unit/services/`, arkitekturregler i `test/unit/audits/` och fulla widgetflöden i `test/widget/`. Använd provider overrides eller repoets `InMemoryLocalStorageRepository` i stället för att låta UI-tester prata med Hive.
+
 
 
 ---

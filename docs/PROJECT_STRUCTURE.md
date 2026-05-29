@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Faktisk mapp- och filstruktur
-uppdaterad: 2026-05-18
+uppdaterad: 2026-05-26
 -->
 # Project Structure (As-Is)
 
-Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-18).
+Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-26).
 
 ## Root
 
@@ -14,7 +14,8 @@ Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-18).
 - `integration_test/` end-to-end tester
 - `assets/` produktionsassets
 - `scripts/` verktygsskript
-- `docs/` dokumentation
+- `tools/` mindre import- och underhållsverktyg
+- `docs/` dokumentation, inklusive `KUNSKAPSNIVA_PER_AK.md`, kanoniska `curriculum_facit.json` och `grade_*_question_bank.json`
 - `.github/` CI/CD och templates
 - `android/` Android-konfiguration
 - `fastlane/` Play Store metadata och listing-sync
@@ -32,9 +33,9 @@ Byggartefakter som inte ar kallkod:
   - `constants/`: nycklar, IDs, UI-konstanter
   - `di/`: GetIt-registrering
   - `providers/`: Riverpod state och service providers
-  - `services/`: appnara tjanster (generator, audio, progression, update, daily challenge, analytics)
+  - `services/`: appnara tjanster (generator, generator-helpers, audio, progression, update, daily challenge, analytics)
   - `theme/`: teman och tokens
-  - `utils/`: layout, transitions, validering m.m.
+  - `utils/`: layout, transitions, bild-cache sizing, validering m.m.
 - `domain/`
   - `constants/`: inlarning/traningskonstanter
   - `entities/`: modeller (`Question`, `QuizSession`, `UserProgress`, `StoryProgress`)
@@ -47,14 +48,18 @@ Byggartefakter som inte ar kallkod:
 - `features/`: feature-agda skarmar, dialoger och widgets (feature-first struktur)
   - `daily_challenge/presentation/widgets/`: `daily_challenge_card.dart`
   - `daily_challenge/providers/`: `daily_challenge_provider.dart`
-  - `home/presentation/screens/`: `home_screen.dart`
+  - `home/providers/`: home-sessionstatus och `home_read_model_provider.dart` som bro mellan lagring/quiz-state och UI
+  - `home/presentation/screens/`: `home_screen.dart` med part-filer för innehåll och ljudkontroller
+  - `home/presentation/`: `home_read_model.dart`
   - `home/presentation/widgets/`: `home_story_progress_card.dart`
   - `inventory/presentation/screens/`: `wardrobe_screen.dart`
-  - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart`
+  - `onboarding/providers/`: onboarding-controller och completion-status
+  - `parent/providers/`: foraldravyns harledda quizhistorik
+  - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart` med separat resultatplanering i part-fil
   - `quiz/presentation/dialogs/`: `feedback_dialog.dart`
   - `quiz/presentation/widgets/`: `answer_button.dart`, `question_card.dart`
-  - `story/presentation/screens/`: `story_map_screen.dart`
-  - `parent/presentation/screens/`: `parent_dashboard_screen.dart`, `parent_pin_screen.dart`, `pin_recovery_screen.dart`
+  - `story/presentation/screens/`: `story_map_screen.dart` med karta/read-model i part-filer
+  - `parent/presentation/screens/`: `parent_dashboard_screen.dart`, `parent_pin_screen.dart`, `pin_recovery_screen.dart` med dashboard-read-model i part-fil
   - `profiles/presentation/screens/`: `profile_selection_screen.dart`
   - `profiles/presentation/dialogs/`: `create_user_dialog.dart`
   - `onboarding/presentation/screens/`: `onboarding_screen.dart`, `initial_profile_setup_screen.dart`
@@ -120,7 +125,7 @@ Byggartefakter som inte ar kallkod:
 
 - `unit/logic/`: difficulty/curriculum/progression
 - `unit/services/`: achievements, pin, backup, quest/story
-- `unit/audits/`: offline-krav, mix-distribution
+- `unit/audits/`: offline-krav, mix-distribution, curriculum-facit-synk
 - `widget/`: home/onboarding/quiz/results/parent/accessibility
 
 ## integration_test/
@@ -143,6 +148,10 @@ Exempel:
 - `flutter_pixel6.ps1`
 - `extract_integration_screenshots.ps1`
 - `generate_android_launcher_icons.dart`
+
+## tools/
+
+- `import_question_banks.py`: importerar en manuell uppgiftstabell till `docs/grade_*_question_bank.json`
 
 ## Aktuell animationsregel
 

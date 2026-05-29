@@ -1,0 +1,3 @@
+- Vid finjustering av Mix-sannolikheter i `question_generator_service.dart` blir utfallet stabilare om chanserna uttrycks explicit per step-band i stället för som flata fönster över många steg.
+- Synka alltid `test/unit/audits/mix_distribution_audit_test.dart` med samma step-värden när M4-sannolikheterna ändras, annars faller guardrailen på gamla förväntningar.
+- `flutter test ... | Tee-Object` skriver ofta auditloggar som UTF-16 i PowerShell; konvertera till UTF-8 innan du läser profilerna i verktygen.

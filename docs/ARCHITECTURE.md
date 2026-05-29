@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-05-16
+uppdaterad: 2026-05-25
 -->
 # Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-16).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-25).
 
 ## Snabboversikt
 
@@ -46,9 +46,18 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-16)
 UI-lagret ar feature-first:
 - `lib/app/bootstrap/` for startup och routing in i appen
 - `lib/features/` for alla featureagda skarmar, dialoger och widgets
+- `lib/features/<feature>/providers/` for feature-specifik harledd state, repository-läsningar och kommandon som annars skulle ligga i widgets
 - `lib/presentation/` innehaller bara delade UI-komponenter under `widgets/`
 - historiska `lib/presentation/screens/` och `lib/presentation/dialogs/` ar avvecklade och ska inte anvandas for ny UI
 - `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
+- `features/home/presentation/home_read_model.dart` + `features/home/providers/home_read_model_provider.dart` samlar hemskärmens hero/CTA-beslut ovanpå aktiv user, quiz-state, story-progress och daily challenge.
+- Större feature-skärmar får små bibliotekslokala read-model/planeringsdelar när de minskar UI-logik utan att flytta ägande: `ResultsPracticePlanner`, `StoryMapReadModel` och `ParentDashboardReadModel` är aktuella exempel.
+
+Modulgränser:
+- `core/` och `data/` far inte importera `features/`.
+- Feature-till-feature-importer ska vara explicita undantag och hallas vid navigation, hubbflöden eller befintliga dialog-/providerkontrakt.
+- Presentation ska läsa providers/read models och skicka kommandon; direkt lagringskontakt ligger i providers, services eller repository-facader.
+- Parameteriserade Riverpod family-providers ska använda `autoDispose.family` om state är user- eller parameter-scopead.
 
 Viktiga skarmar (med faktisk sokväg):
 - `app/bootstrap/presentation/startup_splash_gate.dart`
@@ -83,6 +92,10 @@ Viktiga delar:
 - `core/providers/tts_enabled_provider.dart`
 - `core/providers/user_provider.dart`
 - `core/services/question_generator_service.dart`
+- `core/services/question_generator_service_helpers.dart`
+- `core/services/question_mix_policy.dart`
+- `core/services/quiz_session_planner.dart`
+- `core/services/quiz_due_question_planner.dart`
 - `core/services/audio_service.dart`
 - `core/services/text_to_speech_service.dart`
 - `core/services/achievement_service.dart`
@@ -90,6 +103,7 @@ Viktiga delar:
 - `core/services/story_progression_service.dart`
 - `core/services/daily_challenge_service.dart`
 - `core/services/app_analytics_service.dart`
+- `core/utils/image_cache_size.dart` för konsekvent DPR-baserad `Image.asset`-decode sizing i bildtunga ytor.
 
 Tema-notering:
 - `AppThemeConfig` ager fortfarande bakgrundsassets, hero-assets och `ThemeData`-bygget, men semantiska farg-/surface-tokens ligger nu i `AppThemeColors` som `ThemeExtension`.
@@ -116,6 +130,8 @@ Repository-implementation for lokal lagring:
 1. Barn valjer eller skapar profil. Forsta profilskapandet ar forenk lat till namn + figur, och onboarding satter sedan arskurs samt effektiv `ageGroup`.
 2. Home visar aktuell profil, aktiv maskot och en tydlig primaryta for raknesatten under `Välj räknesätt`. Storykort och badgealbum ligger som sekundara ytor under `Mer att göra`.
 3. Quiz startas via `QuizNotifier.startSession(...)`
+   - `QuizSessionPlanner` bygger första fråga, custom/replay-planering och nästa-fråga-fallback
+   - `QuizDueQuestionPlanner` väljer due-fråga och pending due-keys ovanpå `QuizReviewScheduleService` och `QuestionGeneratorService`
 4. Svar hanteras i `QuizNotifier.submitAnswer(...)`
    - ljudfeedback
    - poang/streak
@@ -125,13 +141,14 @@ Repository-implementation for lokal lagring:
    - pedagogisk feedback via `FeedbackService`, inklusive tallinje för addition/subtraktion och grupperad hjälp för multiplikation/division
    - lokal analytics-event
    - in-progress persistens
-5. Resultat visas i `ResultsScreen`
+5. Resultat visas i `ResultsScreen`, där fokuserad omspelningsplanering ligger i en liten `ResultsPracticePlanner`-del och inte i widget-buildflödet.
 6. `UserNotifier.applyQuizResult(...)` uppdaterar:
    - user stats
    - mastery
    - achievements
    - quest/story progression
    - permanent quizhistorik
+   - `ApplyQuizResultUseCase` är idempotent per complete `sessionId`, så samma resultatsession inte kan ge dubbla poäng, achievements, quest completion eller level rewards.
 
 Quiz-UI-notering:
 - `QuizScreen` kan nu läsa upp fråga och kort feedback via `TextToSpeechService` när profilens uppläsning är aktiverad i Föräldraläge.
@@ -154,8 +171,10 @@ Hive-boxar:
 
 Designval:
 - in-progress session sparas med deterministisk nyckel per `userId + operation`
+- complete quizhistory används som idempotency guard för redan applicerade resultatsessioner
 - legacy in-progress entries rensas for att undvika dubbelrakning
 - quizhistory valideras defensivt innan den anvands
+- settings-nycklar registreras i `SettingsKeys`, inklusive user-scopeade exact-nycklar och prefix för cleanup vid profilradering
 
 ## Test och kvalitet
 

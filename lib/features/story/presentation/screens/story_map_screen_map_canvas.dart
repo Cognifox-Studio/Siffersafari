@@ -38,8 +38,12 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
         height: 320,
         child: LayoutBuilder(
           builder: (context, constraints) {
-            final w = constraints.maxWidth;
+            final w = constraints.maxWidth.isFinite
+                ? constraints.maxWidth
+                : MediaQuery.sizeOf(context).width;
             const h = 320.0;
+            final backgroundCacheWidth = imageCacheExtent(context, w);
+            final backgroundCacheHeight = imageCacheExtent(context, h);
             final positions = _computePositions(nodes.length, w, h);
 
             return Stack(
@@ -49,6 +53,8 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                   widget.backgroundAsset,
                   fit: BoxFit.cover,
                   excludeFromSemantics: true,
+                  cacheWidth: backgroundCacheWidth,
+                  cacheHeight: backgroundCacheHeight,
                   errorBuilder: (_, __, ___) => ColoredBox(
                     color: widget.accentColor.withValues(alpha: 0.35),
                   ),
@@ -102,10 +108,21 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
                                 case final assetPath?)
                               Positioned(
                                 bottom: 6,
-                                child: Image.asset(
-                                  assetPath,
-                                  width: node.sceneTag == 'baslager' ? 48 : 54,
-                                  height: node.sceneTag == 'baslager' ? 48 : 54,
+                                child: Builder(
+                                  builder: (context) {
+                                    final size = node.sceneTag == 'baslager'
+                                        ? 48.0
+                                        : 54.0;
+                                    final cacheSize =
+                                        imageCacheExtent(context, size);
+                                    return Image.asset(
+                                      assetPath,
+                                      width: size,
+                                      height: size,
+                                      cacheWidth: cacheSize,
+                                      cacheHeight: cacheSize,
+                                    );
+                                  },
                                 ),
                               ),
                             Positioned(

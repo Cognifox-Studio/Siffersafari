@@ -1,0 +1,400 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-05-26",
+  "purpose": "Machine-readable curriculum facit for Siffersafari question generation, grade interpretation and audit tests.",
+  "officialSubject": {
+    "country": "SE",
+    "curriculum": "Lgr22",
+    "subjectCode": "GRGRMAT01",
+    "subjectName": "Matematik",
+    "officialGranularity": "stage",
+    "appGranularity": "grade"
+  },
+  "sourceHierarchy": [
+    {
+      "rank": 1,
+      "id": "skolverket_lgr22_grgrmat01",
+      "kind": "official_curriculum",
+      "name": "Skolverket Lgr22, Matematik GRGRMAT01",
+      "url": "https://www.skolverket.se/undervisning/grundskolan/laroplan-lgr22-for-grundskolan-samt-for-forskoleklassen-och-fritidshemmet/curriculums/LGR22/GRGRMAT01?schoolType=GR&tosHeading=Kursplaner&hasSubjects=true"
+    },
+    {
+      "rank": 2,
+      "id": "skolverket_syllabus_api_grgrmat01",
+      "kind": "machine_readable_curriculum",
+      "name": "Skolverket Syllabus API v2, GRGRMAT01",
+      "url": "https://api.skolverket.se/syllabus/v2/subjects/GRGRMAT01"
+    },
+    {
+      "rank": 3,
+      "id": "skolverket_commentary_math_9790",
+      "kind": "official_commentary",
+      "name": "Kommentarmaterial till kursplanen i matematik - grundskolan",
+      "url": "https://www.skolverket.se/publikationer?id=9790"
+    },
+    {
+      "rank": 4,
+      "id": "skolverket_national_tests",
+      "kind": "official_assessment_control",
+      "name": "Skolverkets nationella prov",
+      "url": "https://www.skolverket.se/prov-och-bedomning/nationella-prov"
+    },
+    {
+      "rank": 5,
+      "id": "skolverket_assessment_supports",
+      "kind": "official_assessment_control",
+      "name": "Skolverkets digitala betygsstodjande bedomningsstod",
+      "url": "https://www.skolverket.se/prov-och-bedomning/bedomning/digitala-betygsstodjande-bedomningsstod"
+    },
+    {
+      "rank": 6,
+      "id": "skolverket_hitta_matematiken",
+      "kind": "official_early_support_control",
+      "name": "Hitta matematiken och garantin for tidiga stodinsatser",
+      "url": "https://www.skolverket.se/undervisning/forskoleklassen/kartlaggning-i-forskoleklassen"
+    },
+    {
+      "rank": 7,
+      "id": "ncm",
+      "kind": "didactic_sanity_check",
+      "name": "NCM, Nationellt centrum for matematikutbildning",
+      "url": "https://ncm.gu.se/"
+    }
+  ],
+  "stages": [
+    {
+      "id": "1-3",
+      "grades": [1, 2, 3],
+      "assessmentCheckpointGrade": 3,
+      "appInterpretation": "Gentle progression from concrete number sense and +-/− towards all four operations, missing numbers, short word problems and sparse low-grade statistics/chance/time."
+    },
+    {
+      "id": "4-6",
+      "grades": [4, 5, 6],
+      "assessmentCheckpointGrade": 6,
+      "appInterpretation": "Scale arithmetic, preserve manageable multiplication/division, and add low-share Mix items for statistics, probability, percent and negative numbers."
+    },
+    {
+      "id": "7-9",
+      "grades": [7, 8, 9],
+      "assessmentCheckpointGrade": 9,
+      "appInterpretation": "Use text-based M5 questions as a bridge to algebra, functions, statistics, percent, powers and precedence until richer representations exist."
+    }
+  ],
+  "abilities": [
+    {
+      "id": "concepts_and_relations",
+      "name": "Anvanda och beskriva matematiska begrepp och samband mellan begrepp",
+      "appImplication": "Question types should eventually train relationships such as double/half, fractions, percent, proportionality and functions."
+    },
+    {
+      "id": "methods_and_routines",
+      "name": "Valja och anvanda lampliga matematiska metoder",
+      "appImplication": "difficultyStep should reflect method progression, not only larger operands."
+    },
+    {
+      "id": "problem_solving",
+      "name": "Formulera och losa problem samt vardera strategier",
+      "appImplication": "Word problems and reasonableness checks should grow gradually while staying short in the child flow."
+    },
+    {
+      "id": "reasoning",
+      "name": "Fora och folja matematiska resonemang",
+      "appImplication": "Future modules should support choices, comparisons and simple explanations beyond a single integer answer."
+    },
+    {
+      "id": "representations",
+      "name": "Anvanda matematikens uttrycksformer",
+      "appImplication": "Fractions, geometry, graphs, tables, diagrams and coordinates need dedicated representations before they become core questions."
+    }
+  ],
+  "knowledgeAreas": [
+    {
+      "id": "number_sense",
+      "name": "Taluppfattning och tals anvandning",
+      "stageContent": {
+        "1-3": ["Natural numbers", "place value", "simple fractions", "four operations", "mental and written calculation", "reasonableness"],
+        "4-6": ["rational numbers", "negative numbers", "percent", "fractions and decimals", "methods for four operations"],
+        "7-9": ["real numbers", "powers", "scientific notation", "fraction/decimal/power calculations"]
+      },
+      "currentAppSupport": ["integer arithmetic", "percent with integer answer", "negative numbers", "powers"],
+      "gaps": ["fraction representation", "decimal arithmetic", "scientific notation"]
+    },
+    {
+      "id": "algebra",
+      "name": "Algebra",
+      "stageContent": {
+        "1-3": ["equality sign", "unknown numbers", "simple patterns", "stepwise instructions"],
+        "4-6": ["variables", "expressions", "equations", "patterns", "algorithmic thinking"],
+        "7-9": ["algebraic expressions", "formulas", "equations", "functions"]
+      },
+      "currentAppSupport": ["missing number", "text-based equations with integer answer", "text-based proportionality with integer answer", "simple text-based linear functions"],
+      "gaps": ["symbolic manipulation", "function graphs", "formula input/output beyond integer-answer bridges"]
+    },
+    {
+      "id": "geometry",
+      "name": "Geometri",
+      "stageContent": {
+        "1-3": ["position words", "basic 2D/3D objects", "measurement", "scale", "symmetry"],
+        "4-6": ["2D/3D objects", "area", "perimeter", "volume", "unit conversion", "scale", "symmetry"],
+        "7-9": ["geometric theorems", "formulas", "similarity", "congruence", "area", "volume"]
+      },
+      "currentAppSupport": ["limited text-based geometry transforms", "text-based formula geometry with integer answer"],
+      "gaps": ["shapes", "measurement tools", "circle/cylinder rounding policy", "scale/context tasks", "coordinate geometry"]
+    },
+    {
+      "id": "statistics_probability",
+      "name": "Sannolikhet och statistik",
+      "stageContent": {
+        "1-3": ["random events in concrete situations", "simple tables and diagrams"],
+        "4-6": ["probability", "risk/chance", "combinatorics", "tables", "diagrams", "mean", "mode", "median"],
+        "7-9": ["probability calculations", "combinatorics", "central tendency", "spread", "graphs"]
+      },
+      "currentAppSupport": ["low-grade statistics/chance", "M4 statistics/probability", "M5 advanced statistics text"],
+      "gaps": ["interactive diagrams", "data collection", "graph interpretation"]
+    },
+    {
+      "id": "relationships_change",
+      "name": "Samband och forandring",
+      "stageContent": {
+        "1-3": ["proportional relationships such as double and half"],
+        "4-6": ["proportionality", "coordinates", "graphs"],
+        "7-9": ["percent", "change factor", "linear equation", "functions", "models"]
+      },
+      "currentAppSupport": ["double/half as policy target", "percent", "text-based functions"],
+      "gaps": ["coordinate system", "graphs", "change factor", "models"]
+    },
+    {
+      "id": "problem_solving",
+      "name": "Problemlosning",
+      "stageContent": {
+        "1-3": ["strategies in pupil-near situations", "formulating mathematical questions"],
+        "4-6": ["strategies", "modelling", "everyday problems"],
+        "7-9": ["strategies", "models", "evaluation of results in varied contexts"]
+      },
+      "currentAppSupport": ["short word problems"],
+      "gaps": ["reasonableness checks", "multi-step strategy choices", "model evaluation"]
+    }
+  ],
+  "gradeMappings": [
+    {
+      "grade": 1,
+      "stage": "1-3",
+      "visibleOperations": ["addition", "subtraction"],
+      "expectedSteps": {"addition": 2, "subtraction": 2, "multiplication": 1, "division": 1},
+      "step10Caps": {"addition": 20, "subtraction": 20, "multiplication": 5, "division": 5, "mixed": 5},
+      "appFocus": ["number sense 0-20", "comparison", "add/sub within 10", "number bonds to 10", "short add/sub word problems"],
+      "deferred": ["visual geometry", "visual measurement", "fractions"]
+    },
+    {
+      "grade": 2,
+      "stage": "1-3",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 2, "subtraction": 2, "multiplication": 1, "division": 1},
+      "step10Caps": {"addition": 100, "subtraction": 100, "multiplication": 10, "division": 10, "mixed": 10},
+      "appFocus": ["number sense 0-100", "place value", "add/sub within 100", "gentle repeated addition and sharing", "missing number add/sub"],
+      "deferred": ["visual clock", "visual measurement", "fractions", "geometry"]
+    },
+    {
+      "grade": 3,
+      "stage": "1-3",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 3, "subtraction": 3, "multiplication": 2, "division": 2},
+      "step10Caps": {"addition": 1000, "subtraction": 1000, "multiplication": 10, "division": 10, "mixed": 10},
+      "additionSubtractionStepCaps": [10, 20, 50, 100, 200, 350, 500, 700, 850, 1000],
+      "appFocus": ["number sense 0-1000", "place value", "times tables 2-10", "linked multiplication/division", "short mul/div word problems", "sparse low-grade statistics/chance/time"],
+      "deferred": ["fractions as parts", "visual geometry", "visual measurement", "tables/diagrams UI"]
+    },
+    {
+      "grade": 4,
+      "stage": "4-6",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 4, "subtraction": 4, "multiplication": 3, "division": 3},
+      "step10Caps": {"addition": 10000, "subtraction": 10000, "multiplication": 99, "division": 20, "mixed": 20},
+      "additionSubtractionStepCaps": [20, 50, 100, 200, 500, 1000, 2000, 4000, 7000, 10000],
+      "appFocus": ["larger add/sub", "manageable multiplication/division", "low-share statistics/probability", "late percent and negative numbers"],
+      "deferred": ["fractions/decimals", "coordinates", "geometry UI"]
+    },
+    {
+      "grade": 5,
+      "stage": "4-6",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 5, "subtraction": 5, "multiplication": 4, "division": 4},
+      "step10Caps": {"addition": 100000, "subtraction": 100000, "multiplication": 199, "division": 50, "mixed": 30},
+      "additionSubtractionStepCaps": [50, 100, 200, 500, 1000, 2000, 5000, 10000, 30000, 100000],
+      "appFocus": ["large add/sub with borrowing/carrying", "scaled multiplication/division", "percent from later steps", "negative numbers from later steps"],
+      "deferred": ["fractions/decimals", "coordinates", "graphs"]
+    },
+    {
+      "grade": 6,
+      "stage": "4-6",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 6, "subtraction": 6, "multiplication": 5, "division": 5},
+      "step10Caps": {"addition": 100000, "subtraction": 100000, "multiplication": 299, "division": 100, "mixed": 60},
+      "additionSubtractionStepCaps": [100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000, 100000],
+      "appFocus": ["robust arithmetic", "statistics/probability interpretation", "percent", "negative numbers"],
+      "deferred": ["fractions/decimals", "full geometry", "coordinates", "graphs"]
+    },
+    {
+      "grade": 7,
+      "stage": "7-9",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 6, "subtraction": 6, "multiplication": 5, "division": 5},
+      "step10Caps": {"addition": 1000, "subtraction": 1000, "multiplication": 299, "division": 100, "mixed": 60},
+      "additionSubtractionStepCaps": [10, 20, 40, 80, 120, 180, 300, 500, 750, 1000],
+      "appFocus": ["signed add/sub from step 4", "percent", "precedence", "text-based functions/statistics at high step"],
+      "deferred": ["function graphs", "coordinate system", "non-integer answer formats"]
+    },
+    {
+      "grade": 8,
+      "stage": "7-9",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 7, "subtraction": 7, "multiplication": 6, "division": 6},
+      "step10Caps": {"addition": 1000, "subtraction": 1000, "multiplication": 299, "division": 100, "mixed": 60},
+      "additionSubtractionStepCaps": [10, 25, 50, 100, 160, 240, 360, 550, 800, 1000],
+      "appFocus": ["percent", "powers", "precedence", "M5b text types at high step"],
+      "deferred": ["full algebra", "graphs", "geometry figures"]
+    },
+    {
+      "grade": 9,
+      "stage": "7-9",
+      "visibleOperations": ["addition", "subtraction", "multiplication", "division"],
+      "expectedSteps": {"addition": 7, "subtraction": 7, "multiplication": 6, "division": 6},
+      "step10Caps": {"addition": 1000, "subtraction": 1000, "multiplication": 299, "division": 100, "mixed": 60},
+      "additionSubtractionStepCaps": [10, 30, 60, 120, 180, 280, 420, 650, 900, 1000],
+      "appFocus": ["stable arithmetic", "M5a/M5b text bridge", "models and functions policy"],
+      "deferred": ["reasoning modules", "graphs", "geometry figures", "full model evaluation"]
+    }
+  ],
+  "questionTypePolicies": [
+    {
+      "id": "integer_add_sub",
+      "skolverketAreaId": "number_sense",
+      "stage": "1-3",
+      "appStatus": "NU",
+      "gate": "visibleOperationsForGrade + curriculumNumberRangeForStep",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "difficulty_mix_audit_test.dart"]
+    },
+    {
+      "id": "integer_mul_div",
+      "skolverketAreaId": "number_sense",
+      "stage": "1-3",
+      "appStatus": "NU",
+      "gate": "visibleOperationsForGrade opens multiplication/division from grade 2; word-problem mul/div only grade 3",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "difficulty_mix_audit_test.dart"]
+    },
+    {
+      "id": "missing_number_add_sub",
+      "skolverketAreaId": "algebra",
+      "stage": "1-3",
+      "appStatus": "NU",
+      "gate": "grade 2-3, addition/subtraction only, missingNumberChance",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart"]
+    },
+    {
+      "id": "short_word_problems",
+      "skolverketAreaId": "problem_solving",
+      "stage": "1-3",
+      "appStatus": "NU",
+      "gate": "wordProblemsEnabled, grade 1-3 add/sub and grade 3 mul/div",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart"]
+    },
+    {
+      "id": "low_grade_statistics_chance_time",
+      "skolverketAreaId": "statistics_probability",
+      "stage": "1-3",
+      "appStatus": "NU",
+      "gate": "mixed operation, grade 2-3, later clampedStep windows",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "question_step_profile_audit_test.dart"]
+    },
+    {
+      "id": "m4_statistics_probability",
+      "skolverketAreaId": "statistics_probability",
+      "stage": "4-6",
+      "appStatus": "NU",
+      "gate": "mixed operation, grade 4-6, m4StatsChanceForStep and m4ProbabilityChanceForStep",
+      "minAuditTests": ["mix_distribution_audit_test.dart", "curriculum_logic_coverage_test.dart"]
+    },
+    {
+      "id": "m4_percent",
+      "skolverketAreaId": "relationships_change",
+      "stage": "4-6",
+      "appStatus": "NU",
+      "gate": "grade 4 step 8-10; grade 5-6 from step 6",
+      "minAuditTests": ["mix_distribution_audit_test.dart", "curriculum_logic_coverage_test.dart"]
+    },
+    {
+      "id": "m4_negative_numbers",
+      "skolverketAreaId": "number_sense",
+      "stage": "4-6",
+      "appStatus": "NU",
+      "gate": "grade 4 step 9-10; grade 5-6 from step 7",
+      "minAuditTests": ["mix_distribution_audit_test.dart", "curriculum_logic_coverage_test.dart"]
+    },
+    {
+      "id": "m5a_percent_power_precedence",
+      "skolverketAreaId": "number_sense",
+      "stage": "7-9",
+      "appStatus": "NU",
+      "gate": "mixed operation, grade 7-9, percent from step 4, precedence from step 6, powers grade 8-9 from step 7",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "question_step_profile_audit_test.dart"]
+    },
+    {
+      "id": "m5b_linear_function",
+      "skolverketAreaId": "relationships_change",
+      "stage": "7-9",
+      "appStatus": "NU",
+      "representationStatus": "text_bridge",
+      "gate": "mixed operation, grade 7-9, clampedStep >= 8",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "question_step_profile_audit_test.dart"]
+    },
+    {
+      "id": "m5b_geometric_transformation",
+      "skolverketAreaId": "geometry",
+      "stage": "7-9",
+      "appStatus": "NU",
+      "representationStatus": "text_bridge",
+      "gate": "mixed operation, grade 7-9, clampedStep >= 8",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "question_step_profile_audit_test.dart"]
+    },
+    {
+      "id": "m5b_advanced_statistics",
+      "skolverketAreaId": "statistics_probability",
+      "stage": "7-9",
+      "appStatus": "NU",
+      "representationStatus": "text_bridge",
+      "gate": "mixed operation, grade 7-9, clampedStep >= 8",
+      "minAuditTests": ["curriculum_logic_coverage_test.dart", "question_step_profile_audit_test.dart"]
+    },
+    {
+      "id": "fractions_decimals_visual",
+      "skolverketAreaId": "number_sense",
+      "stage": "1-3",
+      "appStatus": "SEN",
+      "gate": "requires representation module before standard Mix",
+      "minAuditTests": ["future representation test", "curriculum coverage audit"]
+    },
+    {
+      "id": "geometry_measurement_visual",
+      "skolverketAreaId": "geometry",
+      "stage": "1-3",
+      "appStatus": "SEN",
+      "gate": "requires shapes/measurement module before standard Mix",
+      "minAuditTests": ["future representation test", "curriculum coverage audit"]
+    },
+    {
+      "id": "coordinates_graphs_visual",
+      "skolverketAreaId": "relationships_change",
+      "stage": "4-6",
+      "appStatus": "SEN",
+      "gate": "requires coordinate/graph module before standard Mix",
+      "minAuditTests": ["future representation test", "curriculum coverage audit"]
+    }
+  ],
+  "progressionRules": [
+    "A harder question should preferably add a strategy, relationship or representation, not only larger numbers.",
+    "Skolverket stages are official; grade-by-grade values are app interpretation and must stay conservative.",
+    "SEN items must not become standard generated questions until the required representation and an audit test exist.",
+    "Every new standard Mix question type must declare skolverketAreaId, stage, appStatus, gate and minAuditTests."
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: "qa-failure-router"
-description: "Ta ett analyze-, test-, emulator- eller buildfel i Siffersafari och välj rätt första felsökningsspår med minsta nästa check"
+description: "Use when ett analyze-, test-, emulator- eller buildfel just kom in och du vill välja rätt första felsökningsspår med minsta nästa check"
 argument-hint: "Klistra in felmeddelandet eller säg om det gäller analyze, widgettest, integrationstest, Pixel_6 eller build"
 agent: "agent"
 ---

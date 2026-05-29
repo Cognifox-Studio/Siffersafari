@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:siffersafari/core/config/difficulty_config.dart';
-import 'package:siffersafari/core/config/quiz_feature_settings.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
-import 'package:siffersafari/core/providers/local_storage_repository_provider.dart';
-import 'package:siffersafari/core/providers/parent_settings_provider.dart';
-import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
-import 'package:siffersafari/domain/enums/age_group.dart';
-import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/core/utils/image_cache_size.dart';
+import 'package:siffersafari/features/onboarding/providers/onboarding_controller_provider.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -45,16 +40,13 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
 
     // Load persisted onboarding-related settings for this user.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final repo = ref.read(localStorageRepositoryProvider);
-
-      final activeUser = ref.read(userProvider).activeUser;
-      final user = activeUser?.userId == widget.userId
-          ? activeUser
-          : repo.getUserProgress(widget.userId);
+      final gradeLevel = ref
+          .read(onboardingControllerProvider(widget.userId))
+          .loadInitialGrade();
 
       if (!mounted) return;
       setState(() {
-        _gradeLevel = user?.gradeLevel;
+        _gradeLevel = gradeLevel;
         _isInitializing = false;
       });
     });
@@ -68,73 +60,10 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     super.dispose();
   }
 
-  Set<OperationType> _defaultAllowedOperationsFor(int? gradeLevel) {
-    if (gradeLevel == null) {
-      return const {
-        OperationType.addition,
-        OperationType.subtraction,
-      };
-    }
-
-    return DifficultyConfig.visibleOperationsForGrade(gradeLevel);
-  }
-
   Future<void> _completeOnboardingAndSaveProfile() async {
-    final repo = ref.read(localStorageRepositoryProvider);
-
-    // Fallback to grade 1 if the child skipped grade selection. This avoids
-    // a null gradeLevel which would disable word problems, missing-number
-    // questions and the parent benchmark section.
-    final effectiveGrade = _gradeLevel ?? 1;
-    final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
-      fallback: AgeGroup.young,
-      gradeLevel: effectiveGrade,
-    );
-
-    final activeUser = ref.read(userProvider).activeUser;
-    if (activeUser != null && activeUser.userId == widget.userId) {
-      await ref.read(userProvider.notifier).saveUser(
-            activeUser.copyWith(
-              gradeLevel: effectiveGrade,
-              ageGroup: effectiveAgeGroup,
-            ),
-          );
-    } else {
-      final user = repo.getUserProgress(widget.userId);
-      if (user != null) {
-        await repo.saveUserProgress(
-          user.copyWith(
-            gradeLevel: effectiveGrade,
-            ageGroup: effectiveAgeGroup,
-          ),
-        );
-        await ref.read(userProvider.notifier).loadUsers();
-      }
-    }
-
     await ref
-        .read(parentSettingsProvider(widget.userId).notifier)
-        .setAllowedOperations(
-          _defaultAllowedOperationsFor(effectiveGrade),
-        );
-
-    final hasStoredReadingSetting =
-        QuizFeatureSettings.hasStoredWordProblemsEnabled(
-      repository: repo,
-      userId: widget.userId,
-    );
-    if (!hasStoredReadingSetting) {
-      await QuizFeatureSettings.saveWordProblemsEnabled(
-        repository: repo,
-        userId: widget.userId,
-        enabled: QuizFeatureSettings.defaultWordProblemsEnabled(
-          repository: repo,
-          userId: widget.userId,
-        ),
-      );
-    }
-
-    await repo.setOnboardingDone(widget.userId, true);
+        .read(onboardingControllerProvider(widget.userId))
+        .complete(gradeLevel: _gradeLevel);
 
     if (!mounted) return;
     Navigator.of(context).pop();
@@ -209,6 +138,8 @@ class _OnboardingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final accentColor = Theme.of(context).colorScheme.secondary;
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final imageHeight = AppConstants.minTouchTargetSize * 1.5;
+    final imageCacheHeight = imageCacheExtent(context, imageHeight);
     return Center(
       child: PlayfulPanel(
         hero: true,
@@ -220,8 +151,8 @@ class _OnboardingCard extends StatelessWidget {
             children: [
               Image.asset(
                 imageAsset,
-                height: AppConstants.minTouchTargetSize *
-                    1.5, // Gör bilden lite större än en vanlig ikon
+                height: imageHeight,
+                cacheHeight: imageCacheHeight,
               ),
               const SizedBox(height: AppConstants.defaultPadding),
               Text(

@@ -6,6 +6,7 @@ import 'package:siffersafari/core/config/quiz_feature_settings.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
 import 'package:siffersafari/core/services/quiz_review_schedule_service.dart';
+import 'package:siffersafari/core/services/quiz_session_planner.dart';
 import 'package:siffersafari/core/services/quiz_session_storage_service.dart';
 import 'package:uuid/uuid.dart';
 
@@ -130,9 +131,9 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required AdaptiveDifficultyService adaptiveDifficultyService,
     required SpacedRepetitionService spacedRepetitionService,
     QuizReviewScheduleService? reviewScheduleService,
+    QuizSessionPlanner? sessionPlanner,
     QuizSessionStorageService? sessionStorageService,
-  })  : _questionGenerator = questionGenerator,
-        _feedbackService = feedbackService,
+  })  : _feedbackService = feedbackService,
         _audioService = audioService,
         _repository = repository,
         _adaptiveDifficultyService = adaptiveDifficultyService,
@@ -143,17 +144,27 @@ class QuizNotifier extends StateNotifier<QuizState> {
               repository: repository,
               spacedRepetitionService: spacedRepetitionService,
             ),
+        _sessionPlanner = sessionPlanner ??
+            QuizSessionPlanner(
+              questionGenerator: questionGenerator,
+              reviewScheduleService: reviewScheduleService ??
+                  QuizReviewScheduleService(
+                    questionGenerator: questionGenerator,
+                    repository: repository,
+                    spacedRepetitionService: spacedRepetitionService,
+                  ),
+            ),
         _sessionStorageService =
             sessionStorageService ?? QuizSessionStorageService(repository),
         super(const QuizState());
 
-  final QuestionGeneratorService _questionGenerator;
   final FeedbackService _feedbackService;
   final AudioService _audioService;
   final LocalStorageRepository _repository;
   final AdaptiveDifficultyService _adaptiveDifficultyService;
   final SpacedRepetitionService _spacedRepetitionService;
   final QuizReviewScheduleService _reviewScheduleService;
+  final QuizSessionPlanner _sessionPlanner;
   final QuizSessionStorageService _sessionStorageService;
   final _uuid = const Uuid();
 
@@ -220,66 +231,11 @@ class QuizNotifier extends StateNotifier<QuizState> {
       isDailyChallenge: isDailyChallenge,
     );
 
-    _sessionStorageService.persistInProgressSession(
+    _persistInProgressSession(
       userId: userId,
       session: session,
       pendingDueKeys: pendingDueKeys,
       persistEvenWithoutAnswers: true,
-    );
-  }
-
-  ({List<Question> initialQuestions, List<String> pendingDueKeys})
-      _buildCustomSessionQuestionPlan({
-    required List<Question> questions,
-    required DifficultyLevel difficulty,
-    required OperationType operationType,
-    required Map<String, ReviewSchedule> schedules,
-    required DateTime now,
-  }) {
-    final dueKeys = _reviewScheduleService.getDueKeysForSession(
-      schedules,
-      operationType,
-      questions.length,
-      now,
-    );
-    if (dueKeys.isEmpty) {
-      return (
-        initialQuestions: List<Question>.unmodifiable(questions),
-        pendingDueKeys: const <String>[],
-      );
-    }
-
-    Question? firstDueQuestion;
-    final remainingDueKeys = <String>[];
-
-    for (final key in dueKeys) {
-      final parsed = _questionGenerator.tryGenerateFromSrsKey(key, difficulty);
-      if (parsed == null) continue;
-
-      if (firstDueQuestion == null) {
-        firstDueQuestion = parsed;
-      } else {
-        remainingDueKeys.add(key);
-      }
-    }
-
-    if (firstDueQuestion == null) {
-      return (
-        initialQuestions: List<Question>.unmodifiable(questions),
-        pendingDueKeys: const <String>[],
-      );
-    }
-
-    final totalDueCount = 1 + remainingDueKeys.length;
-    final retainedCustomCount =
-        questions.length > totalDueCount ? questions.length - totalDueCount : 0;
-
-    return (
-      initialQuestions: List<Question>.unmodifiable([
-        firstDueQuestion,
-        ...questions.take(retainedCustomCount),
-      ]),
-      pendingDueKeys: List<String>.unmodifiable(remainingDueKeys),
     );
   }
 
@@ -323,29 +279,18 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
 
     final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
-
-    // Compute due SRS keys for this session and try to use the first one.
-    final dueKeys = _reviewScheduleService.getDueKeysForSession(
-      reviewState.schedules,
-      operationType,
-      count,
-      DateTime.now(),
+    final questionPlan = _sessionPlanner.buildGeneratedSessionPlan(
+      ageGroup: ageGroup,
+      operationType: operationType,
+      difficulty: difficulty,
+      targetQuestionCount: count,
+      difficultyStepsByOperation: steps,
+      schedules: reviewState.schedules,
+      now: DateTime.now(),
+      wordProblemsEnabled: featureFlags.wordProblemsEnabled,
+      missingNumberEnabled: featureFlags.missingNumberEnabled,
+      gradeLevel: gradeLevel,
     );
-    final firstDueQuestion = dueKeys.isNotEmpty
-        ? _questionGenerator.tryGenerateFromSrsKey(dueKeys.first, difficulty)
-        : null;
-    final firstQuestion = firstDueQuestion ??
-        _questionGenerator.generateQuestion(
-          ageGroup: ageGroup,
-          operationType: operationType,
-          difficulty: difficulty,
-          difficultyStepsByOperation: steps,
-          gradeLevel: gradeLevel,
-          wordProblemsEnabledOverride: featureFlags.wordProblemsEnabled,
-          missingNumberEnabledOverride: featureFlags.missingNumberEnabled,
-        );
-    final remainingDueKeys =
-        dueKeys.isNotEmpty ? dueKeys.sublist(1) : const <String>[];
 
     final session = QuizSession(
       sessionId: _uuid.v4(),
@@ -353,7 +298,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       gradeLevel: gradeLevel,
       operationType: operationType,
       difficulty: difficulty,
-      questions: [firstQuestion],
+      questions: questionPlan.initialQuestions,
       targetQuestionCount: count,
       wordProblemsEnabled: featureFlags.wordProblemsEnabled,
       missingNumberEnabled: featureFlags.missingNumberEnabled,
@@ -367,7 +312,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       steps: steps,
       reviewState: reviewState,
       isDailyChallenge: isDailyChallenge,
-      pendingDueKeys: remainingDueKeys,
+      pendingDueKeys: questionPlan.pendingDueKeys,
     );
   }
 
@@ -458,7 +403,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     final reviewState = _reviewScheduleService.loadInitialReviewState(userId);
 
-    final questionPlan = _buildCustomSessionQuestionPlan(
+    final questionPlan = _sessionPlanner.buildCustomSessionPlan(
       questions: questions,
       difficulty: difficulty,
       operationType: operationType,
@@ -656,7 +601,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       debugPrint(
         '[QuizNotifier] submitAnswer: persisting session for userId=$userId',
       );
-      _sessionStorageService.persistInProgressSession(
+      _persistInProgressSession(
         userId: userId,
         session: updatedSession,
         pendingDueKeys: state.pendingDueKeys,
@@ -675,7 +620,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void cancelSession(String userId) {
     final session = state.session;
     if (session == null) return;
-    _sessionStorageService.persistInProgressSession(
+    _persistInProgressSession(
       userId: userId,
       session: session,
       pendingDueKeys: state.pendingDueKeys,
@@ -694,34 +639,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
     var newPendingDueKeys = state.pendingDueKeys;
 
     if (!isComplete && nextIndex >= updatedQuestions.length) {
-      Question nextQuestion;
-      if (newPendingDueKeys.isNotEmpty) {
-        final candidate = _questionGenerator.tryGenerateFromSrsKey(
-          newPendingDueKeys.first,
-          session.difficulty,
-        );
-        nextQuestion = candidate ??
-            _questionGenerator.generateQuestion(
-              ageGroup: session.ageGroup,
-              operationType: session.operationType,
-              difficulty: session.difficulty,
-              difficultyStepsByOperation: state.difficultyStepsByOperation,
-              gradeLevel: session.gradeLevel,
-              wordProblemsEnabledOverride: session.wordProblemsEnabled,
-              missingNumberEnabledOverride: session.missingNumberEnabled,
-            );
-        newPendingDueKeys = newPendingDueKeys.sublist(1);
-      } else {
-        nextQuestion = _questionGenerator.generateQuestion(
-          ageGroup: session.ageGroup,
-          operationType: session.operationType,
-          difficulty: session.difficulty,
-          difficultyStepsByOperation: state.difficultyStepsByOperation,
-          gradeLevel: session.gradeLevel,
-          wordProblemsEnabledOverride: session.wordProblemsEnabled,
-          missingNumberEnabledOverride: session.missingNumberEnabled,
-        );
-      }
+      final nextPlan = _sessionPlanner.buildNextQuestionPlan(
+        session: session,
+        difficultyStepsByOperation: state.difficultyStepsByOperation,
+        pendingDueKeys: newPendingDueKeys,
+      );
+      final nextQuestion = nextPlan.question;
+      newPendingDueKeys = nextPlan.pendingDueKeys;
       updatedQuestions = [...updatedQuestions, nextQuestion];
     }
 
@@ -739,7 +663,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
 
     final userId = state.userId;
     if (userId != null && userId.isNotEmpty) {
-      _sessionStorageService.persistInProgressSession(
+      _persistInProgressSession(
         userId: userId,
         session: updatedSession,
         pendingDueKeys: newPendingDueKeys,
@@ -751,6 +675,21 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void clearFeedback() {
     if (state.feedback == null) return;
     state = state.copyWith(feedback: null);
+  }
+
+  void _persistInProgressSession({
+    required String userId,
+    required QuizSession session,
+    required List<String> pendingDueKeys,
+    bool persistEvenWithoutAnswers = false,
+  }) {
+    if (userId.isEmpty) return;
+    _sessionStorageService.persistInProgressSession(
+      userId: userId,
+      session: session,
+      pendingDueKeys: pendingDueKeys,
+      persistEvenWithoutAnswers: persistEvenWithoutAnswers,
+    );
   }
 
   static double _comboMultiplierForStreak(int streak) {
@@ -799,6 +738,10 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
     repository: repo,
     spacedRepetitionService: spacedRepetition,
   );
+  final sessionPlanner = QuizSessionPlanner(
+    questionGenerator: generator,
+    reviewScheduleService: reviewScheduleService,
+  );
   final sessionStorageService = QuizSessionStorageService(repo);
 
   return QuizNotifier(
@@ -809,6 +752,7 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
     adaptiveDifficultyService: adaptiveDifficulty,
     spacedRepetitionService: spacedRepetition,
     reviewScheduleService: reviewScheduleService,
+    sessionPlanner: sessionPlanner,
     sessionStorageService: sessionStorageService,
   );
 });

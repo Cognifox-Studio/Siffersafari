@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
+import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
@@ -202,7 +203,7 @@ void main() {
   );
 
   testWidgets(
-    '[Widget] App home – visar storystyrd primarknapp for aktiv profil',
+    '[Widget] App home – primarknapp startar nasta quiz for aktiv profil',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -246,6 +247,12 @@ void main() {
         find.text('Lös talen så hittar vi rep till bron.'),
         findsWidgets,
       );
+
+      await tester.tap(find.byKey(const Key('primary_play_button')));
+      await tester.pump();
+      await pumpUntilFound(tester, find.byType(QuestionCard));
+
+      expect(find.byType(QuestionCard), findsOneWidget);
     },
   );
 
@@ -390,9 +397,11 @@ void main() {
         find.byKey(const Key('home_badge_album')),
       );
 
+      final expectedBadgeCount = AchievementService().albumEntries.length;
+
       expect(find.byKey(const Key('home_badge_album')), findsOneWidget);
       expect(find.text('Märken'), findsOneWidget);
-      expect(find.text('1 av 5'), findsOneWidget);
+      expect(find.text('1 av $expectedBadgeCount'), findsOneWidget);
       expect(
         find.byKey(
           const Key('home_badge_icon_${AppConstants.firstQuizAchievement}'),
@@ -563,6 +572,14 @@ void main() {
 
       expect(find.text('5 saker'), findsOneWidget);
       expect(find.text('+1 till'), findsOneWidget);
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_map_safari')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_safari_hat')),
+        findsNothing,
+      );
       expect(
         find.byKey(const Key('camp_scene_collection_hidden_count')),
         findsOneWidget,

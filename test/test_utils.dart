@@ -64,6 +64,18 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
   }
 
   @override
+  Map<String, dynamic>? getCompletedQuizSessionById({
+    required String userId,
+    required String sessionId,
+  }) {
+    final session = _quizHistory[sessionId];
+    if (session == null) return null;
+    if (session['userId'] != userId) return null;
+    if (session['isComplete'] != true) return null;
+    return session;
+  }
+
+  @override
   Future<void> deleteQuizSession(String sessionId) async {
     _quizHistory.remove(sessionId);
   }
@@ -172,8 +184,7 @@ class InMemoryLocalStorageRepository extends LocalStorageRepository {
 
     final keys = _settings.keys.toList(growable: false);
     for (final key in keys) {
-      if (SettingsKeys.userScopedKeyPrefixes(userId)
-          .any((prefix) => key.startsWith(prefix))) {
+      if (SettingsKeys.isUserScopedKey(userId, key)) {
         _settings.remove(key);
       }
     }

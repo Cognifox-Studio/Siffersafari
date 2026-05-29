@@ -46,4 +46,5 @@ Svarskrav:
 - Skriv inga patchar.
 - Dela upp rapporten i `Lag risk`, `Krav pa beslut` och `Ror ej automatiskt`.
 - Om scopet ar stort: prioritera hog signal framfor total tackning.
+- Om rapporten visar tydliga lag-risk-kandidater som bor genomforas autonomt nasta steg: peka vidare till `.github/prompts/night-low-risk-apply.prompt.md`.
 - Skriv uttryckligen att allt fortfarande ar ocommittat.

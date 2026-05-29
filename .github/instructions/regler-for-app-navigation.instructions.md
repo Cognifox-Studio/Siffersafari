@@ -1,7 +1,7 @@
 ---
 name: "Navigering och övergångar"
-description: "Use when editing push/pop, route handling, dialogs, back navigation or screen transitions in Flutter without an external router package."
-applyTo: "lib/features/**/presentation/**/*.dart, lib/app/app.dart"
+description: "Use when editing push/pop, route handling, dialogs, startup gates, back navigation or screen transitions in Flutter without an external router package."
+applyTo: "lib/features/**/presentation/**/*.dart, lib/app/bootstrap/presentation/**/*.dart"
 ---
 
 # App Navigation och övergångar

@@ -12,107 +12,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   late final Animation<Offset> _actionsSlide;
   late final Animation<double> _actionsOpacity;
 
-  static const int _slowAnswerThresholdSeconds = 8;
-
-  List<_HardestQuestion> _getHardestQuestions(QuizSession session) {
-    final items = <_HardestQuestion>[];
-
-    for (final q in session.questions) {
-      final answer = session.answers[q.id];
-      final time = session.responseTimes[q.id];
-      if (answer == null && time == null) continue;
-
-      final wasCorrect = answer != null ? q.isCorrect(answer) : true;
-      final isSlow = (time?.inSeconds ?? 0) >= _slowAnswerThresholdSeconds;
-      final include = !wasCorrect || isSlow;
-      if (!include) continue;
-
-      items.add(
-        _HardestQuestion(
-          question: q,
-          answer: answer,
-          wasCorrect: wasCorrect,
-          time: time,
-        ),
-      );
-    }
-
-    items.sort((a, b) {
-      if (a.wasCorrect != b.wasCorrect) {
-        return a.wasCorrect ? 1 : -1;
-      }
-      final at = a.time?.inMilliseconds ?? 0;
-      final bt = b.time?.inMilliseconds ?? 0;
-      return bt.compareTo(at);
-    });
-
-    if (items.length <= 3) return items;
-    return items.take(3).toList(growable: false);
-  }
-
-  List<Question> _buildFocusedMiniPassQuestions(
-    QuizSession session,
-    List<_HardestQuestion> hardest,
-    int count,
-  ) {
-    if (count <= 0) return const [];
-
-    final weakQuestions =
-        hardest.map((h) => h.question).toList(growable: false);
-
-    final correctFast = <Question>[];
-    final timed = <({Question q, int ms})>[];
-
-    for (final q in session.questions) {
-      final answer = session.answers[q.id];
-      if (answer == null) continue;
-      if (!q.isCorrect(answer)) continue;
-
-      final ms = session.responseTimes[q.id]?.inMilliseconds;
-      if (ms == null) {
-        correctFast.add(q);
-      } else {
-        timed.add((q: q, ms: ms));
-      }
-    }
-
-    timed.sort((a, b) => a.ms.compareTo(b.ms));
-    correctFast
-      ..addAll(timed.map((e) => e.q))
-      ..removeWhere((q) => weakQuestions.contains(q));
-
-    final weakCount = ((count * 0.8).round()).clamp(1, count);
-    final easyCount = (count - weakCount).clamp(0, count);
-
-    final result = <Question>[];
-
-    if (weakQuestions.isEmpty) {
-      final fallback = correctFast.isNotEmpty ? correctFast : session.questions;
-      for (var i = 0; i < count; i++) {
-        final q = fallback[i % fallback.length];
-        result.add(q.copyWith(id: '${q.id}__focus_$i'));
-      }
-      return result;
-    }
-
-    for (var i = 0; i < weakCount; i++) {
-      final q = weakQuestions[i % weakQuestions.length];
-      result.add(q.copyWith(id: '${q.id}__weak_$i'));
-    }
-
-    final filler = correctFast.isNotEmpty
-        ? correctFast
-        : session.questions.where((q) => !weakQuestions.contains(q)).toList();
-    for (var i = 0; i < easyCount; i++) {
-      final q = filler.isNotEmpty
-          ? filler[i % filler.length]
-          : weakQuestions[i % weakQuestions.length];
-      result.add(q.copyWith(id: '${q.id}__easy_$i'));
-    }
-
-    return result;
-  }
-
   @override
   void initState() {
     super.initState();
@@ -280,7 +179,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final shouldCelebrate =
         session.successRate >= 0.8 || (reward?.unlockedIds.isNotEmpty ?? false);
     final stars = _calculateStars(session.successRate);
-    final hardest = _getHardestQuestions(session);
+    final hardest = _ResultsPracticePlanner.hardestQuestions(session);
     final bonusPoints = reward?.bonusPoints ?? 0;
     final totalPoints = session.totalPoints + bonusPoints;
     final panelColor = themeColors.cardColor;
@@ -295,6 +194,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
     final activeUser = userState.activeUser;
     final hasStoryCheckpoint = questCompletion != null && storyProgress != null;
+    final starCacheSize = imageCacheExtent(context, 100.w);
 
     final summaryHero = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -344,6 +244,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 'assets/images/ui/ic_ui_star.png',
                 width: 100.w,
                 height: 100.w,
+                cacheWidth: starCacheSize,
+                cacheHeight: starCacheSize,
               ),
             ),
           ),
@@ -662,7 +564,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         effectiveAgeGroup,
       );
 
-      final miniQuestions = _buildFocusedMiniPassQuestions(
+      final miniQuestions = _ResultsPracticePlanner.focusedMiniPassQuestions(
         session,
         hardest,
         count,
@@ -740,6 +642,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required _BadgeTeaser badgeTeaser,
   }) {
     final themeColors = context.appThemeColors;
+    final badgeCacheSize = imageCacheExtent(context, 48);
 
     return PlayfulPanel(
       hero: true,
@@ -755,7 +658,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 SizedBox(
                   width: 48,
                   height: 48,
-                  child: Image.asset(badgeTeaser.badgeImageAsset!),
+                  child: Image.asset(
+                    badgeTeaser.badgeImageAsset!,
+                    cacheWidth: badgeCacheSize,
+                    cacheHeight: badgeCacheSize,
+                  ),
                 )
               else
                 Text(
@@ -1137,6 +1044,7 @@ class _ItemUnlockedBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final itemCacheSize = imageCacheExtent(context, 56);
     return PlayfulPanel(
       hero: true,
       highlightColor: scheme.tertiary,
@@ -1158,6 +1066,8 @@ class _ItemUnlockedBanner extends StatelessWidget {
               child: Image.asset(
                 item.assetPath,
                 fit: BoxFit.contain,
+                cacheWidth: itemCacheSize,
+                cacheHeight: itemCacheSize,
               ),
             ),
           ),
@@ -1197,6 +1107,7 @@ class _LevelUpBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final chestCacheSize = imageCacheExtent(context, 56);
     return PlayfulPanel(
       hero: true,
       highlightColor: scheme.primary,
@@ -1218,6 +1129,8 @@ class _LevelUpBanner extends StatelessWidget {
               child: Image.asset(
                 'assets/images/ui/reward_chest.png',
                 fit: BoxFit.contain,
+                cacheWidth: chestCacheSize,
+                cacheHeight: chestCacheSize,
               ),
             ),
           ),

@@ -1,6 +1,6 @@
 ---
 name: "instruction-match-audit"
-description: "Kartlagg vilka instructions, skills och narliggande prompts som matchar en viss fil, mapp eller andringsyta i detta repo"
+description: "Use when du vill matcha instructions, skills och narliggande prompts mot en fil, mapp eller andringsyta i detta repo"
 argument-hint: "Ange en fil, mapp eller ett scope, till exempel lib/features/quiz/presentation/ eller .github/prompts/"
 agent: "agent"
 ---

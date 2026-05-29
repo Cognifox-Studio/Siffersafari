@@ -1,7 +1,7 @@
 ---
 name: "Offline-first och persistens"
 description: "Use when editing Hive repositories, local storage, persistence formats or offline-first data handling. Covers defensive parsing, deterministic keys and merge back to user state."
-applyTo: "lib/data/**, lib/core/services/storage/**, lib/features/**/data/**, **/*_repository.dart"
+applyTo: "lib/data/**, lib/core/services/*storage*_service.dart, lib/features/**/data/**, **/*_repository.dart"
 ---
 
 # Hive data och offline-first
