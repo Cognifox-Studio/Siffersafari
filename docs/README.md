@@ -1,14 +1,14 @@
 <!--
 typ: reference
 syfte: Sammanställning och index för all dokumentation
-uppdaterad: 2026-05-26
+uppdaterad: 2026-05-29
 -->
 
 # Dokumentationshub (Diátaxis-index)
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-26.
+Senast uppdaterad: 2026-05-29.
 
 ## Naming-baseline
 
@@ -31,11 +31,17 @@ Senast uppdaterad: 2026-05-26.
 
 ### Reference (fakta, API, struktur)
 - `ARCHITECTURE.md` – Systemets faktiska implementation
+- `TRACE_MAP.md` – Snabb spårkarta mellan skärm, provider, service och lagring
 - `PROJECT_STRUCTURE.md` – Repo-struktur
 - `SERVICES_API.md` – Servicekontrakt
 - `KUNSKAPSNIVA_PER_AK.md` – Mänskligt nav för kunskapsfacit och årskurstolkning
 - `curriculum_facit.json` – Kanonisk maskinläsbar facitkälla för årskursmappning, frågetypspolicyer och källhierarki
 - `grade_1_question_bank.json`–`grade_9_question_bank.json` – Strukturerade årskursbanker för exempeluppgifter, manuell granskning och framtida generator-audits
+
+### Kodnara kartor
+- `../lib/START_HERE.md` – Snabb ingång till lager, namnsignaler och vanliga arbetsvägar
+- `../lib/features/START_HERE.md` – Featureindex med lokala `START_HERE.md`-filer
+- `../lib/core/services/SERVICES_INDEX.md` – Snabbindex over serviceagarskap och beroenden
 
 ### Explanation (förklaringar, design, varför)
 - `ACTIVE_PLAN.md` – Aktiv prioriteringsyta för polish och nästa committed steg; nuläge och beslut hålls i `SESSION_BRIEF.md` och `DECISIONS_LOG.md`

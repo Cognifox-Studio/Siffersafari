@@ -1,11 +1,11 @@
 ﻿<!--
 typ: reference
 syfte: Samlad arkitektur, fakta
-uppdaterad: 2026-05-25
+uppdaterad: 2026-05-29
 -->
 # Arkitektur (As-Is)
 
-Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-25).
+Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-29).
 
 ## Snabboversikt
 
@@ -26,6 +26,7 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-25)
 - Tekniska filnamn ar engelska och använder `snake_case.dart`.
 - Feature-agd UI ligger i `lib/features/<feature>/presentation/`.
 - `lib/presentation/widgets/` innehaller bara delad UI och app-shell-komponenter.
+- Bibliotekslokala part-filer namnges `owner__purpose_part.dart` for att visa att de ags av filen bredvid.
 
 ## Startup och bootstrap
 
@@ -51,7 +52,7 @@ UI-lagret ar feature-first:
 - historiska `lib/presentation/screens/` och `lib/presentation/dialogs/` ar avvecklade och ska inte anvandas for ny UI
 - `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
 - `features/home/presentation/home_read_model.dart` + `features/home/providers/home_read_model_provider.dart` samlar hemskärmens hero/CTA-beslut ovanpå aktiv user, quiz-state, story-progress och daily challenge.
-- Större feature-skärmar får små bibliotekslokala read-model/planeringsdelar när de minskar UI-logik utan att flytta ägande: `ResultsPracticePlanner`, `StoryMapReadModel` och `ParentDashboardReadModel` är aktuella exempel.
+- Större feature-skärmar får små bibliotekslokala read-model/planeringsdelar när de minskar UI-logik utan att flytta ägande. De namnges nu som `__*_part.dart` bredvid ägarfilen. `ResultsPracticePlanner`, `StoryMapReadModel` och `ParentDashboardReadModel` är aktuella exempel.
 
 Modulgränser:
 - `core/` och `data/` far inte importera `features/`.
@@ -92,7 +93,7 @@ Viktiga delar:
 - `core/providers/tts_enabled_provider.dart`
 - `core/providers/user_provider.dart`
 - `core/services/question_generator_service.dart`
-- `core/services/question_generator_service_helpers.dart`
+- `core/services/question_generator_service__helpers_part.dart`
 - `core/services/question_mix_policy.dart`
 - `core/services/quiz_session_planner.dart`
 - `core/services/quiz_due_question_planner.dart`
@@ -203,6 +204,7 @@ Play Store-copy versioneras separat i `fastlane/metadata/android/` sa att butiks
 ## Relaterade dokument
 
 - `docs/PROJECT_STRUCTURE.md`
+- `docs/TRACE_MAP.md`
 - `docs/SERVICES_API.md`
 - `docs/DECISIONS_LOG.md`
 - `docs/SESSION_BRIEF.md`

@@ -1,15 +1,16 @@
 ﻿<!--
 typ: reference
 syfte: Faktisk mapp- och filstruktur
-uppdaterad: 2026-05-26
+uppdaterad: 2026-05-29
 -->
 # Project Structure (As-Is)
 
-Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-26).
+Denna fil beskriver faktisk struktur i repo:t (uppdaterad 2026-05-29).
 
 ## Root
 
 - `lib/` appkod
+- `lib/START_HERE.md` snabb kodkarta for lager och vanliga spar
 - `test/` unit + widget tests
 - `integration_test/` end-to-end tester
 - `assets/` produktionsassets
@@ -28,12 +29,13 @@ Byggartefakter som inte ar kallkod:
 ## lib/
 
 - `main.dart`: entrypoint + bootstrap
+- `START_HERE.md`: snabb ingång till lagren i `lib/`
 - `core/`
   - `config/`: difficulty och feature-konfiguration
   - `constants/`: nycklar, IDs, UI-konstanter
   - `di/`: GetIt-registrering
   - `providers/`: Riverpod state och service providers
-  - `services/`: appnara tjanster (generator, generator-helpers, audio, progression, update, daily challenge, analytics)
+  - `services/`: appnara tjanster (generator, audio, progression, update, daily challenge, analytics) samt `SERVICES_INDEX.md` for snabb orientering
   - `theme/`: teman och tokens
   - `utils/`: layout, transitions, bild-cache sizing, validering m.m.
 - `domain/`
@@ -46,20 +48,21 @@ Byggartefakter som inte ar kallkod:
 - `app/`
   - `bootstrap/presentation/`: `startup_splash_gate.dart`, `startup_flow_gate.dart`
 - `features/`: feature-agda skarmar, dialoger och widgets (feature-first struktur)
+  - `START_HERE.md`: index over alla features och namnsignaler
   - `daily_challenge/presentation/widgets/`: `daily_challenge_card.dart`
   - `daily_challenge/providers/`: `daily_challenge_provider.dart`
   - `home/providers/`: home-sessionstatus och `home_read_model_provider.dart` som bro mellan lagring/quiz-state och UI
-  - `home/presentation/screens/`: `home_screen.dart` med part-filer för innehåll och ljudkontroller
+  - `home/presentation/screens/`: `home_screen.dart` med interna `home_screen__*_part.dart`
   - `home/presentation/`: `home_read_model.dart`
   - `home/presentation/widgets/`: `home_story_progress_card.dart`
   - `inventory/presentation/screens/`: `wardrobe_screen.dart`
   - `onboarding/providers/`: onboarding-controller och completion-status
   - `parent/providers/`: foraldravyns harledda quizhistorik
-  - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart` med separat resultatplanering i part-fil
-  - `quiz/presentation/dialogs/`: `feedback_dialog.dart`
+  - `quiz/presentation/screens/`: `quiz_screen.dart`, `results_screen.dart` med interna `results_screen__*_part.dart`
+  - `quiz/presentation/dialogs/`: `feedback_dialog.dart` med intern `feedback_dialog__content_part.dart`
   - `quiz/presentation/widgets/`: `answer_button.dart`, `question_card.dart`
-  - `story/presentation/screens/`: `story_map_screen.dart` med karta/read-model i part-filer
-  - `parent/presentation/screens/`: `parent_dashboard_screen.dart`, `parent_pin_screen.dart`, `pin_recovery_screen.dart` med dashboard-read-model i part-fil
+  - `story/presentation/screens/`: `story_map_screen.dart` med interna `story_map_screen__*_part.dart`
+  - `parent/presentation/screens/`: `parent_dashboard_screen.dart`, `parent_pin_screen.dart`, `pin_recovery_screen.dart` med interna `parent_dashboard_screen__*_part.dart`
   - `profiles/presentation/screens/`: `profile_selection_screen.dart`
   - `profiles/presentation/dialogs/`: `create_user_dialog.dart`
   - `onboarding/presentation/screens/`: `onboarding_screen.dart`, `initial_profile_setup_screen.dart`
@@ -73,6 +76,7 @@ Byggartefakter som inte ar kallkod:
 - Tekniska filnamn ar engelska och anvander `snake_case.dart`.
 - Feature-agd UI ligger i featuremappen i stallet for `lib/presentation/widgets/`.
 - `lib/presentation/widgets/` ar reserverad for verkligt delad UI.
+- Bibliotekslokala part-filer anvander `owner__purpose_part.dart` for att visa agarskap direkt i filnamnet.
 
 ## Viktiga skarmar (med faktisk sökväg)
 
@@ -190,6 +194,7 @@ Exempel:
 
 ## Se ocksa
 
+- `docs/TRACE_MAP.md`
 - `docs/ARCHITECTURE.md`
 - `docs/SERVICES_API.md`
 - `docs/README.md`
