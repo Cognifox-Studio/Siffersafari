@@ -15,7 +15,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
     'subtraction': 'supported_core_arithmetic',
     'number_bonds_to_10': 'supported_core_arithmetic',
     'compare_numbers': 'supported_prompt_family',
-    'word_problems': 'supported_prompt_family_with_exceptions',
+    'word_problems': 'supported_prompt_family',
   },
   2: {
     'addition_with_tens_transition': 'supported_core_arithmetic',

@@ -62,12 +62,7 @@
       "word_problems": 15
     },
     "undercoveredConcepts": [],
-    "requiresSupportingContext": [
-      {
-        "sectionId": "word_problems",
-        "questionCount": 1
-      }
-    ]
+    "requiresSupportingContext": []
   },
   "sections": [
     {
@@ -655,9 +650,8 @@
         },
         {
           "id": "g1_word_problems_008",
-          "prompt": "En påse har 10 godisar. 1 äts upp. Hur många är kvar?",
-          "responseType": "numeric_or_text",
-          "requiresSupportingContext": true
+          "prompt": "En påse har 10 godisar. 1 godis äts upp. Hur många är kvar?",
+          "responseType": "numeric_or_text"
         },
         {
           "id": "g1_word_problems_009",
