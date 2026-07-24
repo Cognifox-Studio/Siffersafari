@@ -8,10 +8,10 @@
 
 ## Now (2026-07-24)
 
-**Mål:** Play / distribution  
-**Status:** Soft go — `v1.4.3+21` ute på GitHub + AAB uppladdad till Play **internal** som **draft**. Promote/completed kräver manuell Console-koll + go/no-go.
+**Mål:** — (välj uttryckligen från Next)  
+**Status:** Play-intern **Go** — `v1.4.3+21` publicerad och godkänd på Internt test. Promote till closed/production är **inte** gjort (separat beslut).
 
-**Senaste grind:** GitHub Latest = `v1.4.3+21` · Play Closed Beta success (internal/draft) · Mix-coverage number-sense-fix · versionCode 20 var redan förbrukad.
+**Senaste grind:** Människa: Go på intern build · Console publicerad · GitHub Latest `v1.4.3+21`.
 
 ---
 
@@ -21,17 +21,16 @@
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
 **flutter analyze:** Global analyze passerar utan issues ✅  
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
-**Play:** Internal draft för `1.4.3+21` uppladdad ✅ (inte promote)  
+**Play:** Internt test **Go** för `1.4.3+21` ✅  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21  
 
 ### Senaste leveranser
 
-**2026-07-24 – Play/distribution: 1.4.3+21**
-- GitHub Release APK för `v1.4.3+20` och `v1.4.3+21`; Latest är `+21`.
-- Play internal draft-upload via `play-closed-beta.yml` (track=`internal`, status=`draft`).
-- Release notes uppdaterade (Nattskogen + mattebank + stabilitet).
-- Coverage-test skippar number-sense-prompts (min/max/sekvens är inte a−b-identitet).
-- **Verifiering:** Build workflow + Play Closed Beta gröna.
+**2026-07-24 – Play/distribution: 1.4.3+21 (Go intern)**
+- GitHub Release APK; Latest = `v1.4.3+21`.
+- Play Internt test publicerad och godkänd (Go).
+- Release notes uppdaterade; Mix-coverage skippar number-sense-prompts.
+- **Ej gjort:** promote till closed/production.
 
 **2026-07-24 – Story/biome presentation: Nattskogen-löftet**
 - Central copy i `StoryProgressionService` speglar låst nästa värld tydligare (`Låst tills djungeln är klar.` m.m.).

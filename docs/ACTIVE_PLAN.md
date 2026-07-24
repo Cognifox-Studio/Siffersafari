@@ -13,18 +13,20 @@ uppdaterad: 2026-07-24
 
 ## Now
 
-**Play / distribution** — se detaljer i [SESSION_BRIEF.md](SESSION_BRIEF.md).
+**Se `SESSION_BRIEF.md`.**  
+Välj uttryckligen från Next innan nästa kodslice.
 
-Synka tagg med `pubspec`, publicera GitHub Release, ladda samma AAB till Play internal (`draft`), kör go/no-go innan promote. Play hade redan versionCode 20 → aktiv build är `1.4.3+21`.
+*Senaste Now (klar):* Play / distribution — intern **Go** för `1.4.3+21`.
 
 ---
 
-## Next (kandidater — max två kvar)
+## Next (kandidater — max tre)
 
-1. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
-2. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
+1. **Play promote** — closed beta / staged production (efter intern Go)
+2. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
+3. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
 
-*(Play/distribution är Now.)*
+Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 
 ---
 
