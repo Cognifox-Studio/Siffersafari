@@ -1,7 +1,7 @@
 # Siffersafari – Aktiv plan
 
-> **Status:** Aktiv plan (2026-05-18)  
-> **Horisont:** Nästa releasepolish till v2.0+  
+> **Status:** Aktiv plan (2026-07-24)  
+> **Horisont:** Nästa produktmål eller release/distribution efter genomförd device-känslokoll  
 > **Syfte:** Visa vad som fortfarande är planerat. Levererad historik och stabila beslut hålls i andra facitdokument.
 
 Den här planen ska vara kort och bara bära det som fortfarande styr prioritering.
@@ -19,14 +19,14 @@ För övrigt facit:
 **När:** Nu, efter att de committed roadmap-slices som redan varit i gång är landade.  
 **Tidsfönster:** En liten slice i taget.
 
-**Produktmål:** Säkerställa att storykarta, hemflöde och TTS känns bra på riktig enhet, och först därefter välja nästa verkliga produktmål.
+**Produktmål:** Kärnflöde, storykarta och TTS är känslokollade på enhet. Nästa steg är att välja ett committed produktmål eller gå vidare med release/distribution.
 
 **Det som återstår innan en ny större fas öppnas:**
 
-1. Kör automatisk guardrail för releasepolish-slicen: `flutter analyze`, berörda widget-/unit-tester och `git diff --check`.
-2. Gör en manuell känslokoll på enhet för TTS-röst/tempo, storykarta, garderob och barnets huvudsakliga väg genom hem -> quiz -> resultat -> story.
-3. Landa bara små polish-slices som tydligt förbättrar begriplighet, CTA-hierarki eller device-känsla.
-4. Välj nästa committed produktmål uttryckligen i stället för att låta flera halvaktiva spår leva samtidigt.
+1. ~~Kör automatisk guardrail för releasepolish-slicen~~ — genomförd (analyze + fokuserade tester).
+2. ~~Gör en manuell känslokoll på enhet~~ — genomförd och bedömd som OK.
+3. Landa bara små polish-slices som tydligt förbättrar begriplighet, CTA-hierarki eller device-känsla (valfritt om inget skaver).
+4. Välj nästa committed produktmål uttryckligen i stället för att låta flera halvaktiva spår leva samtidigt — eller kör release go/no-go om fokus är Play/distribution.
 
 **Vad som kan bli nästa större steg, men ännu inte är låst:**
 
@@ -86,7 +86,7 @@ Detta ska uttryckligen inte prioriteras i den här planen:
 
 För ett litet team är detta den rekommenderade ordningen nu:
 
-1. Manuell device-koll för TTS, storykarta och huvudflöde.
-2. En liten polish- eller release-slice utifrån det som faktiskt faller ut av den kollen.
-3. Ett uttryckligt val av nästa committed produktmål.
-4. Först därefter: eventuell större v1.8-v1.9-slice eller separat v2.0-spike.
+1. ~~Manuell device-koll för TTS, storykarta och huvudflöde.~~ Klar.
+2. Små polish-slices bara om device-kollen lämnade konkreta skav.
+3. Ett uttryckligt val av nästa committed produktmål *eller* release/distribution.
+4. Först därefter: eventuell större v1.8–v1.9-slice eller separat v2.0-spike.

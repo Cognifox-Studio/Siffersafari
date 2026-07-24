@@ -1,6 +1,7 @@
 # Siffersafari
 
-<p align="center"><strong>Offline-first mattespel för barn 6-12 år.</strong><br>Adaptiv träning, flera barnprofiler och PIN-skyddat föräldraläge i en Android-app som går att installera direkt från GitHub Releases.</p>
+<p align="center"><strong>Offline-first mattespel för barn (ca 6–12 år).</strong><br>
+Quiz, storyäventyr och PIN-skyddat föräldraläge — utan konto eller molnsync.</p>
 
 <p align="center">
   <a href="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml"><img src="https://github.com/Cognifox-Studio/Siffersafari/actions/workflows/flutter.yml/badge.svg" alt="Flutter CI"></a>
@@ -9,59 +10,83 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"><strong>Ladda ner senaste APK</strong></a>
+  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk"><strong>Ladda ner APK</strong></a>
   ·
-  <a href="https://github.com/Cognifox-Studio/Siffersafari/releases"><strong>Se releases</strong></a>
+  <a href="docs/SESSION_BRIEF.md"><strong>Aktuellt läge</strong></a>
   ·
   <a href="docs/README.md"><strong>Dokumentation</strong></a>
 </p>
 
+**Kodversion i repo:** `1.4.3+20` (se `pubspec.yaml`).  
+**Senaste GitHub Release-tagg:** kan ligga lite efter — kolla [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases) för installbar APK.
+
+---
+
+## Vad appen är i dag
+
+Barnets väg:
+
+**Profil → Hem → Quiz → Resultat → Storykarta / Camp**
+
+| Del | Status |
+| --- | --- |
+| Quiz med adaptiv svårighet | Redo — Åk 1–9, valda räknesätt |
+| Flera barnprofiler på samma telefon | Redo |
+| Storykarta + uppdrag / biome-teaser | Redo (presentation-first; nästa värld teasas) |
+| Camp, belöningar, garderob | Redo |
+| Pedagogisk hjälp i feedbackdialogen | Redo (alla fyra räknesätt) |
+| Uppläsning (TTS) per profil, föräldrarstyrd | Redo, offline |
+| Föräldraläge bakom PIN | Redo |
+| Teman Djungel och Rymd | Redo |
+
+**Medvetet senare** (inte buggar, utan avgränsning): bråk/decimaler, diagram/grafer som frågeform, full visuell geometri, handskrift, molnsync, sociala funktioner. Se [docs/ACTIVE_PLAN.md](docs/ACTIVE_PLAN.md) och [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md).
+
+---
+
 ## Varför Siffersafari?
 
-Siffersafari kombinerar lekfull matteövning med ett robust offline-flöde som fungerar utan konto, molnsync eller uppkoppling. Fokus ligger på att göra daglig träning enkel för barnet och överblickbar för förälder eller lärare.
+- Fungerar **offline** — ingen inloggning, ingen tracking i kärnflödet
+- **Adaptiv** träning i stället för fasta paket
+- **Förälder** kan styra innehåll och se översikt utan att störa barnets fokus
+- Android-first, COPPA-medveten riktning (inga trackers / ingen OTA i produkten)
 
-Det här projektet passar särskilt bra när du vill ha:
+---
 
-- en Android-app som kan installeras direkt via APK
-- adaptiv svårighetsgrad i stället för statiska uppgiftspaket
-- flera barnprofiler på samma enhet
-- lokalt sparad progression och PIN-skyddade vuxeninställningar
+## Installera
 
-## Höjdpunkter
+### Från GitHub Releases
 
-| Område | Det användaren märker |
+1. Öppna [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases).
+2. Ladda ner `app-release.apk`.
+3. Installera på Android (tillåt okända källor om enheten frågar).
+
+Direktlänk: [app-release.apk (latest)](https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk)
+
+### Play / closed beta
+
+Distribution via Google Play används också i teamets releaseflöde. Repo-APK:n ovan är den öppna installvägen från GitHub.
+
+---
+
+## Förstå repot (börja här)
+
+Du behöver inte läsa hela `docs/` först.
+
+| Du vill… | Öppna |
 | --- | --- |
-| Adaptiv träning | Frågorna justeras efter prestation för att hålla nivån lagom utmanande |
-| Årskursstyrning | Innehållet kan anpassas efter Åk 1-9 och valda räknesätt |
-| Föräldraläge | Vuxna kan låsa upp dashboard, se statistik och styra innehåll via PIN |
-| Offline-first | Kärnflödet fungerar utan internet och sparar data lokalt med Hive |
-| Motivation | Poäng, streaks, medaljer och belöningar gör övningen mer engagerande |
-| Teman | Djungel och rymd ger appen ett tydligt barnvänligt uttryck |
+| Veta vad som är levererat och nästa steg | [docs/SESSION_BRIEF.md](docs/SESSION_BRIEF.md) |
+| Hitta rätt skärm / feature | [lib/features/START_HERE.md](lib/features/START_HERE.md) |
+| Spåra quiz → resultat → lagring | [docs/TRACE_MAP.md](docs/TRACE_MAP.md) |
+| Se hur lager och mappar hänger ihop | [lib/START_HERE.md](lib/START_HERE.md) |
+| Förstå matte per årskurs | [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md) |
+| Se vad som är planerat / inte nu | [docs/ACTIVE_PLAN.md](docs/ACTIVE_PLAN.md) |
+| Full doc-index | [docs/README.md](docs/README.md) |
 
-## Produktöversikt
-
-- Quizflöde från hemskärm till resultatvy
-- Flera barnprofiler med egen progression
-- Rekommenderad övning och statistik i föräldradashboard
-- PIN-skydd med BCrypt-hashning och begränsning av felaktiga försök
-- Onboarding, widgettester och lokal release-byggning via GitHub Actions
-
-## Installera APK
-
-1. Gå till [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases).
-2. Ladda ner `app-release.apk` från senaste versionen.
-3. Öppna filen på Android-enheten och installera.
-4. Tillåt installation från okända appar för webbläsare eller filhanterare om Android frågar.
-
-Direktlänk till senaste APK:
-
-[https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk](https://github.com/Cognifox-Studio/Siffersafari/releases/latest/download/app-release.apk)
+---
 
 ## Snabbstart för utveckling
 
-För full setup: [docs/SETUP_ENVIRONMENT.md](docs/SETUP_ENVIRONMENT.md)
-
-Snabbaste vägen igång:
+Full miljö: [docs/SETUP_ENVIRONMENT.md](docs/SETUP_ENVIRONMENT.md)
 
 ```bash
 flutter pub get
@@ -69,91 +94,51 @@ dart run build_runner build --delete-conflicting-outputs
 flutter run
 ```
 
-För deterministisk Android-körning i detta repo finns Pixel_6-scriptet:
+Rekommenderat lokalflöde på emulatorn `Pixel_6`:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action run
 ```
 
-## Kvalitet och release
-
-- CI kör analyze och testsvit på kodändringar
-- Release-workflow bygger signerad APK från `v*`-taggar
-- Senaste lokala sanity check inför release: `flutter analyze`, `flutter test` och `flutter build apk --release`
-
-Snabbkommandon lokalt:
+Kvalitet:
 
 ```bash
 flutter analyze
 flutter test
-flutter build apk --release
 ```
 
-## Teknisk översikt
+CI kör analyze/test. Release-workflow bygger signerad APK från `v*`-taggar. Mer: [docs/DEPLOY_ANDROID.md](docs/DEPLOY_ANDROID.md).
 
-- Flutter + Dart 3
-- Riverpod för state management
-- Hive för lokal persistens
-- audioplayers för ljud
-- PNG-first mascot-runtime med Flutter-styrda proceduranimationer
-- Anpassade PNG-assets för UI, avatarer och karaktärer
-- flutter_screenutil för responsiv skalning
+---
 
-### Repoautomation
+## Teknik (kort)
 
-Vanliga hjälpskript i repot:
-
-- `powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync` – bygg, installera och starta appen deterministiskt på `Pixel_6`
-- `dart run scripts/generate_project_map.dart --watch` – bygg den lokala projektkartan, se [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md)
-- `powershell -ExecutionPolicy Bypass -File scripts/extract_integration_screenshots.ps1` – hämta ut integrationstestskärmbilder
-- `dart run scripts/generate_android_launcher_icons.dart` – regenerera Android launcher-ikoner
-- `dart run scripts/generate_sfx_wav.dart` – generera eller uppdatera lokala ljudeffekter
-
-Projektet följer en hybrid lagerindelning:
+- Flutter / Dart 3, Android-first
+- Riverpod + GetIt + Hive
+- Feature-first UI under `lib/features/`
+- PNG-first maskot/figur (Loke), proceduranimationer i Flutter
+- Curriculum/facit i `docs/curriculum_facit.json` + årskursbanker
 
 ```text
 lib/
-├── app/
-├── features/
-├── presentation/
-├── core/
+├── app/           # bootstrap, routing
+├── features/      # home, quiz, story, parent, …
+├── presentation/  # delade widgets (t.ex. GameCharacter)
+├── core/          # services, providers, theme
 ├── domain/
-├── data/
-└── ...
+└── data/
 ```
 
-Mer detaljer finns i:
+---
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-- [docs/PROJECT_STRUCTURE.md](docs/PROJECT_STRUCTURE.md)
-- [docs/PROJECT_MAP.md](docs/PROJECT_MAP.md)
-- [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md)
+## Bidra / säkerhet
 
-## Dokumentation
-
-Viktiga länkar:
-
-- [docs/README.md](docs/README.md)
-- [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
 - [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+- [docs/GETTING_STARTED.md](docs/GETTING_STARTED.md)
 - [SECURITY.md](SECURITY.md)
-- [docs/DEPLOY_ANDROID.md](docs/DEPLOY_ANDROID.md)
 
-## Nuvarande scope
-
-Redo idag:
-
-- Android-fokuserad APK-distribution
-- offline-first kärnflöde
-- adaptiv quizlogik
-- föräldraläge med återställningsflöde
-
-Fortsatt utveckling:
-
-- bredare integrationstestning
-- mer tillgänglighetsarbete
-- vidare prestandapolering och mer produktmedia för repo- och release-sidor
+---
 
 ## Licens
 

@@ -8,7 +8,15 @@ uppdaterad: 2026-05-29
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-05-29.
+Senast uppdaterad: 2026-07-24.
+
+## Börja här (kort)
+
+1. `SESSION_BRIEF.md` — vad som är levererat och vad som är nästa steg  
+2. `../lib/features/START_HERE.md` — hitta rätt feature/skärm  
+3. `TRACE_MAP.md` — spåra hem/quiz/resultat/story till lagring  
+4. `ACTIVE_PLAN.md` — vad som är planerat respektive medvetet inte nu  
+5. Rotens `README.md` — produktöversikt för GitHub
 
 ## Naming-baseline
 

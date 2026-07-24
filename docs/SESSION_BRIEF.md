@@ -255,13 +255,16 @@
 
 ---
 
-## Nästa steg (efter roadmap-svepet 2026-05-14)
+## Nästa steg (uppdaterat 2026-07-24)
 
-### Aktuell fas: kvarvarande committed roadmap-slices är nu landade
-- v1.5.0:s SRS-, resume- och quiz/session-spår är fortsatt funktionellt låsta efter de senaste riktade fixarna och testerna.
-- Hemskärmens camp- och samlarspår, quizets pedagogiska hjälp, storykartans biome-preview och den första offline-TTS-slicen är nu landade och verifierade i små delar.
-- **Direkta nästa steg:** Nästa rimliga steg är en manuell känslokoll på enhet för TTS-röst/tempo och storykarta, därefter release-/polish-pass eller nya uttryckligt prioriterade produktmål. Undvik fortfarande stora experimentspår som leaderboard utan tydlig produktnytta.
+### Aktuell fas: releasepolish är klar nog för nästa produktval
+- v1.5.0:s SRS-, resume- och quiz/session-spår är fortsatt funktionellt låsta.
+- Hemskärmens camp- och samlarspår, quizets pedagogiska hjälp, storykartans biome-preview och offline-TTS är landade.
+- Manuell känslokoll på enhet (huvudflöde, story, TTS) är genomförd och bedömd som OK.
+- Analyze + fokuserade tester + dokumentations-/part-refaktor är incheckade; worktree var ren efter QA.
+- **Direkta nästa steg:** Välj uttryckligen *ett* nästa committed produktmål (t.ex. story/biome-polish, camp/samlare, eller Play/release-steg) — eller kör release go/no-go om fokus är distribution. Undvik fortfarande stora experimentspår som leaderboard utan tydlig produktnytta.
 - Behåll nuvarande guardrails: visa inte hjälpen konstant, bygg inte vuxenförklaringar och inför inte ett nytt stort hjälp- eller övningssystem utan tydlig nytta.
+- Åk 1 `word_problems` är fullt stödd i runtime-statusauditen (tidigare delvis p.g.a. en otydlig bankprompt).
 
 ---
 
