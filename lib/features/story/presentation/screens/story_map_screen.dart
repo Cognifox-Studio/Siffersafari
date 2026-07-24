@@ -154,7 +154,6 @@ class StoryMapScreen extends ConsumerWidget {
           properties: {
             'operation': operationType.name,
             'difficulty': effectiveDifficulty.name,
-            'isDailyChallenge': false,
             'gradeLevel': user.gradeLevel,
             'source': 'story_map',
           },

@@ -327,9 +327,6 @@ class AudioService {
   /// Play quiz background music
   Future<void> playQuizMusic() => playMusicTrack(AppMusicTrack.quiz);
 
-  /// Play background music
-  Future<void> playMusic() => playHomeMusic();
-
   Future<void> _playAssetWithFallback({
     required AudioPlayer player,
     required String primary,

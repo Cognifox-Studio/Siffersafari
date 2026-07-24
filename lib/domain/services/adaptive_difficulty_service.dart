@@ -1,5 +1,4 @@
 import '../constants/learning_constants.dart';
-import '../enums/difficulty_level.dart';
 
 /// Adjusts question difficulty based on user performance.
 ///
@@ -60,51 +59,6 @@ class AdaptiveDifficultyService {
     }
 
     return clampedCurrentStep;
-  }
-
-  /// Suggests a new [DifficultyLevel] (easy/medium/hard) based on performance.
-  ///
-  /// Requires at least [questionsBeforeAdjustment] recent results before
-  /// making a suggestion. Otherwise returns the current difficulty unchanged.
-  DifficultyLevel suggestDifficulty({
-    required DifficultyLevel currentDifficulty,
-    required List<bool> recentResults,
-  }) {
-    if (recentResults.length < LearningConstants.questionsBeforeAdjustment) {
-      return currentDifficulty;
-    }
-
-    final successRate = calculateSuccessRate(recentResults);
-
-    if (successRate >= LearningConstants.difficultyIncreaseThreshold) {
-      return _increaseDifficulty(currentDifficulty);
-    }
-
-    if (successRate <= LearningConstants.difficultyDecreaseThreshold) {
-      return _decreaseDifficulty(currentDifficulty);
-    }
-
-    return currentDifficulty;
-  }
-
-  DifficultyLevel _increaseDifficulty(DifficultyLevel current) {
-    switch (current) {
-      case DifficultyLevel.easy:
-        return DifficultyLevel.medium;
-      case DifficultyLevel.medium:
-      case DifficultyLevel.hard:
-        return DifficultyLevel.hard;
-    }
-  }
-
-  DifficultyLevel _decreaseDifficulty(DifficultyLevel current) {
-    switch (current) {
-      case DifficultyLevel.easy:
-      case DifficultyLevel.medium:
-        return DifficultyLevel.easy;
-      case DifficultyLevel.hard:
-        return DifficultyLevel.medium;
-    }
   }
 
   int _macroStepDelta(List<bool> recentResults) {

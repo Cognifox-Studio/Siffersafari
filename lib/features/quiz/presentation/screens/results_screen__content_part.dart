@@ -99,31 +99,9 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
               'successRate': session.successRate,
               'correctAnswers': session.correctAnswers,
               'wrongAnswers': session.wrongAnswers,
-              'isDailyChallenge': quizState.isDailyChallenge,
             },
           ),
         );
-      }
-
-      if (quizState.isDailyChallenge) {
-        final completionUserId =
-            ref.read(userProvider).activeUser?.userId ?? '';
-        if (completionUserId.isNotEmpty) {
-          ref
-              .read(dailyChallengeProvider(completionUserId).notifier)
-              .markCompleted();
-          unawaited(
-            ref.read(appAnalyticsProvider).logEvent(
-              name: 'daily_challenge_completed',
-              userId: completionUserId,
-              properties: {
-                'operation': session.operationType.name,
-                'difficulty': session.difficulty.name,
-                'successRate': session.successRate,
-              },
-            ),
-          );
-        }
       }
 
       final levelUp = ref.read(userProvider).lastLevelUp;

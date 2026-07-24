@@ -48,7 +48,6 @@ class QuizState {
     this.reviewSchedulesByKey = const {},
     this.dueReviewCount = 0,
     this.pendingDueKeys = const [],
-    this.isDailyChallenge = false,
   });
 
   final String? userId;
@@ -65,7 +64,6 @@ class QuizState {
   final Map<String, ReviewSchedule> reviewSchedulesByKey;
   final int dueReviewCount;
   final List<String> pendingDueKeys;
-  final bool isDailyChallenge;
 
   QuizState copyWith({
     String? userId,
@@ -82,7 +80,6 @@ class QuizState {
     Map<String, ReviewSchedule>? reviewSchedulesByKey,
     int? dueReviewCount,
     List<String>? pendingDueKeys,
-    bool? isDailyChallenge,
   }) {
     return QuizState(
       userId: userId ?? this.userId,
@@ -103,7 +100,6 @@ class QuizState {
       reviewSchedulesByKey: reviewSchedulesByKey ?? this.reviewSchedulesByKey,
       dueReviewCount: dueReviewCount ?? this.dueReviewCount,
       pendingDueKeys: pendingDueKeys ?? this.pendingDueKeys,
-      isDailyChallenge: isDailyChallenge ?? this.isDailyChallenge,
     );
   }
 }
@@ -210,7 +206,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
     required QuizSession session,
     required Map<OperationType, int> steps,
     required QuizReviewStateSnapshot reviewState,
-    required bool isDailyChallenge,
     List<String> pendingDueKeys = const [],
   }) {
     state = state.copyWith(
@@ -228,7 +223,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
       ),
       dueReviewCount: reviewState.dueCount,
       pendingDueKeys: List<String>.unmodifiable(pendingDueKeys),
-      isDailyChallenge: isDailyChallenge,
     );
 
     _persistInProgressSession(
@@ -248,7 +242,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
     Map<OperationType, int>? initialDifficultyStepsByOperation,
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
-    bool isDailyChallenge = false,
   }) {
     debugPrint(
       '[QuizNotifier] startSession: userId=$userId, '
@@ -311,7 +304,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
       session: session,
       steps: steps,
       reviewState: reviewState,
-      isDailyChallenge: isDailyChallenge,
       pendingDueKeys: questionPlan.pendingDueKeys,
     );
   }
@@ -337,7 +329,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
       session: session,
       steps: session.difficultyStepsByOperation,
       reviewState: reviewState,
-      isDailyChallenge: false,
       pendingDueKeys: _reviewScheduleService.readPendingDueKeys(sessionMap),
     );
   }
@@ -430,7 +421,6 @@ class QuizNotifier extends StateNotifier<QuizState> {
       session: session,
       steps: steps,
       reviewState: reviewState,
-      isDailyChallenge: false,
       pendingDueKeys: questionPlan.pendingDueKeys,
     );
   }

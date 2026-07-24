@@ -4,7 +4,6 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/story_progress_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/home_read_model.dart';
 import 'package:siffersafari/features/home/providers/home_session_status_provider.dart';
 
@@ -33,13 +32,6 @@ final homeReadModelProvider = Provider.autoDispose<HomeReadModel>((ref) {
   final hasPersistedInProgressSession = user == null
       ? false
       : ref.watch(homePersistedQuizSessionProvider(user.userId));
-  final isDailyChallengeCompleted = user == null
-      ? false
-      : ref.watch(
-          dailyChallengeProvider(user.userId).select(
-            (state) => state.isCompleted,
-          ),
-        );
 
   return HomeReadModel.fromValues(
     activeUser: user,
@@ -49,7 +41,6 @@ final homeReadModelProvider = Provider.autoDispose<HomeReadModel>((ref) {
     storyProgress: storyProgress,
     parentAllowedOps: parentAllowedOps,
     hasPersistedInProgressSession: hasPersistedInProgressSession,
-    isDailyChallengeCompleted: isDailyChallengeCompleted,
   );
 });
 

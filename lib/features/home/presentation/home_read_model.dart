@@ -21,7 +21,6 @@ class HomeReadModel {
     required this.allowedOps,
     required this.hasResumableSession,
     required this.hasStoryQuest,
-    required this.isDailyChallengeCompleted,
     required this.heroEyebrow,
     required this.heroTitle,
     required this.primaryAction,
@@ -34,7 +33,6 @@ class HomeReadModel {
   final Set<OperationType> allowedOps;
   final bool hasResumableSession;
   final bool hasStoryQuest;
-  final bool isDailyChallengeCompleted;
   final String heroEyebrow;
   final String heroTitle;
   final String? heroSubtitle;
@@ -55,7 +53,6 @@ class HomeReadModel {
     required StoryProgress? storyProgress,
     required Set<OperationType> parentAllowedOps,
     required bool hasPersistedInProgressSession,
-    required bool isDailyChallengeCompleted,
   }) {
     return HomeReadModel.fromValues(
       activeUser: userState.activeUser,
@@ -65,7 +62,6 @@ class HomeReadModel {
       storyProgress: storyProgress,
       parentAllowedOps: parentAllowedOps,
       hasPersistedInProgressSession: hasPersistedInProgressSession,
-      isDailyChallengeCompleted: isDailyChallengeCompleted,
     );
   }
 
@@ -77,7 +73,6 @@ class HomeReadModel {
     required StoryProgress? storyProgress,
     required Set<OperationType> parentAllowedOps,
     required bool hasPersistedInProgressSession,
-    required bool isDailyChallengeCompleted,
   }) {
     final user = activeUser;
     final allowedOps = DifficultyConfig.effectiveAllowedOperations(
@@ -108,7 +103,6 @@ class HomeReadModel {
       allowedOps: allowedOps,
       hasResumableSession: hasResumableSession,
       hasStoryQuest: hasStoryQuest,
-      isDailyChallengeCompleted: isDailyChallengeCompleted,
       heroEyebrow: user == null
           ? 'Redo för safari?'
           : hasStoryQuest

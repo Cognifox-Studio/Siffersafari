@@ -34,7 +34,6 @@ Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../do
 
 - `quest_progression_service.dart`: filtrerar questpool och normaliserar kartlangd
 - `story_progression_service.dart`: bygger UI-fardig `StoryProgress`
-- `daily_challenge_service.dart`: dagens utmaning och personaliserad difficulty
 - `user_quest_state_service.dart`: intern hantering av quest-state kring resultatflodet
 
 ## Upplevelse och integrationer

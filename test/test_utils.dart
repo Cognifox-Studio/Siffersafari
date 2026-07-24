@@ -230,19 +230,6 @@ class FakeQuestionGeneratorService extends QuestionGeneratorService {
   );
 
   @override
-  List<Question> generateQuestions({
-    required AgeGroup ageGroup,
-    required OperationType operationType,
-    required DifficultyLevel difficulty,
-    required int count,
-    Map<OperationType, int>? difficultyStepsByOperation,
-    int? difficultyStep,
-    int? gradeLevel,
-  }) {
-    return const [question];
-  }
-
-  @override
   Question generateQuestion({
     required AgeGroup ageGroup,
     required OperationType operationType,
@@ -361,7 +348,7 @@ Future<InMemoryLocalStorageRepository> setupWidgetTestDependencies() async {
   when(() => audio.playCelebrationSound()).thenAnswer((_) async {});
   when(() => audio.playClickSound()).thenAnswer((_) async {});
   when(() => audio.playMapOpenSound()).thenAnswer((_) async {});
-  when(() => audio.playMusic()).thenAnswer((_) async {});
+  when(() => audio.playHomeMusic()).thenAnswer((_) async {});
   when(() => audio.playHomeMusic()).thenAnswer((_) async {});
   when(() => audio.playStoryMusic()).thenAnswer((_) async {});
   when(() => audio.playQuizMusic()).thenAnswer((_) async {});

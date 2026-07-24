@@ -419,8 +419,6 @@ _ModuleInfo _classifyModule(String relativePath) {
 
 String _friendlyFeatureLabel(String featureName) {
   switch (featureName) {
-    case 'daily_challenge':
-      return 'Daglig utmaning';
     case 'home':
       return 'Hem';
     case 'onboarding':

@@ -14,7 +14,6 @@ Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, opp
 - `userProvider`
 - `quizProvider`
 - `storyProgressProvider`
-- `dailyChallengeProvider`
 
 ## Sparar
 

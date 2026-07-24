@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/services/adaptive_difficulty_service.dart';
 
 void main() {
@@ -15,56 +14,6 @@ void main() {
       final successRate = service.calculateSuccessRate(results);
 
       expect(successRate, 0.6); // 3/5
-    });
-
-    test('behåller svårighetsgrad vid för lite data', () {
-      final results = [true, false];
-      final suggestion = service.suggestDifficulty(
-        currentDifficulty: DifficultyLevel.easy,
-        recentResults: results,
-      );
-
-      expect(suggestion, DifficultyLevel.easy);
-    });
-
-    test('höjer svårighetsgrad vid hög träffsäkerhet', () {
-      final results = [true, true, true, true, true];
-      final suggestion = service.suggestDifficulty(
-        currentDifficulty: DifficultyLevel.easy,
-        recentResults: results,
-      );
-
-      expect(suggestion, DifficultyLevel.medium);
-    });
-
-    test('sänker svårighetsgrad vid låg träffsäkerhet', () {
-      final results = [false, false, true, false, false];
-      final suggestion = service.suggestDifficulty(
-        currentDifficulty: DifficultyLevel.medium,
-        recentResults: results,
-      );
-
-      expect(suggestion, DifficultyLevel.easy);
-    });
-
-    test('höjer inte över hard', () {
-      final results = [true, true, true, true, true];
-      final suggestion = service.suggestDifficulty(
-        currentDifficulty: DifficultyLevel.hard,
-        recentResults: results,
-      );
-
-      expect(suggestion, DifficultyLevel.hard);
-    });
-
-    test('sänker inte under easy', () {
-      final results = [false, false, false, false, false];
-      final suggestion = service.suggestDifficulty(
-        currentDifficulty: DifficultyLevel.easy,
-        recentResults: results,
-      );
-
-      expect(suggestion, DifficultyLevel.easy);
     });
 
     test('steg – höjer vid hög träffsäkerhet', () {

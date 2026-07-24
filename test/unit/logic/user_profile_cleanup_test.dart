@@ -56,13 +56,16 @@ void main() {
           false,
         );
         await repository.saveSetting(
-          SettingsKeys.dailyChallengeCompletion('u1', '2026-05-12'),
+          SettingsKeys.legacyDailyChallengeCompletion('u1', '2026-05-12'),
           true,
         );
-        await repository.saveSetting(SettingsKeys.dailyChallengeStreak('u1'), {
-          'streak': 2,
-          'lastDate': '2026-05-12',
-        });
+        await repository.saveSetting(
+          SettingsKeys.legacyDailyChallengeStreak('u1'),
+          {
+            'streak': 2,
+            'lastDate': '2026-05-12',
+          },
+        );
         await repository
             .saveSetting(SettingsKeys.allowedOperations('u2'), ['division']);
 
@@ -114,12 +117,12 @@ void main() {
         );
         expect(
           repository.getSetting(
-            SettingsKeys.dailyChallengeCompletion('u1', '2026-05-12'),
+            SettingsKeys.legacyDailyChallengeCompletion('u1', '2026-05-12'),
           ),
           isNull,
         );
         expect(
-          repository.getSetting(SettingsKeys.dailyChallengeStreak('u1')),
+          repository.getSetting(SettingsKeys.legacyDailyChallengeStreak('u1')),
           isNull,
         );
         expect(

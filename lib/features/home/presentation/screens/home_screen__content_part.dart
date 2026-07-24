@@ -303,7 +303,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void _startQuiz({
     required OperationType operationType,
     required DifficultyLevel difficulty,
-    bool isDailyChallenge = false,
   }) {
     final user = ref.read(userProvider).activeUser;
     if (user == null) {
@@ -349,7 +348,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           initialDifficultyStepsByOperation: steps,
           wordProblemsEnabled: wordProblemsEnabled,
           missingNumberEnabled: missingNumberEnabled,
-          isDailyChallenge: isDailyChallenge,
         );
 
     unawaited(
@@ -359,7 +357,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         properties: {
           'operation': operationType.name,
           'difficulty': effectiveDifficulty.name,
-          'isDailyChallenge': isDailyChallenge,
           'gradeLevel': user.gradeLevel,
         },
       ),
@@ -557,12 +554,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                         : storyProgress.actLabel,
                                     icon: Icons.explore_rounded,
                                     color: themeColors.secondaryActionColor,
-                                  ),
-                                if (homeModel.isDailyChallengeCompleted)
-                                  PlayfulInfoChip(
-                                    label: 'Dagens runda klar',
-                                    icon: Icons.check_circle_rounded,
-                                    color: themeColors.progressCompletedColor,
                                   ),
                               ],
                             ),

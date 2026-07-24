@@ -40,14 +40,11 @@ class SettingsKeys {
 
   static const String analyticsEvents = 'analytics_events';
 
-  /// Key for tracking daily challenge completion.
-  /// [date] should be in 'YYYY-MM-DD' format.
-  static String dailyChallengeCompletion(String userId, String date) =>
+  /// Legacy Daily Challenge keys — kept so profile delete still wipes orphans.
+  static String legacyDailyChallengeCompletion(String userId, String date) =>
       'daily_challenge_${userId}_$date';
 
-  /// Key for tracking daily challenge streak.
-  /// Stores a map with 'streak' (int) and 'lastDate' (YYYY-MM-DD string).
-  static String dailyChallengeStreak(String userId) =>
+  static String legacyDailyChallengeStreak(String userId) =>
       'daily_challenge_streak_$userId';
 
   static List<String> userScopedExactKeys(String userId) => [
@@ -62,7 +59,7 @@ class SettingsKeys {
         textToSpeechEnabled(userId),
         soundVolume(userId),
         musicVolume(userId),
-        dailyChallengeStreak(userId),
+        legacyDailyChallengeStreak(userId),
       ];
 
   static List<String> userScopedKeyPrefixes(String userId) => [
@@ -71,7 +68,7 @@ class SettingsKeys {
 
   static List<String> userScopedSampleKeys(String userId) => [
         ...userScopedExactKeys(userId),
-        dailyChallengeCompletion(userId, '2026-01-02'),
+        legacyDailyChallengeCompletion(userId, '2026-01-02'),
       ];
 
   static bool isUserScopedKey(String userId, Object rawKey) {

@@ -21,27 +21,11 @@ Ansvar:
 Anvands av:
 - `QuizNotifier` (start + nasta fraga)
 
-### DailyChallengeService
-Fil: `lib/core/services/daily_challenge_service.dart`
-
-Ansvar:
-- generera dagens utmaning (operation + svårighetsgrad) deterministiskt baserat på dag-av-året
-- `getTodaysChallenge()`: enkel rotation genom alla operationer, difficulty alternerar easy/medium per dag
-- `getTodaysChallengeForUser(...)`: personaliserad utmaning baserad på användarens mastery och operationDifficultySteps
-  - väljer operation från pool av 2 operationer med lägst `_learningScoreForOperation` (mastery + difficultyStep)
-  - svårighetsgrad anpassas per operation baserat på mastery och step via `_difficultyForOperation`
-- `DailyChallenge` innehåller `operation`, `difficulty`, `dateKey` (YYYY-MM-DD) och `title`
-
-Anvands av:
-- `DailyChallengeNotifier` (via `dailyChallengeProvider`)
-- `HomeScreen` (använder `getTodaysChallengeForUser` för personalisering)
-- `DailyChallengeCard` (`features/daily_challenge/presentation/widgets/`)
-
 ### AppAnalyticsService
 Fil: `lib/core/services/app_analytics_service.dart`
 
 Ansvar:
-- logga lokala funnel-events (quiz_start, quiz_completed, daily_start, daily_completed, parent_mode_opened)
+- logga lokala funnel-events (quiz_started, quiz_completed, parent_mode_opened)
 - lagra events lokalt i Hive (max 500 st)
 - ingen molnsynkning – offline-first
 
@@ -176,28 +160,6 @@ Ansvar:
 
 Providers är Riverpod-baserade state-hanterare som konsumerar services och repository.
 
-### DailyChallengeNotifier
-Fil: `lib/features/daily_challenge/providers/daily_challenge_provider.dart`
-
-Ansvar:
-- spåra completion-status för dagens utmaning per användare
-- hantera consecutive-day streak-räknare
-- persistera streak-data i Hive (`{streak, lastDate}`)
-- `DailyChallengeState` innehåller `isCompleted` och `streakCount`
-
-Beteende:
-- vid `markCompleted()`: räknar upp streak vid consecutiv dag (yesterday → today)
-- bevarar streak vid dubbelmarkering (samma dag)
-- nollställer till streak=1 vid gap > 1 dag
-
-Provider:
-- `dailyChallengeProvider` (family, scopad per userId)
-
-Anvands av:
-- `HomeScreen` (visar streak-badge när streak > 1)
-- `DailyChallengeCard` (visar completion-status)
-- `ResultsScreen` (markerar completed vid quiz-slut)
-
 ### QuizNotifier
 Fil: `lib/core/providers/quiz_provider.dart`
 
@@ -230,10 +192,9 @@ Ansvar:
 ## DI och providers
 
 - DI: `lib/core/di/injection.dart`
-- Providers: främst `lib/core/providers/*.dart`, plus featureägda providers som `lib/features/daily_challenge/providers/*.dart`
+- Providers: främst `lib/core/providers/*.dart`, plus featureägda providers under `lib/features/*/providers/`
 
 Notera:
 - Providers konsumerar services/repository via Riverpod.
 - DI registrerar singleton/lazy-singleton for globala tjanster.
-- `dailyChallengeProvider` är en family-provider scopad per userId.
 - `appAnalyticsProvider` är en global provider.

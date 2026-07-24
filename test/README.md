@@ -23,7 +23,6 @@ test/
 │   └── assets/                    # Asset- och fixture-relaterade enhetstester
 └── widget/                        # Widget- och flödestester
    ├── app_*.dart
-   ├── daily_challenge_card_test.dart
    ├── game_character_test.dart
    └── mascot_reaction_view_test.dart
 ```

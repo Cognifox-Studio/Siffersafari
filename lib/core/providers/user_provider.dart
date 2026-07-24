@@ -343,16 +343,6 @@ class UserNotifier extends StateNotifier<UserState> {
     await saveUser(updated);
   }
 
-  /// Unlocks an inventory item for the active user.
-  Future<void> unlockItem(String itemId) async {
-    final user = state.activeUser;
-    if (user == null || user.unlockedItems.contains(itemId)) return;
-
-    final updatedItems = List<String>.from(user.unlockedItems)..add(itemId);
-    final updatedUser = user.copyWith(unlockedItems: updatedItems);
-    await saveUser(updatedUser);
-  }
-
   /// Equips an inventory item in a specific slot (e.g. 'head', 'hand') for the active user.
   Future<void> equipItem(String slot, String itemId) async {
     final user = state.activeUser;

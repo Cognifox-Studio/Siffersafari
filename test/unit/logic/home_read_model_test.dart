@@ -19,7 +19,6 @@ void main() {
         storyProgress: null,
         parentAllowedOps: _baseOperations,
         hasPersistedInProgressSession: false,
-        isDailyChallengeCompleted: false,
       );
 
       expect(model.heroTitle, 'Börja spela');
@@ -36,13 +35,11 @@ void main() {
         storyProgress: _storyProgress(isEpisodeComplete: true),
         parentAllowedOps: _baseOperations,
         hasPersistedInProgressSession: false,
-        isDailyChallengeCompleted: true,
       );
 
       expect(model.hasResumableSession, isTrue);
       expect(model.primaryAction, HomePrimaryAction.resumeQuiz);
       expect(model.primaryButtonLabel, 'Fortsätt');
-      expect(model.isDailyChallengeCompleted, isTrue);
     });
 
     test('visar story-CTA när aktivt uppdrag matchar tillåtna räknesätt', () {
@@ -53,7 +50,6 @@ void main() {
         storyProgress: _storyProgress(),
         parentAllowedOps: _baseOperations,
         hasPersistedInProgressSession: false,
-        isDailyChallengeCompleted: false,
       );
 
       expect(model.hasStoryQuest, isTrue);

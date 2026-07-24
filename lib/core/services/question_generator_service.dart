@@ -57,33 +57,6 @@ class QuestionGeneratorService
 
   // region Main Generation Methods
 
-  /// Generate a list of questions for a quiz session
-  List<Question> generateQuestions({
-    required AgeGroup ageGroup,
-    required OperationType operationType,
-    required DifficultyLevel difficulty,
-    required int count,
-    Map<OperationType, int>? difficultyStepsByOperation,
-    int? difficultyStep,
-    int? gradeLevel,
-  }) {
-    final questions = <Question>[];
-
-    for (var i = 0; i < count; i++) {
-      final question = generateQuestion(
-        ageGroup: ageGroup,
-        operationType: operationType,
-        difficulty: difficulty,
-        difficultyStepsByOperation: difficultyStepsByOperation,
-        difficultyStep: difficultyStep,
-        gradeLevel: gradeLevel,
-      );
-      questions.add(question);
-    }
-
-    return questions;
-  }
-
   /// Generate a single question
   Question generateQuestion({
     required AgeGroup ageGroup,

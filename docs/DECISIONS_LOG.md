@@ -12,6 +12,7 @@ Princip: senaste datum vinner vid konflikt.
 
 - **Utvecklingssystem:** Now/Next/Later + Definition of Done + Plan→Execute→Review är kanoniskt i `docs/DEV_SYSTEM.md` och `docs/DEFINITION_OF_DONE.md`. Agent-/skill-routing pekar dit; chattvanor får inte åsidosätta DoD.
 - **Git:** trunk/GitHub Flow — korta grenar till `main`, ingen GitFlow-`develop`. Release = tagg synkad med `pubspec`, Play internal före promote.
+- **Dagens runda:** Fullt pensionerad (feature/UI/service/quiz-flagga). Legacy Hive-nycklar behålls endast för profil-wipe.
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.

@@ -7,6 +7,6 @@ Detta repo kör automatiska tester och releaseflöden via GitHub Actions:
 
 Viktigaste workflow-ankare:
 
-- `.github/workflows/ci.yaml` för core smoke på PR och full smoke + audit på huvudgrenen
+- `.github/workflows/ci.yaml` för core smoke på PR och full smoke + audit på huvudgrenen (utan asset-lint; den gamla `tools/pipeline.py`-jobben är borttagen)
 - `.github/workflows/flutter.yml` för grundläggande analyze + test
 - `.github/workflows/release-guard.yml` för release-sanity

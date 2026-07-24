@@ -26,6 +26,13 @@
 
 ### Senaste leveranser
 
+**2026-07-24 – Cleanup: Daily Challenge pension + död kod/filer**
+- Full pension av Dagens runda (feature, service, tester, quiz/home-plumbing).
+- Legacy Hive-nycklar behålls bara för profil-wipe.
+- Döda API:er bort (`generateQuestions`, `suggestDifficulty`, m.fl.); SVG/Rive-stubs i `assets.g.dart` rensade.
+- Filhygien: `test_output*`, `artifacts/play_console_raw`, gamla release notes; zombie `asset-lint` bort från CI.
+- Oanvända pubspec-deps borttagna.
+
 **2026-07-24 – Play/distribution: 1.4.3+21 (Go intern)**
 - GitHub Release APK; Latest = `v1.4.3+21`.
 - Play Internt test publicerad och godkänd (Go).

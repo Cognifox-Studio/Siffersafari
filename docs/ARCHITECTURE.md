@@ -50,8 +50,7 @@ UI-lagret ar feature-first:
 - `lib/features/<feature>/providers/` for feature-specifik harledd state, repository-läsningar och kommandon som annars skulle ligga i widgets
 - `lib/presentation/` innehaller bara delade UI-komponenter under `widgets/`
 - historiska `lib/presentation/screens/` och `lib/presentation/dialogs/` ar avvecklade och ska inte anvandas for ny UI
-- `lib/features/daily_challenge/` innehaller featureagd state och UI for daglig utmaning
-- `features/home/presentation/home_read_model.dart` + `features/home/providers/home_read_model_provider.dart` samlar hemskärmens hero/CTA-beslut ovanpå aktiv user, quiz-state, story-progress och daily challenge.
+- `features/home/presentation/home_read_model.dart` + `features/home/providers/home_read_model_provider.dart` samlar hemskärmens hero/CTA-beslut ovanpå aktiv user, quiz-state och story-progress.
 - Större feature-skärmar får små bibliotekslokala read-model/planeringsdelar när de minskar UI-logik utan att flytta ägande. De namnges nu som `__*_part.dart` bredvid ägarfilen. `ResultsPracticePlanner`, `StoryMapReadModel` och `ParentDashboardReadModel` är aktuella exempel.
 
 Modulgränser:
@@ -102,7 +101,7 @@ Viktiga delar:
 - `core/services/achievement_service.dart`
 - `core/services/quest_progression_service.dart`
 - `core/services/story_progression_service.dart`
-- `core/services/daily_challenge_service.dart`
+- `core/services/story_progression_service.dart`
 - `core/services/app_analytics_service.dart`
 - `core/utils/image_cache_size.dart` för konsekvent DPR-baserad `Image.asset`-decode sizing i bildtunga ytor.
 

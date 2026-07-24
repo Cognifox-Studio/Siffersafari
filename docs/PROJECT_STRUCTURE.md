@@ -49,8 +49,6 @@ Byggartefakter som inte ar kallkod:
   - `bootstrap/presentation/`: `startup_splash_gate.dart`, `startup_flow_gate.dart`
 - `features/`: feature-agda skarmar, dialoger och widgets (feature-first struktur)
   - `START_HERE.md`: index over alla features och namnsignaler
-  - `daily_challenge/presentation/widgets/`: `daily_challenge_card.dart`
-  - `daily_challenge/providers/`: `daily_challenge_provider.dart`
   - `home/providers/`: home-sessionstatus och `home_read_model_provider.dart` som bro mellan lagring/quiz-state och UI
   - `home/presentation/screens/`: `home_screen.dart` med interna `home_screen__*_part.dart`
   - `home/presentation/`: `home_read_model.dart`
@@ -101,7 +99,6 @@ Byggartefakter som inte ar kallkod:
 **State providers (för presentation-lagret):**
 - `userProvider` – UserState och UserNotifier
 - `quizProvider` – QuizState och QuizNotifier
-- `dailyChallengeProvider` (family, per userId) – DailyChallengeState och DailyChallengeNotifier
 - `storyProgressProvider` – StoryProgress beräknad från quest-status
 - `parentSettingsProvider` – ParentSettings
 
@@ -117,7 +114,6 @@ Byggartefakter som inte ar kallkod:
 - `adaptiveDifficultyServiceProvider` – AdaptiveDifficultyService
 - `feedbackServiceProvider` – FeedbackService
 - `achievementServiceProvider` – AchievementService
-- `dailyChallengeServiceProvider` – DailyChallengeService
 - `questionGeneratorServiceProvider` – QuestionGeneratorService
 - `questProgressionServiceProvider` – QuestProgressionService
 - `storyProgressionServiceProvider` – StoryProgressionService
@@ -150,7 +146,6 @@ Byggartefakter som inte ar kallkod:
 
 Exempel:
 - `flutter_pixel6.ps1`
-- `extract_integration_screenshots.ps1`
 - `generate_android_launcher_icons.dart`
 
 ## tools/

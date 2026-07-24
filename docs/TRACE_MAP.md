@@ -56,7 +56,6 @@ flowchart LR
 | Vad som hander nar quiz slutar | `lib/features/quiz/presentation/screens/results_screen.dart` | `lib/core/providers/user_provider.dart`, `lib/core/services/apply_quiz_result_use_case.dart` | `user_progress` och complete `quiz_history` |
 | Storykartan och nasta stopp | `lib/features/story/presentation/screens/story_map_screen.dart` | `lib/core/providers/story_progress_provider.dart`, `lib/core/services/story_progression_service.dart`, `lib/core/services/quest_progression_service.dart` | Read-only fran user- och settingsdata |
 | Parent PIN och toggles | `lib/features/parent/presentation/screens/parent_pin_screen.dart` | `lib/features/parent/presentation/screens/parent_dashboard_screen.dart`, `lib/domain/services/parent_pin_service.dart`, `lib/core/providers/parent_settings_provider.dart` | `settings` |
-| Daily challenge och streak | `lib/features/daily_challenge/presentation/widgets/daily_challenge_card.dart` | `lib/features/daily_challenge/providers/daily_challenge_provider.dart`, `lib/core/services/daily_challenge_service.dart` | `settings` |
 
 ## Nasta steg om du vill grava djupare
 

@@ -35,6 +35,7 @@ migrate_working_dir/
 
 # Local test outputs
 test_results.json
+test_output*.txt
 
 # Local design exports / experiments
 assets/images/app_logo_ideas/

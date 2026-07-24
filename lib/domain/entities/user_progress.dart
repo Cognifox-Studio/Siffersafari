@@ -3,9 +3,6 @@ import 'package:hive/hive.dart';
 
 import '../enums/age_group.dart';
 import '../enums/app_theme.dart';
-import '../enums/difficulty_level.dart';
-import '../enums/mastery_level.dart';
-import '../enums/operation_type.dart';
 
 part 'user_progress.g.dart';
 
@@ -156,24 +153,6 @@ class UserProgress extends Equatable {
   double get successRate {
     if (totalQuestionsAnswered == 0) return 0.0;
     return totalCorrectAnswers / totalQuestionsAnswered;
-  }
-
-  /// Get mastery level for a specific operation and difficulty
-  MasteryLevel getMasteryLevel(
-    OperationType operation,
-    DifficultyLevel difficulty,
-  ) {
-    final key = '${operation.name}_${difficulty.name}';
-    final rate = masteryLevels[key] ?? 0.0;
-
-    if (rate >= MasteryLevel.advanced.threshold) return MasteryLevel.advanced;
-    if (rate >= MasteryLevel.proficient.threshold) {
-      return MasteryLevel.proficient;
-    }
-    if (rate >= MasteryLevel.developing.threshold) {
-      return MasteryLevel.developing;
-    }
-    return MasteryLevel.notStarted;
   }
 
   UserProgress copyWith({

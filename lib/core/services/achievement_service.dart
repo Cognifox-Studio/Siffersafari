@@ -196,10 +196,6 @@ class AchievementService {
     return AchievementDefinition.unknown;
   }
 
-  String getDisplayName(String achievementId) {
-    return getDefinition(achievementId).displayName;
-  }
-
   String getAlbumLabel(String achievementId) {
     return getDefinition(achievementId).albumLabel;
   }

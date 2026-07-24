@@ -23,7 +23,6 @@ import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
-import 'package:siffersafari/features/daily_challenge/providers/daily_challenge_provider.dart';
 import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
 import 'package:siffersafari/features/story/presentation/screens/story_map_screen.dart';

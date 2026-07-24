@@ -19,7 +19,6 @@
 - `inventory/`: garderob och utrustning
 - `profiles/`: profilval och skapa profil
 - `onboarding/`: forsta-gangen-flodet
-- `daily_challenge/`: daglig utmaning och streak
 - `settings/`: vanliga installningar och privacy policy
 
 ## For tvarsnitt genom flera features

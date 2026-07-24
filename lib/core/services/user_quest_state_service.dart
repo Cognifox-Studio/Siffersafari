@@ -63,14 +63,6 @@ class UserQuestStateService {
     );
   }
 
-  QuestStatus getQuestStatus(UserProgress user) {
-    return getQuestStatusWith(
-      user: user,
-      currentQuestId: readCurrentQuestId(user.userId),
-      completedQuestIds: readCompletedQuestIds(user.userId),
-    );
-  }
-
   QuestStatus getQuestStatusWith({
     required UserProgress user,
     required String? currentQuestId,

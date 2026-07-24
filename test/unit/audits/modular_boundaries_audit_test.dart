@@ -111,7 +111,6 @@ void main() {
 }
 
 const _allowedFeatureEdges = {
-  'home -> daily_challenge',
   'home -> inventory',
   'home -> onboarding',
   'home -> parent',
@@ -122,7 +121,6 @@ const _allowedFeatureEdges = {
   'onboarding -> profiles',
   'parent -> settings',
   'profiles -> home',
-  'quiz -> daily_challenge',
   'quiz -> home',
   'quiz -> story',
   'settings -> profiles',
