@@ -1,6 +1,5 @@
----
 name: "Beast Mode"
-description: "Use when code should change and needs end-to-end implementation, fixing, refactoring or QA."
+description: "Use when code should change and needs end-to-end implementation, fixing, refactoring or QA. Signalord: implement, fix, refactor, write code, build, change, feature, bug, end-to-end."
 tools: [read, edit, search, execute, web, todo, agent, "Dart SDK MCP Server/*"]
 argument-hint: "Beskriv uppgiften och önskat slutresultat, till exempel 'Fixa failing widget-test och verifiera på Pixel_6'."
 user-invocable: true

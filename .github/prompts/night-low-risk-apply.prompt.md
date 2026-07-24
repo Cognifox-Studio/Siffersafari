@@ -1,6 +1,5 @@
----
 name: "night-low-risk-apply"
-description: "Use when du vill koera ett autonomt nattpass for lagrisk-cleanup i docs, .github eller ett avgransat scope och lamna allt ocommittat med rapport"
+description: "Use when du vill kora ett autonomt lag-risk-cleanup i docs, .github eller ett avgransat scope och lamna allt ocommittat med rapport. Signalord: automatic cleanup, low-risk fixes, apply, autonomous."
 argument-hint: "Valfritt: begransa scopet till docs, .github, ett featureomrade eller lag-risk-cleanup i lib/test"
 agent: "agent"
 ---

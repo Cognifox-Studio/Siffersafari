@@ -1,7 +1,7 @@
 ---
 name: "Asset runtime consumption"
 description: "Use when editing Dart files that consume story art, theme bundles, startup backgrounds, home hero assets or story map images. Covers owner paths, cache sizing, fallbacks and restart or Pixel_6 verification."
-applyTo: "lib/app/bootstrap/presentation/startup_flow_gate.dart, lib/core/theme/app_theme_config.dart, lib/core/utils/image_cache_size.dart, lib/features/home/presentation/screens/home_screen_content.dart, lib/features/home/presentation/widgets/home_story_progress_card*.dart, lib/features/story/presentation/screens/story_map_screen*.dart, lib/presentation/widgets/themed_background_scaffold.dart"
+applyTo: "lib/app/bootstrap/presentation/startup_flow_gate.dart, lib/core/theme/app_theme_config.dart, lib/core/utils/image_cache_size.dart, lib/features/home/presentation/screens/home_screen__content_part.dart, lib/features/home/presentation/widgets/home_story_progress_card*.dart, lib/features/story/presentation/screens/story_map_screen*.dart, lib/presentation/widgets/themed_background_scaffold.dart"
 ---
 
 # Runtime-konsumtion av assets
@@ -12,7 +12,7 @@ Använd denna instruktion när Dart-koden redan konsumerar theme- eller story-as
 
 - `lib/core/theme/app_theme_config.dart` är facit för theme bundles. Lägg inte nya theme-paths direkt i enskilda widgets när de egentligen hör hemma som `background`, `quest_hero` eller `character`.
 - `lib/app/bootstrap/presentation/startup_flow_gate.dart` är den centrala precache-ytan för theme backgrounds och hero-assets. Duplicera inte bred precache på flera skärmar utan tydlig anledning.
-- `lib/features/home/presentation/screens/home_screen_content.dart` och `lib/features/home/presentation/widgets/home_story_progress_card*.dart` äger home-vyns konsumtion av theme- och story-assets.
+- `lib/features/home/presentation/screens/home_screen__content_part.dart` och `lib/features/home/presentation/widgets/home_story_progress_card*.dart` äger home-vyns konsumtion av theme- och story-assets.
 - `lib/features/story/presentation/screens/story_map_screen*.dart` äger storykartan, dess landmarks, preview-bilder och bakgrundslager.
 
 ## Path- och fallback-regler

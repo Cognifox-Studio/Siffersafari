@@ -19,10 +19,11 @@ Utga fran dessa kallor:
 Arbetsordning:
 
 1. Utga fran anvandarens fil, mapp eller scope och hitta de instruktioner vars `applyTo` eller beskrivning faktiskt matchar.
-2. Lista vilka skills som ar direkt relevanta for samma yta och vilka som bara ar narliggande men inte primara.
-3. Peka ut narliggande prompts eller agenter om de ger battre startyta an en skill.
-4. Flagga overlap, luckor eller potentiellt for breda instruktioner bara om det finns tydlig evidens.
-5. Hall auditen read-only om anvandaren inte uttryckligen bad om att nagot ska andras.
+2. Om ytan ror `question_generator_service.dart`, grade-svarighetsgrad, fragebanker eller `docs/curriculum_facit.json`: behandla `testa-fragornas-svarighetsgrad` som primar skill och flagga om nagon tydlig routing till audit-sparet saknas.
+3. Lista vilka skills som ar direkt relevanta for samma yta och vilka som bara ar narliggande men inte primara.
+4. Peka ut narliggande prompts eller agenter om de ger battre startyta an en skill.
+5. Flagga overlap, luckor eller potentiellt for breda instruktioner bara om det finns tydlig evidens.
+6. Hall auditen read-only om anvandaren inte uttryckligen bad om att nagot ska andras.
 
 Svarskrav:
 

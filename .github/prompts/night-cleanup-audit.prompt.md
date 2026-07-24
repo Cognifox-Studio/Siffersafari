@@ -1,6 +1,5 @@
----
 name: "night-cleanup-audit"
-description: "Kor en lang read-only cleanup-audit over natten och lamna en granskningsbar rapport utan kodandringar"
+description: "Kor en lang read-only cleanup-audit och lamna en granskningsbar rapport utan kodandringar. Signalord: audit, cleanup, stale code, inventory, read-only pass."
 argument-hint: "Valfritt: begransa scopet till lib, test, docs, .github eller ett riskomrade som quiz, navigation eller persistens"
 agent: "agent"
 ---

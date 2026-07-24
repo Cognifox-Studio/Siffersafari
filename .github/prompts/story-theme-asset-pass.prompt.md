@@ -16,10 +16,10 @@ Utgå från dessa källor:
 - [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 - [lib/core/theme/app_theme_config.dart](../../lib/core/theme/app_theme_config.dart)
 - [lib/app/bootstrap/presentation/startup_flow_gate.dart](../../lib/app/bootstrap/presentation/startup_flow_gate.dart)
-- [lib/features/home/presentation/screens/home_screen_content.dart](../../lib/features/home/presentation/screens/home_screen_content.dart)
-- [lib/features/home/presentation/widgets/home_story_progress_card_content.dart](../../lib/features/home/presentation/widgets/home_story_progress_card_content.dart)
-- [lib/features/story/presentation/screens/story_map_screen_map_canvas.dart](../../lib/features/story/presentation/screens/story_map_screen_map_canvas.dart)
-- [lib/features/story/presentation/screens/story_map_screen_content.dart](../../lib/features/story/presentation/screens/story_map_screen_content.dart)
+- [lib/features/home/presentation/screens/home_screen__content_part.dart](../../lib/features/home/presentation/screens/home_screen__content_part.dart)
+- [lib/features/home/presentation/widgets/home_story_progress_card__content_part.dart](../../lib/features/home/presentation/widgets/home_story_progress_card__content_part.dart)
+- [lib/features/story/presentation/screens/story_map_screen__map_canvas_part.dart](../../lib/features/story/presentation/screens/story_map_screen__map_canvas_part.dart)
+- [lib/features/story/presentation/screens/story_map_screen__content_part.dart](../../lib/features/story/presentation/screens/story_map_screen__content_part.dart)
 - [lib/core/utils/image_cache_size.dart](../../lib/core/utils/image_cache_size.dart)
 - [test/widget/app_home_test.dart](../../test/widget/app_home_test.dart)
 - [test/unit/services/story_progression_service_test.dart](../../test/unit/services/story_progression_service_test.dart)
@@ -31,9 +31,9 @@ Arbetsordning:
 3. Peka ut primär ägare och sekundära call sites innan implementation:
    - `app_theme_config.dart` äger theme bundle-paths för `background`, `quest_hero` och `character`
    - `startup_flow_gate.dart` precachar theme backgrounds och hero-assets
-   - `home_screen_content.dart` konsumerar home hero och temaägda UI-bilder
-   - `home_story_progress_card_content.dart` konsumerar hero-, bakgrunds- och character-assets med fallback
-   - `story_map_screen_map_canvas.dart` och `story_map_screen_content.dart` konsumerar story map-bakgrund, landmarks och biome-previews
+   - `home_screen__content_part.dart` konsumerar home hero och temaägda UI-bilder
+   - `home_story_progress_card__content_part.dart` konsumerar hero-, bakgrunds- och character-assets med fallback
+   - `story_map_screen__map_canvas_part.dart` och `story_map_screen__content_part.dart` konsumerar story map-bakgrund, landmarks och biome-previews
 4. Om problemet egentligen gäller råa filer, saknad grafik eller promotion från `_incoming/`: peka vidare till `.github/prompts/asset-flow-router.prompt.md` eller rätt asset-skill i stället för att felsöka runtime först.
 5. Välj minsta rimliga verifiering:
    - filkontroll eller diffgranskning för rena path- eller promptändringar

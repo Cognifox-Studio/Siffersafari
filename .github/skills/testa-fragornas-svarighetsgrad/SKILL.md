@@ -1,6 +1,6 @@
 ---
 name: testa-fragornas-svarighetsgrad
-description: 'Run and analyze the difficulty mix audits to verify balanced question generation. Use when question generation, grade balancing or audit tolerances change.'
+description: 'Run and analyze the difficulty mix audits to verify balanced question generation. Use when QuestionGeneratorService, question banks, docs/curriculum_facit.json, grade balancing, mix distribution or audit tolerances change.'
 argument-hint: 'Beskriv om ändringen gäller generatorn, nivågränser eller en specifik audit.'
 ---
 

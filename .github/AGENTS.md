@@ -18,13 +18,16 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 - Om du behöver veta vilka instructions, skills eller prompts som faktiskt matchar en viss fil eller mapp: kör `.github/prompts/instruction-match-audit.prompt.md`.
 - Om uppgiften gäller garderob, inventory eller `GameCharacter` och du vill få rätt call sites och QA-slice först: kör `.github/prompts/inventory-rendering-pass.prompt.md`.
 - Om uppgiften gäller garderob, inventory eller `GameCharacter`: läs `.github/instructions/regler-for-z-index-inventory.instructions.md` innan du ändrar equip-logik eller rendering.
+- Om du ändrar `question_generator_service.dart`, grade-svårighetsgrad, frågebanker eller `docs/curriculum_facit.json`: använd `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md` för att verifiera balansen före commit.
 - Om ett analyze-, test-, emulator- eller buildfel precis klistrats in eller behöver första triage: kör `.github/prompts/qa-failure-router.prompt.md` först.
 - Om felet redan är konkret och du behöver djupare repo-felsökning efter triage: kör `.github/prompts/felsok.prompt.md`.
 - Om det är oklart om en releasefråga gäller AAB-upload, listing-sync, release notes eller GitHub-release: kör `.github/prompts/play-release-router.prompt.md` för första release-triage.
 - Om butikstext eller release notes behöver granskas: kör `.github/prompts/play-listing-copy-pass.prompt.md`.
 - Om du ska verifiera en diff, välja minsta QA före commit eller bedöma blandade ändringar: kör `.github/prompts/repo-qa-slice.prompt.md` eller `.github/skills/dubbelkolla-andrad-kod/SKILL.md`.
 - Om v1.5.0 resume- eller persistensscopet ska auditeras: kör `.github/prompts/resume-v150-persistence-audit.prompt.md`.
-- Om uppgiften bara gäller `.github/`: välj `Customization Maintainer` och använd gärna `.github/prompts/customization-audit-pass.prompt.md` eller `.github/skills/granska-github-customizations/SKILL.md`.
+- Om uppgiften bara gäller `.github/`, eller användaren vill skapa, uppdatera eller städa instruktioner, promptar, skills, hooks eller agentfiler: välj `Customization Maintainer`.
+- Börja då med `.github/prompts/customization-audit-pass.prompt.md` för audit, init av ett customization-pass eller låg-risk-fixar; använd `.github/skills/granska-github-customizations/SKILL.md` när du redan vet att det är en ren `.github`-audit.
+- Om sessionhistorik finns och du förbättrar `.github` över tid: kontrollera chronicle först för att fånga återkommande discovery-, routing- eller path-friktion innan du patchar.
 - Om en read-only cleanup-audit behövs: kör `.github/prompts/night-cleanup-audit.prompt.md`.
 - Om du vill att ett nattpass ska göra låg-risk-cleanup automatiskt och lämna allt ocommittat: kör `.github/prompts/night-low-risk-apply.prompt.md`.
 - När releaseytan redan är känd och du behöver ett faktiskt `Go`/`Soft go`/`No-go`: kör `.github/prompts/release-go-no-go.prompt.md`.
@@ -35,7 +38,7 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 - Använd standardagenten för små frågor eller små direkta ändringar.
 - Välj `Plan` när scope, risk eller verifiering först måste avgränsas.
 - Välj `Beast Mode` när kod ska ändras eller QA ska köras end-to-end.
-- Välj `Customization Maintainer` när arbetet bara gäller `.github`-customizations.
+- Välj `Customization Maintainer` när arbetet gäller att skapa, uppdatera, granska eller städa `.github`-customizations.
 - Välj `UI Reviewer` för ren UI-granskning utan implementation.
 - Välj `release-manager` för version, release readiness eller Play Console-arbete.
 - Använd skills först när arbetsflödet redan är känt; om du fortfarande mappar problemet är prompt eller agent bättre startyta.

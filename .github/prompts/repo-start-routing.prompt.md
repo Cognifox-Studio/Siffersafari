@@ -21,16 +21,19 @@ Arbetsordning:
 2. Om användaren främst behöver onboarding eller orientering: sammanfatta nuläget i högst några korta punkter innan du väljer startyta.
 3. Läs bara fler docs om uppgiften faktiskt kräver det.
 4. Om uppgiften gäller assets, `_incoming/`, saknad grafik, ikoner, screenshots eller Play-listingbilder: routea direkt till `.github/prompts/asset-flow-router.prompt.md` i stället för bred repo-scanning.
-5. Om användaren uttryckligen vill verifiera en diff eller välja minsta QA före commit: routea till `.github/prompts/repo-qa-slice.prompt.md` och lyft vid behov `.github/skills/dubbelkolla-andrad-kod/SKILL.md`.
-6. Föreslå rätt utförandeform:
+5. Om uppgiften gäller `question_generator_service.dart`, grade-svårighetsgrad, frågebanker eller `docs/curriculum_facit.json`: routea till `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md` och föreslå en audit-baserad QA-slice i stället för bred generell testning.
+6. Om användaren uttryckligen vill verifiera en diff eller välja minsta QA före commit: routea till `.github/prompts/repo-qa-slice.prompt.md` och lyft vid behov `.github/skills/dubbelkolla-andrad-kod/SKILL.md`.
+7. Om uppgiften gäller att skapa, förbättra eller städa chat-customizations under `.github/`: routea till `Customization Maintainer` eller `.github/prompts/customization-audit-pass.prompt.md` och föreslå att befintliga centralfiler uppdateras före nya filer.
+8. Föreslå rätt utförandeform:
    - standardagenten för små, direkta frågor eller små ändringar
    - `Plan` för analys, riskbedömning eller avgränsning
    - `Beast Mode` för implementation och QA
+   - `Customization Maintainer` för `.github`-customizations, routingpolish och hygiene-pass
    - `UI Reviewer` för ren UI-granskning
    - `release-manager` för release- eller Play Console-arbete
-7. Föreslå relevant repo-skill om uppgiften matchar en befintlig skill.
-8. Peka ut sannolika `.github/instructions/` om användaren nämnde en fil eller ett område.
-9. Välj minsta rimliga QA-slice för uppgiften redan från start, eller säg uttryckligen att ingen QA behövs ännu.
+9. Föreslå relevant repo-skill om uppgiften matchar en befintlig skill.
+10. Peka ut sannolika `.github/instructions/` om användaren nämnde en fil eller ett område.
+11. Välj minsta rimliga QA-slice för uppgiften redan från start, eller säg uttryckligen att ingen QA behövs ännu.
 
 Svarskrav:
 

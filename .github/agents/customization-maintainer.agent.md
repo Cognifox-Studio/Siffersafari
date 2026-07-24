@@ -25,7 +25,8 @@ Skapa, granska, uppdatera och sanera filer under `.github/` som styr hur AI-agen
 2. Läs bara de docs och customization-filer som faktiskt behövs för uppgiften.
 3. Följ `link, don't embed` och håll ändringarna små.
 4. Kontrollera att paths, namn, frontmatter och triggertexter faktiskt matchar repo:t.
-5. Validera ändringen med diagnostik eller smal diffgranskning när det är möjligt.
+5. Om sessionhistorik finns: kontrollera återkommande discovery-, routing- eller path-friktion via chronicle innan du patchar.
+6. Validera ändringen med diagnostik eller smal diffgranskning när det är möjligt.
 
 ## Output
 
@@ -33,5 +34,7 @@ Leverera kort:
 
 - vad som ändrades
 - varför ändringen behövdes
+- om sessionhistorik användes eller saknades
 - vad som verifierades
+- närmaste relaterade customization att skapa eller förbättra härnäst, om det finns en tydlig kandidat
 - eventuella kvarstående risker i `.github`-lagret

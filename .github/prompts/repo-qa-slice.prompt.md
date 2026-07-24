@@ -15,12 +15,13 @@ Utga fran dessa kallor:
 - [docs/ACTIVE_PLAN.md](../../docs/ACTIVE_PLAN.md)
 - [.github/skills/testa-att-appen-fungerar/SKILL.md](../skills/testa-att-appen-fungerar/SKILL.md)
 - [.github/skills/dubbelkolla-andrad-kod/SKILL.md](../skills/dubbelkolla-andrad-kod/SKILL.md)
+- [.github/skills/testa-fragornas-svarighetsgrad/SKILL.md](../skills/testa-fragornas-svarighetsgrad/SKILL.md)
 - [.github/skills/testa-att-quiz-sparas-ratt/SKILL.md](../skills/testa-att-quiz-sparas-ratt/SKILL.md)
 - [.vscode/tasks.json](../../.vscode/tasks.json)
 
 Arbetsordning:
 
-1. Klassificera andringen i en huvudklass: docs/customizations, Dart-logik, UI/presentation, quiz-persistens, parent mode, Android/release, assets/animation eller bred blandad diff.
+1. Klassificera andringen i en huvudklass: docs/customizations, Dart-logik, question-generation/curriculum, UI/presentation, quiz-persistens, parent mode, Android/release, assets/animation eller bred blandad diff.
 2. Valj en enda primar QA-slice som ger snabbast falsifierbar signal.
 3. Kor verifieringen, inte bara foresla den.
 4. Eskalera bara om forsta slice inte racker eller om risken tydligt korsar flera lager.
@@ -36,17 +37,22 @@ Vagledning per slice:
 - kor den smalaste relevanta testfilen
 - anvand `testa-att-quiz-sparas-ratt` om diffen ror session, resume, replay eller `applyQuizResult(...)`
 
-3. UI eller widgetar:
+3. Question generation eller curriculum:
+- anvand `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md`
+- borja med de smalaste relevanta audit-testerna, till exempel difficulty mix eller mix distribution, fore bredare testning
+- lagg till `QA: Analyze` om runtimekod eller Dart-logik faktiskt andrats
+
+4. UI eller widgetar:
 - borja med `QA: Analyze`
 - kor fokuserat widgettest
 - eskalera till integration eller Pixel_6 bara om navigation, rendering, animation, asset eller state-handoff faktiskt paverkas
 
-4. Android, enhet eller release:
+5. Android, enhet eller release:
 - valj relevant Android- eller releasekontroll forst
 - anvand Pixel_6-task eller script nar deviceverifiering behovs
 - ta `flutter analyze` om Dart/runtime berors
 
-5. Asset- eller animationsandring:
+6. Asset- eller animationsandring:
 - kor relevant generator eller workflow forst
 - fortsatt med analyze och riktad verifiering av konsumtionsvyn
 - inkludera Pixel_6 sync/install nar devicebeteende ar en del av risken
