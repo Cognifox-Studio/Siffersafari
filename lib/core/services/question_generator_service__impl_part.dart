@@ -1602,7 +1602,7 @@ Vad är $answerType efter transformationen?''';
         const triangles = <(int, int, int)>[
           (7, 9, 12),
           (9, 12, 15),
-          (8, 15, 17)
+          (8, 15, 17),
         ];
         final triangle = triangles[_random.nextInt(triangles.length)];
         body =

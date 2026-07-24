@@ -10,8 +10,8 @@ import '../config/app_features.dart';
 import '../config/difficulty_config.dart';
 import 'question_mix_policy.dart';
 
-part 'question_generator_service_helpers.dart';
-part 'question_generator_service_impl.dart';
+part 'question_generator_service__helpers_part.dart';
+part 'question_generator_service__impl_part.dart';
 
 /// Generates randomized math questions for quiz sessions.
 ///

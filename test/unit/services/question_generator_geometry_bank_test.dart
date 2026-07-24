@@ -81,7 +81,8 @@ void main() {
       }
 
       fail(
-          'Ingen geometrisk transformation genererades för Åk 8 inom 360 försök.');
+        'Ingen geometrisk transformation genererades för Åk 8 inom 360 försök.',
+      );
     });
   });
 }

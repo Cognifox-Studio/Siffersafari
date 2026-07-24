@@ -34,8 +34,8 @@ import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/star_rating.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
-part 'results_screen_content.dart';
-part 'results_screen_practice_planner.dart';
+part 'results_screen__content_part.dart';
+part 'results_screen__practice_planner_part.dart';
 
 class ResultsScreen extends ConsumerStatefulWidget {
   const ResultsScreen({super.key});

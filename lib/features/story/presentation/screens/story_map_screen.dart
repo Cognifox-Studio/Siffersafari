@@ -22,9 +22,9 @@ import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
-part 'story_map_screen_content.dart';
-part 'story_map_screen_map_canvas.dart';
-part 'story_map_screen_read_model.dart';
+part 'story_map_screen__content_part.dart';
+part 'story_map_screen__map_canvas_part.dart';
+part 'story_map_screen__read_model_part.dart';
 
 class StoryMapScreen extends ConsumerWidget {
   const StoryMapScreen({super.key});

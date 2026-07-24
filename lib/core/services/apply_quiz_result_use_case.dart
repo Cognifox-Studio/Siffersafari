@@ -7,11 +7,11 @@ import 'package:siffersafari/domain/entities/quest.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 
-part 'apply_quiz_result_history_writer.dart';
-part 'apply_quiz_result_level_reward_unlocker.dart';
-part 'apply_quiz_result_progress_merger.dart';
-part 'apply_quiz_result_quest_coordinator.dart';
-part 'apply_quiz_result_use_case_helpers.dart';
+part 'apply_quiz_result__helpers_part.dart';
+part 'apply_quiz_result__history_writer_part.dart';
+part 'apply_quiz_result__level_reward_unlocker_part.dart';
+part 'apply_quiz_result__progress_merger_part.dart';
+part 'apply_quiz_result__quest_coordinator_part.dart';
 
 class QuestCompletionSummary {
   const QuestCompletionSummary({

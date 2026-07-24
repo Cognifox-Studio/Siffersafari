@@ -35,8 +35,8 @@ import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
-part 'home_screen_audio_controls.dart';
-part 'home_screen_content.dart';
+part 'home_screen__audio_controls_part.dart';
+part 'home_screen__content_part.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});

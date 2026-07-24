@@ -8,7 +8,7 @@ import 'package:siffersafari/domain/services/feedback_service.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 
-part 'feedback_dialog_content.dart';
+part 'feedback_dialog__content_part.dart';
 
 class FeedbackDialog extends ConsumerStatefulWidget {
   const FeedbackDialog({

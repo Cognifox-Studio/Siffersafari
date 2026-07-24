@@ -22,10 +22,10 @@ import 'package:siffersafari/features/parent/providers/parent_quiz_history_provi
 import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
-part 'parent_dashboard_screen_benchmark.dart';
-part 'parent_dashboard_screen_content.dart';
-part 'parent_dashboard_screen_read_model.dart';
-part 'parent_dashboard_screen_widgets.dart';
+part 'parent_dashboard_screen__benchmark_part.dart';
+part 'parent_dashboard_screen__content_part.dart';
+part 'parent_dashboard_screen__read_model_part.dart';
+part 'parent_dashboard_screen__widgets_part.dart';
 
 // region ParentDashboardScreen
 
