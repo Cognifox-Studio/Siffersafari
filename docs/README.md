@@ -12,11 +12,13 @@ Senast uppdaterad: 2026-07-24.
 
 ## Börja här (kort)
 
-1. `SESSION_BRIEF.md` — vad som är levererat och vad som är nästa steg  
-2. `../lib/features/START_HERE.md` — hitta rätt feature/skärm  
-3. `TRACE_MAP.md` — spåra hem/quiz/resultat/story till lagring  
-4. `ACTIVE_PLAN.md` — vad som är planerat respektive medvetet inte nu  
-5. Rotens `README.md` — produktöversikt för GitHub
+1. `DEV_SYSTEM.md` — hur vi jobbar (Now/DoD/AI-loop)  
+2. `DEFINITION_OF_DONE.md` — när något är klart  
+3. `SESSION_BRIEF.md` — **Now** och vad som är levererat  
+4. `ACTIVE_PLAN.md` — **Next / Later**  
+5. `../lib/features/START_HERE.md` — hitta rätt feature/skärm  
+6. `TRACE_MAP.md` — spåra hem/quiz/resultat/story till lagring  
+7. Rotens `README.md` — produktöversikt för GitHub
 
 ## Naming-baseline
 
@@ -52,7 +54,9 @@ Senast uppdaterad: 2026-07-24.
 - `../lib/core/services/SERVICES_INDEX.md` – Snabbindex over serviceagarskap och beroenden
 
 ### Explanation (förklaringar, design, varför)
-- `ACTIVE_PLAN.md` – Aktiv prioriteringsyta för polish och nästa committed steg; nuläge och beslut hålls i `SESSION_BRIEF.md` och `DECISIONS_LOG.md`
+- `DEV_SYSTEM.md` – Kanoniskt arbetssätt (Now/Next/Later, DoD, AI-loop, release)
+- `DEFINITION_OF_DONE.md` – Checklistor för slice- och release-klart
+- `ACTIVE_PLAN.md` – Next/Later och guardrails; Now bor i `SESSION_BRIEF.md`
 - `DECISIONS_LOG.md` – Beslutslogg och varför
 - `lore/` – Bakgrundshistorier och spelets lore (t.ex. [Loke](lore/loke.md), [Signe](lore/signe.md), [Astrid](lore/astrid.md))
 

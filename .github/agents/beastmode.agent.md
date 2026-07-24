@@ -21,13 +21,14 @@ Du är genomförandeagenten för **Siffersafari**.
 
 ## Arbetsflöde
 
+0. Läs `docs/DEV_SYSTEM.md` + `docs/SESSION_BRIEF.md` (Now). Om Now saknas eller slicen är icke-trivial: be användaren köra/bekräfta `.github/prompts/slice-start.prompt.md` innan du antar go.
 1. Hämta URL:er direkt med `web` när användaren anger dem.
 2. Läs och sök i relevant kod, docs och tester innan du ändrar något.
-3. Skapa en tydlig `todo`-plan och håll ett steg i taget aktivt.
+3. Skapa en tydlig `todo`-plan och håll ett steg i taget aktivt (**en avsikt** per commit-grupp).
 4. Implementera i små, testbara steg nära ägande kodväg.
 5. Felsök med `search`, `read`, `execute`, Problems-vyn och Dart-verktygen tills rotorsaken är tydlig.
-6. Validera efter varje större ändring med minsta tillräckliga QA-slice.
-7. Iterera tills beteendet är fixat, verifierat och stämt mot den ursprungliga avsikten.
+6. Validera efter varje större ändring mot `docs/DEFINITION_OF_DONE.md` (A) med minsta tillräckliga QA-slice.
+7. Iterera tills beteendet är fixat, verifierat och stämt mot den ursprungliga avsikten. Uppdatera `SESSION_BRIEF` om Now ändrats.
 
 ## Repo-regler
 

@@ -1,92 +1,70 @@
-# Siffersafari – Aktiv plan
+<!--
+typ: explanation
+syfte: Now / Next / Later — aktiv prioritering utan falska datumlöften
+uppdaterad: 2026-07-24
+-->
 
-> **Status:** Aktiv plan (2026-07-24)  
-> **Horisont:** Nästa produktmål eller release/distribution efter genomförd device-känslokoll  
-> **Syfte:** Visa vad som fortfarande är planerat. Levererad historik och stabila beslut hålls i andra facitdokument.
+# Aktiv plan — Now / Next / Later
 
-Den här planen ska vara kort och bara bära det som fortfarande styr prioritering.
-
-För övrigt facit:
-
-- `docs/SESSION_BRIEF.md` för levererat nuläge och senaste steg
-- `docs/DECISIONS_LOG.md` för stabila produkt- och teknikbeslut
-- `docs/ARCHITECTURE.md` och `docs/PROJECT_STRUCTURE.md` för faktisk implementation
+> Facit för **riktning**. Det som byggs just nu står i [SESSION_BRIEF.md](SESSION_BRIEF.md).  
+> Arbetssätt: [DEV_SYSTEM.md](DEV_SYSTEM.md) · Klart när: [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md)
 
 ---
 
-## Aktiv fas – releasepolish och nästa produktmål
+## Now
 
-**När:** Nu, efter att de committed roadmap-slices som redan varit i gång är landade.  
-**Tidsfönster:** En liten slice i taget.
+**Se `SESSION_BRIEF.md`.**  
+Här ska det bara finnas **ett** committed mål. Om Now är tomt: välj uttryckligen innan kod.
 
-**Produktmål:** Kärnflöde, storykarta och TTS är känslokollade på enhet. Nästa steg är att välja ett committed produktmål eller gå vidare med release/distribution.
-
-**Det som återstår innan en ny större fas öppnas:**
-
-1. ~~Kör automatisk guardrail för releasepolish-slicen~~ — genomförd (analyze + fokuserade tester).
-2. ~~Gör en manuell känslokoll på enhet~~ — genomförd och bedömd som OK.
-3. Landa bara små polish-slices som tydligt förbättrar begriplighet, CTA-hierarki eller device-känsla (valfritt om inget skaver).
-4. Välj nästa committed produktmål uttryckligen i stället för att låta flera halvaktiva spår leva samtidigt — eller kör release go/no-go om fokus är Play/distribution.
-
-**Vad som kan bli nästa större steg, men ännu inte är låst:**
-
-- fortsatt story-/biome-polish om den ger tydlig produktnytta
-- mer camp-polish eller samlarvärde ovanpå nuvarande rewardmodell
-- ytterligare pedagogiska hjälpmedel om data visar fastkörningar
-
-## Guardrails
-
-- Öppna inte ny biome, ny persistens och ny UX-polish i samma slice.
-- Blanda inte releasepolish med stora datamigreringar.
-- Definiera QA-slice innan implementation.
-- Låt inte leaderboard eller andra experimentspår bli committed plan utan tydlig retention- eller begriplighetsnytta.
-
-**Regel för experiment:**
-
-- Allt som inte direkt stärker retention, pedagogik eller begriplighet ska behandlas som experiment.
-- Ett experiment måste kunna tas bort utan att påverka kärnloopen.
-
-**COPPA-notering:** Om ett lokalt leaderboard-experiment byggs får botar inte presenteras som verkliga barn eller sociala motspelare.
+*Nuläge 2026-07-24:* polish/device-koll klar — **Now behöver väljas** (release/distribution *eller* ett produktspår).
 
 ---
 
-## v2.0+ – Forskningsspår och möjliga framtida leveranser
+## Next (kandidater — max tre)
 
-Första offline-TTS-slicen är levererad och följs nu upp i polish- och releasearbete, inte som ett eget framtidsblock här. Den här sektionen ska därför bara innehålla sådant som faktiskt fortfarande är research eller framtida kandidatspår.
+Högst förtroende, inte påbörjade:
 
-### Forskningsspår: Handskrift och sifferigenkänning
+1. **Play / distribution** — synka tagg med `1.4.3+20`, internal testing, go/no-go, closed beta
+2. **Story / biome (presentation-first)** — gör nästa-värld-löftet tydligare utan ny persistens
+3. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
 
-**När:** Först efter en separat spike. Inte som planerad huvudleverans nu.
-
-**Nuvarande bedömning:**
-
-- Google ML Kit Digital Ink är mer lovande än att direkt bygga egen modell, eftersom den är gjord för streckdata, kör on-device och stöder många språk.
-- Samtidigt hålls språkmodellerna små genom dynamisk nedladdning av språkpaket, vilket gör spåret svagare som offline-first-kärnflöde dag ett.
-- LiteRT/TensorFlow Lite är kraftfullt, men kräver egen modellkedja: modellval, konvertering, optimering/kvantisering, benchmark och size-budget.
-
-**Beslut:**
-
-- Handskrift går inte in i committed roadmap förrän vi har bevis för rimlig modellstorlek, stabil latens på målenheter och ett första läge som inte bryter offline-first-principen.
+Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 
 ---
 
-## Inte nu
+## Later (riktning, inga löften)
 
-Detta ska uttryckligen inte prioriteras i den här planen:
-
-- molnsync och kontoberoenden
-- riktiga sociala funktioner
-- leaderboard som kärnfeature
-- ny mascot-runtime utanför nuvarande PNG-first-spåret
-- stora ML-funktioner i kärnflödet innan offline- och size-frågor är lösta
+- Ytterligare matte-broar (delvisa banksektioner i Åk 6–9)
+- Bråk / decimaler / diagram-UI (ny representation)
+- Mer pedagogisk hjälp *om* data visar fastkörningar
+- Handskrift / sifferigenkänning (research först)
+- Molnsync, konton, sociala funktioner, leaderboard som kärna
 
 ---
 
-## Aktiv tidslinje
+## Guardrails (gäller alltid)
 
-För ett litet team är detta den rekommenderade ordningen nu:
+- Öppna inte ny biome + ny persistens + stor UX-polish i samma slice.
+- Blanda inte release med stora datamigreringar.
+- Definiera QA-slice / DoD innan implementation.
+- Experiment måste kunna tas bort utan att knäcka kärnloopen (hem → quiz → resultat → story).
+- COPPA: inga trackers; leaderboard-botar får inte låtsas vara riktiga barn.
 
-1. ~~Manuell device-koll för TTS, storykarta och huvudflöde.~~ Klar.
-2. Små polish-slices bara om device-kollen lämnade konkreta skav.
-3. Ett uttryckligt val av nästa committed produktmål *eller* release/distribution.
-4. Först därefter: eventuell större v1.8–v1.9-slice eller separat v2.0-spike.
+---
+
+## Inte nu (explicit)
+
+- Molnsync / kontoberoenden  
+- Riktiga sociala funktioner  
+- Leaderboard som kärnfeature  
+- Ny mascot-runtime utanför PNG-first  
+- Stora ML-funktioner i kärnflödet innan offline- och size-frågor är lösta  
+
+---
+
+## Facitordning vid konflikt
+
+1. `ARCHITECTURE.md` / kod  
+2. `SESSION_BRIEF.md` (Now)  
+3. Denna fil (Next/Later)  
+4. `DECISIONS_LOG.md`

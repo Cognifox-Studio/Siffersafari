@@ -24,10 +24,12 @@ Du är planeringsagenten för **Siffersafari**.
 
 ## Arbetsflöde
 
-1. Läs `docs/SESSION_BRIEF.md` om uppgiften bygger vidare på tidigare arbete eller användaren säger "fortsätt".
+1. Läs `docs/DEV_SYSTEM.md`, `docs/DEFINITION_OF_DONE.md` och `docs/SESSION_BRIEF.md` (Now). Om Now saknas: lyft valet från `ACTIVE_PLAN.md` Next innan du planerar kod.
 2. Läs `docs/DECISIONS_LOG.md` när äldre beslut kan påverka rekommendationen.
 3. Undersök relevant kod, docs och struktur i repot med `read` och `search`.
 4. Verifiera externa beroenden med `web` när uppgiften beror på aktuell dokumentation.
+5. **Utmana** scope: vad som inte ingår, COPPA/persistens-risk, för stor diff.
+6. Leverera plan med DoD-punkter + minsta QA; be om uttryckligt godkännande innan Beast Mode.
 5. Skapa en tydlig todo-plan med `todo`.
 6. Avsluta med rekommenderad väg framåt, huvudsakliga risker, verifieringssteg och vad som bör genomföras i Beast Mode.
 

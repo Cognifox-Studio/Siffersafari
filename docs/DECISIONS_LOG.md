@@ -8,8 +8,10 @@ uppdaterad: 2026-05-26
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
-## Gällande nuläge (2026-05-26)
+## Gällande nuläge (2026-07-24)
 
+- **Utvecklingssystem:** Now/Next/Later + Definition of Done + Plan→Execute→Review är kanoniskt i `docs/DEV_SYSTEM.md` och `docs/DEFINITION_OF_DONE.md`. Agent-/skill-routing pekar dit; chattvanor får inte åsidosätta DoD.
+- **Git:** trunk/GitHub Flow — korta grenar till `main`, ingen GitFlow-`develop`. Release = tagg synkad med `pubspec`, Play internal före promote.
 - Plattform: Android-first, offline-first, flera barnprofiler.
 - Gränssnitt: Extremt reducerat och barnvänligt. Skärmar som Quiz och Home har städats på all överflödig text och UI för att leda fokus direkt till interaktionen.
 - Arkitektur: lagerindelad Flutter-app med Riverpod + GetIt + Hive.
@@ -36,6 +38,9 @@ Princip: senaste datum vinner vid konflikt.
 - Samma princip gäller nu Åk 9 geometri: Pythagoras, area, omkrets och volym med heltalssvar kan gå direkt i dagens quizmodell, medan cirkel/cylinder-frågor med pi/avrundning, skala och annan figur-/kontextbunden geometri ska stanna som explicit deferred tills representation och svarspolicy finns.
 
 ## Historik (kort)
+
+### 2026-07-24
+- **Arbetssätt låstes i repo:** Ett Now i taget, DoD före “klart”, slice-start-prompt innan icke-trivial kod, och releasekedja där `pubspec` = git-tagg. Syftet är högre kvalitet med AI-assistans utan större dirty trees eller stale briefs.
 
 ### 2026-05-26
 - **Strukturerat curriculum-facit före lång fri text:** Årskursmappning, frågetypspolicyer, källhierarki och stadieindelning hålls nu i `docs/curriculum_facit.json`, medan `docs/KUNSKAPSNIVA_PER_AK.md` förklarar modellen på hög nivå. Det gör curriculumändringar lättare att testa mot `DifficultyConfig` och minskar risken att dokumentation, audits och runtime driver isär.

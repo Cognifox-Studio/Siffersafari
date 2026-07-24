@@ -2,16 +2,24 @@
 
 Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.github/agents/` och de närmaste startytorna för skills, promptar och QA i Siffersafari.
 
+## Arbetssätt (läs först)
+
+- **Facit:** `docs/DEV_SYSTEM.md` — Now/Next/Later, Plan→Execute→Review, releasekedja.
+- **Klart när:** `docs/DEFINITION_OF_DONE.md`.
+- **Now:** `docs/SESSION_BRIEF.md` (ett committed mål). **Next/Later:** `docs/ACTIVE_PLAN.md`.
+- **Ny slice:** kör `.github/prompts/slice-start.prompt.md` (Plan) innan kod om scopet inte redan är godkänt.
+
 ## Starta här
 
 - Läs `docs/SESSION_BRIEF.md` först vid start och när användaren säger "fortsätt".
 - Läs `.github/copilot-instructions.md` för alltid-på-regler, repo-fallgropar och QA-baseline.
 - Läs `docs/README.md` som index och `docs/ARCHITECTURE.md` bara när uppgiften kräver mer faktisk implementation.
-- Om scopet fortfarande är oklart: börja med `.github/prompts/repo-start-routing.prompt.md` eller agenten `Plan` innan du väljer en skill.
+- Om scopet fortfarande är oklart: börja med `.github/prompts/slice-start.prompt.md` eller `.github/prompts/repo-start-routing.prompt.md` / agenten `Plan` innan du väljer en skill.
 
 ## Snabbstart
 
-- Om scopet är oklart: kör `.github/prompts/repo-start-routing.prompt.md` först.
+- **Ny arbetsslice:** `.github/prompts/slice-start.prompt.md` först (låser Now + DoD + QA).
+- Om scopet är oklart / onboarding: kör `.github/prompts/repo-start-routing.prompt.md`.
 - Om en ny utvecklare eller kall agent behöver snabb repo-onboarding: kör `.github/prompts/repo-start-routing.prompt.md` och be om onboardingläge.
 - Om uppgiften gäller assets, `_incoming/`, saknad grafik, app-ikoner eller Play-listingbilder: kör `.github/prompts/asset-flow-router.prompt.md`.
 - Om storykartan, home story-kortet, biome-previews eller theme bundles visar fel bild eller verkar ha fel ägare: kör `.github/prompts/story-theme-asset-pass.prompt.md`.
@@ -103,12 +111,13 @@ Detta dokument är snabb routing för de anpassade GitHub Copilot-agenterna i `.
 
 ## Arbetsordning
 
-1. Läs `docs/SESSION_BRIEF.md`.
-2. Om scopet eller QA-valet är oklart, börja med relevant prompt eller agenten `Plan` i stället för bred scanning.
-3. Välj skill först när arbetsflödet redan matchar en etablerad slice.
-4. Välj specialagent bara när uppgiften behöver ett tydligt modebyte.
-5. Läs agentfilen i `.github/agents/` om du behöver agentens exakta arbetssätt.
-6. Följ `.github/copilot-instructions.md` för repo-regler; låt skills och promptar bära smalare arbetsflöden.
+1. Läs `docs/DEV_SYSTEM.md` + `docs/SESSION_BRIEF.md` (Now).
+2. Om Now saknas eller slice är icke-trivial: `.github/prompts/slice-start.prompt.md` / `Plan` innan kod.
+3. Om scopet eller QA-valet är oklart, börja med relevant prompt eller agenten `Plan` i stället för bred scanning.
+4. Välj skill först när arbetsflödet redan matchar en etablerad slice.
+5. Avsluta med `docs/DEFINITION_OF_DONE.md` (slice) innan commit.
+6. Läs agentfilen i `.github/agents/` om du behöver agentens exakta arbetssätt.
+7. Följ `.github/copilot-instructions.md` för repo-regler; låt skills och promptar bära smalare arbetsflöden.
 
 ## Underhållsprincip
 

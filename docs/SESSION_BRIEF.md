@@ -1,19 +1,39 @@
 ﻿# Session Status Brief
 
-> Syfte: Sammanfattar aktuellt projektläge, pågående arbete, och nästa steg för att underlätta kontextöverföring mellan sessioner.
->
-> Uppdateras efter större milestones. Historiska beslut finns i docs/DECISIONS_LOG.md.
+> Syfte: **Now** + levererat läge för kontextöverföring mellan sessioner.  
+> Arbetssätt: [DEV_SYSTEM.md](DEV_SYSTEM.md) · Klart när: [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) · Next/Later: [ACTIVE_PLAN.md](ACTIVE_PLAN.md)  
+> Historiska beslut: [DECISIONS_LOG.md](DECISIONS_LOG.md)
 
 ---
 
-## Nuläge (2026-05-26)
+## Now (2026-07-24)
 
-**Version:** 1.4.3+20
+**Status:** Inget committed Now — välj uttryckligen innan nästa kodslice.
+
+**Kandidater (ta en):** se Next i `ACTIVE_PLAN.md`  
+1. Play/distribution (tagg = `1.4.3+20`, internal, go/no-go)  
+2. Story/biome presentation-first  
+3. Camp/samlarvärde  
+
+**Senaste grind:** Device-känslokoll OK · analyze/tester gröna · docs synkade med GitHub · utvecklingsystem (`DEV_SYSTEM`) infört.
+
+---
+
+## Nuläge (snapshot)
+
+**Version:** 1.4.3+20 (`pubspec`) — synka GitHub Release-tagg vid nästa release-DoD  
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
 **flutter analyze:** Global analyze passerar utan issues ✅  
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
 
 ### Senaste leveranser
+
+**2026-07-24 – Utvecklingssystem + GitHub-synk**
+- Införde `DEV_SYSTEM.md` + `DEFINITION_OF_DONE.md` (Now/Next/Later, Plan→Execute→Review, releasekedja).
+- README och planer synkade med appens faktiska status; push till Cognifox-Studio/Siffersafari.
+
+**2026-07-24 – QA + commits efter dirty tree**
+- Part-filskonvention `__*_part`, START_HERE/TRACE_MAP, Åk 1 word_problems fullt stödd, agent-routing-polish.
 
 **2026-05-26 – Åk 9 geometri fick en första banknära runtime-bro**
 - **Heltalsbar geometri går nu direkt i Mix:** Åk 9 kan nu generera textbaserade geometriuppgifter för Pythagoras, area, omkrets och volym när svaret kan hållas som heltal i nuvarande quizformat.
@@ -255,16 +275,18 @@
 
 ---
 
-## Nästa steg (uppdaterat 2026-07-24)
+## Nästa steg (Now-styrning)
 
-### Aktuell fas: releasepolish är klar nog för nästa produktval
-- v1.5.0:s SRS-, resume- och quiz/session-spår är fortsatt funktionellt låsta.
-- Hemskärmens camp- och samlarspår, quizets pedagogiska hjälp, storykartans biome-preview och offline-TTS är landade.
-- Manuell känslokoll på enhet (huvudflöde, story, TTS) är genomförd och bedömd som OK.
-- Analyze + fokuserade tester + dokumentations-/part-refaktor är incheckade; worktree var ren efter QA.
-- **Direkta nästa steg:** Välj uttryckligen *ett* nästa committed produktmål (t.ex. story/biome-polish, camp/samlare, eller Play/release-steg) — eller kör release go/no-go om fokus är distribution. Undvik fortfarande stora experimentspår som leaderboard utan tydlig produktnytta.
-- Behåll nuvarande guardrails: visa inte hjälpen konstant, bygg inte vuxenförklaringar och inför inte ett nytt stort hjälp- eller övningssystem utan tydlig nytta.
-- Åk 1 `word_problems` är fullt stödd i runtime-statusauditen (tidigare delvis p.g.a. en otydlig bankprompt).
+### Regel
+Arbeta bara mot **Now** i toppen av denna fil. Next/Later bor i `ACTIVE_PLAN.md`. Varje slice följer `DEV_SYSTEM.md` och avslutas med `DEFINITION_OF_DONE.md`.
+
+### När Now saknas
+Välj uttryckligen (release *eller* ett produktspår) innan implementation. Använd `.github/prompts/slice-start.prompt.md`.
+
+### Guardrails
+- Undvik stora experimentspår (leaderboard m.m.) utan bet i Next.
+- Visa inte quizhjälpen konstant; bygg inte vuxenförklaringar utan tydlig nytta.
+- Åk 1 `word_problems` är fullt stödd i runtime-statusauditen.
 
 ---
 

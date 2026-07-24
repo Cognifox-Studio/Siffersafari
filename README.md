@@ -74,12 +74,13 @@ Du behöver inte läsa hela `docs/` först.
 
 | Du vill… | Öppna |
 | --- | --- |
-| Veta vad som är levererat och nästa steg | [docs/SESSION_BRIEF.md](docs/SESSION_BRIEF.md) |
+| Veta hur vi jobbar (Now, DoD, AI-loop) | [docs/DEV_SYSTEM.md](docs/DEV_SYSTEM.md) |
+| Veta när något är “klart” | [docs/DEFINITION_OF_DONE.md](docs/DEFINITION_OF_DONE.md) |
+| Veta vad som är Now / levererat | [docs/SESSION_BRIEF.md](docs/SESSION_BRIEF.md) |
+| Se Next / Later | [docs/ACTIVE_PLAN.md](docs/ACTIVE_PLAN.md) |
 | Hitta rätt skärm / feature | [lib/features/START_HERE.md](lib/features/START_HERE.md) |
 | Spåra quiz → resultat → lagring | [docs/TRACE_MAP.md](docs/TRACE_MAP.md) |
-| Se hur lager och mappar hänger ihop | [lib/START_HERE.md](lib/START_HERE.md) |
 | Förstå matte per årskurs | [docs/KUNSKAPSNIVA_PER_AK.md](docs/KUNSKAPSNIVA_PER_AK.md) |
-| Se vad som är planerat / inte nu | [docs/ACTIVE_PLAN.md](docs/ACTIVE_PLAN.md) |
 | Full doc-index | [docs/README.md](docs/README.md) |
 
 ---
