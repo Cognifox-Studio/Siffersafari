@@ -94,6 +94,7 @@ class HomeStoryProgressCard extends StatelessWidget {
                 ),
                 if (story.nextBiome != null)
                   _LockedBiomeChip(
+                    label: story.nextBiome!.previewPrefix,
                     biomeName: story.nextBiome!.name,
                     onPrimary: onPrimary,
                     mutedOnPrimary: mutedOnPrimary,
@@ -641,11 +642,13 @@ class _InfoChip extends StatelessWidget {
 
 class _LockedBiomeChip extends StatelessWidget {
   const _LockedBiomeChip({
+    required this.label,
     required this.biomeName,
     required this.onPrimary,
     required this.mutedOnPrimary,
   });
 
+  final String label;
   final String biomeName;
   final Color onPrimary;
   final Color mutedOnPrimary;
@@ -675,7 +678,7 @@ class _LockedBiomeChip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Sen',
+                label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: mutedOnPrimary,
                       fontWeight: FontWeight.w700,

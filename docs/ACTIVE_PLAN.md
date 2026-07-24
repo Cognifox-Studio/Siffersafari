@@ -14,19 +14,17 @@ uppdaterad: 2026-07-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-Här ska det bara finnas **ett** committed mål. Om Now är tomt: välj uttryckligen innan kod.
+Välj uttryckligen från Next innan nästa kodslice.
 
-*Nuläge 2026-07-24:* polish/device-koll klar — **Now behöver väljas** (release/distribution *eller* ett produktspår).
+*Senaste Now (klar):* Story / biome presentation-first — Nattskogen-löftet i hem + storykarta.
 
 ---
 
 ## Next (kandidater — max tre)
 
-Högst förtroende, inte påbörjade:
-
 1. **Play / distribution** — synka tagg med `1.4.3+20`, internal testing, go/no-go, closed beta
-2. **Story / biome (presentation-first)** — gör nästa-värld-löftet tydligare utan ny persistens
-3. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
+2. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
+3. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
 
 Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 

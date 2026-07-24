@@ -104,6 +104,11 @@ void main() {
 
       expect(progress.nextBiome?.name, 'Nattskogen');
       expect(progress.nextBiome?.previewPrefix, 'Efter djungeln');
+      expect(progress.nextBiome?.tagline, 'Låst tills djungeln är klar.');
+      expect(
+        progress.nextBiome?.previewBody,
+        'En mörkare stig väntar — spela klart djungelns stopp först.',
+      );
     });
 
     test('ger ingen nästa biome när sista noden redan är aktiv', () {

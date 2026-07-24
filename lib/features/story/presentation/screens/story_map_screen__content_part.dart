@@ -88,6 +88,7 @@ class _MapHeroCard extends StatelessWidget {
               ),
               if (story.nextBiome != null)
                 _NextBiomeHeaderChip(
+                  label: story.nextBiome!.previewPrefix,
                   biomeName: story.nextBiome!.name,
                   onPrimary: onPrimary,
                   mutedOnPrimary: mutedOnPrimary,
@@ -167,11 +168,13 @@ class _HeaderChip extends StatelessWidget {
 
 class _NextBiomeHeaderChip extends StatelessWidget {
   const _NextBiomeHeaderChip({
+    required this.label,
     required this.biomeName,
     required this.onPrimary,
     required this.mutedOnPrimary,
   });
 
+  final String label;
   final String biomeName;
   final Color onPrimary;
   final Color mutedOnPrimary;
@@ -201,7 +204,7 @@ class _NextBiomeHeaderChip extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Sen',
+                label,
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                       color: mutedOnPrimary,
                       fontWeight: FontWeight.w700,
@@ -497,7 +500,7 @@ class _LockedBiomeTeaser extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Sen',
+                  biome.previewPrefix,
                   style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w800,

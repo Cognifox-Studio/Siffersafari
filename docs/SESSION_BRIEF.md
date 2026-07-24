@@ -8,14 +8,10 @@
 
 ## Now (2026-07-24)
 
-**Status:** Inget committed Now — välj uttryckligen innan nästa kodslice.
+**Mål:** — (välj uttryckligen från Next)  
+**Status:** Presentation-slice **klar** — Nattskogen-löftet syns tydligare i hem + storykarta via central `StoryBiomePreview`-copy. Ingen ny persistens/progression/assets.
 
-**Kandidater (ta en):** se Next i `ACTIVE_PLAN.md`  
-1. Play/distribution (tagg = `1.4.3+20`, internal, go/no-go)  
-2. Story/biome presentation-first  
-3. Camp/samlarvärde  
-
-**Senaste grind:** Device-känslokoll OK · analyze/tester gröna · docs synkade med GitHub · utvecklingsystem (`DEV_SYSTEM`) infört.
+**Senaste grind:** analyze + `story_progression_service_test` + `app_home_test` gröna · verify_git_changes OK.
 
 ---
 
@@ -27,6 +23,11 @@
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
 
 ### Senaste leveranser
+
+**2026-07-24 – Story/biome presentation: Nattskogen-löftet**
+- Central copy i `StoryProgressionService` speglar låst nästa värld tydligare (`Låst tills djungeln är klar.` m.m.).
+- Hem-chip, storykartans header-chip och teaser använder samma `previewPrefix` i stället för generiskt "Sen".
+- **Verifiering:** `flutter analyze`, `story_progression_service_test`, `app_home_test`, `verify_git_changes.ps1`.
 
 **2026-07-24 – Utvecklingssystem + GitHub-synk**
 - Införde `DEV_SYSTEM.md` + `DEFINITION_OF_DONE.md` (Now/Next/Later, Plan→Execute→Review, releasekedja).

@@ -8,15 +8,17 @@ class StoryProgressionService {
   static const _upcomingBiomes = <DifficultyLevel, StoryBiomePreview>{
     DifficultyLevel.easy: StoryBiomePreview(
       name: 'Nattskogen',
-      tagline: 'Spela fler stopp först.',
+      tagline: 'Låst tills djungeln är klar.',
       previewPrefix: 'Efter djungeln',
-      previewBody: 'Fler stopp först.',
+      previewBody:
+          'En mörkare stig väntar — spela klart djungelns stopp först.',
     ),
     DifficultyLevel.medium: StoryBiomePreview(
       name: 'Stjärnöknen',
-      tagline: 'Fortsätt genom skymningen först.',
+      tagline: 'Låst tills natten är klar.',
       previewPrefix: 'Efter natten',
-      previewBody: 'Fler stopp först.',
+      previewBody:
+          'Öknen under stjärnorna väntar — spela klart nattens stopp först.',
     ),
   };
 

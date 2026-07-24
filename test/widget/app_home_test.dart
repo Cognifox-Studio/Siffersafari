@@ -796,7 +796,7 @@ void main() {
         find.byKey(const Key('story_map_locked_biome_preview')),
         findsOneWidget,
       );
-      expect(find.text('Efter djungeln'), findsOneWidget);
+      expect(find.text('Efter djungeln'), findsWidgets);
 
       await tester.ensureVisible(find.text('Spela nästa stopp'));
       await tester.tap(find.text('Spela nästa stopp'));
