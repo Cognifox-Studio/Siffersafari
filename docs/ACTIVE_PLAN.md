@@ -15,7 +15,7 @@ uppdaterad: 2026-07-24
 
 **Play / distribution** — se detaljer i [SESSION_BRIEF.md](SESSION_BRIEF.md).
 
-Synka tagg `v1.4.3+20` med `pubspec`, publicera GitHub Release, ladda samma AAB till Play internal, kör go/no-go innan promote.
+Synka tagg med `pubspec`, publicera GitHub Release, ladda samma AAB till Play internal (`draft`), kör go/no-go innan promote. Play hade redan versionCode 20 → aktiv build är `1.4.3+21`.
 
 ---
 

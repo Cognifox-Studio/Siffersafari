@@ -17,7 +17,7 @@ Quiz, storyäventyr och PIN-skyddat föräldraläge — utan konto eller molnsyn
   <a href="docs/README.md"><strong>Dokumentation</strong></a>
 </p>
 
-**Kodversion i repo:** `1.4.3+20` (se `pubspec.yaml`).  
+**Kodversion i repo:** `1.4.3+21` (se `pubspec.yaml`).  
 **Senaste GitHub Release-tagg:** kan ligga lite efter — kolla [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases) för installbar APK.
 
 ---

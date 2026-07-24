@@ -9,15 +9,15 @@
 ## Now (2026-07-24)
 
 **Mål:** Play / distribution  
-**Status:** Committed — synka `pubspec` `1.4.3+20` med GitHub-tagg/release och ta samma build till Play internal (go/no-go innan promote).
+**Status:** Pågår — GitHub Release `v1.4.3+20` klar; Play krävde bump till `1.4.3+21` (versionCode 20 redan använd). Internal draft-upload körs för `+21`.
 
-**Senaste grind:** Story-presentation klar · analyze/tester gröna · `main` 1 commit före `origin` (Nattskogen) · Latest Release fortfarande `v1.4.2+19`.
+**Senaste grind:** Tagg `v1.4.3+20` + APK ute · Mix-coverage-test fixat (number-sense) · Play upload failade på versionCode 20 → bump `+21`.
 
 ---
 
 ## Nuläge (snapshot)
 
-**Version:** 1.4.3+20 (`pubspec`) — synka GitHub Release-tagg vid nästa release-DoD  
+**Version:** 1.4.3+21 (`pubspec`) — GitHub `v1.4.3+20` finns; ny tagg `v1.4.3+21` för Play  
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
 **flutter analyze:** Global analyze passerar utan issues ✅  
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
