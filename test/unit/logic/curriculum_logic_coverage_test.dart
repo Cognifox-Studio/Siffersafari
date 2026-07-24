@@ -320,14 +320,24 @@ void main() {
           final text = (q.promptText ?? q.questionText).trim();
           expect(text, isNotEmpty);
 
-          assertArithmeticRanges(
-            grade: grade,
-            step: step,
-            op: q.operationType,
-            q: q,
-            context:
-                'Åk $grade step $step (seed=$seed sample=$i op=${q.operationType.name})',
-          );
+          // Number-sense Mix prompts reuse +/- as carrier ops; operands are
+          // not always a standard arithmetic identity (min/max, sequences).
+          final isNumberSense = text.startsWith('Vilket tal kommer före ') ||
+              text.startsWith('Vilket tal kommer efter ') ||
+              text.startsWith('Vilket tal saknas i ordningen: ') ||
+              text.startsWith('Vilket är störst: ') ||
+              text.startsWith('Vilket är minst: ');
+
+          if (!isNumberSense) {
+            assertArithmeticRanges(
+              grade: grade,
+              step: step,
+              op: q.operationType,
+              q: q,
+              context:
+                  'Åk $grade step $step (seed=$seed sample=$i op=${q.operationType.name})',
+            );
+          }
           obs.see(q.operationType, text, grade: grade);
         }
       }
