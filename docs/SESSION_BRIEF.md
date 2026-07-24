@@ -8,10 +8,10 @@
 
 ## Now (2026-07-24)
 
-**Mål:** — (välj uttryckligen från Next)  
-**Status:** Presentation-slice **klar** — Nattskogen-löftet syns tydligare i hem + storykarta via central `StoryBiomePreview`-copy. Ingen ny persistens/progression/assets.
+**Mål:** Play / distribution  
+**Status:** Committed — synka `pubspec` `1.4.3+20` med GitHub-tagg/release och ta samma build till Play internal (go/no-go innan promote).
 
-**Senaste grind:** analyze + `story_progression_service_test` + `app_home_test` gröna · verify_git_changes OK.
+**Senaste grind:** Story-presentation klar · analyze/tester gröna · `main` 1 commit före `origin` (Nattskogen) · Latest Release fortfarande `v1.4.2+19`.
 
 ---
 

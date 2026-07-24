@@ -13,20 +13,18 @@ uppdaterad: 2026-07-24
 
 ## Now
 
-**Se `SESSION_BRIEF.md`.**  
-Välj uttryckligen från Next innan nästa kodslice.
+**Play / distribution** — se detaljer i [SESSION_BRIEF.md](SESSION_BRIEF.md).
 
-*Senaste Now (klar):* Story / biome presentation-first — Nattskogen-löftet i hem + storykarta.
+Synka tagg `v1.4.3+20` med `pubspec`, publicera GitHub Release, ladda samma AAB till Play internal, kör go/no-go innan promote.
 
 ---
 
-## Next (kandidater — max tre)
+## Next (kandidater — max två kvar)
 
-1. **Play / distribution** — synka tagg med `1.4.3+20`, internal testing, go/no-go, closed beta
-2. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
-3. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
+1. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
+2. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
 
-Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
+*(Play/distribution är Now.)*
 
 ---
 
