@@ -1,0 +1,30 @@
+---
+description: Siffersafari Cursor-default — Now, DoD-light, COPPA
+alwaysApply: true
+---
+
+# Siffersafari (Cursor)
+
+## Start (minimalt)
+
+1. `docs/SESSION_BRIEF.md` — **Now** (toppen)
+2. Berörd `lib/features/<feature>/START_HERE.md`
+3. `docs/DEFINITION_OF_DONE.md` — **DoD-light** (A0) som default
+4. `docs/DEV_SYSTEM.md` — bara om rutinen är oklar
+
+Ladda **inte** hela `.github/AGENTS.md` eller skills “för säkerhets skull”.  
+AGENTS.md är referensindex; arkiverade prompts/skills ligger under `.github/archive/`.
+
+## Alltid
+
+- COPPA / offline-first: inga trackers, annonser eller onlinekrav i kärnflödet
+- Feature-first UI under `lib/features/.../presentation/`
+- PNG-first maskot (Loke); ingen ny Rive/SVG-runtime
+- Hive via repository; quiz-session mergas tillbaka till `UserProgress` vid slut
+- Ett Now; en avsikt per commit-grupp; commit bara när användaren ber om det
+
+## Loop
+
+Now → bygg → analyze + berörda tester → uppdatera Now-rad om status ändrats.
+
+Plan / `slice-start` bara vid risk: persistens, mattebank, release, bred refaktor.

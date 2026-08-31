@@ -14,9 +14,9 @@ uppdaterad: 2026-08-31
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-Story / biome — nästa värld i slutskedet (QA-grön).
+Cursor-first rutin-slim (QA-grön / landad).
 
-*Senaste Now (klar):* Camp / piedestaler — souvenirer först.  
+*Senaste produkt-Now (klar):* Story / biome — nästa värld i slutskedet.  
 *Parkerat:* Play promote av `1.4.3+21` (väntar Console).
 
 ---
@@ -24,7 +24,7 @@ Story / biome — nästa värld i slutskedet (QA-grön).
 ## Next (kandidater — max tre)
 
 1. **Play promote** — closed/alpha för `1.4.3+21`, sedan ev. staged production (människa i Console)
-2. **Ny Play-build med camp-slicar** — bump `1.4.3+22` om camp ska ut via Play
+2. **Ny Play-build med camp/story** — bump `1.4.3+22` (eller högre) om HEAD ska ut via Play
 
 Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 
@@ -44,9 +44,10 @@ Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 
 - Öppna inte ny biome + ny persistens + stor UX-polish i samma slice.
 - Blanda inte release med stora datamigreringar.
-- Definiera QA-slice / DoD innan implementation.
+- Definiera QA-slice / DoD innan implementation vid riskytor.
 - Experiment måste kunna tas bort utan att knäcka kärnloopen (hem → quiz → resultat → story).
 - COPPA: inga trackers; leaderboard-botar får inte låtsas vara riktiga barn.
+- Bygg inte nya `.github/skills` utan återkommande smärta (se DEV_SYSTEM).
 
 ---
 

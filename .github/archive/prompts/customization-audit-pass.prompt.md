@@ -12,7 +12,7 @@ Utgå från dessa källor:
 - [.github/copilot-instructions.md](../copilot-instructions.md)
 - [.github/AGENTS.md](../AGENTS.md)
 - [.github/instructions/regler-for-customization-hygien.instructions.md](../instructions/regler-for-customization-hygien.instructions.md)
-- [.github/skills/granska-github-customizations/SKILL.md](../skills/granska-github-customizations/SKILL.md)
+- [.github/archive/skills/granska-github-customizations/SKILL.md](../skills/granska-github-customizations/SKILL.md)
 - [docs/README.md](../../docs/README.md)
 - [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 - [docs/DECISIONS_LOG.md](../../docs/DECISIONS_LOG.md)

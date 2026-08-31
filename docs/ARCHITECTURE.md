@@ -101,9 +101,11 @@ Viktiga delar:
 - `core/services/achievement_service.dart`
 - `core/services/quest_progression_service.dart`
 - `core/services/story_progression_service.dart`
-- `core/services/story_progression_service.dart`
 - `core/services/app_analytics_service.dart`
 - `core/utils/image_cache_size.dart` för konsekvent DPR-baserad `Image.asset`-decode sizing i bildtunga ytor.
+
+Aktuell home/camp-notering:
+- Camp-souvenirer (`slot == 'camp'`) visas via `InventoryConfig.campSouvenirItems` / `visibleCampPedestalItems` i home-widgets — ingen ny persistens.
 
 Tema-notering:
 - `AppThemeConfig` ager fortfarande bakgrundsassets, hero-assets och `ThemeData`-bygget, men semantiska farg-/surface-tokens ligger nu i `AppThemeColors` som `ThemeExtension`.

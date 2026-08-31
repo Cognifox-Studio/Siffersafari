@@ -1,7 +1,7 @@
 <!--
 typ: reference
 syfte: Snabb spårkarta mellan skärm, provider, service och lagring
-uppdaterad: 2026-05-29
+uppdaterad: 2026-08-31
 -->
 
 # Trace Map
@@ -53,10 +53,12 @@ flowchart LR
 | --- | --- | --- | --- |
 | Home-CTA, hero och resume-logik | `lib/features/home/presentation/screens/home_screen.dart` | `lib/features/home/providers/home_read_model_provider.dart`, `lib/features/home/presentation/home_read_model.dart` | Ingen direkt skrivning |
 | Camp-souveniralbum / piedestaler | `lib/features/home/presentation/widgets/camp_scene_view.dart` | `camp_collection_album.dart`, `InventoryConfig.campSouvenirItems`, `InventoryConfig.visibleCampPedestalItems` | Ingen direkt skrivning |
+| Garderob / utrustning | `lib/features/inventory/presentation/screens/wardrobe_screen.dart` | `lib/presentation/widgets/game_character.dart`, `lib/domain/entities/inventory_item.dart` | `user_progress` (equipped/unlocked) |
 | Hur en fraga byggs | `lib/core/providers/quiz_provider.dart` | `lib/core/services/quiz_session_planner.dart`, `lib/core/services/question_generator_service.dart`, `lib/core/services/question_mix_policy.dart` | Pagaende session i `quiz_history` |
-| Vad som hander nar quiz slutar | `lib/features/quiz/presentation/screens/results_screen.dart` | `lib/core/providers/user_provider.dart`, `lib/core/services/apply_quiz_result_use_case.dart` | `user_progress` och complete `quiz_history` |
+| Vad som hander nar quiz slutar | `lib/features/quiz/presentation/screens/results_screen.dart` | `lib/core/providers/user_provider.dart`, `lib/core/services/apply_quiz_result_use_case.dart`, `storyProgressProvider` (`nextBiome` vid episodslut) | `user_progress` och complete `quiz_history` |
 | Storykartan och nasta stopp | `lib/features/story/presentation/screens/story_map_screen.dart` | `lib/core/providers/story_progress_provider.dart`, `lib/core/services/story_progression_service.dart`, `lib/core/services/quest_progression_service.dart` | Read-only fran user- och settingsdata |
-| Parent PIN och toggles | `lib/features/parent/presentation/screens/parent_pin_screen.dart` | `lib/features/parent/presentation/screens/parent_dashboard_screen.dart`, `lib/domain/services/parent_pin_service.dart`, `lib/core/providers/parent_settings_provider.dart` | `settings` |
+| Parent PIN och toggles | `lib/features/parent/presentation/screens/parent_pin_screen.dart` | `parent_dashboard_screen.dart`, `parent_pin_service.dart`, `parent_settings_provider.dart`, `tts_enabled_provider.dart`, `word_problems_settings_provider.dart` | `settings` |
+| Settings (tema, radera profil) | `lib/features/settings/presentation/screens/settings_screen.dart` | `userProvider`, `app_theme_config.dart` | `user_progress` / `settings` |
 
 ## Nasta steg om du vill grava djupare
 

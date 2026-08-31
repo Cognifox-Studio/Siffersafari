@@ -25,8 +25,8 @@ Arbetsordning:
 4. Läs bara fler docs om uppgiften faktiskt kräver det.
 5. Om uppgiften gäller assets, `_incoming/`, saknad grafik, ikoner, screenshots eller Play-listingbilder: routea direkt till `.github/prompts/asset-flow-router.prompt.md` i stället för bred repo-scanning.
 6. Om uppgiften gäller `question_generator_service.dart`, grade-svårighetsgrad, frågebanker eller `docs/curriculum_facit.json`: routea till `.github/skills/testa-fragornas-svarighetsgrad/SKILL.md` och föreslå en audit-baserad QA-slice i stället för bred generell testning.
-7. Om användaren uttryckligen vill verifiera en diff eller välja minsta QA före commit: routea till `.github/prompts/repo-qa-slice.prompt.md` och lyft vid behov `.github/skills/dubbelkolla-andrad-kod/SKILL.md`.
-8. Om uppgiften gäller att skapa, förbättra eller städa chat-customizations under `.github/`: routea till `Customization Maintainer` eller `.github/prompts/customization-audit-pass.prompt.md` och föreslå att befintliga centralfiler uppdateras före nya filer.
+7. Om användaren uttryckligen vill verifiera en diff eller välja minsta QA före commit: routea till `.github/prompts/repo-qa-slice.prompt.md` (DoD-light i `DEFINITION_OF_DONE`).
+8. Om uppgiften gäller att skapa, förbättra eller städa chat-customizations under `.github/`: routea till `Customization Maintainer` eller arkiverad `.github/archive/prompts/customization-audit-pass.prompt.md`.
 9. Föreslå rätt utförandeform:
    - standardagenten för små, direkta frågor eller små ändringar
    - `Plan` för analys, riskbedömning eller avgränsning

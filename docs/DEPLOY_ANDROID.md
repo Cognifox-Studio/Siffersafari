@@ -47,11 +47,11 @@ Nar native Android, navigation eller UI har andrats ar `sync` den sakraste verif
 Versionen styrs i `pubspec.yaml`:
 
 ```yaml
-version: 1.4.3+20
+version: 1.4.3+21
 ```
 
 - `1.4.3` = versionsnamn
-- `20` = versionskod
+- `21` = versionskod (oka alltid buildnumret fore ny Play-upload)
 
 Innan varje Play-upload ska bada uppdateras. Play nekar nya builds om versionskoden inte okar.
 
@@ -233,7 +233,7 @@ flutter build appbundle --release --analyze-size
 
 ### Version code is lower than previously released code
 
-Oka buildnumret i `pubspec.yaml`, till exempel `1.4.3+20` -> `1.4.4+21`.
+Oka buildnumret i `pubspec.yaml`, till exempel `1.4.3+21` -> `1.4.4+22`.
 
 ---
 

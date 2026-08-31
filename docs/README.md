@@ -8,17 +8,18 @@ uppdaterad: 2026-05-29
 
 Detta är ingångspunkten till dokumentationen. All dokumentation är organiserad enligt Diátaxis-ramverket.
 
-Senast uppdaterad: 2026-07-24.
+Senast uppdaterad: 2026-08-31.
 
 ## Börja här (kort)
 
-1. `DEV_SYSTEM.md` — hur vi jobbar (Now/DoD/AI-loop)  
-2. `DEFINITION_OF_DONE.md` — när något är klart  
-3. `SESSION_BRIEF.md` — **Now** och vad som är levererat  
+1. `DEV_SYSTEM.md` — hur vi jobbar (Cursor-first, Now/DoD)  
+2. `DEFINITION_OF_DONE.md` — DoD-light (default) och full DoD  
+3. `SESSION_BRIEF.md` — **Now** och senaste leveranser  
 4. `ACTIVE_PLAN.md` — **Next / Later**  
-5. `../lib/features/START_HERE.md` — hitta rätt feature/skärm  
-6. `TRACE_MAP.md` — spåra hem/quiz/resultat/story till lagring  
-7. Rotens `README.md` — produktöversikt för GitHub
+5. `TOOLING_SURFACE.md` — aktiv vs arkiverad AI-yta  
+6. `../lib/features/START_HERE.md` — hitta rätt feature/skärm  
+7. `TRACE_MAP.md` — spåra hem/quiz/resultat/story till lagring  
+8. Rotens `README.md` — produktöversikt för GitHub
 
 ## Naming-baseline
 

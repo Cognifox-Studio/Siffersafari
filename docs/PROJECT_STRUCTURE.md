@@ -35,7 +35,7 @@ Byggartefakter som inte ar kallkod:
   - `constants/`: nycklar, IDs, UI-konstanter
   - `di/`: GetIt-registrering
   - `providers/`: Riverpod state och service providers
-  - `services/`: appnara tjanster (generator, audio, progression, update, daily challenge, analytics) samt `SERVICES_INDEX.md` for snabb orientering
+  - `services/`: appnara tjanster (generator, quizplanering/session-storage, audio, TTS, progression, analytics, achievements) samt `SERVICES_INDEX.md` for snabb orientering
   - `theme/`: teman och tokens
   - `utils/`: layout, transitions, bild-cache sizing, validering m.m.
 - `domain/`
@@ -52,7 +52,7 @@ Byggartefakter som inte ar kallkod:
   - `home/providers/`: home-sessionstatus och `home_read_model_provider.dart` som bro mellan lagring/quiz-state och UI
   - `home/presentation/screens/`: `home_screen.dart` med interna `home_screen__*_part.dart`
   - `home/presentation/`: `home_read_model.dart`
-  - `home/presentation/widgets/`: `home_story_progress_card.dart`
+  - `home/presentation/widgets/`: `camp_scene_view.dart`, `camp_collection_album.dart`, `home_story_progress_card.dart`, `home_badge_album.dart`
   - `inventory/presentation/screens/`: `wardrobe_screen.dart`
   - `onboarding/providers/`: onboarding-controller och completion-status
   - `parent/providers/`: foraldravyns harledda quizhistorik

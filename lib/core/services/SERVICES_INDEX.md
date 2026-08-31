@@ -20,6 +20,7 @@ Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../do
 - `quiz_session_planner.dart`: bygger start-, custom- och replaypass
 - `quiz_due_question_planner.dart`: valjer due-fragor och pending due keys
 - `quiz_review_schedule_service.dart`: intervall och due-berakning
+- `quiz_session_storage_service.dart`: persistens av in-progress-session (resume)
 
 ## Resultatmerge
 
