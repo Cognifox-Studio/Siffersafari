@@ -86,5 +86,49 @@ void main() {
         1,
       );
     });
+
+    test('pedestal items prefer unlocked camp souvenirs before wearables', () {
+      final visible = InventoryConfig.visibleCampPedestalItems(const [
+        'item_safari_hat',
+        'item_hat_safari',
+        'item_binoculars_safari',
+        'item_compass_safari',
+        'item_map_safari',
+        'item_camp_fruit_glade',
+        'item_pet_zebra_companion',
+      ]);
+
+      expect(
+        visible.map((item) => item.id),
+        [
+          'item_camp_fruit_glade',
+          'item_binoculars_safari',
+          'item_compass_safari',
+          'item_map_safari',
+        ],
+      );
+      expect(visible.every((item) => item.slot != 'pet'), isTrue);
+    });
+
+    test('pedestal overflow keeps the latest souvenirs only', () {
+      final visible = InventoryConfig.visibleCampPedestalItems(const [
+        'item_camp_fruit_glade',
+        'item_camp_bridge',
+        'item_camp_cartography',
+        'item_camp_temple_gate',
+        'item_camp_treasure_cache',
+        'item_safari_hat',
+      ]);
+
+      expect(
+        visible.map((item) => item.id),
+        [
+          'item_camp_bridge',
+          'item_camp_cartography',
+          'item_camp_temple_gate',
+          'item_camp_treasure_cache',
+        ],
+      );
+    });
   });
 }

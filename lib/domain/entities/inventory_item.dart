@@ -205,6 +205,45 @@ class InventoryConfig {
       .where((item) => item.slot == 'camp')
       .toList(growable: false);
 
+  /// Props for camp pedestals: unlocked souvenirs first, then other non-pet rewards.
+  static List<InventoryItem> visibleCampPedestalItems(
+    Iterable<String> unlockedItemIds, {
+    int maxVisible = 4,
+  }) {
+    assert(maxVisible > 0, 'maxVisible must be positive');
+
+    final unlocked = unlockedItemIds.toSet();
+    final unlockedProps = levelUnlockOrderIds
+        .where(unlocked.contains)
+        .map((id) => _itemsById[id])
+        .whereType<InventoryItem>()
+        .where((item) => item.slot != 'pet')
+        .toList(growable: false);
+
+    final souvenirs = unlockedProps
+        .where((item) => item.slot == 'camp')
+        .toList(growable: false);
+    final otherProps = unlockedProps
+        .where((item) => item.slot != 'camp')
+        .toList(growable: false);
+
+    if (souvenirs.length >= maxVisible) {
+      return List<InventoryItem>.unmodifiable(
+        souvenirs.sublist(souvenirs.length - maxVisible),
+      );
+    }
+
+    final remainingSlots = maxVisible - souvenirs.length;
+    final fillers = otherProps.length <= remainingSlots
+        ? otherProps
+        : otherProps.sublist(otherProps.length - remainingSlots);
+
+    return List<InventoryItem>.unmodifiable([
+      ...souvenirs,
+      ...fillers,
+    ]);
+  }
+
   static List<String> validateRewardCatalog() {
     final errors = <String>[];
     final knownItemIds = <String>{};

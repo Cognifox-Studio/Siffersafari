@@ -46,10 +46,6 @@ class CampSceneView extends ConsumerWidget {
     ),
   ];
 
-  static final Map<String, InventoryItem> _inventoryItemsById = {
-    for (final item in InventoryConfig.allItems) item.id: item,
-  };
-
   void _openWardrobe(BuildContext context, WidgetRef ref) {
     final user = ref.read(userProvider).activeUser;
     if (user != null) {
@@ -72,24 +68,6 @@ class CampSceneView extends ConsumerWidget {
     );
   }
 
-  List<InventoryItem> _visibleCampRewards(List<String> unlockedItemIds) {
-    final unlocked = unlockedItemIds.toSet();
-    final unlockedRewards = InventoryConfig.levelUnlockOrderIds
-        .where(unlocked.contains)
-        .map((id) => _inventoryItemsById[id])
-        .whereType<InventoryItem>()
-        .where((item) => item.slot != 'pet')
-        .toList(growable: false);
-
-    if (unlockedRewards.length <= _visibleCampRewardCount) {
-      return unlockedRewards;
-    }
-
-    return unlockedRewards.sublist(
-      unlockedRewards.length - _visibleCampRewardCount,
-    );
-  }
-
   int _unlockedCampItemCount(List<String> unlockedItemIds) {
     final unlocked = unlockedItemIds.toSet();
     return InventoryConfig.levelUnlockOrderIds.where(unlocked.contains).length;
@@ -106,7 +84,10 @@ class CampSceneView extends ConsumerWidget {
 
     final theme = Theme.of(context);
     final unlockedItemIds = user?.unlockedItems ?? const <String>[];
-    final campRewards = _visibleCampRewards(unlockedItemIds);
+    final campRewards = InventoryConfig.visibleCampPedestalItems(
+      unlockedItemIds,
+      maxVisible: _visibleCampRewardCount,
+    );
     final campPet = InventoryConfig.firstUnlockedCampCompanion(
       unlockedItemIds,
     );

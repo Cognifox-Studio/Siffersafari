@@ -6,12 +6,12 @@
 
 ---
 
-## Now (2026-08-21)
+## Now (2026-08-31)
 
-**Mål:** Camp-souveniralbum från collection-badgen (`slot == 'camp'`, ingen ny persistens).  
-**Status:** Slice implementerad och QA-grön — väntar på commit.
+**Mål:** Visa camp-souvenirer (`slot == 'camp'`) på piedestalerna först (fyll med övriga props om det finns plats).  
+**Status:** Slice implementerad och QA-grön.
 
-**Senaste grind:** Analyze + `inventory_reward_unlock_test` + `app_home_test` + Pixel_6 sync. Play-promote stannar i Next.
+**Senaste grind:** `inventory_reward_unlock_test` + `app_home_test` gröna. Play-promote och story/biome stannar i Next.
 
 ---
 
@@ -26,10 +26,15 @@
 
 ### Senaste leveranser
 
-**2026-08-21 – Camp: souveniralbum från collection-badgen**
+**2026-08-31 – Camp: souvenirer på piedestalerna först**
+- Piedestalerna prioriterar upplåsta `slot == 'camp'` via `InventoryConfig.visibleCampPedestalItems` och fyller resten med övriga props (inte pets).
+- Ingen ny persistens; album/garderob oförändrade i beteende utöver att scenen speglar souvenirprioritet.
+- **Verifiering:** `inventory_reward_unlock_test`, `app_home_test`.
+
+**2026-08-31 – Camp: souveniralbum från collection-badgen**
 - Camp-badgen är tryckbar och öppnar ett album för `slot == 'camp'` (upplåst med bild/namn, låst som tom plats).
-- Katalogen ägs av `InventoryConfig.campSouvenirItems`; ingen ny persistens, inga nya items och oförändrade piedestaler/garderob.
-- **Verifiering:** `flutter analyze` på ändrade filer, `inventory_reward_unlock_test`, `app_home_test`, Pixel_6 sync.
+- Katalogen ägs av `InventoryConfig.campSouvenirItems`; ingen ny persistens, inga nya items.
+- **Verifiering:** `flutter analyze` på ändrade filer, `inventory_reward_unlock_test`, `app_home_test`.
 
 **2026-07-24 – Cleanup: Daily Challenge pension + död kod/filer**
 - Full pension av Dagens runda (feature, service, tester, quiz/home-plumbing).

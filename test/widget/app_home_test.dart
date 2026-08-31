@@ -700,11 +700,66 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byKey(
-          const Key('camp_collection_album_locked_item_camp_bridge'),
-        ),
+        find.byKey(const Key('camp_collection_album_locked_item_camp_bridge')),
         findsOneWidget,
       );
+    },
+  );
+
+  testWidgets(
+    '[Widget] App home – camp-souvenirer prioriteras pa piedestalerna',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'camp-pedestal-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Bo',
+        ageGroup: AgeGroup.middle,
+        unlockedItems: [
+          'item_safari_hat',
+          'item_hat_safari',
+          'item_binoculars_safari',
+          'item_compass_safari',
+          'item_map_safari',
+          'item_camp_fruit_glade',
+        ],
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_scene_view')),
+      );
+
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_map_safari')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_safari_hat')),
+        findsNothing,
+      );
+      expect(find.text('6 saker'), findsOneWidget);
+      expect(find.text('+2 till'), findsOneWidget);
     },
   );
 

@@ -52,7 +52,7 @@ flowchart LR
 | Jag vill andra | Borja i | Las sedan | Data landar har |
 | --- | --- | --- | --- |
 | Home-CTA, hero och resume-logik | `lib/features/home/presentation/screens/home_screen.dart` | `lib/features/home/providers/home_read_model_provider.dart`, `lib/features/home/presentation/home_read_model.dart` | Ingen direkt skrivning |
-| Camp-souveniralbum | `lib/features/home/presentation/widgets/camp_scene_view.dart` | `lib/features/home/presentation/widgets/camp_collection_album.dart`, `InventoryConfig.campSouvenirItems` | Ingen direkt skrivning |
+| Camp-souveniralbum / piedestaler | `lib/features/home/presentation/widgets/camp_scene_view.dart` | `camp_collection_album.dart`, `InventoryConfig.campSouvenirItems`, `InventoryConfig.visibleCampPedestalItems` | Ingen direkt skrivning |
 | Hur en fraga byggs | `lib/core/providers/quiz_provider.dart` | `lib/core/services/quiz_session_planner.dart`, `lib/core/services/question_generator_service.dart`, `lib/core/services/question_mix_policy.dart` | Pagaende session i `quiz_history` |
 | Vad som hander nar quiz slutar | `lib/features/quiz/presentation/screens/results_screen.dart` | `lib/core/providers/user_provider.dart`, `lib/core/services/apply_quiz_result_use_case.dart` | `user_progress` och complete `quiz_history` |
 | Storykartan och nasta stopp | `lib/features/story/presentation/screens/story_map_screen.dart` | `lib/core/providers/story_progress_provider.dart`, `lib/core/services/story_progression_service.dart`, `lib/core/services/quest_progression_service.dart` | Read-only fran user- och settingsdata |

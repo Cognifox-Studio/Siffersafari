@@ -17,12 +17,13 @@ Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, opp
 - `quizProvider`
 - `storyProgressProvider`
 - `InventoryConfig.campSouvenirItems` for camp-albumet (ingen egen lagring)
+- `InventoryConfig.visibleCampPedestalItems` for vilka props som syns pa piedestalerna
 
 ## Sparar
 
 Home sparar inget direkt. Den laser state och navigerar vidare till quiz, story, settings eller parent flow.
 
-Camp-badgen oppnar ett read-only souveniralbum for `slot == 'camp'`. Piedestalerna i scenen ar oforandrade. Garderoben oppnas via maskoten.
+Camp-badgen oppnar ett read-only souveniralbum for `slot == 'camp'`. Piedestalerna prioriterar upplastade camp-souvenirer och fyller resten med andra props (inte pets). Garderoben oppnas via maskoten.
 
 ## Bra forsta test
 

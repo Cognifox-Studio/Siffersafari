@@ -13,7 +13,7 @@ Ansvar: garderob, kosmetiska rewards och hur utrustade saker visas pa figuren.
 
 Upplasta och utrustade foremal ligger pa `UserProgress` och uppdateras i resultatflodet eller garderoben.
 
-Camp-souvenirer (`slot == 'camp'`, `showInWardrobe: false`) listas via `InventoryConfig.campSouvenirItems` och visas i hemmets camp-album, inte i garderoben.
+Camp-souvenirer (`slot == 'camp'`, `showInWardrobe: false`) listas via `InventoryConfig.campSouvenirItems` (album) och `visibleCampPedestalItems` (piedestaler), inte i garderoben.
 
 ## Bra forsta test
 
