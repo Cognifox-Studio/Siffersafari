@@ -1,6 +1,6 @@
 # Onboarding
 
-Ansvar: forsta-gangen-flodet fram till att spelaren har en riktig profil och appen kan ga vidare till home.
+Ansvar: forsta-gangen-flodet fram till att spelaren har arskurs, effektiv age group och appen kan ga vidare till home.
 
 ## Borja har
 
@@ -12,7 +12,9 @@ Ansvar: forsta-gangen-flodet fram till att spelaren har en riktig profil och app
 ## Sparar
 
 - onboardingstatus i `settings`
-- den forsta profilen via `userProvider`
+- arskurs + effektiv `ageGroup` + default allowed operations via `userProvider`
+
+Namn och figur skapas tidigare i `profiles/` (`create_user_dialog.dart`).
 
 ## Bra forsta test
 

@@ -18,3 +18,5 @@ Camp-souvenirer (`slot == 'camp'`, `showInWardrobe: false`) listas via `Inventor
 ## Bra forsta test
 
 - `test/unit/logic/inventory_reward_unlock_test.dart`
+- `test/widget/wardrobe_screen_test.dart`
+- `test/unit/audits/wardrobe_hit_shape_audit_test.dart`

@@ -1,20 +1,21 @@
 # Settings
 
-Ansvar: vanliga installningar, tema, privacy policy och vissa toggles som parent-laget ager.
+Ansvar: vanliga installningar for aktiv profil — tema, ljud/vibration, profilbyte, radera profil/all data och privacy policy.
 
 ## Borja har
 
 - `presentation/screens/settings_screen.dart`
 - `presentation/screens/privacy_policy_screen.dart`
-- `../../core/providers/parent_settings_provider.dart`
-- `../../core/providers/tts_enabled_provider.dart`
-- `../../core/providers/word_problems_settings_provider.dart`
+- `../../core/providers/user_provider.dart`
+- `../../core/theme/app_theme_config.dart`
 
-## Sparar
+## Laser / sparar
 
-Installningar sparas i `settings`.
+Settings laser och sparar via `userProvider` (tema, ljud, vibration, aktiv profil). Privacy policy ar read-only.
 
-## Bra forsta check
+Foraldratoggles (TTS, textproblem, allowed operations) ligger i `parent/`, inte har.
 
-- `test/unit/logic/parent_settings_provider_test.dart`
-- `integration_test/app_smoke_test.dart`
+## Bra forsta test
+
+- `test/widget/settings_screen_test.dart`
+- `test/unit/logic/user_profile_cleanup_test.dart` for radera profil / all data
