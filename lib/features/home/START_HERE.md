@@ -8,18 +8,24 @@ Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, opp
 - `providers/home_read_model_provider.dart`
 - `presentation/home_read_model.dart`
 - `providers/home_session_status_provider.dart`
+- `presentation/widgets/camp_scene_view.dart`
+- `presentation/widgets/camp_collection_album.dart`
 
 ## Laser fran
 
 - `userProvider`
 - `quizProvider`
 - `storyProgressProvider`
+- `InventoryConfig.campSouvenirItems` for camp-albumet (ingen egen lagring)
 
 ## Sparar
 
 Home sparar inget direkt. Den laser state och navigerar vidare till quiz, story, settings eller parent flow.
 
+Camp-badgen oppnar ett read-only souveniralbum for `slot == 'camp'`. Piedestalerna i scenen ar oforandrade. Garderoben oppnas via maskoten.
+
 ## Bra forsta test
 
 - `test/widget/app_home_test.dart`
 - `test/unit/logic/home_read_model_test.dart`
+- `test/unit/logic/inventory_reward_unlock_test.dart` for camp-souvenirkatalogen

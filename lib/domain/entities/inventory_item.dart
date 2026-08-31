@@ -198,6 +198,13 @@ class InventoryConfig {
   static final List<InventoryItem> wardrobeItems =
       allItems.where((item) => item.showInWardrobe).toList(growable: false);
 
+  /// Camp souvenirs in reward order. These stay out of the wardrobe.
+  static final List<InventoryItem> campSouvenirItems = levelUnlockOrderIds
+      .map((id) => _itemsById[id])
+      .whereType<InventoryItem>()
+      .where((item) => item.slot == 'camp')
+      .toList(growable: false);
+
   static List<String> validateRewardCatalog() {
     final errors = <String>[];
     final knownItemIds = <String>{};
@@ -243,6 +250,11 @@ class InventoryConfig {
     }
 
     return null;
+  }
+
+  static int unlockedCampSouvenirCount(Iterable<String> unlockedItemIds) {
+    final unlocked = unlockedItemIds.toSet();
+    return campSouvenirItems.where((item) => unlocked.contains(item.id)).length;
   }
 
   static InventoryItem? firstUnlockedCampCompanion(

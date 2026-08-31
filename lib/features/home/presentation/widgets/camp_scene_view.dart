@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
+import 'package:siffersafari/features/home/presentation/widgets/camp_collection_album.dart';
 import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
@@ -57,6 +59,17 @@ class CampSceneView extends ConsumerWidget {
         ),
       );
     }
+  }
+
+  void _openCampCollection(BuildContext context, WidgetRef ref) {
+    final user = ref.read(userProvider).activeUser;
+    if (user == null) return;
+
+    ref.read(audioServiceProvider).playClickSound();
+    showCampCollectionAlbum(
+      context,
+      unlockedItemIds: user.unlockedItems,
+    );
   }
 
   List<InventoryItem> _visibleCampRewards(List<String> unlockedItemIds) {
@@ -199,18 +212,6 @@ class CampSceneView extends ConsumerWidget {
             ),
           ),
 
-          if (unlockedCampItemCount > 0)
-            Positioned(
-              top: isWideScreen ? 16 : 12,
-              right: isWideScreen ? 16 : 12,
-              child: IgnorePointer(
-                child: _CampCollectionBadge(
-                  itemCount: unlockedCampItemCount,
-                  hiddenCount: hiddenCampItemCount,
-                ),
-              ),
-            ),
-
           for (var index = 0; index < campRewards.length; index++)
             Align(
               alignment: _campRewardSpots[index].alignment,
@@ -263,6 +264,17 @@ class CampSceneView extends ConsumerWidget {
                 ),
               ),
             ),
+
+          if (unlockedCampItemCount > 0)
+            Positioned(
+              top: isWideScreen ? 16 : 12,
+              right: isWideScreen ? 16 : 12,
+              child: _CampCollectionBadge(
+                itemCount: unlockedCampItemCount,
+                hiddenCount: hiddenCampItemCount,
+                onTap: () => _openCampCollection(context, ref),
+              ),
+            ),
         ],
       ),
     );
@@ -285,60 +297,68 @@ class _CampCollectionBadge extends StatelessWidget {
   const _CampCollectionBadge({
     required this.itemCount,
     required this.hiddenCount,
+    required this.onTap,
   });
 
   final int itemCount;
   final int hiddenCount;
+  final VoidCallback onTap;
 
   String get _countLabel => '$itemCount ${itemCount == 1 ? 'sak' : 'saker'}';
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final semanticsLabel = hiddenCount > 0
+        ? 'Visa camp-samling. Du har $_countLabel i campet. $hiddenCount till syns inte här.'
+        : 'Visa camp-samling. Du har $_countLabel i campet.';
 
     return Semantics(
-      label: hiddenCount > 0
-          ? 'Du har $_countLabel i campet. $hiddenCount till syns inte här.'
-          : 'Du har $_countLabel i campet.',
-      child: ExcludeSemantics(
-        child: Container(
-          key: const Key('camp_scene_collection_badge'),
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF8E7A7).withValues(alpha: 0.96),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFF8B6A2C).withValues(alpha: 0.6),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.14),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+      button: true,
+      label: semanticsLabel,
+      child: GestureDetector(
+        key: const Key('camp_scene_collection_badge'),
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: ExcludeSemantics(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8E7A7).withValues(alpha: 0.96),
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: const Color(0xFF8B6A2C).withValues(alpha: 0.6),
               ),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _countLabel,
-                style: theme.textTheme.labelLarge?.copyWith(
-                  color: const Color(0xFF5C441C),
-                  fontWeight: FontWeight.w900,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.14),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
                 ),
-              ),
-              if (hiddenCount > 0)
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 Text(
-                  '+$hiddenCount till',
-                  key: const Key('camp_scene_collection_hidden_count'),
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: const Color(0xFF6C5425),
-                    fontWeight: FontWeight.w800,
+                  _countLabel,
+                  style: theme.textTheme.labelLarge?.copyWith(
+                    color: const Color(0xFF5C441C),
+                    fontWeight: FontWeight.w900,
                   ),
                 ),
-            ],
+                if (hiddenCount > 0)
+                  Text(
+                    '+$hiddenCount till',
+                    key: const Key('camp_scene_collection_hidden_count'),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: const Color(0xFF6C5425),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

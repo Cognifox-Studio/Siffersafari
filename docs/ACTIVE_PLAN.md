@@ -1,7 +1,7 @@
 <!--
 typ: explanation
 syfte: Now / Next / Later — aktiv prioritering utan falska datumlöften
-uppdaterad: 2026-07-24
+uppdaterad: 2026-08-21
 -->
 
 # Aktiv plan — Now / Next / Later
@@ -14,7 +14,7 @@ uppdaterad: 2026-07-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-Välj uttryckligen från Next innan nästa kodslice.
+Camp-souveniralbum från camp-badgen (ingen ny persistens).
 
 *Senaste Now (klar):* Play / distribution — intern **Go** för `1.4.3+21`.
 
@@ -23,7 +23,7 @@ Välj uttryckligen från Next innan nästa kodslice.
 ## Next (kandidater — max tre)
 
 1. **Play promote** — closed beta / staged production (efter intern Go)
-2. **Camp / samlarvärde** — mer “min värld” ovanpå nuvarande rewards
+2. **Camp / piedestaler** — visa souvenirer (`slot == 'camp'`) på piedestalerna först
 3. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
 
 Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.

@@ -588,6 +588,127 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] App home – camp-badge öppnar souveniralbum med lasta platser',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'camp-album-locked-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Iris',
+        ageGroup: AgeGroup.middle,
+        unlockedItems: ['item_safari_hat'],
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_scene_collection_badge')),
+      );
+      await tester.ensureVisible(
+        find.byKey(const Key('camp_scene_collection_badge')),
+      );
+      await tester.tap(find.byKey(const Key('camp_scene_collection_badge')));
+      await tester.pump();
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_collection_album')),
+      );
+
+      expect(find.byKey(const Key('camp_collection_album')), findsOneWidget);
+      expect(find.text('Campet'), findsOneWidget);
+      expect(
+        find.byKey(
+          const Key('camp_collection_album_locked_item_camp_fruit_glade'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('camp_collection_album_unlocked_item_camp_fruit_glade'),
+        ),
+        findsNothing,
+      );
+      expect(find.text('Riktig Safarihatt'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    '[Widget] App home – camp-album visar upplast souvenir och lasta platser',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'camp-album-unlocked-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Alva',
+        ageGroup: AgeGroup.middle,
+        unlockedItems: [
+          'item_safari_hat',
+          'item_camp_fruit_glade',
+        ],
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_scene_collection_badge')),
+      );
+      await tester.ensureVisible(
+        find.byKey(const Key('camp_scene_collection_badge')),
+      );
+      await tester.tap(find.byKey(const Key('camp_scene_collection_badge')));
+      await tester.pump();
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_collection_album')),
+      );
+
+      expect(find.byKey(const Key('camp_collection_album')), findsOneWidget);
+      expect(
+        find.byKey(
+          const Key('camp_collection_album_unlocked_item_camp_fruit_glade'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(
+          const Key('camp_collection_album_locked_item_camp_bridge'),
+        ),
+        findsOneWidget,
+      );
+    },
+  );
+
+  testWidgets(
     '[Widget] App home – visar fortsätt när sparad quizsession finns',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;

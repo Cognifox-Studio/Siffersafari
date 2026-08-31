@@ -6,12 +6,12 @@
 
 ---
 
-## Now (2026-07-24)
+## Now (2026-08-21)
 
-**Mål:** — (välj uttryckligen från Next)  
-**Status:** Play-intern **Go** — `v1.4.3+21` publicerad och godkänd på Internt test. Promote till closed/production är **inte** gjort (separat beslut).
+**Mål:** Camp-souveniralbum från collection-badgen (`slot == 'camp'`, ingen ny persistens).  
+**Status:** Slice implementerad och QA-grön — väntar på commit.
 
-**Senaste grind:** Människa: Go på intern build · Console publicerad · GitHub Latest `v1.4.3+21`.
+**Senaste grind:** Analyze + `inventory_reward_unlock_test` + `app_home_test` + Pixel_6 sync. Play-promote stannar i Next.
 
 ---
 
@@ -25,6 +25,11 @@
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21  
 
 ### Senaste leveranser
+
+**2026-08-21 – Camp: souveniralbum från collection-badgen**
+- Camp-badgen är tryckbar och öppnar ett album för `slot == 'camp'` (upplåst med bild/namn, låst som tom plats).
+- Katalogen ägs av `InventoryConfig.campSouvenirItems`; ingen ny persistens, inga nya items och oförändrade piedestaler/garderob.
+- **Verifiering:** `flutter analyze` på ändrade filer, `inventory_reward_unlock_test`, `app_home_test`, Pixel_6 sync.
 
 **2026-07-24 – Cleanup: Daily Challenge pension + död kod/filer**
 - Full pension av Dagens runda (feature, service, tester, quiz/home-plumbing).

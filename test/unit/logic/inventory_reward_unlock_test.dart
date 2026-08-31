@@ -56,5 +56,35 @@ void main() {
         isTrue,
       );
     });
+
+    test('camp souvenir album follows reward order and excludes wearables', () {
+      expect(
+        InventoryConfig.campSouvenirItems.map((item) => item.id),
+        [
+          'item_camp_fruit_glade',
+          'item_camp_bridge',
+          'item_camp_cartography',
+          'item_camp_temple_gate',
+          'item_camp_treasure_cache',
+        ],
+      );
+      expect(
+        InventoryConfig.campSouvenirItems.every(
+          (item) => item.slot == 'camp' && !item.showInWardrobe,
+        ),
+        isTrue,
+      );
+    });
+
+    test('unlockedCampSouvenirCount only counts camp-slot items', () {
+      expect(
+        InventoryConfig.unlockedCampSouvenirCount(const [
+          'item_safari_hat',
+          'item_camp_fruit_glade',
+          'item_pet_zebra_companion',
+        ]),
+        1,
+      );
+    });
   });
 }
