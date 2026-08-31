@@ -1,11 +1,12 @@
 ---
 name: "slice-start"
-description: "Use when starting a new work slice: lock Now, challenge the plan, set DoD and minimal QA before any code"
+description: "Use when starting a risky work slice: lock Now, challenge the plan, set DoD and minimal QA before any code. Skip for small Cursor UI/docs slices."
 argument-hint: "Valfritt: föreslaget Now-mål eller kort uppgiftsbeskrivning"
-agent: "Plan"
+agent: "agent"
 ---
 
-Starta en ny arbetsslice enligt Siffersafaris utvecklingssystem.
+Starta en **risk-slice** enligt Siffersafaris utvecklingssystem (Cursor-first).  
+Använd **inte** för triviala UI/docs-ändringar — då räcker Now + DoD-light.
 
 Läs först:
 
@@ -19,9 +20,12 @@ Arbetsordning (ingen kod ännu):
 1. Citera aktuellt **Now**. Om Now saknas eller är oklart: stoppa och be användaren välja *ett* mål från Next (eller ett nytt uttryckligt Now).
 2. Formulera slice-scope i 3–6 punkter: vad som ingår, vad som **inte** ingår.
 3. **Utmana planen:** risker, COPPA, persistens, blandad diff, för stor yta. Föreslå snävare scope om behövs.
-4. Skriv **Definition of Done** för just denna slice (referera A/B/C i DoD-filen).
+4. Välj DoD-nivå:
+   - **A0 DoD-light** om risken visade sig låg
+   - **A (full slice)** vid persistens, matte/bank, bred refaktor, blandad `.github`+feature
+   - **B** om det är release
 5. Välj **minsta QA-slice** (analyze / vilka tester / Pixel_6 / ingen ännu).
-6. Föreslå agent/skill för execute-fasen (`Beast Mode`, difficulty-skill, release-prompt, …).
+6. Föreslå execute i **Cursor Agent** (eller Cursor Plan om scopet fortfarande är öppet). Nämn aktiv skill bara om den matchar (t.ex. difficulty, quiz-persistens, COPPA) — se [docs/TOOLING_SURFACE.md](../../docs/TOOLING_SURFACE.md). Föreslå **inte** Copilot Beast Mode som default.
 7. Fråga uttryckligen: “Godkänner du planen?” — vänta på go innan implementation.
 
 Svarskrav:

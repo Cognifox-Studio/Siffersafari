@@ -5,14 +5,16 @@ agent: "agent"
 argument-hint: "Klistra in felmeddelandet eller beskriv felet"
 ---
 
-Felsök följande problem rigoröst efter att felet redan är tillräckligt konkret eller efter att första triage/routing redan är gjord.
+Felsök följande problem rigoröst. Anta att felet redan är konkret nog — gör **egen kort triage** här (ingen separat router-prompt).
 
-## Steg:
-1. Läs relevanta filer i `/memories/repo/` om de matchar felet, till exempel `/memories/repo/testing.md` vid testfel. Vid mascot-, animation- eller assetproblem: läs också `docs/ARCHITECTURE.md` och `docs/DECISIONS_LOG.md` för aktuell PNG-first-runtime och gällande beslut.
-	Vid Hive-, local storage-, resume- eller annan persistensproblematik: peka tidigt vidare till `.github/skills/felsok-sparad-data/SKILL.md`.
-2. Läs det faktiska felet (stack trace).
-3. Läs berörd källkod och kontrollera mot konventionerna i `docs/ARCHITECTURE.md`.
-4. Analysera om problemet orsakas av en känd fallgrop (ex. ScreenUtilInit saknas i tester, Hot Reload istället för Hot Restart för animationer, stale artifacts från äldre experimentspår).
-5. Lös problemet. Om felet är helt nytt för projektet, sammanfatta kort en lärdom vi borde spara för framtiden.
+## Steg
+
+1. Klassificera snabbt: analyze/compile, unit/widget-test, integration, Pixel_6/adb, asset/runtime, eller persistens/Hive.
+2. Läs relevanta filer i `/memories/repo/` om de matchar felet (t.ex. testing). Vid mascot/animation/asset: `docs/ARCHITECTURE.md` + `docs/DECISIONS_LOG.md` (PNG-first).
+3. Vid Hive, local storage, resume eller annan persistens: följ `.github/skills/felsok-sparad-data/SKILL.md` tidigt.
+4. Vid Pixel_6/adb/stale APK: `.github/skills/felsok-android-emulatorn/SKILL.md`.
+5. Läs stack trace och berörd källkod mot `docs/ARCHITECTURE.md` / feature `START_HERE`.
+6. Kolla kända fallgropar (ScreenUtilInit i tester, Hot Reload vs restart för animationer/assets, stale APK).
+7. Lös problemet. Om felet är nytt för projektet: en kort lärdom att spara.
 
 **Uppgiften / Felet:**

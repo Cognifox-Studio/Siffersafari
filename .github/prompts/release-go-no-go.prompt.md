@@ -9,6 +9,7 @@ Gör en snabb men defensibel go/no-go-bedömning för en redan identifierad rele
 
 Utgå från dessa källor:
 
+- [docs/DEFINITION_OF_DONE.md](../../docs/DEFINITION_OF_DONE.md) (sektion B Release DoD)
 - [docs/SESSION_BRIEF.md](../../docs/SESSION_BRIEF.md)
 - [docs/DEPLOY_ANDROID.md](../../docs/DEPLOY_ANDROID.md)
 - [.github/copilot-instructions.md](../copilot-instructions.md)
@@ -23,8 +24,8 @@ Utgå från dessa källor:
 Arbetsordning:
 
 1. Klassificera målet: demo, intern handoff, closed beta eller skarp release.
-2. Välj minsta rimliga QA-slice för just den releaseytan och kör den i stället för att hoppa direkt till fullsvit.
-3. Kontrollera att `pubspec.yaml` och release-taggen matchar exakt. GitHub-release i detta repo använder full tagg med buildnummer, till exempel `version: 1.4.2+19` och tagg `v1.4.2+19`.
+2. Välj minsta rimliga QA-slice för just den releaseytan (Release DoD B, inte bara DoD-light).
+3. Kontrollera att `pubspec.yaml` och release-taggen matchar exakt. GitHub-release använder full tagg med buildnummer, till exempel `version: 1.4.3+21` och tagg `v1.4.3+21`. Flagga om `main` har commits efter taggen som *inte* ska med.
 4. Kontrollera att artifacts, workflow och releaseväg matchar scope:
 - `build.yml` för vanlig GitHub-release med APK på GitHub Releases.
 - `play-closed-beta.yml` för Play closed beta och AAB-/Play-spår.

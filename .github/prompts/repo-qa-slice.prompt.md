@@ -5,14 +5,15 @@ argument-hint: "Valfritt: beskriv ändringen, diffens scope eller ange ett risko
 agent: "agent"
 ---
 
-Valj och kor den minsta tillrackliga QA-slice som ger hog signal for den aktuella andringen i detta repo.
+Valj och kor den minsta tillrackliga QA-slice for den aktuella andringen (Cursor-first).
 
 Utga fran dessa kallor:
 
+- [docs/DEFINITION_OF_DONE.md](../../docs/DEFINITION_OF_DONE.md) (A0 DoD-light default; full A vid risk)
+- [docs/DEV_SYSTEM.md](../../docs/DEV_SYSTEM.md)
 - [copilot-instructions.md](../copilot-instructions.md)
 - [docs/ARCHITECTURE.md](../../docs/ARCHITECTURE.md)
 - [docs/SESSION_BRIEF.md](../../docs/SESSION_BRIEF.md)
-- [docs/DEFINITION_OF_DONE.md](../../docs/DEFINITION_OF_DONE.md)
 - [.github/skills/testa-att-appen-fungerar/SKILL.md](../skills/testa-att-appen-fungerar/SKILL.md)
 - [.github/skills/testa-fragornas-svarighetsgrad/SKILL.md](../skills/testa-fragornas-svarighetsgrad/SKILL.md)
 - [.github/skills/testa-att-quiz-sparas-ratt/SKILL.md](../skills/testa-att-quiz-sparas-ratt/SKILL.md)
@@ -20,10 +21,10 @@ Utga fran dessa kallor:
 
 Arbetsordning:
 
-1. Klassificera andringen i en huvudklass: docs/customizations, Dart-logik, question-generation/curriculum, UI/presentation, quiz-persistens, parent mode, Android/release, assets/animation eller bred blandad diff.
+1. Klassificera andringen. Om den ar trivial UI/docs: folj **DoD-light (A0)** utan att eskalera.
 2. Valj en enda primar QA-slice som ger snabbast falsifierbar signal.
 3. Kor verifieringen, inte bara foresla den.
-4. Eskalera bara om forsta slice inte racker eller om risken tydligt korsar flera lager.
+4. Eskalera bara om forsta slice inte racker eller risken korsar flera lager (da full DoD A).
 
 Vagledning per slice:
 
