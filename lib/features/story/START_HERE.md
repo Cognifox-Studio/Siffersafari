@@ -13,6 +13,8 @@ Ansvar: visa djungelkartan, nuvarande stopp och vad som kommer nast. Storyn ar r
 
 `story_map_screen.dart` ager visningen. De intilliggande `story_map_screen__*_part.dart` ar bara interna delar av samma skarm.
 
+`StoryProgress.nextBiome` visas aven pa sista stoppet och nar episoden ar klar (med avslutningscopy). Resultatpanelens “Sedan”-kort anvander samma preview nar episoden ar klar.
+
 ## Sparar
 
 Ingen egen feature-lagring. Story lases fram fran befintlig quest- och userdata.

@@ -743,16 +743,29 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final currentNode = storyProgress.currentNode;
     final reachedLandmark = currentNode?.landmark ?? 'nästa plats';
     final isEpisodeComplete = storyProgress.isEpisodeComplete;
+    final nextBiome = storyProgress.nextBiome;
     final panelTitle = isEpisodeComplete
         ? storyProgress.endingTitle
         : 'Nu nådde du $reachedLandmark!';
     final panelLead =
         isEpisodeComplete ? storyProgress.endingBody : 'Storyn gick vidare.';
-    final nextTitle = isEpisodeComplete
-        ? 'Episode 1 klar'
-        : questCompletion.nextQuestTitle ?? storyProgress.currentObjectiveTitle;
-    final nextBody =
-        isEpisodeComplete ? storyProgress.endingBody : 'Nästa mål: $nextTitle';
+    final useBiomeAsNext = isEpisodeComplete && nextBiome != null;
+    final nextTitle = useBiomeAsNext
+        ? nextBiome.name
+        : isEpisodeComplete
+            ? 'Episode 1 klar'
+            : questCompletion.nextQuestTitle ??
+                storyProgress.currentObjectiveTitle;
+    final nextBody = useBiomeAsNext
+        ? nextBiome.tagline
+        : isEpisodeComplete
+            ? storyProgress.endingBody
+            : 'Nästa mål: $nextTitle';
+    final nextLabel = useBiomeAsNext
+        ? nextBiome.previewPrefix
+        : isEpisodeComplete
+            ? 'Nu'
+            : 'Sedan';
     final storyButtonLabel =
         isEpisodeComplete ? 'Se episoden' : 'Fortsätt storyn';
     final storyButtonIcon =
@@ -795,7 +808,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 onPrimary: onPrimary,
               );
               final nextCard = _StoryFocusCard(
-                label: isEpisodeComplete ? 'Nu' : 'Sedan',
+                key: useBiomeAsNext
+                    ? const Key('results_story_next_biome_card')
+                    : null,
+                label: nextLabel,
                 title: nextTitle,
                 body: nextBody,
                 icon: Icons.flag_rounded,
@@ -979,6 +995,7 @@ class _StoryFocusCard extends StatelessWidget {
     required this.icon,
     required this.color,
     required this.onPrimary,
+    super.key,
   });
 
   final String label;
@@ -991,6 +1008,7 @@ class _StoryFocusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PlayfulAccentCard(
+      key: key,
       label: label,
       title: title,
       body: body,

@@ -259,8 +259,7 @@ class StoryProgressionService {
       endingBody: endingBeat.body,
       nextBiome: _nextBiomeFor(
         difficulty: currentStatus.quest.difficulty,
-        isFinalNode:
-            isEpisodeComplete || currentNodeIndex >= effectivePath.length - 1,
+        isEpisodeComplete: isEpisodeComplete,
       ),
       notice: notice,
     );
@@ -287,13 +286,19 @@ class StoryProgressionService {
 
   StoryBiomePreview? _nextBiomeFor({
     required DifficultyLevel difficulty,
-    required bool isFinalNode,
+    required bool isEpisodeComplete,
   }) {
-    if (isFinalNode) {
-      return null;
-    }
+    final base = _upcomingBiomes[difficulty];
+    if (base == null) return null;
+    if (!isEpisodeComplete) return base;
 
-    return _upcomingBiomes[difficulty];
+    return StoryBiomePreview(
+      name: base.name,
+      tagline: '${base.name} väntar.',
+      previewPrefix: base.previewPrefix,
+      previewBody:
+          'Kapitlet är klart. ${base.name} öppnas i en senare uppdatering.',
+    );
   }
 
   String _chapterTitleFor(DifficultyLevel difficulty) {

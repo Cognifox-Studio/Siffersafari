@@ -8,19 +8,10 @@
 
 ## Now (2026-08-31)
 
-**Mål:** Play promote av `1.4.3+21` från internt test → closed (alpha), sedan ev. staged production.  
-**Status:** Soft go för Console-promote av befintlig internal-release. Ingen ny AAB utan versionsbump.
+**Mål:** Story/biome — behåll `nextBiome` på sista stoppet och i episodslut; resultatpanelen visar nästa värld som “Sedan”.  
+**Status:** Slice implementerad och QA-grön.
 
-**Senaste grind:** GitHub Release `v1.4.3+21` finns; `play-closed-beta` lyckades 2026-07-24; internal Go dokumenterad. HEAD har camp-commits efter taggen men `pubspec` är fortfarande `1.4.3+21` — ny upload av HEAD blockeras tills bump.
-
-**Promote-checklista (människa i Play Console):**
-1. Play Console → `se.cognifox.Siffersafari` → Testning → Internt test → releasen `1.4.3 (21)`.
-2. **Promote** till closed test (`alpha` om det är closed-spåret).
-3. Sätt status / skicka till granskning om Console kräver det.
-4. Efter closed OK: promote till production med **låg staged rollout** (börja lågt).
-5. Uppdatera `SESSION_BRIEF` när promote är klar (closed respektive production).
-
-**Inte i samma steg:** listing-sync, ny feature-build, versionsbump. Camp-album/piedestaler går ut först efter bump + ny internal.
+**Senaste grind:** `story_progression_service_test` + `app_results_test` + analyze gröna. Play promote parkerat i Next.
 
 ---
 
@@ -30,10 +21,20 @@
 **Tester:** Reward-svit, `app_quiz_flow`, core smoke och screenshot-integration passerar ✅  
 **flutter analyze:** Global analyze passerar utan issues ✅  
 **Integration smoke:** Core smoke passerar på Android-emulator ✅  
-**Play:** Internt test **Go** för `1.4.3+21` ✅ · **Closed/production promote:** ej klar  
+**Play:** Internt test **Go** för `1.4.3+21` ✅ · **Closed/production promote:** ej klar (parkerat)  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21  
 
 ### Senaste leveranser
+
+**2026-08-31 – Story/biome: nästa värld syns i slutskedet**
+- `nextBiome` döljs inte längre på sista noden; vid episodslut får previewen avslutningscopy (`…väntar.`).
+- Resultatpanelens “Sedan”-kort använder samma `StoryBiomePreview` när episoden är klar.
+- Ingen ny persistens eller ny biome-runtime.
+- **Verifiering:** `story_progression_service_test`, `app_results_test`, analyze.
+
+**2026-08-31 – Docs: Now låst till Play promote av 1.4.3+21**
+- Soft go för Console-promote av befintlig internal-release; camp-commits kräver senare bump.
+- **Status:** Parkerat i Next — väntar mänsklig Console-action.
 
 **2026-08-31 – Camp: souvenirer på piedestalerna först**
 - Piedestalerna prioriterar upplåsta `slot == 'camp'` via `InventoryConfig.visibleCampPedestalItems` och fyller resten med övriga props (inte pets).

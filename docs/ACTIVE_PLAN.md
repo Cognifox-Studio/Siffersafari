@@ -14,16 +14,17 @@ uppdaterad: 2026-08-31
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-Play promote — closed beta (alpha) för redan Go-ad `1.4.3+21`, därefter ev. staged production.
+Story / biome — nästa värld i slutskedet (QA-grön).
 
-*Senaste Now (klar):* Camp / piedestaler — souvenirer först.
+*Senaste Now (klar):* Camp / piedestaler — souvenirer först.  
+*Parkerat:* Play promote av `1.4.3+21` (väntar Console).
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Story / biome (fortsättning)** — mer hierarki/polish eller senare persistence när det behövs
-2. **Ny Play-build med camp-slicar** — bump `1.4.3+22` (eller högre) om camp-album/piedestaler ska ut via Play (kräver ny internal först)
+1. **Play promote** — closed/alpha för `1.4.3+21`, sedan ev. staged production (människa i Console)
+2. **Ny Play-build med camp-slicar** — bump `1.4.3+22` om camp ska ut via Play
 
 Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
 

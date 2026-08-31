@@ -24,7 +24,7 @@ void main() {
       id: 'quest_finish',
       title: 'Sista bron',
       description: 'Nu är du framme.',
-      difficulty: DifficultyLevel.medium,
+      difficulty: DifficultyLevel.easy,
       operation: OperationType.multiplication,
     );
 
@@ -111,7 +111,7 @@ void main() {
       );
     });
 
-    test('ger ingen nästa biome när sista noden redan är aktiv', () {
+    test('behåller nästa biome på sista aktiva noden', () {
       final progress = storyService.createStoryProgress(
         path: const [easyQuest, secondQuest],
         currentStatus: const QuestStatus(
@@ -123,7 +123,8 @@ void main() {
         completedQuestIds: const {'quest_bridge'},
       );
 
-      expect(progress.nextBiome, isNull);
+      expect(progress.nextBiome?.name, 'Nattskogen');
+      expect(progress.nextBiome?.tagline, 'Låst tills djungeln är klar.');
     });
 
     test('ger slutlage nar hela episoden ar klar', () {
@@ -142,7 +143,12 @@ void main() {
       expect(progress.actLabel, 'Akt 2 av 2');
       expect(progress.endingTitle, 'Djungeln klar!');
       expect(progress.endingBody, contains('kommer senare'));
-      expect(progress.nextBiome, isNull);
+      expect(progress.nextBiome?.name, 'Nattskogen');
+      expect(progress.nextBiome?.tagline, 'Nattskogen väntar.');
+      expect(
+        progress.nextBiome?.previewBody,
+        'Kapitlet är klart. Nattskogen öppnas i en senare uppdatering.',
+      );
     });
   });
 }
