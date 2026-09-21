@@ -1,3 +1,4 @@
+import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
@@ -100,6 +101,36 @@ class AchievementService {
       emoji: '🪙',
     ),
     AchievementDefinition(
+      id: AppConstants.points1000Achievement,
+      displayName: '1000 poäng',
+      albumLabel: '1000 p',
+      emoji: '🏅',
+    ),
+    AchievementDefinition(
+      id: AppConstants.points2000Achievement,
+      displayName: '2000 poäng',
+      albumLabel: '2000 p',
+      emoji: '🏆',
+    ),
+    AchievementDefinition(
+      id: AppConstants.questions500Achievement,
+      displayName: '500 frågor',
+      albumLabel: '500 frågor',
+      emoji: '🧠',
+    ),
+    AchievementDefinition(
+      id: AppConstants.questions1000Achievement,
+      displayName: '1000 frågor',
+      albumLabel: '1000 frågor',
+      emoji: '🚀',
+    ),
+    AchievementDefinition(
+      id: AppConstants.collectAllSouvenirsAchievement,
+      displayName: 'Alla souvenirer',
+      albumLabel: 'Souvenirer',
+      emoji: '🗺️',
+    ),
+    AchievementDefinition(
       id: AppConstants.master100Achievement,
       displayName: 'Mästare 100',
       albumLabel: '100 rätt',
@@ -163,6 +194,51 @@ class AchievementService {
     )) {
       unlocked.add(AppConstants.points500Achievement);
       bonusPoints += 40;
+    }
+
+    if (_shouldUnlockTotalPoints(
+      user,
+      session,
+      1000,
+      AppConstants.points1000Achievement,
+    )) {
+      unlocked.add(AppConstants.points1000Achievement);
+      bonusPoints += 100;
+    }
+
+    if (_shouldUnlockTotalPoints(
+      user,
+      session,
+      2000,
+      AppConstants.points2000Achievement,
+    )) {
+      unlocked.add(AppConstants.points2000Achievement);
+      bonusPoints += 200;
+    }
+
+    if (_shouldUnlockTotalQuestions(
+      user,
+      session,
+      500,
+      AppConstants.questions500Achievement,
+    )) {
+      unlocked.add(AppConstants.questions500Achievement);
+      bonusPoints += 75;
+    }
+
+    if (_shouldUnlockTotalQuestions(
+      user,
+      session,
+      1000,
+      AppConstants.questions1000Achievement,
+    )) {
+      unlocked.add(AppConstants.questions1000Achievement);
+      bonusPoints += 150;
+    }
+
+    if (_shouldUnlockAllSouvenirs(user)) {
+      unlocked.add(AppConstants.collectAllSouvenirsAchievement);
+      bonusPoints += 100;
     }
 
     if (_shouldUnlockMaster100(user, session)) {
@@ -243,6 +319,28 @@ class AchievementService {
   ) {
     return user.totalPoints + session.totalPoints >= target &&
         !user.achievements.contains(achievementId);
+  }
+
+  bool _shouldUnlockTotalQuestions(
+    UserProgress user,
+    QuizSession session,
+    int target,
+    String achievementId,
+  ) {
+    final totalAnswered =
+        user.totalQuestionsAnswered + session.totalQuestions;
+    return totalAnswered >= target &&
+        !user.achievements.contains(achievementId);
+  }
+
+  bool _shouldUnlockAllSouvenirs(UserProgress user) {
+    if (user.achievements.contains(AppConstants.collectAllSouvenirsAchievement)) {
+      return false;
+    }
+    final unlocked = user.unlockedItems.toSet();
+    return InventoryConfig.campSouvenirItems.every(
+      (item) => unlocked.contains(item.id),
+    );
   }
 
   bool _shouldUnlockMaster100(UserProgress user, QuizSession session) {

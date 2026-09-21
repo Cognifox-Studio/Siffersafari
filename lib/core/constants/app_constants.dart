@@ -149,4 +149,14 @@ class AppConstants {
   static const String quiz10Achievement = AchievementIds.quiz10Achievement;
   static const String points500Achievement =
       AchievementIds.points500Achievement;
+  static const String points1000Achievement =
+      AchievementIds.points1000Achievement;
+  static const String points2000Achievement =
+      AchievementIds.points2000Achievement;
+  static const String questions500Achievement =
+      AchievementIds.questions500Achievement;
+  static const String questions1000Achievement =
+      AchievementIds.questions1000Achievement;
+  static const String collectAllSouvenirsAchievement =
+      AchievementIds.collectAllSouvenirsAchievement;
 }

@@ -112,6 +112,11 @@ void main() {
           AppConstants.hardQuizAchievement,
           AppConstants.quiz10Achievement,
           AppConstants.points500Achievement,
+          AppConstants.points1000Achievement,
+          AppConstants.points2000Achievement,
+          AppConstants.questions500Achievement,
+          AppConstants.questions1000Achievement,
+          AppConstants.collectAllSouvenirsAchievement,
           AppConstants.master100Achievement,
           AppConstants.streak7Achievement,
           AppConstants.streak30Achievement,
@@ -158,6 +163,155 @@ void main() {
       expect(reward.unlockedIds, contains(AppConstants.hardQuizAchievement));
       expect(reward.unlockedIds, contains(AppConstants.quiz10Achievement));
       expect(reward.unlockedIds, contains(AppConstants.points500Achievement));
+    });
+
+    test('låser upp 1000- och 2000-poängsbadge när gränserna passeras', () {
+      const user = UserProgress(
+        userId: 'u11',
+        name: 'Nova',
+        ageGroup: AgeGroup.older,
+        totalPoints: 950,
+      );
+
+      const session = QuizSession(
+        sessionId: 's11',
+        ageGroup: AgeGroup.older,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.medium,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 60,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+      expect(reward.unlockedIds, contains(AppConstants.points1000Achievement));
+      expect(
+        reward.unlockedIds,
+        isNot(contains(AppConstants.points2000Achievement)),
+      );
+    });
+
+    test('låser upp 2000-poängsbadge vid 2000', () {
+      const user = UserProgress(
+        userId: 'u12',
+        name: 'Stella',
+        ageGroup: AgeGroup.older,
+        totalPoints: 1990,
+      );
+
+      const session = QuizSession(
+        sessionId: 's12',
+        ageGroup: AgeGroup.older,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.medium,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 20,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+      expect(reward.unlockedIds, contains(AppConstants.points2000Achievement));
+    });
+
+    test('låser upp fråge-badges när antalet frågor passeras', () {
+      const user = UserProgress(
+        userId: 'u13',
+        name: 'Milo',
+        ageGroup: AgeGroup.middle,
+        totalQuestionsAnswered: 490,
+      );
+
+      const session = QuizSession(
+        sessionId: 's13',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 40,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+      expect(
+        reward.unlockedIds,
+        contains(AppConstants.questions500Achievement),
+      );
+      expect(
+        reward.unlockedIds,
+        isNot(contains(AppConstants.questions1000Achievement)),
+      );
+    });
+
+    test('låser upp alla-souvenirer-badge när alla camp-souvenirer är upplåsta',
+        () {
+      const user = UserProgress(
+        userId: 'u14',
+        name: 'Zoe',
+        ageGroup: AgeGroup.middle,
+        unlockedItems: [
+          'item_camp_fruit_glade',
+          'item_camp_bridge',
+          'item_camp_cartography',
+          'item_camp_temple_gate',
+          'item_camp_treasure_cache',
+        ],
+      );
+
+      const session = QuizSession(
+        sessionId: 's14',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 40,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+      expect(
+        reward.unlockedIds,
+        contains(AppConstants.collectAllSouvenirsAchievement),
+      );
+    });
+
+    test('låser inte upp alla-souvenirer-badge när souvenirer saknas', () {
+      const user = UserProgress(
+        userId: 'u15',
+        name: 'Iris',
+        ageGroup: AgeGroup.middle,
+        unlockedItems: ['item_camp_fruit_glade', 'item_camp_bridge'],
+      );
+
+      const session = QuizSession(
+        sessionId: 's15',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 8,
+        wrongAnswers: 2,
+        totalPoints: 40,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+
+expect(
+        reward.unlockedIds,
+        isNot(contains(AppConstants.collectAllSouvenirsAchievement)),
+      );
     });
   });
 }
