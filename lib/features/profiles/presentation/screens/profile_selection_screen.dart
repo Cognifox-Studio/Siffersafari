@@ -5,8 +5,7 @@ import 'package:siffersafari/core/providers/audio_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
-import 'package:siffersafari/core/utils/page_transitions.dart';
-import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/app/navigation/app_navigator.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -83,7 +82,7 @@ class ProfileSelectionScreen extends ConsumerWidget {
                               u.userId,
                             );
                         if (!context.mounted) return;
-                        await context.pushReplacementSmooth(const HomeScreen());
+                        await AppNavigator.replaceWithHome(context);
                       },
                     );
                   },

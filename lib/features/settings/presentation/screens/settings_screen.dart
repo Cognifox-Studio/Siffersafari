@@ -126,11 +126,13 @@ class SettingsScreen extends ConsumerWidget {
                         borderRadius:
                             BorderRadius.circular(AppConstants.borderRadius),
                       ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _AdaptiveDropdownTile<String>(
-                            title: 'Profiler',
+                      child: Material(
+                        color: Colors.transparent,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _AdaptiveDropdownTile<String>(
+                              title: 'Profiler',
                             subtitle: 'Välj eller skapa en profil',
                             value: user?.userId,
                             isCompact: layout.isCompactWidth,
@@ -173,7 +175,8 @@ class SettingsScreen extends ConsumerWidget {
                               ref: ref,
                             ),
                           ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(height: AppConstants.defaultPadding),
@@ -210,11 +213,13 @@ class SettingsScreen extends ConsumerWidget {
                           borderRadius:
                               BorderRadius.circular(AppConstants.borderRadius),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _AdaptiveDropdownTile<int?>(
-                              title: 'Årskurs',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _AdaptiveDropdownTile<int?>(
+                                title: 'Årskurs',
                               subtitle: 'Styr svårighetsnivå (Åk 1–9).',
                               value: user.gradeLevel,
                               isCompact: layout.isCompactWidth,
@@ -364,7 +369,8 @@ class SettingsScreen extends ConsumerWidget {
                                 user.name,
                               ),
                             ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     const SizedBox(height: AppConstants.defaultPadding),
@@ -377,12 +383,14 @@ class SettingsScreen extends ConsumerWidget {
                           borderRadius:
                               BorderRadius.circular(AppConstants.borderRadius),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            ListTile(
-                              title: Text(
-                                'Om appen',
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              ListTile(
+                                title: Text(
+                                  'Om appen',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleSmall
@@ -451,7 +459,8 @@ class SettingsScreen extends ConsumerWidget {
                               ),
                               onTap: () => _confirmClearAllData(context, ref),
                             ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                   ],

@@ -64,61 +64,26 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     super.dispose();
   }
 
-  void _applySessionResults() {
+  Future<void> _applySessionResults() async {
     if (_applied) return;
 
-    final quizState = ref.read(quizProvider);
-    final session = quizState.session;
-    if (session != null) {
-      ref.read(userProvider.notifier).applyQuizResult(session);
+    final session = ref.read(quizProvider).session;
+    if (session == null) return;
 
-      final reward = ref.read(userProvider).lastReward;
-      final shouldCelebrate = session.successRate >= 0.8 ||
-          (reward?.unlockedIds.isNotEmpty ?? false);
-      if (shouldCelebrate) {
-        ref.read(audioServiceProvider).playCelebrationSound();
-        _celebrateTimer = Timer(const Duration(milliseconds: 900), () {
-          if (mounted) {
-            setState(() {
-              _characterCelebrate = true;
-              _showConfetti = true;
-            });
-          }
-        });
-      }
+    final shouldCelebrate =
+        await ref.read(resultsFlowProvider).commitSessionResults(session);
+    if (shouldCelebrate) {
+      _celebrateTimer = Timer(const Duration(milliseconds: 900), () {
+        if (mounted) {
+          setState(() {
+            _characterCelebrate = true;
+            _showConfetti = true;
+          });
+        }
+      });
+    }
 
-      final userId = ref.read(userProvider).activeUser?.userId;
-      if (userId != null && userId.isNotEmpty) {
-        unawaited(
-          ref.read(appAnalyticsProvider).logEvent(
-            name: 'quiz_completed',
-            userId: userId,
-            properties: {
-              'operation': session.operationType.name,
-              'difficulty': session.difficulty.name,
-              'successRate': session.successRate,
-              'correctAnswers': session.correctAnswers,
-              'wrongAnswers': session.wrongAnswers,
-            },
-          ),
-        );
-      }
-
-      final levelUp = ref.read(userProvider).lastLevelUp;
-      if (levelUp != null && userId != null && userId.isNotEmpty) {
-        unawaited(
-          ref.read(appAnalyticsProvider).logEvent(
-            name: 'level_up',
-            userId: userId,
-            properties: {
-              'old_level': levelUp.oldLevel,
-              'new_level': levelUp.newLevel,
-              'title': levelUp.newTitle,
-            },
-          ),
-        );
-      }
-
+    if (mounted) {
       setState(() {
         _applied = true;
       });
@@ -127,12 +92,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final quizState = ref.watch(quizProvider);
+    final readModel = ref.watch(resultsReadModelProvider);
     final userState = ref.watch(userProvider);
-    final session = quizState.session;
-    final reward = userState.lastReward;
-    final storyProgress = ref.watch(storyProgressProvider);
-    final questCompletion = userState.lastQuestCompletion;
+    final session = readModel.session;
+    final reward = readModel.reward;
+    final storyProgress = readModel.storyProgress;
+    final questCompletion = readModel.questCompletion;
+    final quizState = ref.watch(quizProvider);
 
     final themeColors = context.appThemeColors;
 
@@ -154,12 +120,11 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       );
     }
 
-    final shouldCelebrate =
-        session.successRate >= 0.8 || (reward?.unlockedIds.isNotEmpty ?? false);
-    final stars = _calculateStars(session.successRate);
+    final shouldCelebrate = readModel.shouldCelebrate;
+    final stars = readModel.stars;
     final hardest = _ResultsPracticePlanner.hardestQuestions(session);
     final bonusPoints = reward?.bonusPoints ?? 0;
-    final totalPoints = session.totalPoints + bonusPoints;
+    final totalPoints = readModel.totalPoints;
     final panelColor = themeColors.cardColor;
     final didUnlockSomething = reward?.unlockedIds.isNotEmpty ?? false;
 
@@ -171,7 +136,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       didUnlockSomething: didUnlockSomething,
     );
     final activeUser = userState.activeUser;
-    final hasStoryCheckpoint = questCompletion != null && storyProgress != null;
+    final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
     final starCacheSize = imageCacheExtent(context, 100.w);
 
     final summaryHero = Column(
@@ -288,8 +253,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             panelColor: panelColor,
             onPrimary: onPrimary,
             mutedOnPrimary: mutedOnPrimary,
-            storyProgress: storyProgress,
-            questCompletion: questCompletion,
+            storyProgress: storyProgress!,
+            questCompletion: questCompletion!,
             onContinueStory: _goToStoryMapFromResults,
           ),
         ],
@@ -347,14 +312,18 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                   label: const Text('Snabbträna ⚡'),
                 ),
               SizedBox(height: AppConstants.smallPadding.h),
-              TextButton(
-                onPressed: _goHomeFromResults,
-                child: Text(
-                  'Hem',
+              Semantics(
+                button: true,
+                label: ResultsScreenSemantics.homeButtonLabel,
+                child: TextButton(
+                  onPressed: _goHomeFromResults,
+                  child: Text(
+                    'Hem',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                         color: mutedOnPrimary,
                         fontWeight: FontWeight.w600,
                       ),
+                  ),
                 ),
               ),
             ],
@@ -466,10 +435,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playHomeMusic();
-    context.pushAndRemoveUntilSmooth(
-      const HomeScreen(),
-      (route) => false,
-    );
+    AppNavigator.resetStackToHome(context);
   }
 
   void _goToStoryMapFromResults() {
@@ -477,10 +443,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playMapOpenSound();
     ref.read(audioServiceProvider).playStoryMusic();
-    context.pushAndRemoveUntilSmooth(
-      const StoryMapScreen(),
-      (route) => false,
-    );
+    AppNavigator.resetStackToStoryMap(context);
   }
 
   void _startRoundFromResults({
@@ -576,10 +539,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
 
     ref.read(audioServiceProvider).playQuizStartSound();
     ref.read(audioServiceProvider).playQuizMusic();
-    context.pushAndRemoveUntilSmooth(
-      const QuizScreen(),
-      (route) => false,
-    );
+    AppNavigator.resetStackToQuiz(context);
   }
 
   String _getTitle(int stars) {
@@ -603,13 +563,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       charName = id[0].toUpperCase() + id.substring(1);
     }
     return '$charName: $text';
-  }
-
-  int _calculateStars(double successRate) {
-    if (successRate >= 0.9) return 3;
-    if (successRate >= 0.7) return 2;
-    if (successRate >= 0.5) return 1;
-    return 0;
   }
 
   Widget _buildBadgePanel(

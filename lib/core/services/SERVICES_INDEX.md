@@ -14,6 +14,8 @@ Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../do
 ## Fragor och quizplanering
 
 - `question_generator_service.dart`: facade for att bygga fragor
+- `question_generation/`: pipeline DTOs (`QuestionRequest`, `QuestionGenerationContext`) — se `PIPELINE.md`
+- `question_generator_service__pipeline_part.dart`: mix-dispatch (bank vs procedural)
 - `question_generator_service__helpers_part.dart`: gemensamma generatorhelpers
 - `question_generator_service__impl_part.dart`: faktiska generatorgrenar per fragtyp
 - `question_mix_policy.dart`: gates och sannolikheter for mix-specialer
@@ -44,6 +46,12 @@ Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../do
 - `app_analytics_service.dart`: lokal eventlogg utan molnsynk
 - `achievement_service.dart`: badges och bonusrewards
 - `user_audio_settings_service.dart`: profilscopade ljudinstallningar
+
+## DI (GetIt vs Riverpod)
+
+- **GetIt** (`core/di/injection.dart`): singleton-tjänster (generator, audio, TTS, …).
+- **Riverpod** (`core/providers/`, `features/*/providers/`): UI-state, read models, profil-scopade toggles.
+- Navigering: `app/navigation/app_navigator.dart` (features anropar AppNavigator, inte varandras skärmar).
 
 ## Viktiga grenser
 

@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/settings_keys.dart';
+import '../../domain/entities/quiz_session_record.dart';
 import '../../domain/entities/user_progress.dart';
 
 /// Repository for local storage operations using Hive
@@ -47,19 +48,14 @@ class LocalStorageRepository {
   Map<String, dynamic>? _validateQuizSession(dynamic value) {
     final session = _tryAsStringKeyedMap(value);
     if (session == null) return null;
+    final record = QuizSessionRecord.tryParse(session);
+    return record?.raw;
+  }
 
-    // Validate critical fields
-    final sessionId = session['sessionId'];
-    final userId = session['userId'];
-    final isComplete = session['isComplete'];
-    final operationType = session['operationType'];
-
-    if (sessionId is! String || sessionId.isEmpty) return null;
-    if (userId is! String || userId.isEmpty) return null;
-    if (isComplete is! bool) return null;
-    if (operationType is! String || operationType.isEmpty) return null;
-
-    return session;
+  QuizSessionRecord? parseQuizSessionRecord(dynamic value) {
+    final session = _tryAsStringKeyedMap(value);
+    if (session == null) return null;
+    return QuizSessionRecord.tryParse(session);
   }
 
   Iterable<Map<String, dynamic>> _validQuizSessions() sync* {

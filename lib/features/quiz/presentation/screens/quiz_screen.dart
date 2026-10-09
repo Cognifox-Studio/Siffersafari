@@ -15,12 +15,10 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/services/text_to_speech_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
-import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
+import 'package:siffersafari/app/navigation/app_navigator.dart';
 import 'package:siffersafari/features/quiz/presentation/dialogs/feedback_dialog.dart';
-import 'package:siffersafari/features/quiz/presentation/screens/results_screen.dart';
 import 'package:siffersafari/features/quiz/presentation/widgets/answer_button.dart';
 import 'package:siffersafari/features/quiz/presentation/widgets/question_card.dart';
 import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
@@ -128,7 +126,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       setState(() {
         _selectedAnswer = null;
       });
-      context.pushReplacementSmooth(const ResultsScreen());
+      AppNavigator.replaceWithResults(context);
       return;
     }
 
@@ -163,10 +161,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       quizProvider.select((state) => state.session),
       (prev, session) {
         if (session == null || session.currentQuestion == null) {
-          context.pushAndRemoveUntilSmooth(
-            const HomeScreen(),
-            (route) => false,
-          );
+          AppNavigator.resetStackToHome(context);
         }
       },
     );

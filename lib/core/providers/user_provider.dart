@@ -396,6 +396,7 @@ class UserNotifier extends StateNotifier<UserState> {
     await saveUser(updatedUser);
   }
 
+  /// Sole write path for completed quiz sessions (via [ApplyQuizResultUseCase]).
   Future<void> applyQuizResult(QuizSession session) async {
     final user = state.activeUser;
     if (user == null) {

@@ -14,12 +14,10 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
-import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
-import 'package:siffersafari/features/parent/presentation/screens/parent_pin_screen.dart';
+import 'package:siffersafari/app/navigation/app_navigator.dart';
 import 'package:siffersafari/features/parent/providers/parent_quiz_history_provider.dart';
-import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
 part 'parent_dashboard_screen__benchmark_part.dart';
@@ -48,7 +46,7 @@ class ParentDashboardScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Inställningar',
             onPressed: () {
-              context.pushSmooth(const SettingsScreen());
+              AppNavigator.openSettings(context);
             },
             icon: Image.asset(
               'assets/images/ui/ic_ui_settings.png',
@@ -61,7 +59,7 @@ class ParentDashboardScreen extends ConsumerWidget {
           IconButton(
             tooltip: 'Byt PIN',
             onPressed: () {
-              context.pushSmooth(const ParentPinScreen(forceSetNewPin: true));
+              AppNavigator.openParentPin(context, forceSetNewPin: true);
             },
             icon: const Icon(Icons.key),
           ),

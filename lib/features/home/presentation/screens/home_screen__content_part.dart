@@ -52,13 +52,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
     if (!done) {
       _onboardingPushInFlight = true;
-      Navigator.of(context)
-          .push(
-        MaterialPageRoute(
-          builder: (_) => OnboardingScreen(userId: userId),
-        ),
-      )
-          .whenComplete(() {
+      AppNavigator.openOnboarding(context, userId: userId).whenComplete(() {
         if (mounted) {
           _onboardingPushInFlight = false;
         }
@@ -71,7 +65,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     audio.playMapOpenSound();
     audio.playStoryMusic();
 
-    context.pushSmooth(const StoryMapScreen()).then((_) {
+    AppNavigator.openStoryMap(context).then((_) {
       if (!mounted) return;
       ref.read(audioServiceProvider).playHomeMusic();
     });
@@ -82,7 +76,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     audio.playQuizStartSound();
     audio.playQuizMusic();
 
-    context.pushSmooth(const QuizScreen()).then((_) {
+    AppNavigator.openQuiz(context).then((_) {
       if (!mounted) return;
       ref.read(audioServiceProvider).playHomeMusic();
     });
@@ -309,7 +303,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Skapa en profil först!')),
       );
-      context.pushSmooth(const SettingsScreen());
+      AppNavigator.openSettings(context);
       return;
     }
 
@@ -485,9 +479,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                                 userId: user.userId,
                                               ),
                                         );
-                                        context.pushSmooth(
-                                          const ParentPinScreen(),
-                                        );
+                                        AppNavigator.openParentPin(context);
                                       },
                                       iconSize: 56,
                                       icon: Image.asset(

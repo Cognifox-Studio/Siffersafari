@@ -5,7 +5,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/features/home/presentation/widgets/camp_collection_album.dart';
-import 'package:siffersafari/features/inventory/presentation/screens/wardrobe_screen.dart';
+import 'package:siffersafari/app/navigation/app_navigator.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 
@@ -49,11 +49,7 @@ class CampSceneView extends ConsumerWidget {
   void _openWardrobe(BuildContext context, WidgetRef ref) {
     final user = ref.read(userProvider).activeUser;
     if (user != null) {
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const WardrobeScreen(),
-        ),
-      );
+      AppNavigator.openWardrobe(context);
     }
   }
 

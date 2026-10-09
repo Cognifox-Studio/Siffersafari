@@ -1,7 +1,7 @@
 <!--
 typ: explanation
 syfte: Now / Next / Later — aktiv prioritering utan falska datumlöften
-uppdaterad: 2026-08-31
+uppdaterad: 2026-09-25
 -->
 
 # Aktiv plan — Now / Next / Later
@@ -14,19 +14,13 @@ uppdaterad: 2026-08-31
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-Cursor-first rutin-slim (QA-grön / landad).
-
-*Senaste produkt-Now (klar):* Story / biome — nästa värld i slutskedet.  
-*Parkerat:* Play promote av `1.4.3+21` (väntar Console).
+Inget öppet produktspår. `main` är `1.4.3+22`; senaste tagg är `v1.4.3+21`.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Play promote** — closed/alpha för `1.4.3+21`, sedan ev. staged production (människa i Console)
-2. **Ny Play-build med camp/story** — bump `1.4.3+22` (eller högre) om HEAD ska ut via Play
-
-Välj **en** till Now. Parkera de andra kvar i Next eller flytta till Later.
+Inga. Välj ett produktspår uttryckligen innan det blir Now.
 
 ---
 

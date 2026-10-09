@@ -22,14 +22,6 @@ void main() {
         RegExp(r'https?://'),
       ];
 
-      // AppUpdateService has an explicit parent-initiated update check/download flow.
-      const allowedViolations = <String, Set<String>>{
-        'lib/core/services/app_update_service.dart': {
-          r'\bHttpClient\s*\(',
-          r'https?://',
-        },
-      };
-
       final violations = <String>[];
       final dartFiles = libDir
           .listSync(recursive: true)
@@ -42,12 +34,7 @@ void main() {
 
         for (final pattern in forbiddenPatterns) {
           if (pattern.hasMatch(content)) {
-            final allowedForFile = allowedViolations[path];
-            final isAllowedForFile = allowedForFile != null &&
-                allowedForFile.contains(pattern.pattern);
-            if (!isAllowedForFile) {
-              violations.add('$path -> ${pattern.pattern}');
-            }
+            violations.add('$path -> ${pattern.pattern}');
           }
         }
       }

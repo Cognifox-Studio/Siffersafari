@@ -11,9 +11,7 @@ void main() {
         final path = _relativePath(file.path);
         final content = file.readAsStringSync();
 
-        if (content.contains('package:siffersafari/features/') ||
-            content.contains('../features/') ||
-            content.contains('../../features/')) {
+        if (_importsFeatureLayer(content)) {
           violations.add(path);
         }
       }
@@ -111,21 +109,10 @@ void main() {
 }
 
 const _allowedFeatureEdges = {
-  'home -> inventory',
   'home -> onboarding',
-  'home -> parent',
   'home -> profiles',
-  'home -> quiz',
-  'home -> settings',
-  'home -> story',
   'onboarding -> profiles',
-  'parent -> settings',
-  'profiles -> home',
-  'quiz -> home',
-  'quiz -> story',
   'settings -> profiles',
-  'story -> home',
-  'story -> quiz',
 };
 
 Iterable<File> _dartFilesUnder(List<String> roots) sync* {
@@ -147,6 +134,26 @@ String _relativePath(String absolutePath) {
   return normalized.startsWith(rootPath)
       ? normalized.substring(rootPath.length + 1)
       : normalized;
+}
+
+bool _importsFeatureLayer(String content) {
+  if (content.contains('../features/') || content.contains('../../features/')) {
+    return true;
+  }
+  if (!content.contains('package:siffersafari/features/')) {
+    return false;
+  }
+  // Allow core provider barrels that only re-export feature-owned toggles.
+  final lines = content.split('\n');
+  for (final line in lines) {
+    final trimmed = line.trim();
+    if (trimmed.isEmpty || trimmed.startsWith('//')) continue;
+    if (trimmed.startsWith('export ')) continue;
+    if (trimmed.contains('package:siffersafari/features/')) {
+      return true;
+    }
+  }
+  return false;
 }
 
 String? _featureNameForPath(String path) {

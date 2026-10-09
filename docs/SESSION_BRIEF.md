@@ -6,22 +6,20 @@
 
 ---
 
-## Now (2026-08-31)
+## Now (2026-09-25)
 
-**Mål:** Slimma utvecklarrutiner för Cursor (process + archive).  
-**Status:** Slice landad — DoD-light + archive + Cursor-rule.
+**Mål:** Inget öppet produktspår.  
+**Status:** Kod på `main` är `1.4.3+22`. Senaste tagg är `v1.4.3+21`. Nästa produktspår väljs uttryckligen.
 
-**Föregående produkt-Now (klart):** Story/biome — `nextBiome` i slutskedet (`fc236a7`).  
-**Parkerat:** Play promote av `1.4.3+21` (Console).
+**Klart sedan förra briefen:** Cursor-rutin-slim, camp-souvenirer, `nextBiome` i slutskedet, fler samlar-badges (`7090fd3`).
 
 ---
 
 ## Nuläge (snapshot)
 
-**Version:** 1.4.3+21 (`pubspec` = tagg `v1.4.3+21`)  
-**Play:** Internt test **Go** för `1.4.3+21` ✅ · Closed/production: ej klar  
-**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21  
-**Obs:** `main` har camp/story-commits efter taggen — kräver bump innan ny Play-upload.
+**Version i repo:** `1.4.3+22` (`pubspec.yaml`)  
+**Senaste tagg:** `v1.4.3+21`  
+**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21
 
 ---
 
@@ -39,8 +37,11 @@ Feature-START_HERE synkade (settings/home/parent/quiz m.fl.). (`51fc85d`)
 **2026-08-31 – Camp: piedestaler + souveniralbum**  
 Souvenirer först på piedestaler; album från collection-badge. (`ef0e19a`, `1eaeb1c`)
 
-**2026-07-24 – Daily Challenge pension + Play internal Go `1.4.3+21`**  
-Feature borta; legacy Hive-nycklar endast för profil-wipe. Promote till closed/prod ej klar.
+**2026-09-25 – Samlar-badges**  
+Fler samlar-achievements på `main` (`7090fd3`), i samma build som `1.4.3+22`.
+
+**2026-07-24 – Daily Challenge pension**  
+Feature borta; legacy Hive-nycklar endast för profil-wipe.
 
 Äldre leveransnotiser: git-logg / tidigare brief-versioner.
 

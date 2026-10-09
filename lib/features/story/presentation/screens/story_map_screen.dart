@@ -15,10 +15,8 @@ import 'package:siffersafari/core/providers/word_problems_settings_provider.dart
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
-import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
-import 'package:siffersafari/features/home/presentation/screens/home_screen.dart';
-import 'package:siffersafari/features/quiz/presentation/screens/quiz_screen.dart';
+import 'package:siffersafari/app/navigation/app_navigator.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -83,7 +81,7 @@ class StoryMapScreen extends ConsumerWidget {
       audio.playQuizStartSound();
       audio.playQuizMusic();
 
-      context.pushSmooth(const QuizScreen()).then((_) {
+      AppNavigator.openQuiz(context).then((_) {
         if (!context.mounted) return;
         ref.read(audioServiceProvider).playStoryMusic();
       });
@@ -92,10 +90,7 @@ class StoryMapScreen extends ConsumerWidget {
     void startCurrentQuest() {
       if (story.isEpisodeComplete) {
         ref.read(audioServiceProvider).playHomeMusic();
-        context.pushAndRemoveUntilSmooth(
-          const HomeScreen(),
-          (route) => false,
-        );
+        AppNavigator.resetStackToHome(context);
         return;
       }
 
