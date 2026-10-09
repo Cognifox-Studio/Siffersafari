@@ -13,6 +13,31 @@ void main() {
       service = FeedbackService();
     });
 
+    test('delar stora additionshopp i tiotal och ental', () {
+      const question = Question(
+        id: 'q_add_large',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 50,
+        operand2: 44,
+        correctAnswer: 94,
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 80,
+        ageGroup: AgeGroup.middle,
+      );
+
+      expect(
+        feedback.message,
+        contains('💡 Först +40 till 90, sedan +4 till 94.'),
+      );
+      expect(feedback.numberLine?.waypoint, 90);
+      expect(feedback.numberLine?.firstHop, 40);
+      expect(feedback.numberLine?.secondHop, 4);
+    });
+
     test('ger extra additionstips vid fel svar', () {
       const question = Question(
         id: 'q_add_tip',

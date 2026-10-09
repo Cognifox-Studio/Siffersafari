@@ -122,11 +122,11 @@ void main() {
       await tester.pump();
       await pumpUntilFound(
         tester,
-        find.text('Kolla in din nya Riktig Safarihatt i garderoben.'),
+        find.text('Kolla in din nya Safarihatt i garderoben.'),
       );
 
       expect(
-        find.text('Kolla in din nya Riktig Safarihatt i garderoben.'),
+        find.text('Kolla in din nya Safarihatt i garderoben.'),
         findsOneWidget,
       );
       expect(

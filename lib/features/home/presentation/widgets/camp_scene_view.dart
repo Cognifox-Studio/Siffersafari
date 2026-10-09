@@ -93,7 +93,7 @@ class CampSceneView extends ConsumerWidget {
         .clamp(0, unlockedCampItemCount);
 
     // The height of the camp scene.
-    final height = isWideScreen ? 256.0 : 216.0;
+    final height = isWideScreen ? 220.0 : 160.0;
 
     return Container(
       key: const Key('camp_scene_view'),
@@ -221,6 +221,7 @@ class CampSceneView extends ConsumerWidget {
                 equippedItems: user?.equippedItems ?? const {},
                 customItemOffsets: user?.customItemOffsets ?? const {},
                 onTap: () => _openWardrobe(context, ref),
+                semanticLabel: 'Öppna garderoben',
               ),
             ),
           ),

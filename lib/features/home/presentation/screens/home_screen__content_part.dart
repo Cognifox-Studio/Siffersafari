@@ -417,7 +417,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ? 1.15
                   : layout.isMediumWidth
                       ? 1.0
-                      : 0.95;
+                      : 1.55;
 
           final questHeroLogicalWidth = isWideScreen
               ? constraints.maxWidth.clamp(0.0, 800.0).toDouble()
@@ -441,13 +441,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           SizedBox(
-                            height: 120,
+                            height: 88,
                             child: Stack(
                               alignment: Alignment.center,
                               children: [
                                 Image.asset(
                                   'assets/images/ui/img_logo_safari.png',
-                                  height: 120,
+                                  height: 88,
                                   fit: BoxFit.contain,
                                   cacheHeight: homeLogoCacheHeight,
                                 ),
@@ -550,6 +550,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               ],
                             ),
                             const SizedBox(height: AppConstants.defaultPadding),
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                'Välj räknesätt',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.copyWith(
+                                      color: onPrimary,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                              ),
+                            ),
+                            const SizedBox(height: AppConstants.defaultPadding),
+                            GridView.count(
+                              crossAxisCount: gridCrossAxisCount,
+                              childAspectRatio: operationCardAspectRatio,
+                              crossAxisSpacing: AppConstants.defaultPadding,
+                              mainAxisSpacing: AppConstants.defaultPadding,
+                              physics: const NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              children: operationCards,
+                            ),
+                            const SizedBox(height: AppConstants.defaultPadding),
                             RepaintBoundary(
                               child: CampSceneView(
                                 mascotReaction: _mascotReaction,
@@ -572,36 +596,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         ],
                       ),
                     ),
-                    if (user != null) ...[
-                      const SizedBox(height: AppConstants.largePadding),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Välj räknesätt',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    color: onPrimary,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: AppConstants.defaultPadding),
-                    if (user != null)
-                      ConstrainedBox(
-                        constraints: isWideScreen
-                            ? const BoxConstraints(maxWidth: 800)
-                            : const BoxConstraints(),
-                        child: GridView.count(
-                          crossAxisCount: gridCrossAxisCount,
-                          childAspectRatio: operationCardAspectRatio,
-                          crossAxisSpacing: AppConstants.defaultPadding,
-                          mainAxisSpacing: AppConstants.defaultPadding,
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          children: operationCards,
-                        ),
-                      ),
                     if (user != null) ...[
                       const SizedBox(height: AppConstants.largePadding),
                       Align(

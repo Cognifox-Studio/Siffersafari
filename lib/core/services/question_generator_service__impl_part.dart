@@ -2132,8 +2132,20 @@ Vilken typ av korrelation har variablerna?
           continue;
         }
 
+        if ((operand1 == 0 || operand2 == 0) && operand1 + operand2 > 10) {
+          operand1 = _randomInRange(range);
+          operand2 = _randomInRange(range);
+          continue;
+        }
+
         break;
       }
+    }
+    if (operand1 == 0 && operand2 > 10) {
+      operand1 = 1;
+    }
+    if (operand2 == 0 && operand1 > 10) {
+      operand2 = 1;
     }
     final correctAnswer = operand1 + operand2;
 
@@ -2376,9 +2388,17 @@ Vilken typ av korrelation har variablerna?
         continue;
       }
 
+      if (operand2 == 0 && operand1 > 10) {
+        operand2 = _randomInRange(range);
+        continue;
+      }
+
       break;
     }
 
+    if (operand2 == 0 && operand1 > 10) {
+      operand2 = 1;
+    }
     final correctAnswer = operand1 - operand2;
 
     return Question(

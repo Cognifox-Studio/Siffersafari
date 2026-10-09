@@ -6,10 +6,10 @@
 
 ---
 
-## Now (2026-09-25)
+## Now (2026-10-09)
 
 **Mål:** Inget öppet produktspår.  
-**Status:** Kod på `main` är `1.4.3+22`. Senaste tagg är `v1.4.3+21`. Nästa produktspår väljs uttryckligen.
+**Status:** Playtest-polish (frågekort, tallinje, resultat, hem) är inne lokalt på `1.4.3+22`. Senaste tagg är `v1.4.3+21`. Inte pushad.
 
 **Klart sedan förra briefen:** Cursor-rutin-slim, camp-souvenirer, `nextBiome` i slutskedet, fler samlar-badges (`7090fd3`).
 

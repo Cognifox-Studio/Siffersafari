@@ -29,8 +29,8 @@ class QuestionCard extends StatelessWidget {
     required bool compact,
   }) {
     final candidates = compact
-        ? <double>[44, 40, 36, 32, 28]
-        : <double>[64, 58, 52, 46, 40, 34];
+        ? <double>[40, 36, 32, 28, 24, 20, 18]
+        : <double>[56, 48, 42, 36, 32, 28, 24, 20];
     final textScaler = MediaQuery.textScalerOf(context);
 
     for (final fontSize in candidates) {
@@ -117,8 +117,11 @@ class QuestionCard extends StatelessWidget {
                     ? AppConstants.smallPadding.w
                     : AppConstants.defaultPadding.w)
                 : AppConstants.largePadding.w;
-            final maxQuestionWidth =
-                constraints.maxWidth < 520.w ? constraints.maxWidth : 520.w;
+            final horizontalChrome =
+                (AppConstants.defaultPadding.w * 2) + (cardPadding * 2);
+            final innerWidth = (constraints.maxWidth - horizontalChrome)
+                .clamp(48.0, constraints.maxWidth);
+            final maxQuestionWidth = innerWidth < 520.w ? innerWidth : 520.w;
 
             final questionStyle = isWordProblem
                 ? (compact ? textTheme.titleMedium : textTheme.headlineSmall)
@@ -211,19 +214,21 @@ class QuestionCard extends StatelessWidget {
                                       maxLines: questionMaxLines,
                                       overflow: TextOverflow.ellipsis,
                                     )
-                                  : Text(
-                                      question.displayQuestionText,
-                                      style: questionStyle?.copyWith(
-                                        fontSize: equationFontSize,
-                                        fontWeight: FontWeight.bold,
-                                        color: questionTextColor ??
-                                            scheme.onSurface,
-                                        height: 1.0,
+                                  : FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      child: Text(
+                                        question.displayQuestionText,
+                                        style: questionStyle?.copyWith(
+                                          fontSize: equationFontSize,
+                                          fontWeight: FontWeight.bold,
+                                          color: questionTextColor ??
+                                              scheme.onSurface,
+                                          height: 1.0,
+                                        ),
+                                        maxLines: 1,
+                                        softWrap: false,
+                                        textAlign: TextAlign.center,
                                       ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.clip,
-                                      softWrap: false,
-                                      textAlign: TextAlign.center,
                                     ),
                             ),
                           ),

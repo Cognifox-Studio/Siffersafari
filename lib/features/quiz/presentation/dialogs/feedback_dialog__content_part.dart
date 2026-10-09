@@ -298,11 +298,11 @@ class _FeedbackNumberLineView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final startAlignment =
-        numberLine.startOnLeft ? Alignment.centerLeft : Alignment.centerRight;
-    final semanticsLabel = numberLine.isSubtraction
-        ? 'Tallinje. Start ${numberLine.start}. Räkna tillbaka ${numberLine.jump} steg till ${numberLine.end}.'
-        : 'Tallinje. Start ${numberLine.start}. Räkna fram ${numberLine.jump} steg till ${numberLine.end}.';
+    final semanticsLabel = numberLine.usesTwoHops
+        ? 'Tallinje. Från ${numberLine.start} via ${numberLine.waypoint} till ${numberLine.end}.'
+        : numberLine.isSubtraction
+            ? 'Tallinje. Start ${numberLine.start}. Räkna tillbaka ${numberLine.jump} steg till ${numberLine.end}.'
+            : 'Tallinje. Start ${numberLine.start}. Räkna fram ${numberLine.jump} steg till ${numberLine.end}.';
 
     return Semantics(
       label: semanticsLabel,
@@ -313,125 +313,209 @@ class _FeedbackNumberLineView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: AppConstants.smallPadding.w,
-                  vertical: AppConstants.microSpacing6.h,
-                ),
-                decoration: BoxDecoration(
-                  color: accentColor.withValues(alpha: 0.12),
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
-                  border: Border.all(
-                    color: accentColor.withValues(alpha: 0.34),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Container(
+                  key: const Key('feedback_number_line_start_chip'),
+                  margin: EdgeInsets.only(bottom: AppConstants.smallPadding.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AppConstants.microSpacing6.w,
+                    vertical: 2.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: accentColor.withValues(alpha: 0.14),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    'Start ${numberLine.start}',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: accentColor,
+                          fontWeight: FontWeight.w800,
+                        ),
                   ),
                 ),
-                child: Text(
-                  numberLine.jumpLabel,
-                  key: const Key('feedback_number_line_jump'),
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: accentColor,
-                        fontWeight: FontWeight.w900,
-                      ),
-                ),
               ),
-              SizedBox(height: AppConstants.smallPadding.h),
-              SizedBox(
-                height: 64.h,
+              if (numberLine.usesTwoHops)
+                _TwoHopLine(
+                  numberLine: numberLine,
+                  accentColor: accentColor,
+                  textColor: textColor,
+                )
+              else
+                _SingleHopLine(
+                  numberLine: numberLine,
+                  accentColor: accentColor,
+                  textColor: textColor,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SingleHopLine extends StatelessWidget {
+  const _SingleHopLine({
+    required this.numberLine,
+    required this.accentColor,
+    required this.textColor,
+  });
+
+  final FeedbackNumberLine numberLine;
+  final Color accentColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final tickCount = numberLine.jump.clamp(1, 10);
+    return Column(
+      children: [
+        Text(
+          numberLine.jumpLabel,
+          key: const Key('feedback_number_line_jump'),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: accentColor,
+                fontWeight: FontWeight.w900,
+              ),
+        ),
+        SizedBox(height: AppConstants.smallPadding.h),
+        SizedBox(
+          height: 18.h,
+          child: Row(
+            children: [
+              _NumberLineDot(color: accentColor),
+              Expanded(
                 child: Stack(
-                  clipBehavior: Clip.none,
+                  alignment: Alignment.center,
                   children: [
-                    Align(
-                      alignment: startAlignment,
-                      child: Container(
-                        key: const Key('feedback_number_line_start_chip'),
-                        margin: EdgeInsets.symmetric(horizontal: 6.w),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AppConstants.microSpacing6.w,
-                          vertical: 2.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.14),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                        child: Text(
-                          'Start',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
-                                    color: accentColor,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                        ),
-                      ),
+                    Container(
+                      height: 4.h,
+                      color: accentColor.withValues(alpha: 0.72),
                     ),
-                    Positioned(
-                      left: 18.w,
-                      right: 18.w,
-                      top: 22.h,
-                      child: Container(
-                        height: 4.h,
-                        decoration: BoxDecoration(
-                          color: accentColor.withValues(alpha: 0.72),
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      left: 10.w,
-                      top: 16.h,
-                      child: _NumberLineDot(
-                        color: numberLine.startOnLeft
-                            ? accentColor
-                            : accentColor.withValues(alpha: 0.42),
-                      ),
-                    ),
-                    Positioned(
-                      right: 10.w,
-                      top: 16.h,
-                      child: _NumberLineDot(
-                        color: numberLine.startOnLeft
-                            ? accentColor.withValues(alpha: 0.42)
-                            : accentColor,
-                      ),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: 40.h,
-                      child: SizedBox(
-                        width: 46.w,
-                        child: Text(
-                          '${numberLine.leftValue}',
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: textColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      right: 0,
-                      top: 40.h,
-                      child: SizedBox(
-                        width: 46.w,
-                        child: Text(
-                          '${numberLine.rightValue}',
-                          textAlign: TextAlign.center,
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: textColor,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                        ),
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        for (var i = 0; i < tickCount; i++)
+                          Container(
+                            width: 3.w,
+                            height: 12.h,
+                            color: accentColor,
+                          ),
+                      ],
                     ),
                   ],
                 ),
               ),
+              _NumberLineDot(color: accentColor.withValues(alpha: 0.42)),
             ],
           ),
         ),
+        SizedBox(height: 4.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              '${numberLine.leftValue}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: textColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+            Text(
+              '${numberLine.rightValue}',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: textColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _TwoHopLine extends StatelessWidget {
+  const _TwoHopLine({
+    required this.numberLine,
+    required this.accentColor,
+    required this.textColor,
+  });
+
+  final FeedbackNumberLine numberLine;
+  final Color accentColor;
+  final Color textColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          color: accentColor,
+          fontWeight: FontWeight.w900,
+        );
+    final valueStyle = Theme.of(context).textTheme.bodyMedium?.copyWith(
+          color: textColor,
+          fontWeight: FontWeight.w700,
+        );
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                numberLine.hopLabel(numberLine.firstHop!),
+                key: const Key('feedback_number_line_jump'),
+                textAlign: TextAlign.center,
+                style: labelStyle,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                numberLine.hopLabel(numberLine.secondHop!),
+                textAlign: TextAlign.center,
+                style: labelStyle,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: AppConstants.smallPadding.h),
+        Row(
+          children: [
+            _NumberLineDot(color: accentColor),
+            Expanded(child: _HopBar(color: accentColor)),
+            _NumberLineDot(color: accentColor),
+            Expanded(child: _HopBar(color: accentColor)),
+            _NumberLineDot(color: accentColor.withValues(alpha: 0.42)),
+          ],
+        ),
+        SizedBox(height: 4.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('${numberLine.start}', style: valueStyle),
+            Text('${numberLine.waypoint}', style: valueStyle),
+            Text('${numberLine.end}', style: valueStyle),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _HopBar extends StatelessWidget {
+  const _HopBar({required this.color});
+
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 4.h,
+      margin: EdgeInsets.symmetric(horizontal: 4.w),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.72),
+        borderRadius: BorderRadius.circular(999),
       ),
     );
   }

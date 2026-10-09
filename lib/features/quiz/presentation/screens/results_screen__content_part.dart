@@ -120,7 +120,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       );
     }
 
-    final shouldCelebrate = readModel.shouldCelebrate;
     final stars = readModel.stars;
     final hardest = _ResultsPracticePlanner.hardestQuestions(session);
     final bonusPoints = reward?.bonusPoints ?? 0;
@@ -137,13 +136,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
     final activeUser = userState.activeUser;
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
-    final starCacheSize = imageCacheExtent(context, 100.w);
 
     final summaryHero = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         SizedBox(
-          height: 112.h,
+          height: 88.h,
           child: GameCharacter(
             characterId: activeUser?.selectedCharacterId == 'signe'
                 ? CharacterId.signe
@@ -154,7 +152,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 ? CharacterReaction.celebrate
                 : CharacterReaction.idle,
             reactionNonce: _characterCelebrate ? 1 : 0,
-            height: 112.h,
+            height: 88.h,
             equippedItems: activeUser?.equippedItems,
             customItemOffsets: activeUser?.customItemOffsets,
           ),
@@ -165,35 +163,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           title: _getTitle(stars),
           center: true,
         ),
-        const SizedBox(height: AppConstants.largePadding),
-        if (shouldCelebrate) ...[
-          TweenAnimationBuilder<double>(
-            duration: AppConstants.celebrationPopDuration,
-            tween: Tween(begin: 0.0, end: 1.0),
-            curve: Curves.easeOutBack,
-            builder: (context, t, child) {
-              final scale = 0.85 + (0.15 * t);
-              return Opacity(
-                opacity: t.clamp(0.0, 1.0),
-                child: Transform.scale(
-                  scale: scale,
-                  child: child,
-                ),
-              );
-            },
-            child: SizedBox(
-              height: 150.h,
-              child: Image.asset(
-                'assets/images/ui/ic_ui_star.png',
-                width: 100.w,
-                height: 100.w,
-                cacheWidth: starCacheSize,
-                cacheHeight: starCacheSize,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppConstants.largePadding),
-        ],
+        const SizedBox(height: AppConstants.defaultPadding),
         StarRating(stars: stars),
       ],
     );
@@ -205,9 +175,8 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          PlayfulSectionHeading(
-            eyebrow: 'Så gick det',
-            title: '${session.correctAnswers} rätt',
+          const PlayfulSectionHeading(
+            title: 'Så gick det',
           ),
           SizedBox(height: AppConstants.largePadding.h),
           Wrap(
@@ -234,9 +203,82 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final showCoachCard = activeUser != null && stars == 0;
     final showCelebrationCard = didUnlockSomething || stars == 3;
 
+    final nextStepPanel = PlayfulPanel(
+      hero: !hasStoryCheckpoint,
+      backgroundColor: panelColor,
+      highlightColor: themeColors.secondaryActionColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          PlayfulSectionHeading(
+            title: hasStoryCheckpoint ? 'Mer att prova' : 'Kör mer?',
+          ),
+          SizedBox(height: AppConstants.defaultPadding.h),
+          if (hasStoryCheckpoint)
+            OutlinedButton.icon(
+              onPressed: () => _startRoundFromResults(
+                session: session,
+                hardest: hardest,
+                useFocusedMiniPass: false,
+              ),
+              icon: const Icon(Icons.replay_rounded),
+              label: const Text('Spela igen'),
+            )
+          else
+            ElevatedButton.icon(
+              onPressed: () => _startRoundFromResults(
+                session: session,
+                hardest: hardest,
+                useFocusedMiniPass: false,
+              ),
+              icon: const Icon(Icons.replay_rounded),
+              label: const Text('Spela igen'),
+            ),
+          SizedBox(height: AppConstants.defaultPadding.h),
+          if (hasStoryCheckpoint)
+            TextButton.icon(
+              onPressed: () => _startRoundFromResults(
+                session: session,
+                hardest: hardest,
+                useFocusedMiniPass: true,
+              ),
+              icon: const Icon(Icons.bolt_rounded),
+              label: const Text('Snabbträna ⚡'),
+            )
+          else
+            OutlinedButton.icon(
+              onPressed: () => _startRoundFromResults(
+                session: session,
+                hardest: hardest,
+                useFocusedMiniPass: true,
+              ),
+              icon: const Icon(Icons.bolt_rounded),
+              label: const Text('Snabbträna ⚡'),
+            ),
+          SizedBox(height: AppConstants.smallPadding.h),
+          Semantics(
+            button: true,
+            label: ResultsScreenSemantics.homeButtonLabel,
+            child: TextButton(
+              onPressed: _goHomeFromResults,
+              child: Text(
+                'Hem',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: mutedOnPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+
     final actionColumn = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        nextStepPanel,
+        const SizedBox(height: AppConstants.largePadding),
         if (userState.newlyUnlockedItem != null) ...[
           _ItemUnlockedBanner(item: userState.newlyUnlockedItem!),
           const SizedBox(height: AppConstants.largePadding),
@@ -258,77 +300,6 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             onContinueStory: _goToStoryMapFromResults,
           ),
         ],
-        const SizedBox(height: AppConstants.largePadding),
-        PlayfulPanel(
-          hero: !hasStoryCheckpoint,
-          backgroundColor: panelColor,
-          highlightColor: themeColors.secondaryActionColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              PlayfulSectionHeading(
-                title: hasStoryCheckpoint ? 'Mer att prova' : 'Kör mer?',
-              ),
-              SizedBox(height: AppConstants.defaultPadding.h),
-              if (hasStoryCheckpoint)
-                OutlinedButton.icon(
-                  onPressed: () => _startRoundFromResults(
-                    session: session,
-                    hardest: hardest,
-                    useFocusedMiniPass: false,
-                  ),
-                  icon: const Icon(Icons.replay_rounded),
-                  label: const Text('Spela igen'),
-                )
-              else
-                ElevatedButton.icon(
-                  onPressed: () => _startRoundFromResults(
-                    session: session,
-                    hardest: hardest,
-                    useFocusedMiniPass: false,
-                  ),
-                  icon: const Icon(Icons.replay_rounded),
-                  label: const Text('Spela igen'),
-                ),
-              SizedBox(height: AppConstants.defaultPadding.h),
-              if (hasStoryCheckpoint)
-                TextButton.icon(
-                  onPressed: () => _startRoundFromResults(
-                    session: session,
-                    hardest: hardest,
-                    useFocusedMiniPass: true,
-                  ),
-                  icon: const Icon(Icons.bolt_rounded),
-                  label: const Text('Snabbträna ⚡'),
-                )
-              else
-                OutlinedButton.icon(
-                  onPressed: () => _startRoundFromResults(
-                    session: session,
-                    hardest: hardest,
-                    useFocusedMiniPass: true,
-                  ),
-                  icon: const Icon(Icons.bolt_rounded),
-                  label: const Text('Snabbträna ⚡'),
-                ),
-              SizedBox(height: AppConstants.smallPadding.h),
-              Semantics(
-                button: true,
-                label: ResultsScreenSemantics.homeButtonLabel,
-                child: TextButton(
-                  onPressed: _goHomeFromResults,
-                  child: Text(
-                    'Hem',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
         if (showCoachCard) ...[
           const SizedBox(height: AppConstants.largePadding),
           _buildProgressSummaryPanel(
@@ -364,7 +335,13 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             final useTwoColumnResults = layout.isExpandedWidth;
 
             return SingleChildScrollView(
-              padding: const EdgeInsets.all(AppConstants.defaultPadding),
+              padding: EdgeInsets.fromLTRB(
+                AppConstants.defaultPadding,
+                AppConstants.defaultPadding,
+                AppConstants.defaultPadding,
+                AppConstants.defaultPadding +
+                    MediaQuery.paddingOf(context).bottom,
+              ),
               child: ConstrainedBox(
                 constraints: BoxConstraints(minHeight: constraints.maxHeight),
                 child: Center(

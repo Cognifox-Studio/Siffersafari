@@ -31,6 +31,7 @@ class GameCharacter extends StatefulWidget {
     this.interactiveItems = false,
     this.persistentReaction = false,
     this.onTap,
+    this.semanticLabel,
   });
 
   final CharacterReaction reaction;
@@ -64,6 +65,9 @@ class GameCharacter extends StatefulWidget {
 
   /// Callback when the character is tapped.
   final VoidCallback? onTap;
+
+  /// Spoken name when [onTap] opens another screen.
+  final String? semanticLabel;
 
   @override
   State<GameCharacter> createState() => _GameCharacterState();
@@ -271,7 +275,7 @@ class _GameCharacterState extends State<GameCharacter>
   }
 
   Widget _buildAnimatedCharacterSurface(double canvasSize) {
-    return GestureDetector(
+    final detector = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: widget.onTap == null
           ? null
@@ -388,6 +392,17 @@ class _GameCharacterState extends State<GameCharacter>
           );
         },
       ),
+    );
+
+    final label = widget.semanticLabel;
+    if (label == null || label.isEmpty) {
+      return detector;
+    }
+
+    return Semantics(
+      button: true,
+      label: label,
+      child: detector,
     );
   }
 

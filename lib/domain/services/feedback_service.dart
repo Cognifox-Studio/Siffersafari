@@ -29,6 +29,9 @@ class FeedbackNumberLine {
     required this.jump,
     required this.end,
     required this.operationType,
+    this.waypoint,
+    this.firstHop,
+    this.secondHop,
   });
 
   final int start;
@@ -36,9 +39,19 @@ class FeedbackNumberLine {
   final int end;
   final OperationType operationType;
 
+  /// Intermediate stop when a large jump is split into tens and ones.
+  final int? waypoint;
+  final int? firstHop;
+  final int? secondHop;
+
   bool get isSubtraction => operationType == OperationType.subtraction;
 
+  bool get usesTwoHops =>
+      waypoint != null && firstHop != null && secondHop != null;
+
   String get jumpLabel => isSubtraction ? '-$jump' : '+$jump';
+
+  String hopLabel(int hop) => isSubtraction ? '-$hop' : '+$hop';
 
   int get leftValue => start <= end ? start : end;
 
@@ -271,14 +284,26 @@ class FeedbackService {
           return null;
         }
 
-        return 'Börja på $larger och räkna $smaller steg till.';
+        if (smaller <= 10) {
+          return 'Börja på $larger och räkna $smaller steg till.';
+        }
+
+        return _twoHopTip(start: larger, jump: smaller, backward: false);
       case OperationType.subtraction:
         final jump = question.operand2.abs();
         if (jump <= 0) {
           return null;
         }
 
-        return 'Börja på ${question.operand1} och räkna $jump steg tillbaka.';
+        if (jump <= 10) {
+          return 'Börja på ${question.operand1} och räkna $jump steg tillbaka.';
+        }
+
+        return _twoHopTip(
+          start: question.operand1,
+          jump: jump,
+          backward: true,
+        );
       case OperationType.multiplication:
         final groupModel = _buildGroupModel(question);
         if (groupModel == null) {
@@ -312,7 +337,7 @@ class FeedbackService {
           return null;
         }
 
-        return FeedbackNumberLine(
+        return _numberLineForJump(
           start: start,
           jump: jump,
           end: start + jump,
@@ -324,7 +349,7 @@ class FeedbackService {
           return null;
         }
 
-        return FeedbackNumberLine(
+        return _numberLineForJump(
           start: question.operand1,
           jump: jump,
           end: question.correctAnswer,
@@ -333,6 +358,62 @@ class FeedbackService {
       default:
         return null;
     }
+  }
+
+  String _twoHopTip({
+    required int start,
+    required int jump,
+    required bool backward,
+  }) {
+    final tens = (jump ~/ 10) * 10;
+    final ones = jump % 10;
+    final sign = backward ? '−' : '+';
+    final afterTens = backward ? start - tens : start + tens;
+    if (ones == 0) {
+      return 'Hoppa $tens. $start $sign $tens = $afterTens.';
+    }
+
+    final end = backward ? afterTens - ones : afterTens + ones;
+    return 'Först $sign$tens till $afterTens, sedan $sign$ones till $end.';
+  }
+
+  FeedbackNumberLine _numberLineForJump({
+    required int start,
+    required int jump,
+    required int end,
+    required OperationType operationType,
+  }) {
+    if (jump <= 10) {
+      return FeedbackNumberLine(
+        start: start,
+        jump: jump,
+        end: end,
+        operationType: operationType,
+      );
+    }
+
+    final tens = (jump ~/ 10) * 10;
+    final ones = jump % 10;
+    final backward = operationType == OperationType.subtraction;
+    if (ones == 0) {
+      return FeedbackNumberLine(
+        start: start,
+        jump: jump,
+        end: end,
+        operationType: operationType,
+      );
+    }
+
+    final waypoint = backward ? start - tens : start + tens;
+    return FeedbackNumberLine(
+      start: start,
+      jump: jump,
+      end: end,
+      operationType: operationType,
+      waypoint: waypoint,
+      firstHop: tens,
+      secondHop: ones,
+    );
   }
 
   FeedbackGroupModel? _buildGroupModel(Question question) {
