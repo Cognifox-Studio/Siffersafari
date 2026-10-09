@@ -56,7 +56,6 @@ class HomeStoryProgressCard extends StatelessWidget {
               characterAsset: characterAsset,
               cacheWidth: cacheWidth,
               cacheHeight: cacheHeight,
-              onPrimary: onPrimary,
             ),
             const SizedBox(height: AppConstants.smallPadding),
             Text(
@@ -102,19 +101,6 @@ class HomeStoryProgressCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppConstants.defaultPadding),
-            _JourneyPreviewPanel(
-              story: story,
-              currentNode: currentNode,
-              nextNode: nextNode,
-              visibleNodes: visibleNodes,
-              primaryActionColor: primaryActionColor,
-              secondaryActionColor: secondaryActionColor,
-              accentColor: accentColor,
-              onPrimary: onPrimary,
-              mutedOnPrimary: mutedOnPrimary,
-              faintOnPrimary: faintOnPrimary,
-            ),
-            const SizedBox(height: AppConstants.defaultPadding),
             ElevatedButton.icon(
               onPressed: onStartQuest,
               icon: Icon(
@@ -141,6 +127,19 @@ class HomeStoryProgressCard extends StatelessWidget {
                 ),
               ),
             ],
+            const SizedBox(height: AppConstants.defaultPadding),
+            _JourneyPreviewPanel(
+              story: story,
+              currentNode: currentNode,
+              nextNode: nextNode,
+              visibleNodes: visibleNodes,
+              primaryActionColor: primaryActionColor,
+              secondaryActionColor: secondaryActionColor,
+              accentColor: accentColor,
+              onPrimary: onPrimary,
+              mutedOnPrimary: mutedOnPrimary,
+              faintOnPrimary: faintOnPrimary,
+            ),
           ],
         ),
       ),
@@ -453,6 +452,51 @@ class _JourneyStepCard extends StatelessWidget {
   }
 }
 
+class _HeroBannerLabel extends StatelessWidget {
+  const _HeroBannerLabel({
+    required this.label,
+    required this.shadowColor,
+    required this.pill,
+  });
+
+  final String label;
+  final Color shadowColor;
+  final bool pill;
+
+  @override
+  Widget build(BuildContext context) {
+    final radius = pill
+        ? BorderRadius.circular(999)
+        : BorderRadius.circular(AppConstants.borderRadius);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.smallPadding,
+        vertical: AppConstants.microSpacing6,
+      ),
+      decoration: BoxDecoration(
+        color: shadowColor.withValues(alpha: 0.72),
+        borderRadius: radius,
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.28),
+        ),
+      ),
+      child: Text(
+        label,
+        maxLines: pill ? 2 : 1,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              shadows: const [
+                Shadow(color: Colors.black54, blurRadius: 4, offset: Offset(0, 1)),
+              ],
+            ),
+      ),
+    );
+  }
+}
+
 class _HeroBanner extends StatelessWidget {
   const _HeroBanner({
     required this.story,
@@ -461,7 +505,6 @@ class _HeroBanner extends StatelessWidget {
     required this.characterAsset,
     required this.cacheWidth,
     required this.cacheHeight,
-    required this.onPrimary,
   });
 
   final StoryProgress story;
@@ -470,7 +513,6 @@ class _HeroBanner extends StatelessWidget {
   final String characterAsset;
   final int cacheWidth;
   final int cacheHeight;
-  final Color onPrimary;
 
   @override
   Widget build(BuildContext context) {
@@ -507,9 +549,11 @@ class _HeroBanner extends StatelessWidget {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      shadowColor.withValues(alpha: 0.05),
-                      shadowColor.withValues(alpha: 0.28),
+                      shadowColor.withValues(alpha: 0.38),
+                      shadowColor.withValues(alpha: 0.12),
+                      shadowColor.withValues(alpha: 0.32),
                     ],
+                    stops: const [0.0, 0.45, 1.0],
                   ),
                 ),
               ),
@@ -517,53 +561,20 @@ class _HeroBanner extends StatelessWidget {
             Positioned(
               left: AppConstants.defaultPadding,
               top: AppConstants.defaultPadding,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.smallPadding,
-                  vertical: AppConstants.microSpacing6,
-                ),
-                decoration: BoxDecoration(
-                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(
-                    color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-                  ),
-                ),
-                child: Text(
-                  story.chapterTitle,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
+              child: _HeroBannerLabel(
+                label: story.chapterTitle,
+                shadowColor: shadowColor,
+                pill: true,
               ),
             ),
             Positioned(
               left: AppConstants.defaultPadding,
               right: 112,
               bottom: AppConstants.defaultPadding,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppConstants.smallPadding,
-                  vertical: AppConstants.microSpacing6,
-                ),
-                decoration: BoxDecoration(
-                  color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
-                  borderRadius:
-                      BorderRadius.circular(AppConstants.borderRadius),
-                  border: Border.all(
-                    color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
-                  ),
-                ),
-                child: Text(
-                  story.currentNode?.landmark ?? 'Djungelstigen',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
+              child: _HeroBannerLabel(
+                label: story.currentNode?.landmark ?? 'Djungelstigen',
+                shadowColor: shadowColor,
+                pill: false,
               ),
             ),
             Positioned(

@@ -148,7 +148,7 @@ img.Image _renderLegacyIcon({
   img.fill(canvas, color: background);
 
   // Give the icon some breathing room, but keep it large.
-  final padding = (size * 0.06).round().clamp(2, 24);
+  final padding = (size * 0.12).round().clamp(4, 32);
   final innerSize = (size - padding * 2).clamp(1, size);
   final resized = img.copyResize(
     sourceImage,
@@ -169,7 +169,8 @@ img.Image _renderAdaptiveForeground({
   img.fill(canvas, color: img.ColorRgba8(0, 0, 0, 0));
 
   // Slightly larger than legacy, but keep safe-ish margins for masks.
-  final padding = (size * 0.10).round().clamp(6, 64);
+  // Android adaptive safe zone ~66% diameter; keep wordmark inside the mask.
+  final padding = (size * 0.19).round().clamp(10, 96);
   final innerSize = (size - padding * 2).clamp(1, size);
   final resized = img.copyResize(
     sourceImage,

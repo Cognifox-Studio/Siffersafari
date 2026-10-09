@@ -9,7 +9,7 @@
 ## Now (2026-10-09)
 
 **Mål:** Inget öppet produktspår.  
-**Status:** Playtest-polish (frågekort, tallinje, resultat, hem) är inne lokalt på `1.4.3+22`. Senaste tagg är `v1.4.3+21`. Inte pushad.
+**Status:** Andra playtest-runda (feedback-scrim, tallinje +1, story-banner, ikon) lokalt på `1.4.3+22`. Senaste tagg `v1.4.3+21`.
 
 **Klart sedan förra briefen:** Cursor-rutin-slim, camp-souvenirer, `nextBiome` i slutskedet, fler samlar-badges (`7090fd3`).
 

@@ -87,6 +87,61 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] FeedbackDialog – visar inga mittstreck på tallinje vid ett steg',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const question = Question(
+        id: 'q_feedback_add_one',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 4,
+        operand2: 1,
+        correctAnswer: 5,
+      );
+
+      final feedback = feedbackService.buildFeedback(
+        question: question,
+        userAnswer: 2,
+        ageGroup: AgeGroup.middle,
+      );
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: ScreenUtilInit(
+            designSize: const Size(390, 844),
+            minTextAdapt: true,
+            builder: (_, __) => MaterialApp(
+              home: Scaffold(
+                body: FeedbackDialog(
+                  feedback: feedback,
+                  onContinue: () {},
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      expect(find.text('+1'), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(const Key('feedback_number_line_ticks')),
+          matching: find.byType(Container),
+        ),
+        findsNothing,
+      );
+    },
+  );
+
+  testWidgets(
     '[Widget] FeedbackDialog – visar subtraktionstips och steg tillbaka',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;

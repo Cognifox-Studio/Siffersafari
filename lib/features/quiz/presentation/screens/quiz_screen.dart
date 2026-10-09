@@ -196,6 +196,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           showDialog(
             context: context,
             barrierDismissible: false,
+            barrierColor: Colors.black.withValues(alpha: 0.82),
             builder: (_) => FeedbackDialog(
               feedback: feedback,
               onContinue: _handleNextQuestion,

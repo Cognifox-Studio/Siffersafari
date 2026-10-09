@@ -368,7 +368,9 @@ class _SingleHopLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tickCount = numberLine.jump.clamp(1, 10);
+    // Endpoints already mark start/end; interior ticks only help for 2–10 steps.
+    final tickCount =
+        numberLine.jump <= 1 ? 0 : numberLine.jump.clamp(2, 10);
     return Column(
       children: [
         Text(
@@ -394,6 +396,7 @@ class _SingleHopLine extends StatelessWidget {
                       color: accentColor.withValues(alpha: 0.72),
                     ),
                     Row(
+                      key: const Key('feedback_number_line_ticks'),
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         for (var i = 0; i < tickCount; i++)

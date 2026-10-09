@@ -284,7 +284,7 @@ class _StartupSplashScaffold extends StatelessWidget {
                         child: RepaintBoundary(
                           child: _SplashImage(
                             assetPath: 'assets/images/app_icon/icon_source.png',
-                            size: imageSize,
+                            size: imageSize * 0.74,
                             fallbackIcon: Icons.calculate,
                           ),
                         ),
