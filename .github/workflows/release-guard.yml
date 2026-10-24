@@ -29,28 +29,28 @@ jobs:
 
       - name: Fast release checks
         run: |
-          flutter analyze lib test
+          flutter analyze --fatal-infos lib test
           flutter test test/unit/logic/spaced_repetition_test.dart
           flutter test test/unit/logic/quiz_provider_srs_test.dart
           flutter test test/unit/audits/question_bank_runtime_status_audit_test.dart
 
-      - name: Build debug APK
-        run: flutter build apk --debug
+      - name: Build release App Bundle
+        run: flutter build appbundle --release
 
-      - name: Verify APK size budget
+      - name: Verify AAB size budget
         run: |
-          APK_PATH="build/app/outputs/flutter-apk/app-debug.apk"
-          test -f "$APK_PATH"
-          SIZE_BYTES=$(stat -c%s "$APK_PATH")
+          AAB_PATH="build/app/outputs/bundle/release/app-release.aab"
+          test -f "$AAB_PATH"
+          SIZE_BYTES=$(stat -c%s "$AAB_PATH")
           MAX_BYTES=$((80 * 1024 * 1024))
-          echo "APK size: $SIZE_BYTES bytes"
+          echo "AAB size: $SIZE_BYTES bytes"
           if [ "$SIZE_BYTES" -gt "$MAX_BYTES" ]; then
-            echo "APK exceeds budget ($MAX_BYTES bytes)"
+            echo "AAB exceeds budget ($MAX_BYTES bytes)"
             exit 1
           fi
 
-      - name: Upload APK artifact
+      - name: Upload AAB artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: build/app/outputs/flutter-apk/app-debug.apk
+          name: app-release-aab
+          path: build/app/outputs/bundle/release/app-release.aab

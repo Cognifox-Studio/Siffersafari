@@ -15,7 +15,7 @@ jobs:
         with:
           flutter-version: '3.41.x'
       - run: flutter pub get
-      - run: flutter analyze
+      - run: flutter analyze --fatal-infos lib test integration_test
 
   core-smoke:
     if: github.event_name == 'pull_request'
