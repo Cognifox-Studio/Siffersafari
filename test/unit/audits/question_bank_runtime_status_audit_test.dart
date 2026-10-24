@@ -69,7 +69,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
     'functions': 'supported_prompt_family',
     'equations': 'supported_prompt_family',
     'geometry': 'supported_prompt_family_with_exceptions',
-    'probability': 'deferred_representation',
+    'probability': 'supported_prompt_family',
   },
 };
 
@@ -554,6 +554,13 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 8,
         matches: (prompt) => prompt.startsWith('Linjär funktion = ?'),
+      );
+    case '9:probability':
+      _assertPromptRuntime(
+        gradeLevel: 9,
+        operationType: OperationType.mixed,
+        difficultyStep: 8,
+        matches: (prompt) => prompt.startsWith('Sannolikhet = ?'),
       );
     case '9:equations':
       _assertPromptRuntime(

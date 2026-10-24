@@ -253,6 +253,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Rimlighet = ?')) {
     return 'm_reasonableness';
   }
+  if (prompt.startsWith('Sannolikhet = ?')) {
+    return 'm_probability';
+  }
   if (prompt.startsWith('Flerstegsproblem = ?')) {
     return 'm_multi_step_word';
   }

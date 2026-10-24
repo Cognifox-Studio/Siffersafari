@@ -102,6 +102,10 @@ class QuestionMixPolicy {
         isM5Mix: isM5Mix,
         clampedStep: clampedStep,
       );
+  double get m5bProbabilityChance => m5bProbabilityChanceFor(
+        gradeLevel: gradeLevel,
+        clampedStep: clampedStep,
+      );
   double get m4TimeChance => m4TimeChanceFor(
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
@@ -239,6 +243,18 @@ class QuestionMixPolicy {
       clampedStep >= 8 &&
       roll >= _m5bAdvancedStatsStart &&
       roll < (_m5bAdvancedStatsStart + m5bAdvancedStatsChance);
+
+  /// Åk 9 bag/table/dice probability as integer % (ROI #40).
+  bool get shouldTryM5bProbability =>
+      isM5Mix &&
+      gradeLevel == 9 &&
+      clampedStep >= 7 &&
+      m5bProbabilityChance > 0 &&
+      roll >= (_m5bAdvancedStatsStart + m5bAdvancedStatsChance) &&
+      roll <
+          (_m5bAdvancedStatsStart +
+              m5bAdvancedStatsChance +
+              m5bProbabilityChance);
 
   bool get shouldTryM4Time =>
       requestedOperation == OperationType.mixed &&
@@ -523,6 +539,16 @@ class QuestionMixPolicy {
     if (!isM5Mix || clampedStep < 8) return 0.0;
     if (clampedStep == 8) return 0.08;
     return 0.10;
+  }
+
+  static double m5bProbabilityChanceFor({
+    required int? gradeLevel,
+    required int clampedStep,
+  }) {
+    if (gradeLevel != 9 || clampedStep < 7) return 0.0;
+    if (clampedStep == 7) return 0.08;
+    if (clampedStep == 8) return 0.10;
+    return 0.12;
   }
 
   static double m4TimeChanceFor({

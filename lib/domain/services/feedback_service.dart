@@ -294,6 +294,9 @@ class FeedbackService {
           ? 'Räkna ungefär (eller exakt) och jämför avståndet till varje alternativ.'
           : 'Avrunda först, multiplicera de avrundade talen.';
     }
+    if (prompt.startsWith('Sannolikhet = ?')) {
+      return 'Chans (%) = (gynnsamma ÷ alla) × 100.';
+    }
     if (prompt.startsWith('Sammansatt procent = ?')) {
       return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
     }

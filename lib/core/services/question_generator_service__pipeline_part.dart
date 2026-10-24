@@ -192,6 +192,13 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
       );
     }
 
+    if (mixPolicy.shouldTryM5bProbability) {
+      return _generateM5bProbabilityBagTableQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+      );
+    }
+
     if (mixPolicy.shouldTryM4Time) {
       final timeStep = mixBaselineStep;
 

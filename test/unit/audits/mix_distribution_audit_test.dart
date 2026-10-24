@@ -43,6 +43,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Rimlighet = ?')) {
     return 'm_reasonableness';
   }
+  if (promptText.startsWith('Sannolikhet = ?')) {
+    return 'm_probability';
+  }
   if (promptText.startsWith('Sammansatt procent = ?')) {
     return 'm5a_compound_percent';
   }

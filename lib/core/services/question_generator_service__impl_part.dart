@@ -2188,6 +2188,129 @@ Vad är $answerType efter transformationen?''';
     );
   }
 
+  /// Åk 9 probability bag/table/dice — integer percent answers (ROI #40).
+  Question _generateM5bProbabilityBagTableQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final mode = _random.nextInt(3);
+
+    if (mode == 0) {
+      // Bag with colors that yield exact percent.
+      final totals = <int>[4, 5, 10, 20, 25];
+      final total = totals[_random.nextInt(totals.length)];
+      final red = 1 + _random.nextInt(total - 1);
+      final blue = _random.nextInt(total - red + 1);
+      final green = total - red - blue;
+      final percent = (red * 100) ~/ total;
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: red,
+        operand2: total,
+        correctAnswer: percent,
+        wrongAnswers: _generateWrongPercentAnswers(percent, 3),
+        promptText:
+            'Sannolikhet = ?\nPåse: $red röda, $blue blå, $green gröna (totalt $total).\nHur stor är chansen (%) att dra röd?',
+        explanation:
+            'Chans = $red/$total × 100 = $percent%.',
+      );
+    }
+
+    if (mode == 1) {
+      // Two-way table style.
+      final boysYes = 2 + _random.nextInt(step <= 8 ? 6 : 10);
+      final boysNo = 2 + _random.nextInt(step <= 8 ? 6 : 10);
+      final girlsYes = 2 + _random.nextInt(step <= 8 ? 6 : 10);
+      final girlsNo = 2 + _random.nextInt(step <= 8 ? 6 : 10);
+      final total = boysYes + boysNo + girlsYes + girlsNo;
+      // Force percent-friendly total by adjusting girlsNo.
+      final targetTotals = <int>[10, 20, 25, 50];
+      final target = targetTotals[_random.nextInt(targetTotals.length)];
+      var gNo = girlsNo;
+      final withoutGNo = boysYes + boysNo + girlsYes;
+      if (withoutGNo >= target) {
+        // Fallback bag already handled; use simple percent of yes.
+        final yes = boysYes + girlsYes;
+        final all = withoutGNo + gNo;
+        final percent = (yes * 100) ~/ all;
+        return Question(
+          id: _uuid.v4(),
+          operationType: OperationType.mixed,
+          difficulty: difficulty,
+          operand1: yes,
+          operand2: all,
+          correctAnswer: percent,
+          wrongAnswers: _generateWrongPercentAnswers(percent, 3),
+          promptText:
+              'Sannolikhet = ?\nTabell (gillar matte):\nPojkar ja:$boysYes nej:$boysNo\nFlickor ja:$girlsYes nej:$gNo\nHur stor är chansen (%) att en slumpvald elev svarade ja?',
+          explanation: 'Ja = $yes av $all ⇒ $percent%.',
+        );
+      }
+      gNo = target - withoutGNo;
+      final yes = boysYes + girlsYes;
+      final percent = (yes * 100) ~/ target;
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: yes,
+        operand2: target,
+        correctAnswer: percent,
+        wrongAnswers: _generateWrongPercentAnswers(percent, 3),
+        promptText:
+            'Sannolikhet = ?\nTabell (gillar matte):\nPojkar ja:$boysYes nej:$boysNo\nFlickor ja:$girlsYes nej:$gNo\nHur stor är chansen (%) att en slumpvald elev svarade ja?',
+        explanation: 'Ja = $yes av $target ⇒ $percent%.',
+      );
+    }
+
+    // Dice with exact percents.
+    final dieRoll = _random.nextInt(3);
+    if (dieRoll == 0) {
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: 3,
+        operand2: 6,
+        correctAnswer: 50,
+        wrongAnswers: const [33, 25, 75],
+        promptText:
+            'Sannolikhet = ?\nEn tärning kastas. Hur stor är chansen (%) för jämnt tal?',
+        explanation: 'Jämna: 2,4,6 → 3/6 = 50%.',
+      );
+    }
+    if (dieRoll == 1) {
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: 2,
+        operand2: 6,
+        correctAnswer: 50,
+        wrongAnswers: const [33, 25, 17],
+        promptText:
+            'Sannolikhet = ?\nEn tärning kastas. Hur stor är chansen (%) för tal > 3?',
+        explanation: '4,5,6 → 3/6 = 50%.',
+      );
+    }
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: 6,
+      operand2: 36,
+      correctAnswer: 17,
+      wrongAnswers: const [14, 20, 25],
+      promptText:
+          'Sannolikhet = ?\nTvå tärningar kastas. Ungefär hur stor är chansen (%) för summa 7? (6 av 36 utfall)',
+      explanation: '6/36 ≈ 16,7% ≈ 17%.',
+    );
+  }
+
   Question _generateM5bAdvancedStatisticsQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,

@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk 9 probability bag/table text ([ROI_BACKLOG](ROI_BACKLOG.md) #40).  
-**Status:** #39 linjär/funktioner text-bridge klar. #11–39 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~25 lokalt (ej pushad).
+**Mål:** Cadence #41+ ([ROI_BACKLOG](ROI_BACKLOG.md)).  
+**Status:** #40 Åk 9 sannolikhet klar. #11–40 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~26 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Linjär k/m/y; rimlighet; ASCII diagram; ½-of-n; Sortera.
+**Klart sedan förra briefen:** Sannolikhet bag/table; linjär; rimlighet; ASCII; ½-of-n; Sortera; Mix SRS.
 
 ---
 
