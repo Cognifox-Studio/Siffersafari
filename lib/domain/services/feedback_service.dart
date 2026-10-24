@@ -256,10 +256,13 @@ class FeedbackService {
     required bool isCorrect,
     required Duration? responseTime,
   }) {
-    if (question.operationType != OperationType.addition &&
-        question.operationType != OperationType.subtraction &&
-        question.operationType != OperationType.multiplication &&
-        question.operationType != OperationType.division) {
+    final isCoreOp = question.operationType == OperationType.addition ||
+        question.operationType == OperationType.subtraction ||
+        question.operationType == OperationType.multiplication ||
+        question.operationType == OperationType.division;
+    final isMixBridge = question.operationType == OperationType.mixed &&
+        _mixBridgeTip(question) != null;
+    if (!isCoreOp && !isMixBridge) {
       return false;
     }
 
@@ -270,7 +273,37 @@ class FeedbackService {
     return responseTime != null && responseTime >= _slowResponseTipThreshold;
   }
 
+  String? _mixBridgeTip(Question question) {
+    final prompt = question.promptText?.trim() ?? '';
+    if (prompt.startsWith('Procentuell förändring = ?')) {
+      if (prompt.contains('Vad blir nya priset')) {
+        return 'Räkna procenten av startpriset och lägg till eller dra ifrån.';
+      }
+      return 'Skillnad ÷ startvärde × 100 ger procenten.';
+    }
+    if (prompt.startsWith('Procent = ?') || prompt.contains('% av')) {
+      return 'x% av y betyder (x ÷ 100) × y.';
+    }
+    if (prompt.startsWith('Flerstegsproblem = ?')) {
+      return 'Gör ett steg i taget och spara mellanresultatet.';
+    }
+    if (prompt.startsWith('Ekvation = ?')) {
+      return 'Gör samma sak på båda sidor tills x står ensamt.';
+    }
+    if (prompt.startsWith('Proportionalitet = ?')) {
+      return 'Hitta hur många gånger större (k) och använd samma k.';
+    }
+    if (prompt.startsWith('Prioriteringsregler = ?')) {
+      return 'Parenteser först, sedan ×/÷, sist +/−.';
+    }
+    return null;
+  }
+
   String? _buildPedagogicalTip(Question question) {
+    if (question.operationType == OperationType.mixed) {
+      return _mixBridgeTip(question);
+    }
+
     switch (question.operationType) {
       case OperationType.addition:
         final larger = question.operand1 >= question.operand2

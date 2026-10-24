@@ -253,5 +253,53 @@ void main() {
         contains('💡 Se det som 3 grupper med 4 i varje.'),
       );
     });
+
+    test('ger Mix-tips för procent vid fel svar', () {
+      const question = Question(
+        id: 'q_mix_percent',
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.medium,
+        operand1: 0,
+        operand2: 0,
+        correctAnswer: 40,
+        promptText: 'Procent = ?\nVad är 20% av 200?',
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 20,
+        ageGroup: AgeGroup.middle,
+      );
+
+      expect(feedback.isCorrect, isFalse);
+      expect(
+        feedback.message,
+        contains('💡 x% av y betyder (x ÷ 100) × y.'),
+      );
+    });
+
+    test('ger Mix-tips för flerstegsproblem vid fel svar', () {
+      const question = Question(
+        id: 'q_mix_multi',
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.medium,
+        operand1: 0,
+        operand2: 0,
+        correctAnswer: 720,
+        promptText:
+            'Flerstegsproblem = ?\nEn butik sänker ett pris på 1000 kr med 20% och sedan ytterligare 10%. Vad blir priset?',
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 700,
+        ageGroup: AgeGroup.middle,
+      );
+
+      expect(
+        feedback.message,
+        contains('💡 Gör ett steg i taget och spara mellanresultatet.'),
+      );
+    });
   });
 }

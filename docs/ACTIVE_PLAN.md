@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Mix-feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #32). #11–27 + #20 levererade.
+**Produktspår:** Åk 8 compound % integer ([ROI_BACKLOG](ROI_BACKLOG.md) #28). #11–27 + #20 + #32 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk 8 compound % integer** — #28
-2. **Widen Åk 8 proportionality** — #29
-3. **Widen Åk 9 geometry integer** — #30
+1. **Widen Åk 8 proportionality** — #29
+2. **Widen Åk 9 geometry integer** — #30
+3. **Dubbelt/hälften Mix specialty** — #31
 
 Lyft **en** till Now i taget.
 

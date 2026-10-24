@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Mix-feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #32).  
-**Status:** #27 flerstegsordproblem unlocked. #11–27 + #20 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Åk 8 compound % integer ([ROI_BACKLOG](ROI_BACKLOG.md) #28).  
+**Status:** #32 Mix-feedback tips inne. #11–27 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Åk 6 %-change + multi-step; Sedan/Senare; home play-first; parent trust.
+**Klart sedan förra briefen:** Mix-tips; Åk 6 %-change + multi-step; Sedan/Senare; home play-first.
 
 ---
 
