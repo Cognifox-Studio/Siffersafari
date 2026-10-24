@@ -76,6 +76,12 @@ void main() {
 
       final tts = getIt<TextToSpeechService>() as MockTextToSpeechService;
       verify(() => tts.speakQuestion(any())).called(1);
+      expect(find.text('Stoppa'), findsOneWidget);
+
+      await tester.tap(speakButton);
+      await tester.pump();
+      verify(() => tts.stop()).called(greaterThanOrEqualTo(1));
+      expect(find.text('Läs upp'), findsOneWidget);
 
       await tester.ensureVisible(find.text('42'));
       await tester.tap(find.text('42'), warnIfMissed: true);

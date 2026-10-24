@@ -2,6 +2,7 @@ import 'package:siffersafari/core/config/difficulty_config.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/entities/quest.dart';
+import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
@@ -25,6 +26,7 @@ class HomeReadModel {
     required this.heroTitle,
     required this.primaryAction,
     this.heroSubtitle,
+    this.resumeSession,
   });
 
   final UserProgress? activeUser;
@@ -37,14 +39,26 @@ class HomeReadModel {
   final String heroTitle;
   final String? heroSubtitle;
   final HomePrimaryAction primaryAction;
+  final QuizSession? resumeSession;
 
   String get primaryButtonLabel {
     return switch (primaryAction) {
-      HomePrimaryAction.resumeQuiz => 'Fortsätt',
+      HomePrimaryAction.resumeQuiz => _resumeButtonLabel,
       HomePrimaryAction.openStoryMap => 'Se episoden',
       HomePrimaryAction.startStoryQuest => 'Spela nästa stopp',
       HomePrimaryAction.startFreePlay => 'Spela nu',
     };
+  }
+
+  String get _resumeButtonLabel {
+    final session = resumeSession;
+    if (session == null) return 'Fortsätt';
+
+    final op = session.operationType.displayName;
+    final answered = session.answers.length;
+    final total = session.totalQuestions;
+    if (total <= 0) return 'Fortsätt $op';
+    return 'Fortsätt $op ($answered/$total)';
   }
 
   factory HomeReadModel.fromState({
@@ -53,6 +67,7 @@ class HomeReadModel {
     required StoryProgress? storyProgress,
     required Set<OperationType> parentAllowedOps,
     required bool hasPersistedInProgressSession,
+    QuizSession? resumeSession,
   }) {
     return HomeReadModel.fromValues(
       activeUser: userState.activeUser,
@@ -62,6 +77,7 @@ class HomeReadModel {
       storyProgress: storyProgress,
       parentAllowedOps: parentAllowedOps,
       hasPersistedInProgressSession: hasPersistedInProgressSession,
+      resumeSession: resumeSession ?? quizState.session,
     );
   }
 
@@ -73,6 +89,7 @@ class HomeReadModel {
     required StoryProgress? storyProgress,
     required Set<OperationType> parentAllowedOps,
     required bool hasPersistedInProgressSession,
+    QuizSession? resumeSession,
   }) {
     final user = activeUser;
     final allowedOps = DifficultyConfig.effectiveAllowedOperations(
@@ -123,6 +140,7 @@ class HomeReadModel {
                   : storyProgress.currentObjectiveDescription
               : null,
       primaryAction: primaryAction,
+      resumeSession: hasResumableSession ? resumeSession : null,
     );
   }
 }

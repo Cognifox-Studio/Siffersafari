@@ -18,6 +18,7 @@ Ansvar: vuxenlaget. Har ligger PIN-flodet, foraldrainstallningar (allowed operat
 - PIN och security question i `settings`
 - foraldrainstallningar, TTS och textproblem i `settings` (profilscopade)
 - dashboarden laser quizhistorik men ager den inte
+- nar TTS ar av syns tipset `parent_tts_discoverability_tip` under Snabba andringar
 
 ## Bra forsta test
 

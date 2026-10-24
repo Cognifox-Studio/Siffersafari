@@ -3,6 +3,12 @@ import 'package:flutter_tts/flutter_tts.dart';
 class TextToSpeechService {
   FlutterTts? _tts;
   bool _configured = false;
+  bool _speaking = false;
+
+  /// Fires when speaking starts/stops (including stop/cancel/complete).
+  void Function(bool speaking)? onSpeakingChanged;
+
+  bool get isSpeaking => _speaking;
 
   Future<void> speakQuestion(String text) {
     return _speak(_normalizeQuestion(text));
@@ -14,11 +20,15 @@ class TextToSpeechService {
 
   Future<void> stop() async {
     final tts = _tts;
-    if (tts == null) return;
+    if (tts == null) {
+      _setSpeaking(false);
+      return;
+    }
 
     try {
       await tts.stop();
     } catch (_) {}
+    _setSpeaking(false);
   }
 
   Future<void> _speak(String rawText) async {
@@ -29,8 +39,11 @@ class TextToSpeechService {
       final tts = _instance;
       await _configure(tts);
       await tts.stop();
+      _setSpeaking(true);
       await tts.speak(text);
-    } catch (_) {}
+    } catch (_) {
+      _setSpeaking(false);
+    }
   }
 
   Future<void> _configure(FlutterTts tts) async {
@@ -49,7 +62,23 @@ class TextToSpeechService {
       await tts.setVolume(1.0);
     } catch (_) {}
 
+    tts.setCompletionHandler(() {
+      _setSpeaking(false);
+    });
+    tts.setCancelHandler(() {
+      _setSpeaking(false);
+    });
+    tts.setErrorHandler((_) {
+      _setSpeaking(false);
+    });
+
     _configured = true;
+  }
+
+  void _setSpeaking(bool speaking) {
+    if (_speaking == speaking) return;
+    _speaking = speaking;
+    onSpeakingChanged?.call(speaking);
   }
 
   FlutterTts get _instance => _tts ??= FlutterTts();

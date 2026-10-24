@@ -29,9 +29,10 @@ final homeReadModelProvider = Provider.autoDispose<HomeReadModel>((ref) {
   final parentAllowedOps = user == null
       ? _defaultAllowedOperations
       : ref.watch(parentSettingsProvider(user.userId));
-  final hasPersistedInProgressSession = user == null
-      ? false
-      : ref.watch(homePersistedQuizSessionProvider(user.userId));
+  final resumeSession = user == null
+      ? null
+      : ref.watch(homeResumeQuizSessionProvider(user.userId));
+  final hasPersistedInProgressSession = resumeSession != null;
 
   return HomeReadModel.fromValues(
     activeUser: user,
@@ -41,6 +42,7 @@ final homeReadModelProvider = Provider.autoDispose<HomeReadModel>((ref) {
     storyProgress: storyProgress,
     parentAllowedOps: parentAllowedOps,
     hasPersistedInProgressSession: hasPersistedInProgressSession,
+    resumeSession: resumeSession,
   );
 });
 

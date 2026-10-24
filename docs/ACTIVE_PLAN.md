@@ -15,7 +15,7 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** TTS discoverability för föräldrar ([ROI_BACKLOG](ROI_BACKLOG.md) #15). Collect-loop #11–14 levererade.
+**Produktspår:** Nattskogen soft landing ([ROI_BACKLOG](ROI_BACKLOG.md) #19). #11–18 levererade.
 
 ---
 
@@ -23,9 +23,9 @@ uppdaterad: 2026-10-24
 
 Collect/loop polish (Tier B), i ordning:
 
-1. **In-quiz TTS replay/stop clarity** — #16
-2. **Resume CTA visar op + progress** — #17
-3. **Results focused-practice CTA prominence** — #18
+1. **Align Sedan/Senare copy** home↔map↔results — #20
+2. **Onboarding grade helper** — #21
+3. **Parent first-run checklist** — #22
 
 Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa är klara eller uttryckligen byts ut här.
 

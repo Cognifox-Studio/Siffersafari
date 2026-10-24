@@ -27,6 +27,7 @@ Ansvar: sjalva spelpasset. Har genereras fragor, svar utvarderas, feedback visas
 
 Nar episoden ar klar visar resultatpanelens “Sedan”-kort `StoryProgress.nextBiome` (read-only).
 Firandekortet namnger upplasta achievements (`displayName` + `unlockHint`) i stallet for generisk skatt-copy.
+Nar det finns svar att ovva ar “Snabbtrana” prima CTA pa resultatskarmen. TTS-knappen vaxlar Läs upp/Stoppa.
 
 ## Bra forsta test
 

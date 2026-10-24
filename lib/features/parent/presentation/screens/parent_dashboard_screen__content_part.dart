@@ -447,12 +447,30 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
           ),
           const SizedBox(height: AppConstants.smallPadding),
           Text(
-            'Vanligast först. Fler val ligger längre ner.',
+            'Vanligast först: årskurs, uppläsning, räknesätt.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: subtleOnPrimary,
                   fontWeight: FontWeight.w600,
                 ),
           ),
+          if (!ttsEnabled) ...[
+            const SizedBox(height: AppConstants.smallPadding),
+            Container(
+              key: const Key('parent_tts_discoverability_tip'),
+              padding: const EdgeInsets.all(AppConstants.smallPadding),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.16),
+                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+              ),
+              child: Text(
+                'Tips: slå på Uppläsning under Stöd i quiz — bra för tidiga läsare.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ),
+          ],
           const SizedBox(height: AppConstants.defaultPadding),
           _InsetPanel(
             child: Column(
@@ -475,10 +493,11 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 const _ParentSectionHeader(
                   title: 'Stöd i quiz',
                   subtitle:
-                      'Bra när barnet behöver mer guidning i själva rundan.',
+                      'Uppläsning läser frågan högt i quiz. Bra för tidiga läsare.',
                 ),
                 const SizedBox(height: AppConstants.smallPadding),
                 SwitchListTile(
+                  key: const Key('parent_tts_switch'),
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     'Uppläsning',
@@ -488,7 +507,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                         ),
                   ),
                   subtitle: Text(
-                    'Fråga och kort feedback i quiz',
+                    ttsEnabled
+                        ? 'På — läser fråga och kort feedback'
+                        : 'Av — slå på om barnet behöver höra frågan',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: subtleOnPrimary,
                         ),

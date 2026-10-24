@@ -920,7 +920,7 @@ void main() {
         find.byKey(const Key('primary_play_button')),
       );
 
-      expect(find.text('Fortsätt'), findsOneWidget);
+      expect(find.textContaining('Fortsätt Plusraketer'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('primary_play_button')));
       await tester.pump();

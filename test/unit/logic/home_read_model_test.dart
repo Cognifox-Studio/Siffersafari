@@ -29,17 +29,19 @@ void main() {
 
     test('prioriterar fortsätt när en session kan återupptas', () {
       final user = _user();
+      final session = _session();
       final model = HomeReadModel.fromState(
         userState: UserState(activeUser: user, questStatus: _questStatus()),
-        quizState: QuizState(userId: user.userId, session: _session()),
+        quizState: QuizState(userId: user.userId, session: session),
         storyProgress: _storyProgress(isEpisodeComplete: true),
         parentAllowedOps: _baseOperations,
         hasPersistedInProgressSession: false,
+        resumeSession: session,
       );
 
       expect(model.hasResumableSession, isTrue);
       expect(model.primaryAction, HomePrimaryAction.resumeQuiz);
-      expect(model.primaryButtonLabel, 'Fortsätt');
+      expect(model.primaryButtonLabel, 'Fortsätt Plusraketer (0/10)');
     });
 
     test('visar story-CTA när aktivt uppdrag matchar tillåtna räknesätt', () {

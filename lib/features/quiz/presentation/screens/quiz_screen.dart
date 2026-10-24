@@ -35,6 +35,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   DateTime? _questionStartTime;
   int? _selectedAnswer;
   bool _feedbackDialogVisible = false;
+  bool _ttsSpeaking = false;
   late final TextToSpeechService _textToSpeechService;
   // Memoized answer options keyed by question id to prevent reshuffle on rebuild.
   String? _cachedQuestionId;
@@ -52,11 +53,16 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   void initState() {
     super.initState();
     _textToSpeechService = ref.read(textToSpeechServiceProvider);
+    _textToSpeechService.onSpeakingChanged = (speaking) {
+      if (!mounted) return;
+      setState(() => _ttsSpeaking = speaking);
+    };
     _questionStartTime = DateTime.now();
   }
 
   @override
   void dispose() {
+    _textToSpeechService.onSpeakingChanged = null;
     unawaited(_textToSpeechService.stop());
     super.dispose();
   }
@@ -93,6 +99,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     HapticFeedback.lightImpact();
 
     setState(() {
+      _ttsSpeaking = false;
       _selectedAnswer = answer;
     });
 
@@ -519,12 +526,20 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     return FilledButton.tonalIcon(
       key: const Key('quiz_tts_button'),
       onPressed: () {
+        if (_ttsSpeaking) {
+          unawaited(_textToSpeechService.stop());
+          setState(() => _ttsSpeaking = false);
+          return;
+        }
+        setState(() => _ttsSpeaking = true);
         unawaited(
           _textToSpeechService.speakQuestion(question.displayQuestionText),
         );
       },
-      icon: const Icon(Icons.volume_up_rounded),
-      label: const Text('Läs upp'),
+      icon: Icon(
+        _ttsSpeaking ? Icons.stop_rounded : Icons.volume_up_rounded,
+      ),
+      label: Text(_ttsSpeaking ? 'Stoppa' : 'Läs upp'),
       style: FilledButton.styleFrom(
         foregroundColor: onPrimary,
         visualDensity: VisualDensity.compact,

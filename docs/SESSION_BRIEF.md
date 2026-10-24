@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** TTS discoverability för föräldrar ([ROI_BACKLOG](ROI_BACKLOG.md) #15).  
-**Status:** Camp tom-tillstånd (#13–14) inne — “Samla”-teaser + garderobs-CTA. Collect-loop #11–14 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Nattskogen soft landing ([ROI_BACKLOG](ROI_BACKLOG.md) #19).  
+**Status:** #15–18 inne (TTS tip/stop, resume-kontext, snabbträna-CTA). Collect-loop #11–18 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** camp teaser/CTA; namngivna unlocks; badge hints; Play internal; tag `v1.4.3+22`.
+**Klart sedan förra briefen:** TTS discoverability + Stoppa; Fortsätt op/progress; Snabbträna primär; camp teaser; namngivna unlocks; badge hints.
 
 ---
 

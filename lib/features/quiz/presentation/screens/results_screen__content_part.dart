@@ -203,6 +203,48 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final showCoachCard = activeUser != null && stars == 0;
     final showCelebrationCard = didUnlockSomething || stars == 3;
 
+    final canFocusPractice = hardest.isNotEmpty;
+    final replayButton = OutlinedButton.icon(
+      key: const Key('results_replay_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: false,
+      ),
+      icon: const Icon(Icons.replay_rounded),
+      label: const Text('Spela igen'),
+    );
+    final practiceButton = ElevatedButton.icon(
+      key: const Key('results_practice_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: true,
+      ),
+      icon: const Icon(Icons.bolt_rounded),
+      label: const Text('Snabbträna ⚡'),
+    );
+    final practiceSecondary = OutlinedButton.icon(
+      key: const Key('results_practice_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: true,
+      ),
+      icon: const Icon(Icons.bolt_rounded),
+      label: const Text('Snabbträna ⚡'),
+    );
+    final replayPrimary = ElevatedButton.icon(
+      key: const Key('results_replay_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: false,
+      ),
+      icon: const Icon(Icons.replay_rounded),
+      label: const Text('Spela igen'),
+    );
+
     final nextStepPanel = PlayfulPanel(
       hero: !hasStoryCheckpoint,
       backgroundColor: panelColor,
@@ -211,50 +253,22 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           PlayfulSectionHeading(
-            title: hasStoryCheckpoint ? 'Mer att prova' : 'Kör mer?',
+            title: hasStoryCheckpoint
+                ? 'Mer att prova'
+                : canFocusPractice
+                    ? 'Träna det som krånglade'
+                    : 'Kör mer?',
           ),
           SizedBox(height: AppConstants.defaultPadding.h),
-          if (hasStoryCheckpoint)
-            OutlinedButton.icon(
-              onPressed: () => _startRoundFromResults(
-                session: session,
-                hardest: hardest,
-                useFocusedMiniPass: false,
-              ),
-              icon: const Icon(Icons.replay_rounded),
-              label: const Text('Spela igen'),
-            )
-          else
-            ElevatedButton.icon(
-              onPressed: () => _startRoundFromResults(
-                session: session,
-                hardest: hardest,
-                useFocusedMiniPass: false,
-              ),
-              icon: const Icon(Icons.replay_rounded),
-              label: const Text('Spela igen'),
-            ),
-          SizedBox(height: AppConstants.defaultPadding.h),
-          if (hasStoryCheckpoint)
-            TextButton.icon(
-              onPressed: () => _startRoundFromResults(
-                session: session,
-                hardest: hardest,
-                useFocusedMiniPass: true,
-              ),
-              icon: const Icon(Icons.bolt_rounded),
-              label: const Text('Snabbträna ⚡'),
-            )
-          else
-            OutlinedButton.icon(
-              onPressed: () => _startRoundFromResults(
-                session: session,
-                hardest: hardest,
-                useFocusedMiniPass: true,
-              ),
-              icon: const Icon(Icons.bolt_rounded),
-              label: const Text('Snabbträna ⚡'),
-            ),
+          if (canFocusPractice) ...[
+            practiceButton,
+            SizedBox(height: AppConstants.defaultPadding.h),
+            replayButton,
+          ] else ...[
+            replayPrimary,
+            SizedBox(height: AppConstants.defaultPadding.h),
+            practiceSecondary,
+          ],
           SizedBox(height: AppConstants.smallPadding.h),
           Semantics(
             button: true,
