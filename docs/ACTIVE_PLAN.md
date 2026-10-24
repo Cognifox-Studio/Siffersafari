@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #92+). #11–48 + #51–91 + #20 levererade.
+**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #95+). #11–48 + #51–94 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Snapshot content-rating docs** — #92
-2. **Dual-locale what’s-new** — #94
-3. **Release cadence** — ask before push (~70 ahead)
+1. **Screenshot beat: parent PIN + no-ads** — #95
+2. **CI fatal-infos align** — #96
+3. **Release cadence** — ask before push (~71 ahead)
 
 Lyft **en** till Now i taget.
 

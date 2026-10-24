@@ -1,10 +1,12 @@
 # Play release notes
 
-Den har mappen anvands av `.github/workflows/play-closed-beta.yml` via `whatsNewDirectory`.
+Den här mappen används av `.github/workflows/play-closed-beta.yml` via `whatsNewDirectory`.
 
 Format:
 
 - `whatsnew-sv-SE`
 - `whatsnew-en-US`
 
-Uppdatera filerna innan varje ny Play-upload om release notes ska andras.
+Uppdatera **båda** filerna innan varje ny Play-upload / git-tagg.
+
+Se `TEMPLATE.md` för dual-locale checklista (ROI #94): samma beats i båda språken, barn först, max ~500 tecken.

@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #92+).  
-**Status:** #91 Data safety i DoD B klar. #11–48 + #51–91 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~70, ej pushad). Ask before push.
+**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #95+).  
+**Status:** #91–94 release-docs/listing klar. #11–48 + #51–94 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~71, ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** DoD Data safety; Store listing; privacy honesty.
+**Klart sedan förra briefen:** what’s-new template; Data safety DoD; content-rating snapshot.
 
 ---
 
