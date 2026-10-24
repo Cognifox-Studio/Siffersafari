@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #74–75). #11–48 + #51–73 + #20 levererade.
+**Produktspår:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #75–76). #11–48 + #51–74 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Duck music while TTS speaks** — #74
-2. **Distinct haptic wrong vs correct** — #75
-3. **Confetti only above score threshold** — #76
+1. **Distinct haptic wrong vs correct** — #75
+2. **Confetti only above score threshold** — #76
+3. **Camp souvenir discoverability** — #77
 
 Lyft **en** till Now i taget.
 

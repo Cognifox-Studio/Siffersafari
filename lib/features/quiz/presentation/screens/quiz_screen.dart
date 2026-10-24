@@ -12,6 +12,7 @@ import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/text_to_speech_service_provider.dart';
 import 'package:siffersafari/core/providers/tts_enabled_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/text_to_speech_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -37,6 +38,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   bool _feedbackDialogVisible = false;
   bool _ttsSpeaking = false;
   late final TextToSpeechService _textToSpeechService;
+  late final AudioService _audioService;
   // Memoized answer options keyed by question id to prevent reshuffle on rebuild.
   String? _cachedQuestionId;
   List<int>? _cachedOptions;
@@ -53,9 +55,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   void initState() {
     super.initState();
     _textToSpeechService = ref.read(textToSpeechServiceProvider);
+    _audioService = ref.read(audioServiceProvider);
     _textToSpeechService.onSpeakingChanged = (speaking) {
       if (!mounted) return;
       setState(() => _ttsSpeaking = speaking);
+      // Duck quiz music while TTS speaks so narration stays audible (#74).
+      _audioService.setMusicVolume(speaking ? 0.2 : 1.0);
     };
     _questionStartTime = DateTime.now();
   }
@@ -64,6 +69,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   void dispose() {
     _textToSpeechService.onSpeakingChanged = null;
     unawaited(_textToSpeechService.stop());
+    _audioService.setMusicVolume(1.0);
     super.dispose();
   }
 

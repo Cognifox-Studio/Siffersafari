@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #74–75).  
-**Status:** #72–73 kid-safe ljudetiketter + quiz-avslut-bekräftelse. #11–48 + #51–73 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~51 lokalt (ej pushad).
+**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #75–76).  
+**Status:** #74 duck music under TTS klar. #11–48 + #51–74 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~52 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Quiz abandon confirm; SFX labels; benchmark CTA; profile polish.
+**Klart sedan förra briefen:** TTS duck; quiz abandon; SFX labels; benchmark CTA.
 
 ---
 
