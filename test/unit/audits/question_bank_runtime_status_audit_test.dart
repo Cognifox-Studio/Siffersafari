@@ -56,7 +56,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
   7: {
     'order_of_operations': 'supported_prompt_family',
     'equations': 'supported_prompt_family',
-    'simplify_expressions': 'deferred_symbolic_output',
+    'simplify_expressions': 'supported_prompt_family',
     'percentage': 'supported_prompt_family',
   },
   8: {
@@ -505,6 +505,13 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 7,
         matches: (prompt) => prompt.startsWith('Prioriteringsregler = ?'),
+      );
+    case '7:simplify_expressions':
+      _assertPromptRuntime(
+        gradeLevel: 7,
+        operationType: OperationType.mixed,
+        difficultyStep: 7,
+        matches: (prompt) => prompt.startsWith('Förenkla = ?'),
       );
     case '7:equations':
       _assertPromptRuntime(

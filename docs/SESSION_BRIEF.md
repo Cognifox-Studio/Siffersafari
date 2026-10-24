@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Incremental facit→runtime (#49) / strategy difficulty (#50) ([ROI_BACKLOG](ROI_BACKLOG.md)).  
-**Status:** #48 lokal parent-analytics klar. #11–48 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~33 lokalt (ej pushad).
+**Mål:** Exception matrices + feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #52–56).  
+**Status:** #51 Åk7 Förenkla evaluate-at-x klar. #11–48 + #51 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~34 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Parent lokal aktivitet; hard fairness; feedback; Öken; a11y; cadence; matte #34–40.
+**Klart sedan förra briefen:** Förenkla@x; parent analytics; hard fairness; feedback; Öken; matte #34–40.
 
 ---
 

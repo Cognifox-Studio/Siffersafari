@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Incremental facit→runtime / strategy steps ([ROI_BACKLOG](ROI_BACKLOG.md) #49–50). #11–48 + #20 levererade.
+**Produktspår:** Exception matrices + feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #52–56). #11–48 + #51 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk7 simplify → evaluate-at-x** — #51
-2. **Publish exception matrices** — #52–54
-3. **Feedback tips leftovers** — #55–56
+1. **Publish exception matrices** — #52–54
+2. **Feedback tips leftovers** — #55–56
+3. **Widen Åk8 powers** — #57
 
 Lyft **en** till Now i taget.
 

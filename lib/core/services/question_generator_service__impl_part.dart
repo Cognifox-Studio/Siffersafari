@@ -1438,6 +1438,14 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
   }) {
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
 
+    // ROI #51: Åk 7 simplify bank → evaluate-at-x integer bridge.
+    if (gradeLevel == 7 && _random.nextDouble() < 0.45) {
+      return _generateM5aSimplifyEvaluateAtXQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
     if (gradeLevel >= 9 && step >= 7 && _random.nextDouble() < 0.35) {
       return _generateM5aDivisionEquationQuestion(
         difficulty,
@@ -1455,6 +1463,56 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     return _generateM5aLinearEquationQuestion(
       difficulty,
       difficultyStep: step,
+    );
+  }
+
+  Question _generateM5aSimplifyEvaluateAtXQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final x = 1 + _random.nextInt(step <= 6 ? 6 : 10);
+    final mode = _random.nextInt(3);
+
+    late final String expression;
+    late final int value;
+    late final String explanation;
+
+    if (mode == 0) {
+      final a = 1 + _random.nextInt(6);
+      final b = 1 + _random.nextInt(6);
+      final c = _random.nextInt(9);
+      final subtractC = _random.nextBool();
+      expression = subtractC ? '${a}x + ${b}x − $c' : '${a}x + ${b}x + $c';
+      value = (a + b) * x + (subtractC ? -c : c);
+      explanation =
+          'Först ${a}x + ${b}x = ${(a + b)}x. Sedan ${(a + b)}·$x ${subtractC ? '−' : '+'} $c = $value.';
+    } else if (mode == 1) {
+      final a = 2 + _random.nextInt(5);
+      final b = 1 + _random.nextInt(8);
+      expression = '$a(x + $b)';
+      value = a * (x + b);
+      explanation = '$a·($x + $b) = $a·${x + b} = $value.';
+    } else {
+      final a = 2 + _random.nextInt(5);
+      final b = 1 + _random.nextInt(6);
+      final c = 1 + _random.nextInt(8);
+      expression = '$a(x − $b) + $c';
+      value = a * (x - b) + c;
+      explanation = '$a·($x − $b) + $c = $a·${x - b} + $c = $value.';
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: x,
+      operand2: value,
+      correctAnswer: value,
+      wrongAnswers: _generateWrongAnswers(value, 3),
+      promptText:
+          'Förenkla = ?\nUttryck: $expression\nVad blir värdet när x = $x?',
+      explanation: explanation,
     );
   }
 

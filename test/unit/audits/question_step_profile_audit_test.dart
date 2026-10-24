@@ -256,6 +256,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Sannolikhet = ?')) {
     return 'm_probability';
   }
+  if (prompt.startsWith('Förenkla = ?')) {
+    return 'm_simplify_eval';
+  }
   if (prompt.startsWith('Flerstegsproblem = ?')) {
     return 'm_multi_step_word';
   }

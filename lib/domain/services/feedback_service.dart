@@ -297,6 +297,9 @@ class FeedbackService {
     if (prompt.startsWith('Sannolikhet = ?')) {
       return 'Chans (%) = (gynnsamma ÷ alla) × 100.';
     }
+    if (prompt.startsWith('Förenkla = ?')) {
+      return 'Sätt in x-värdet i uttrycket och räkna ut stegen.';
+    }
     if (prompt.startsWith('Sammansatt procent = ?')) {
       return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
     }
