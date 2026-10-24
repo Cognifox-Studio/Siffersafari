@@ -48,7 +48,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
   6: {
     'percentage_change': 'supported_prompt_family',
     'negative_numbers': 'supported_prompt_family',
-    'diagram_interpretation': 'deferred_representation',
+    'diagram_interpretation': 'supported_prompt_family',
     'multiplication': 'supported_core_arithmetic',
     'division': 'supported_core_arithmetic',
     'multi_step_word_problems': 'supported_prompt_family',
@@ -456,6 +456,13 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 7,
         matches: (prompt) => prompt.startsWith('Medelvärde'),
+      );
+    case '6:diagram_interpretation':
+      _assertPromptRuntime(
+        gradeLevel: 6,
+        operationType: OperationType.mixed,
+        difficultyStep: 7,
+        matches: (prompt) => prompt.startsWith('Diagram (stapel) = ?'),
       );
     case '6:percentage_change':
       _assertPromptRuntime(

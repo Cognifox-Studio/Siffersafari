@@ -30,6 +30,7 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
         statsRange,
         difficulty,
         difficultyStep: statsStep,
+        gradeLevel: gradeLevel,
       );
     }
 

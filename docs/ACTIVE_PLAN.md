@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk 6 ASCII diagram ([ROI_BACKLOG](ROI_BACKLOG.md) #37). #11–36 + #20 levererade.
+**Produktspår:** Rimlighets-/estimate integer checks ([ROI_BACKLOG](ROI_BACKLOG.md) #38). #11–37 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Rimlighets-/estimate integer checks** — #38
-2. **Åk 8–9 linear/functions integer text** — #39
-3. **Åk 9 probability bag/table text** — #40
+1. **Åk 8–9 linear/functions integer text** — #39
+2. **Åk 9 probability bag/table text** — #40
+3. **Cadence: release-guard / preflight** — #41+
 
 Lyft **en** till Now i taget.
 

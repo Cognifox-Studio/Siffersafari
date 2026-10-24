@@ -9,11 +9,13 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     DifficultyNumberRange range,
     DifficultyLevel difficulty, {
     required int difficultyStep,
+    int? gradeLevel,
   }) {
     // M4 (Åk 4–6, quiz-format utan ny UI): enkel statistik som alltid ger
     // heltalssvar.
     // Vi inkluderar '=' i prompten för att UI ska dölja operationssymbolen.
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final isGrade6 = gradeLevel == 6;
 
     final valueCap = step <= 3
         ? min(range.max, 200)
@@ -33,13 +35,15 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
       );
     }
 
-    // M4 full (del 2a): ASCII-stapeldiagram med tolkning-frågor.
-    // Från step 7 och uppåt med låg sannolikhet.
-    if (step >= 7 && _random.nextDouble() < 0.15) {
+    // ASCII-stapeldiagram: Åk 6 earlier/heavier (ROI #37); others from step 7.
+    final barMinStep = isGrade6 ? 5 : 7;
+    final barChance = isGrade6 ? (step >= 8 ? 0.42 : 0.28) : 0.15;
+    if (step >= barMinStep && _random.nextDouble() < barChance) {
       return _generateM4BarChartQuestion(
         valueRange,
         difficulty,
         difficultyStep: step,
+        gradeLevel: gradeLevel,
       );
     }
 
@@ -271,67 +275,91 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     DifficultyNumberRange valueRange,
     DifficultyLevel difficulty, {
     required int difficultyStep,
+    int? gradeLevel,
   }) {
     // M4 full (del 2a): ASCII-stapeldiagram med tolkning-frågor.
     // Visa ett enkelt diagram med asterisker och ställ frågor om högsta/lägsta.
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final isGrade6 = gradeLevel == 6;
 
-    final labels = <String>['X', 'Y', 'Z'];
+    // Keep printed bars short even when values are large (scale + label).
+    final barCount = isGrade6 ? (step >= 7 ? 5 : 4) : 3;
+    final displayCap = isGrade6 ? min(40, max(8, valueRange.max)) : null;
     final minVal = max(2, valueRange.min);
-    final maxVal = max(minVal + 2, valueRange.max);
+    final maxVal = displayCap != null
+        ? max(minVal + 2, displayCap)
+        : max(minVal + 2, min(valueRange.max, 20));
 
-    int a = _randomInRange(DifficultyNumberRange(minVal, maxVal));
-    int b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
-    int c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
-
-    // Undvik degenererad data (alla samma).
-    for (var i = 0; i < 60; i++) {
-      if (!(a == b && b == c)) break;
-      b = _randomInRange(DifficultyNumberRange(minVal, maxVal));
-      c = _randomInRange(DifficultyNumberRange(minVal, maxVal));
+    final values = <int>[];
+    for (var i = 0; i < barCount; i++) {
+      values.add(_randomInRange(DifficultyNumberRange(minVal, maxVal)));
+    }
+    for (var i = 0; i < 80; i++) {
+      if (values.toSet().length >= 2) break;
+      values[i % barCount] =
+          _randomInRange(DifficultyNumberRange(minVal, maxVal));
     }
 
-    final values = <int>[a, b, c];
-    final sorted = _sortedCopy(values);
+    final labels = isGrade6
+        ? List<String>.generate(barCount, (i) => 'Dag ${i + 1}')
+        : <String>['X', 'Y', 'Z'].take(barCount).toList(growable: false);
 
-    // Byggklassning av stapeldiagram med asterisker.
+    final peak = values.reduce(max);
+    final starScale = max(1, (peak / 12).ceil());
+
     final diagramLines = <String>[];
-    for (int i = 0; i < labels.length; i++) {
-      final asterisks = '*' * values[i];
-      diagramLines.add('${labels[i]}: $asterisks (${values[i]})');
+    for (var i = 0; i < labels.length; i++) {
+      final stars = max(1, (values[i] / starScale).round());
+      diagramLines.add('${labels[i]}: ${'*' * stars} (${values[i]})');
     }
     final diagram = diagramLines.join('\n');
 
+    final sorted = _sortedCopy(values);
     final int correct;
     final String questionLine;
     final String explanation;
 
-    if (step <= 7) {
-      final maxValEntry = values.reduce((x, y) => x > y ? x : y);
-      correct = maxValEntry;
+    final modeRoll = _random.nextDouble();
+    if (isGrade6 && modeRoll < 0.28) {
+      final maxIdx = values.indexOf(sorted.last);
+      correct = maxIdx + 1;
+      questionLine = 'Vilken dag hade högst värde? Svara med dagnummer.';
+      explanation = 'Dag $correct har högst stapel (${sorted.last}).';
+    } else if (isGrade6 && modeRoll < 0.48) {
+      final minIdx = values.indexOf(sorted.first);
+      correct = minIdx + 1;
+      questionLine = 'Vilken dag hade lägst värde? Svara med dagnummer.';
+      explanation = 'Dag $correct har lägst stapel (${sorted.first}).';
+    } else if (isGrade6 && modeRoll < 0.68 && barCount >= 3) {
+      final i = _random.nextInt(barCount - 1);
+      final delta = values[i + 1] - values[i];
+      correct = delta.abs();
+      questionLine = delta >= 0
+          ? 'Hur mycket ökade mellan dag ${i + 1} och dag ${i + 2}?'
+          : 'Hur mycket minskade mellan dag ${i + 1} och dag ${i + 2}?';
+      explanation =
+          'Skillnad = |${values[i + 1]} − ${values[i]}| = $correct.';
+    } else if (step <= 7 && !isGrade6) {
+      correct = sorted.last;
       questionLine = 'Vilket värde är störst?';
       explanation =
           'Jämför alla staplar i diagrammet och välj det största: $correct.';
-    } else if (step <= 9) {
-      final diff = sorted.last - sorted.first;
-      correct = diff;
+    } else if (step <= 9 || (isGrade6 && modeRoll < 0.85)) {
+      correct = sorted.last - sorted.first;
       questionLine = 'Vad är skillnaden mellan största och minsta värdet?';
       explanation =
           'Skillnad = största - minsta = ${sorted.last} - ${sorted.first} = $correct.';
     } else {
-      final sum = values.fold<int>(0, (acc, v) => acc + v);
-      if (sum % values.length == 0) {
-        correct = sum ~/ values.length;
-      } else {
-        final remainder = sum % values.length;
-        c += (values.length - remainder);
-        values[2] = c;
-        final adjustedSum = values.fold<int>(0, (acc, v) => acc + v);
-        correct = adjustedSum ~/ values.length;
+      var sum = values.fold<int>(0, (acc, v) => acc + v);
+      final rem = sum % values.length;
+      if (rem != 0) {
+        values[values.length - 1] += values.length - rem;
+        sum = values.fold<int>(0, (acc, v) => acc + v);
       }
+      correct = sum ~/ values.length;
       questionLine = 'Vad är medelvärdet?';
       explanation =
-          'Medelvärde = summa / antal = ${values.fold<int>(0, (acc, v) => acc + v)} / ${values.length} = $correct.';
+          'Medelvärde = summa / antal = $sum / ${values.length} = $correct.';
     }
 
     final prompt = 'Diagram (stapel) = ?\n$diagram\nFråga: $questionLine';
@@ -340,8 +368,8 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
       id: _uuid.v4(),
       operationType: OperationType.mixed,
       difficulty: difficulty,
-      operand1: 0,
-      operand2: 0,
+      operand1: sorted.first,
+      operand2: sorted.last,
       correctAnswer: correct,
       wrongAnswers: _generateWrongAnswers(correct, 3),
       promptText: prompt,

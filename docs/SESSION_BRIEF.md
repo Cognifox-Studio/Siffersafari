@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk 6 ASCII diagram ([ROI_BACKLOG](ROI_BACKLOG.md) #37).  
-**Status:** #36 ½-of-n text-bridge klar. #11–36 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~22 lokalt (ej pushad).
+**Mål:** Rimlighets-/estimate integer checks ([ROI_BACKLOG](ROI_BACKLOG.md) #38).  
+**Status:** #37 Åk 6 ASCII diagram klar. #11–37 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~23 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Bråk (½) integer bridge; Sortera MC; Mix SRS; matte-broar.
+**Klart sedan förra briefen:** ASCII stapeldiagram Åk 6; ½-of-n; Sortera MC; Mix SRS.
 
 ---
 
