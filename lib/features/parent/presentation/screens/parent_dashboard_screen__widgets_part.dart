@@ -5,11 +5,15 @@ class _WeakArea {
     required this.key,
     required this.rate,
     required this.label,
+    this.isSuggestedFiller = false,
   });
 
   final String key;
   final double rate;
   final String label;
+
+  /// True when mastery is empty — suggested default pass, not a weak area.
+  final bool isSuggestedFiller;
 
   OperationType? get operationType {
     final parts = key.split('_');
@@ -446,9 +450,8 @@ class _FirstRunChecklistRow extends StatelessWidget {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final accent = Theme.of(context).colorScheme.secondary;
     final iconColor = done ? accent : onPrimary.withValues(alpha: 0.55);
-    final textColor = done
-        ? onPrimary.withValues(alpha: AppOpacities.mutedText)
-        : onPrimary;
+    final textColor =
+        done ? onPrimary.withValues(alpha: AppOpacities.mutedText) : onPrimary;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,

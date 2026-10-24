@@ -70,6 +70,15 @@ void main() {
 
       await pumpUntilFound(tester, find.text('Översikt'));
       expect(find.text('Översikt'), findsOneWidget);
+      // Near-miss: tonight practice filler when mastery is empty.
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('parent_tonight_practice_button')),
+      );
+      expect(
+        find.textContaining('Inga svaga områden ännu'),
+        findsOneWidget,
+      );
     },
   );
 

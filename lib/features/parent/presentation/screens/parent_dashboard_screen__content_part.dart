@@ -362,8 +362,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final showFirstRunChecklist = !gradeDone || !ttsDone || !opsDone;
 
     Future<void> startTonightPractice(_WeakArea area) async {
-      final operation =
-          area.operationType ?? OperationType.addition;
+      final operation = area.operationType ?? OperationType.addition;
       final difficulty = area.difficultyLevel ?? DifficultyLevel.easy;
       final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
         fallback: user.ageGroup,
@@ -412,53 +411,69 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
       await AppNavigator.resetStackToQuiz(context);
     }
 
-    final tonightPracticeCard = weakestAreas.isEmpty
-        ? null
-        : _Card(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Ikväll',
-                  key: const Key('parent_tonight_practice_title'),
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.microSpacing4),
-                Text(
-                  'Ett kort pass på det som känns svårast just nu.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: subtleOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.smallPadding),
-                Text(
-                  weakestAreas.first.label,
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: onPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                ),
-                Text(
-                  '${(weakestAreas.first.rate * 100).toStringAsFixed(0)}% rätt hittills',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: mutedOnPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                ),
-                const SizedBox(height: AppConstants.defaultPadding),
-                FilledButton.icon(
-                  key: const Key('parent_tonight_practice_button'),
-                  onPressed: () => startTonightPractice(weakestAreas.first),
-                  icon: const Icon(Icons.nightlight_round),
-                  label: const Text('Öva ikväll'),
-                ),
-              ],
+    final tonightArea = weakestAreas.isNotEmpty
+        ? weakestAreas.first
+        : _WeakArea(
+            key:
+                '${(allowedOps.isNotEmpty ? allowedOps.first : OperationType.addition).name}_easy',
+            rate: 1.0,
+            label: _prettyEnumLabel(
+              (allowedOps.isNotEmpty
+                      ? allowedOps.first
+                      : OperationType.addition)
+                  .name,
             ),
+            isSuggestedFiller: true,
           );
+
+    final tonightPracticeCard = _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Ikväll',
+            key: const Key('parent_tonight_practice_title'),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: AppConstants.microSpacing4),
+          Text(
+            tonightArea.isSuggestedFiller
+                ? 'Inga svaga områden ännu. Ett kort pass håller vanan igång.'
+                : 'Ett kort pass på det som känns svårast just nu.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: subtleOnPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Text(
+            tonightArea.label,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+          ),
+          if (!tonightArea.isSuggestedFiller)
+            Text(
+              '${(tonightArea.rate * 100).toStringAsFixed(0)}% rätt hittills',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: mutedOnPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          FilledButton.icon(
+            key: const Key('parent_tonight_practice_button'),
+            onPressed: () => startTonightPractice(tonightArea),
+            icon: const Icon(Icons.nightlight_round),
+            label: const Text('Öva ikväll'),
+          ),
+        ],
+      ),
+    );
 
     final firstRunChecklistCard = _Card(
       child: Column(
@@ -1128,10 +1143,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 firstRunChecklistCard,
                 sectionSpacing,
               ],
-              if (tonightPracticeCard != null) ...[
-                tonightPracticeCard,
-                sectionSpacing,
-              ],
+              tonightPracticeCard,
+              sectionSpacing,
               overviewCard,
               sectionSpacing,
               localInsightCard,
@@ -1157,10 +1170,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                       firstRunChecklistCard,
                       sectionSpacing,
                     ],
-                    if (tonightPracticeCard != null) ...[
-                      tonightPracticeCard,
-                      sectionSpacing,
-                    ],
+                    tonightPracticeCard,
+                    sectionSpacing,
                     overviewCard,
                     sectionSpacing,
                     localInsightCard,
