@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk2 tip + profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #62–70). #11–48 + #51–61 + #20 levererade.
+**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #63–70). #11–48 + #51–62 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Tip: Åk2 tens-transition** — #62
-2. **Profile rename after create** — #63
-3. **Force security Q before PIN unlock** — #64
+1. **Profile rename after create** — #63
+2. **Force security Q before PIN unlock** — #64
+3. **Parent SRS toggle copy** — #65
 
 Lyft **en** till Now i taget.
 

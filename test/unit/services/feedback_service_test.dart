@@ -302,6 +302,25 @@ void main() {
       );
     });
 
+    test('Åk2 tiotalsövergång tipsar om växling (#62)', () {
+      const question = Question(
+        id: 'q_carry',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 17,
+        operand2: 5,
+        correctAnswer: 22,
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 12,
+        ageGroup: AgeGroup.young,
+      );
+
+      expect(feedback.message, contains('växla 1 tiotal'));
+    });
+
     test('prioriteringsregler tipsar om parentes-misconception (#55)', () {
       const question = Question(
         id: 'q_prec_paren',

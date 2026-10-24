@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk2 tens-transition tip + profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #62–70).  
-**Status:** #61 undercoveredConcepts ifyllda. #11–48 + #51–61 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~41 lokalt (ej pushad).
+**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #63–70).  
+**Status:** #62 Åk2 tiotalsövergång-tip klar. #11–48 + #51–62 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~42 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Undercovered; non-runtime tags; tiokompisar; ekvation; powers.
+**Klart sedan förra briefen:** Carry tip; undercovered; non-runtime; tiokompisar; ekvation.
 
 ---
 

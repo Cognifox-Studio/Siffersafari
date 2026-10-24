@@ -362,6 +362,14 @@ class FeedbackService {
           return null;
         }
 
+        final onesSum = (question.operand1 % 10) + (question.operand2 % 10);
+        if (onesSum >= 10) {
+          final ones = onesSum - 10;
+          return ones == 0
+              ? 'Entalen blir 10 — skriv 0 och växla 1 tiotal.'
+              : 'Entalen blir $onesSum — skriv $ones och växla 1 tiotal.';
+        }
+
         if (smaller <= 10) {
           return 'Börja på $larger och räkna $smaller steg till.';
         }
