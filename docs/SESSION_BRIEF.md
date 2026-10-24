@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Home first-viewport play primär ([ROI_BACKLOG](ROI_BACKLOG.md) #25).  
-**Status:** #24 “Öva ikväll” inne. #11–24 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Åk 6 %-change policy ([ROI_BACKLOG](ROI_BACKLOG.md) #26).  
+**Status:** #20 Sedan/Senare aligned home↔map↔results. #11–25 + #20 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Parent tonight practice; grade helper; Kom igång; PIN före radera.
+**Klart sedan förra briefen:** Sedan/Senare-align; home play-first; Öva ikväll; parent trust/setup.
 
 ---
 

@@ -256,12 +256,13 @@ class _NowAndNextPanel extends StatelessWidget {
     final currentBody = story.isEpisodeComplete
         ? story.chapterTitle
         : story.currentObjectiveTitle;
+    final nextBiome = story.nextBiome;
     final nextLabel = story.isEpisodeComplete ? 'Senare' : 'Sedan';
     final nextTitle = story.isEpisodeComplete
-        ? 'Nästa värld'
+        ? (nextBiome?.name ?? 'Senare')
         : nextNode?.landmark ?? 'Djungeln klar snart';
     final nextBody = story.isEpisodeComplete
-        ? story.endingBody
+        ? (nextBiome?.previewBody ?? story.endingBody)
         : nextNode?.title ?? 'Ett sista steg kvar.';
     final buttonLabel =
         story.isEpisodeComplete ? 'Till hem' : 'Spela nästa stopp';

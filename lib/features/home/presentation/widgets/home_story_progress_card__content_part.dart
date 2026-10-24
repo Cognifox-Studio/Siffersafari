@@ -224,7 +224,7 @@ class _JourneyPreviewPanel extends StatelessWidget {
       title: story.isEpisodeComplete
           ? (nextBiome?.name ?? 'Senare')
           : nextNode?.landmark ?? 'Djungeln klar snart',
-      meta: story.isEpisodeComplete ? 'Kommer snart' : 'Nästa stopp',
+      meta: story.isEpisodeComplete ? 'Kommer senare' : 'Nästa stopp',
       body: story.isEpisodeComplete
           ? (nextBiome?.previewBody ?? story.endingBody)
           : nextNode == null

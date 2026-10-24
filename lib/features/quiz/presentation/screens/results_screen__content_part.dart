@@ -709,7 +709,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     final nextLabel = useBiomeAsNext
         ? nextBiome.previewPrefix
         : isEpisodeComplete
-            ? 'Nu'
+            ? 'Senare'
             : 'Sedan';
     final storyButtonLabel =
         isEpisodeComplete ? 'Se episoden' : 'Fortsätt storyn';
