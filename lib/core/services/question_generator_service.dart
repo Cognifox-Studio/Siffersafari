@@ -142,7 +142,7 @@ class QuestionGeneratorService
         if (op1 != null && op2 != null && correct != null) {
           OperationType? opType;
           for (final op in OperationType.values) {
-            if (op.name == opName && op != OperationType.mixed) {
+            if (op.name == opName) {
               opType = op;
               break;
             }
@@ -150,8 +150,16 @@ class QuestionGeneratorService
 
           if (opType != null) {
             String? promptText;
-            if (displayQuestionText != '$op1 ${opType.symbol} $op2 = ?') {
+            final defaultArithmetic =
+                '$op1 ${opType.symbol} $op2 = ?';
+            if (displayQuestionText != defaultArithmetic) {
               promptText = displayQuestionText;
+            }
+
+            // Mix bridges need their prompt text to stay meaningful.
+            if (opType == OperationType.mixed &&
+                (promptText == null || promptText.trim().isEmpty)) {
+              return null;
             }
 
             return Question(

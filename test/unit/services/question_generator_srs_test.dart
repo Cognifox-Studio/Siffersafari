@@ -69,7 +69,7 @@ void main() {
       expect(question, isNull);
     });
 
-    test('returnerar null för OperationType.mixed', () {
+    test('returnerar null för legacy Mix-nyckel utan v2-prompt', () {
       final question = service.tryGenerateFromSrsKey(
         'mixed|4 ? 7 = ?',
         DifficultyLevel.easy,
@@ -173,6 +173,30 @@ void main() {
       expect(question.operand2, 0);
       expect(question.correctAnswer, 10);
       expect(question.promptText, 'Tabell\nA | B\n1 | 2\nTotal? = ?');
+    });
+
+    test('parsar Mix-promptfamilj från v2-nyckel', () {
+      final question = service.tryGenerateFromSrsKey(
+        'v2|mixed|200|20|135|Procentuell förändring = ?\nPriset sänks med 20% från 200. Vad blir nya priset?',
+        DifficultyLevel.medium,
+      );
+
+      expect(question, isNotNull);
+      expect(question!.operationType, OperationType.mixed);
+      expect(question.correctAnswer, 135);
+      expect(
+        question.promptText,
+        startsWith('Procentuell förändring = ?'),
+      );
+    });
+
+    test('avvisar Mix-nyckel utan prompttext', () {
+      final question = service.tryGenerateFromSrsKey(
+        'v2|mixed|2|3|5|2 ? 3 = ?',
+        DifficultyLevel.easy,
+      );
+
+      expect(question, isNull);
     });
   });
 }

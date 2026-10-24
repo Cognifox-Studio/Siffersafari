@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** SRS/due keys för Mix families ([ROI_BACKLOG](ROI_BACKLOG.md) #34).  
-**Status:** #33 focused practice från weak areas. #11–33 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~19 lokalt (ej pushad).
+**Mål:** Åk 1–2 Sortera as MC order ([ROI_BACKLOG](ROI_BACKLOG.md) #35).  
+**Status:** #34 Mix SRS/due keys klara. #11–34 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~20 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Parent focused short passes; geometry/prop/%-broar; Mix-tips; home/parent polish.
+**Klart sedan förra briefen:** Mix v2 SRS regeneration + Mix-preferens i due-kö; parent focused practice; matte-broar.
 
 ---
 

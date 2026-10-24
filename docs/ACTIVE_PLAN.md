@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** SRS/due keys för Mix families ([ROI_BACKLOG](ROI_BACKLOG.md) #34). #11–33 + #20 levererade.
+**Produktspår:** Åk 1–2 Sortera as MC order ([ROI_BACKLOG](ROI_BACKLOG.md) #35). #11–34 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk 1–2 Sortera as MC order** — #35
-2. **Integer ½ of n text-bridge** — #36
-3. **Åk 6 ASCII diagram** — #37
+1. **Integer ½ of n text-bridge** — #36
+2. **Åk 6 ASCII diagram** — #37
+3. **Rimlighets-/estimate integer checks** — #38
 
 Lyft **en** till Now i taget.
 

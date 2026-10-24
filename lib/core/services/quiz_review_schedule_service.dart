@@ -176,15 +176,32 @@ class QuizReviewScheduleService {
       schedules.values.toList(growable: false),
       now,
     );
-    final filtered = allDue.where((key) {
-      if (sessionOpType == OperationType.mixed) return true;
+
+    String opNameOf(String key) {
       final isV2 = key.startsWith('v2|');
-      final opName = isV2
-          ? key.split('|').elementAtOrNull(1) ?? ''
-          : key.substring(0, key.indexOf('|').clamp(0, key.length));
-      if (opName.isEmpty) return false;
-      return opName == sessionOpType.name;
-    }).toList();
+      if (isV2) {
+        return key.split('|').elementAtOrNull(1) ?? '';
+      }
+      final pipe = key.indexOf('|');
+      if (pipe <= 0) return '';
+      return key.substring(0, pipe);
+    }
+
+    final List<String> filtered;
+    if (sessionOpType == OperationType.mixed) {
+      // Prefer Mix prompt-family keys so bridges actually resurface.
+      final mixKeys =
+          allDue.where((key) => opNameOf(key) == OperationType.mixed.name);
+      final otherKeys =
+          allDue.where((key) => opNameOf(key) != OperationType.mixed.name);
+      filtered = [...mixKeys, ...otherKeys];
+    } else {
+      filtered = allDue.where((key) {
+        final opName = opNameOf(key);
+        if (opName.isEmpty) return false;
+        return opName == sessionOpType.name;
+      }).toList();
+    }
 
     if (filtered.isEmpty) return const [];
     final cap = (totalQuestions ~/ 3).clamp(1, filtered.length);

@@ -167,6 +167,31 @@ void main() {
       expect(notifier.state.pendingDueKeys, hasLength(1));
     });
 
+    test('Mix-session prioriterar Mix-promptfamilj framför övriga due', () async {
+      await seedSchedules([
+        (key: 'multiplication|4 × 7 = ?', daysAgo: 1),
+        (
+          key:
+              'v2|mixed|200|20|160|Procentuell förändring = ?\nPriset sänks med 20% från 200. Vad blir nya priset?',
+          daysAgo: 1,
+        ),
+      ]);
+
+      notifier.startSession(
+        userId: userId,
+        ageGroup: AgeGroup.young,
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.easy,
+      );
+
+      final session = notifier.state.session;
+      expect(session, isNotNull);
+      final first = session!.questions.first;
+      expect(first.operationType, OperationType.mixed);
+      expect(first.correctAnswer, 160);
+      expect(first.promptText, startsWith('Procentuell förändring'));
+    });
+
     test('framtida schedules räknas inte som due', () async {
       await seedSchedules([
         (key: 'multiplication|4 × 7 = ?', daysAgo: -7), // 7 dagar i framtiden
