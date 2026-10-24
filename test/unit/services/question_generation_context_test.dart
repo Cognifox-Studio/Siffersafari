@@ -17,7 +17,7 @@ void main() {
           required int mixBaselineStep,
         }) =>
             OperationType.addition,
-        request: QuestionRequest(
+        request: const QuestionRequest(
           ageGroup: AgeGroup.young,
           operationType: OperationType.addition,
           difficulty: DifficultyLevel.easy,

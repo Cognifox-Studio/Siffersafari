@@ -8,15 +8,15 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Stäng release `v1.4.3+22` (Top-50 #1–3) innan nytt produktspår.  
-**Status:** Playtest-polish (feedback-scrim, tallinje +1, story-banner, ikon) ligger lokalt på `1.4.3+22` (`e93c0fe`); `main` 1 commit ahead of origin. Senaste tagg `v1.4.3+21`.
+**Mål:** Stäng release `v1.4.3+22` innan nytt produktspår.  
+**Status:** #1 analyze infos fixade; #3 what’s-new uppdaterad. Kvar: tag `v1.4.3+22` + samma AAB till Play internal (DoD B). Senaste tagg `v1.4.3+21`.
 
 **Now-steg (i ordning):**
-1. Fix 4 `prefer_const` infos så `--fatal-infos` CI passerar
+1. ~~Fix 4 `prefer_const` infos så `--fatal-infos` CI passerar~~
 2. Tag `v1.4.3+22` + samma AAB till Play internal (DoD B)
-3. What’s-new notes för +22 (camp, badges, nextBiome, polish)
+3. ~~What’s-new notes för +22 (camp, badges, nextBiome, polish)~~
 
-**Klart sedan förra briefen:** ROI-backlog Top 100 i `ROI_BACKLOG.md` (Now/Next oförändrade); andra playtest-runda lokalt; Cursor-rutin-slim, camp-souvenirer, `nextBiome`, samlar-badges.
+**Klart sedan förra briefen:** prefer_const CI-fix + what’s-new +22; ROI Top 100; playtest-polish lokalt; camp/nextBiome/badges.
 
 ---
 

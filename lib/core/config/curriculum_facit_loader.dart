@@ -7,17 +7,17 @@ class CurriculumFacitLoader {
   static CurriculumFacitSnapshot parseJson(String jsonSource) {
     final decoded = jsonDecode(jsonSource);
     if (decoded is! Map<String, dynamic>) {
-      throw FormatException('curriculum_facit root must be an object');
+      throw const FormatException('curriculum_facit root must be an object');
     }
 
     final schemaVersion = decoded['schemaVersion'];
     if (schemaVersion is! int) {
-      throw FormatException('curriculum_facit.schemaVersion must be int');
+      throw const FormatException('curriculum_facit.schemaVersion must be int');
     }
 
     final stages = decoded['stages'];
     if (stages is! List) {
-      throw FormatException('curriculum_facit.stages must be a list');
+      throw const FormatException('curriculum_facit.stages must be a list');
     }
 
     final gradeLevels = <int>{};
