@@ -15,14 +15,14 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** A11y pass home/wardrobe/story/badges ([ROI_BACKLOG](ROI_BACKLOG.md) #44). #11–43 + #20 levererade.
+**Produktspår:** Desert theme parity ([ROI_BACKLOG](ROI_BACKLOG.md) #45). #11–44 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Desert theme parity** — #45
-2. **Feedback glanceability** — #46
+1. **Feedback glanceability** — #46
+2. **Hard-quest vs hard-badge fairness** — #47
 3. **Curriculum polish leftovers** — #51–62
 
 Lyft **en** till Now i taget.

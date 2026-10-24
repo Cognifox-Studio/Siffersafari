@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/features/home/presentation/widgets/home_badge_album.dart';
 import 'package:siffersafari/features/quiz/presentation/widgets/answer_button.dart';
 import 'package:siffersafari/features/quiz/presentation/widgets/question_card.dart';
 import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
+
+import '../test_utils.dart';
 
 void main() {
   Widget wrapForTest(Widget child) {
@@ -109,6 +114,61 @@ void main() {
       );
 
       expect(compactSize.height, lessThan(defaultSize.height));
+    });
+  });
+
+  group('[Widget] Accessibility – Home collectibles (#44)', () {
+    testWidgets('HomeBadgeAlbum exponerar märkessemantik', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await setupWidgetTestDependencies();
+
+      await tester.pumpWidget(
+        ProviderScope(
+          child: wrapForTest(
+            const HomeBadgeAlbum(
+              achievementIds: [AppConstants.firstQuizAchievement],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.bySemanticsLabel(RegExp(r'Märken\..*upplåsta')),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(RegExp(r'Första, upplåst')),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(RegExp(r'Perfekt, låst')),
+        findsOneWidget,
+      );
+      semantics.dispose();
+    });
+
+    testWidgets('Operation-start-semantik använder displayName', (tester) async {
+      final semantics = tester.ensureSemantics();
+      await tester.pumpWidget(
+        wrapForTest(
+          Semantics(
+            button: true,
+            label: 'Starta ${OperationType.addition.displayName}',
+            child: const SizedBox(width: 48, height: 48),
+          ),
+        ),
+      );
+
+      expect(
+        find.bySemanticsLabel('Starta ${OperationType.addition.displayName}'),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel('Starta Plusraketer'),
+        findsOneWidget,
+      );
+      semantics.dispose();
     });
   });
 }

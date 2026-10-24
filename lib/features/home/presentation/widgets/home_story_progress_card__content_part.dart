@@ -40,7 +40,14 @@ class HomeStoryProgressCard extends StatelessWidget {
     final nextNode = _nextNode();
     final visibleNodes = _selectVisibleNodes();
 
-    return ConstrainedBox(
+    final storySummary =
+        'Berättelse ${story.worldTitle}. ${story.actLabel}. '
+        'Klart ${story.completedNodes} av ${story.totalNodes}.';
+
+    return Semantics(
+      container: true,
+      label: storySummary,
+      child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 800),
       child: PlayfulPanel(
         key: const Key('home_story_progress_card'),
@@ -142,6 +149,7 @@ class HomeStoryProgressCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }

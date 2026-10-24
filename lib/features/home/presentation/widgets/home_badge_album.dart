@@ -26,7 +26,10 @@ class HomeBadgeAlbum extends ConsumerWidget {
             ? 'Alla märken klara!'
             : 'Tryck på låsta för tips.';
 
-    return PlayfulPanel(
+    return Semantics(
+      container: true,
+      label: 'Märken. $countLabel upplåsta. $helperText',
+      child: PlayfulPanel(
       key: const Key('home_badge_album'),
       backgroundColor: Colors.white.withValues(alpha: 0.12),
       highlightColor: theme.colorScheme.secondary,
@@ -85,6 +88,7 @@ class HomeBadgeAlbum extends ConsumerWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }

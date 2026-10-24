@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** A11y pass home/wardrobe/story/badges ([ROI_BACKLOG](ROI_BACKLOG.md) #44).  
-**Status:** #41–43 cadence (release-guard paths, preflight, DEPLOY +22) klara. #11–43 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~27 lokalt (ej pushad).
+**Mål:** Desert theme parity ([ROI_BACKLOG](ROI_BACKLOG.md) #45).  
+**Status:** #44 a11y home/badges/story klar. #11–44 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~28 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Matte #34–40; release-guard/preflight; sannolikhet; linjär; rimlighet.
+**Klart sedan förra briefen:** A11y Semantics; cadence #41–43; matte #34–40.
 
 ---
 
