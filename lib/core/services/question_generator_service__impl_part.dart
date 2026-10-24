@@ -1011,6 +1011,134 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     );
   }
 
+  Question _generateM5aCompoundPercentQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    // Åk 8 policy: two sequential %-changes → final integer price.
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final templates = step <= 7
+        ? const <({String prompt, int answer, String explanation})>[
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 200 kr får 25% rabatt och sedan 10% rabatt. Vad kostar det då?',
+              answer: 135,
+              explanation: '200 × 0,75 × 0,90 = 135 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr höjs med 20% och sedan 10%. Vad kostar det då?',
+              answer: 132,
+              explanation: '100 × 1,20 × 1,10 = 132 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 50% rabatt och sedan 20% rabatt. Vad kostar det då?',
+              answer: 40,
+              explanation: '100 × 0,50 × 0,80 = 40 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr höjs med 10% och sänks sedan med 10%. Vad kostar det då?',
+              answer: 99,
+              explanation: '100 × 1,10 × 0,90 = 99 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 10% rabatt två gånger. Vad kostar det då?',
+              answer: 81,
+              explanation: '100 × 0,90 × 0,90 = 81 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 20% rabatt två gånger. Vad kostar det då?',
+              answer: 64,
+              explanation: '100 × 0,80 × 0,80 = 64 kr.',
+            ),
+          ]
+        : const <({String prompt, int answer, String explanation})>[
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 30% rabatt två gånger. Vad kostar det då?',
+              answer: 49,
+              explanation: '100 × 0,70 × 0,70 = 49 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 400 kr höjs med 5% två gånger. Vad kostar det då?',
+              answer: 441,
+              explanation: '400 × 1,05 × 1,05 = 441 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 400 kr höjs med 25% två gånger. Vad kostar det då?',
+              answer: 625,
+              explanation: '400 × 1,25 × 1,25 = 625 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr höjs med 50% och sedan 10%. Vad kostar det då?',
+              answer: 165,
+              explanation: '100 × 1,50 × 1,10 = 165 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 10% rabatt och sedan 20% rabatt. Vad kostar det då?',
+              answer: 72,
+              explanation: '100 × 0,90 × 0,80 = 72 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr höjs med 30% och sänks sedan med 10%. Vad kostar det då?',
+              answer: 117,
+              explanation: '100 × 1,30 × 0,90 = 117 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 400 kr får 15% rabatt två gånger. Vad kostar det då?',
+              answer: 289,
+              explanation: '400 × 0,85 × 0,85 = 289 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 400 kr får 5% rabatt två gånger. Vad kostar det då?',
+              answer: 361,
+              explanation: '400 × 0,95 × 0,95 = 361 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 200 kr får 40% rabatt och höjs sedan med 10%. Vad kostar det då?',
+              answer: 132,
+              explanation: '200 × 0,60 × 1,10 = 132 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 100 kr får 60% rabatt och sedan 10% rabatt. Vad kostar det då?',
+              answer: 36,
+              explanation: '100 × 0,40 × 0,90 = 36 kr.',
+            ),
+            (
+              prompt:
+                  'Sammansatt procent = ?\nEtt pris på 200 kr får 75% rabatt och sedan 10% rabatt. Vad kostar det då?',
+              answer: 45,
+              explanation: '200 × 0,25 × 0,90 = 45 kr.',
+            ),
+          ];
+
+    final picked = templates[_random.nextInt(templates.length)];
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: 0,
+      operand2: 0,
+      correctAnswer: picked.answer,
+      wrongAnswers: _generateWrongAnswers(picked.answer, 3),
+      promptText: picked.prompt,
+      explanation: picked.explanation,
+    );
+  }
+
   Question _generateM5aPercentQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,

@@ -39,6 +39,7 @@ Princip: senaste datum vinner vid konflikt.
 - Samma princip gäller nu Åk 9 geometri: Pythagoras, area, omkrets och volym med heltalssvar kan gå direkt i dagens quizmodell, medan cirkel/cylinder-frågor med pi/avrundning, skala och annan figur-/kontextbunden geometri ska stanna som explicit deferred tills representation och svarspolicy finns.
 - **Åk 6 procentuell förändring (2026-10-24):** Fast integer-policy. Apply-%-prompts frågar efter nytt pris (slutvärde). Före→efter-prompts frågar efter förändringens storlek i procent (positiv heltal). Runtime: `Procentuell förändring = ?` via M4 Mix för Åk ≥ 6; Åk 5 behåller `Procent = ?` (`x% av y`).
 - **Åk 6 flerstegsordproblem (2026-10-24):** Samma Mix-slot som %-change (~35%). Varje prompt är färdig svensk text med ett slutligt heltalssvar (`Flerstegsproblem = ?`). Inga ja/nej- eller öppna mål.
+- **Åk 8 sammansatt procent (2026-10-24):** Två steg i rad, alltid slutpris som heltal (`Sammansatt procent = ?`). Delar M5a-procent-slot (~40%) med `x% av y`.
 
 ## Historik (kort)
 

@@ -281,6 +281,9 @@ class FeedbackService {
       }
       return 'Skillnad ÷ startvärde × 100 ger procenten.';
     }
+    if (prompt.startsWith('Sammansatt procent = ?')) {
+      return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
+    }
     if (prompt.startsWith('Procent = ?') || prompt.contains('% av')) {
       return 'x% av y betyder (x ÷ 100) × y.';
     }

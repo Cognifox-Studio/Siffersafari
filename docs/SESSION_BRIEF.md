@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk 8 compound % integer ([ROI_BACKLOG](ROI_BACKLOG.md) #28).  
-**Status:** #32 Mix-feedback tips inne. #11–27 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Widen Åk 8 proportionality ([ROI_BACKLOG](ROI_BACKLOG.md) #29).  
+**Status:** #28 sammansatt % unlocked. #11–28 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Mix-tips; Åk 6 %-change + multi-step; Sedan/Senare; home play-first.
+**Klart sedan förra briefen:** Åk 8 compound %; Mix-tips; Åk 6 %-broar; home/parent polish.
 
 ---
 

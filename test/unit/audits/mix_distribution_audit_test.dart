@@ -34,6 +34,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Procentuell förändring = ?')) {
     return 'm4_percentage_change';
   }
+  if (promptText.startsWith('Sammansatt procent = ?')) {
+    return 'm5a_compound_percent';
+  }
   if (promptText.startsWith('Procent = ?')) return 'm4_percent_of';
   if (promptText.startsWith('Negativa tal = ?')) return 'm4_negative_numbers';
 

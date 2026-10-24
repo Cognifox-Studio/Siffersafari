@@ -250,6 +250,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Procentuell förändring = ?')) {
     return 'm_percentage_change';
   }
+  if (prompt.startsWith('Sammansatt procent = ?')) {
+    return 'm_compound_percent';
+  }
   if (prompt.startsWith('Procent = ?')) return 'm_percent';
   if (prompt.startsWith('Negativa tal = ?')) return 'm_negative';
   if (prompt.startsWith('Potenser = ?')) return 'm_power';

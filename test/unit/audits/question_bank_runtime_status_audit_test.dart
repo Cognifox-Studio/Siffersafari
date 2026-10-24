@@ -63,7 +63,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
     'powers': 'supported_prompt_family',
     'proportionality': 'supported_prompt_family_with_exceptions',
     'linear_relationships': 'deferred_representation',
-    'compound_percent_change': 'deferred_answer_policy',
+    'compound_percent_change': 'supported_prompt_family',
   },
   9: {
     'functions': 'deferred_representation',
@@ -525,6 +525,13 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 8,
         matches: (prompt) => prompt.startsWith('Proportionalitet = ?'),
+      );
+    case '8:compound_percent_change':
+      _assertPromptRuntime(
+        gradeLevel: 8,
+        operationType: OperationType.mixed,
+        difficultyStep: 8,
+        matches: (prompt) => prompt.startsWith('Sammansatt procent = ?'),
       );
     case '9:equations':
       _assertPromptRuntime(

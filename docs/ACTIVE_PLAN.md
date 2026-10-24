@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk 8 compound % integer ([ROI_BACKLOG](ROI_BACKLOG.md) #28). #11–27 + #20 + #32 levererade.
+**Produktspår:** Widen Åk 8 proportionality ([ROI_BACKLOG](ROI_BACKLOG.md) #29). #11–28 + #20 + #32 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Widen Åk 8 proportionality** — #29
-2. **Widen Åk 9 geometry integer** — #30
-3. **Dubbelt/hälften Mix specialty** — #31
+1. **Widen Åk 9 geometry integer** — #30
+2. **Dubbelt/hälften Mix specialty** — #31
+3. **Struggle → focused practice** — #33
 
 Lyft **en** till Now i taget.
 

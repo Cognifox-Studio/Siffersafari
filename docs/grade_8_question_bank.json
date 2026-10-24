@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-05-26",
+  "updated": "2026-10-24",
   "purpose": "Structured grade 8 seed bank for manual review, example prompts and future generator audits.",
   "grade": 8,
   "stage": "7-9",
@@ -82,10 +82,6 @@
       {
         "sectionId": "linear_relationships",
         "questionCount": 40
-      },
-      {
-        "sectionId": "compound_percent_change",
-        "questionCount": 20
       }
     ]
   },
@@ -819,129 +815,129 @@
       "label": "Procent på procent",
       "questionCount": 20,
       "declaredQuestionCount": 20,
-      "defaultResponseType": "numeric_or_text",
+      "defaultResponseType": "numeric",
       "defaultConceptTags": [],
       "defaultStrategyTags": [],
       "questions": [
         {
           "id": "g8_compound_percent_change_001",
-          "prompt": "25% rabatt + 10% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 200 kr får 25% rabatt och sedan 10% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 135
         },
         {
           "id": "g8_compound_percent_change_002",
-          "prompt": "20% höjning + 10% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr höjs med 20% och sedan 10%. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 132
         },
         {
           "id": "g8_compound_percent_change_003",
-          "prompt": "50% rabatt + 20% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 50% rabatt och sedan 20% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 40
         },
         {
           "id": "g8_compound_percent_change_004",
-          "prompt": "10% höjning + 10% sänkning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr höjs med 10% och sänks sedan med 10%. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 99
         },
         {
           "id": "g8_compound_percent_change_005",
-          "prompt": "30% rabatt + 30% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 30% rabatt två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 49
         },
         {
           "id": "g8_compound_percent_change_006",
-          "prompt": "15% höjning + 5% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr höjs med 5% och sedan 5% igen. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 441
         },
         {
           "id": "g8_compound_percent_change_007",
-          "prompt": "40% rabatt + 10% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 200 kr får 40% rabatt och höjs sedan med 10%. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 132
         },
         {
           "id": "g8_compound_percent_change_008",
-          "prompt": "10% rabatt + 10% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 10% rabatt två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 81
         },
         {
           "id": "g8_compound_percent_change_009",
-          "prompt": "5% höjning + 5% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr höjs med 5% två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 441
         },
         {
           "id": "g8_compound_percent_change_010",
-          "prompt": "60% rabatt + 10% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 60% rabatt och sedan 10% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 36
         },
         {
           "id": "g8_compound_percent_change_011",
-          "prompt": "20% rabatt + 20% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 20% rabatt två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 64
         },
         {
           "id": "g8_compound_percent_change_012",
-          "prompt": "12% höjning + 12% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr höjs med 25% två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 625
         },
         {
           "id": "g8_compound_percent_change_013",
-          "prompt": "8% rabatt + 8% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 500 kr får 20% rabatt och sedan 10% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 360
         },
         {
           "id": "g8_compound_percent_change_014",
-          "prompt": "25% höjning + 25% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr höjs med 25% två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 625
         },
         {
           "id": "g8_compound_percent_change_015",
-          "prompt": "50% höjning + 10% höjning",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr höjs med 50% och sedan 10%. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 165
         },
         {
           "id": "g8_compound_percent_change_016",
-          "prompt": "10% rabatt + 20% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr får 10% rabatt och sedan 20% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 72
         },
         {
           "id": "g8_compound_percent_change_017",
-          "prompt": "30% höjning + 10% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 100 kr höjs med 30% och sänks sedan med 10%. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 117
         },
         {
           "id": "g8_compound_percent_change_018",
-          "prompt": "15% rabatt + 15% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr får 15% rabatt två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 289
         },
         {
           "id": "g8_compound_percent_change_019",
-          "prompt": "5% rabatt + 5% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 400 kr får 5% rabatt två gånger. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 361
         },
         {
           "id": "g8_compound_percent_change_020",
-          "prompt": "75% rabatt + 10% rabatt",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Sammansatt procent = ?\\nEtt pris på 200 kr får 75% rabatt och sedan 10% rabatt. Vad kostar det då?",
+          "responseType": "numeric",
+          "correctAnswer": 45
         }
       ]
     }
