@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Widen Åk 8 proportionality ([ROI_BACKLOG](ROI_BACKLOG.md) #29).  
-**Status:** #28 sammansatt % unlocked. #11–28 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Widen Åk 9 geometry integer ([ROI_BACKLOG](ROI_BACKLOG.md) #30).  
+**Status:** #29 proportionalitet breddad. #11–29 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Åk 8 compound %; Mix-tips; Åk 6 %-broar; home/parent polish.
+**Klart sedan förra briefen:** Åk 8 prop/compound %; Mix-tips; Åk 6 broar; home/parent polish.
 
 ---
 

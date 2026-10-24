@@ -1240,14 +1240,21 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
     final roll = _random.nextDouble();
 
-    if (step >= 9 && roll < 0.34) {
+    if (step >= 8 && roll < 0.28) {
       return _generateM5aProportionalityWordProblemQuestion(
         difficulty,
         difficultyStep: step,
       );
     }
 
-    if (roll < 0.68) {
+    if (step >= 9 && roll < 0.42) {
+      return _generateM5aProportionalityScaleQuestion(
+        difficulty,
+        difficultyStep: step,
+      );
+    }
+
+    if (roll < 0.70) {
       return _generateM5aProportionalityForwardQuestion(
         difficulty,
         difficultyStep: step,
@@ -1321,7 +1328,7 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
         difficultyStep <= 9 ? 2 + _random.nextInt(8) : 3 + _random.nextInt(10);
     final correct = unitValue * quantity;
 
-    final templateIndex = _random.nextInt(3);
+    final templateIndex = _random.nextInt(5);
     late final String body;
     late final String explanation;
 
@@ -1334,10 +1341,19 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
         body = '1 timme = $unitValue km. Hur långt på $quantity timmar?';
         explanation =
             'Vid proportionell fart blir sträckan $quantity × $unitValue = $correct km.';
-      default:
+      case 2:
         body = '1 burk kostar $unitValue kr. Vad kostar $quantity burkar?';
         explanation =
             '$quantity burkar kostar $quantity × $unitValue = $correct kr.';
+      case 3:
+        body = '1 äggpaket kostar $unitValue kr. Vad kostar $quantity paket?';
+        explanation =
+            '$quantity paket kostar $quantity × $unitValue = $correct kr.';
+      default:
+        body =
+            '1 meter tyg kostar $unitValue kr. Vad kostar $quantity meter?';
+        explanation =
+            '$quantity meter kostar $quantity × $unitValue = $correct kr.';
     }
 
     return Question(
@@ -1350,6 +1366,40 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
       wrongAnswers: _generateWrongAnswers(correct, 3),
       promptText: 'Proportionalitet = ?\n$body',
       explanation: explanation,
+    );
+  }
+
+  Question _generateM5aProportionalityScaleQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    // Known pair → scale to another quantity (integer unit rate).
+    final unitValue =
+        difficultyStep <= 9 ? 3 + _random.nextInt(10) : 4 + _random.nextInt(14);
+    final knownQty = 2 + _random.nextInt(5);
+    final knownTotal = unitValue * knownQty;
+    final askQty = knownQty + 1 + _random.nextInt(6);
+    final correct = unitValue * askQty;
+
+    final bodies = <String>[
+      '$knownQty kg kostar $knownTotal kr. Vad kostar $askQty kg?',
+      '$knownQty meter kostar $knownTotal kr. Vad kostar $askQty meter?',
+      '$knownQty burkar kostar $knownTotal kr. Vad kostar $askQty burkar?',
+    ];
+    final body = bodies[_random.nextInt(bodies.length)];
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: knownTotal,
+      operand2: askQty,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongAnswers(correct, 3),
+      promptText: 'Proportionalitet = ?\n$body',
+      explanation:
+          'Enhetspris = $knownTotal ÷ $knownQty = $unitValue. '
+          'Sedan $askQty × $unitValue = $correct.',
     );
   }
 
