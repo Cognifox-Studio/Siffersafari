@@ -77,43 +77,63 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 top: AppConstants.smallPadding,
                 bottom: AppConstants.defaultPadding,
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 children: [
-                  _ReactionButton(
-                    label: 'Vanlig',
-                    isSelected: _selectedReaction == CharacterReaction.idle,
-                    onTap: () {
-                      setState(
-                        () => _selectedReaction = CharacterReaction.idle,
-                      );
-                      ref.read(audioServiceProvider).playClickSound();
-                    },
+                  Text(
+                    'Välj pose — kläderna sparas per pose',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.72),
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
-                  const SizedBox(width: AppConstants.smallPadding),
-                  _ReactionButton(
-                    label: 'Tänker',
-                    isSelected:
-                        _selectedReaction == CharacterReaction.answerWrong,
-                    onTap: () {
-                      setState(
-                        () => _selectedReaction = CharacterReaction.answerWrong,
-                      );
-                      ref.read(audioServiceProvider).playClickSound();
-                    },
-                  ),
-                  const SizedBox(width: AppConstants.smallPadding),
-                  _ReactionButton(
-                    label: 'Glad!',
-                    isSelected:
-                        _selectedReaction == CharacterReaction.answerCorrect,
-                    onTap: () {
-                      setState(
-                        () =>
-                            _selectedReaction = CharacterReaction.answerCorrect,
-                      );
-                      ref.read(audioServiceProvider).playClickSound();
-                    },
+                  const SizedBox(height: AppConstants.smallPadding),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: AppConstants.smallPadding,
+                    runSpacing: AppConstants.smallPadding,
+                    children: [
+                      _ReactionButton(
+                        label: 'Vila',
+                        semanticsLabel: 'Pose vila, när ni väntar',
+                        isSelected:
+                            _selectedReaction == CharacterReaction.idle,
+                        onTap: () {
+                          setState(
+                            () => _selectedReaction = CharacterReaction.idle,
+                          );
+                          ref.read(audioServiceProvider).playClickSound();
+                        },
+                      ),
+                      _ReactionButton(
+                        label: 'Fel',
+                        semanticsLabel: 'Pose fel svar',
+                        isSelected: _selectedReaction ==
+                            CharacterReaction.answerWrong,
+                        onTap: () {
+                          setState(
+                            () => _selectedReaction =
+                                CharacterReaction.answerWrong,
+                          );
+                          ref.read(audioServiceProvider).playClickSound();
+                        },
+                      ),
+                      _ReactionButton(
+                        label: 'Rätt',
+                        semanticsLabel: 'Pose rätt svar',
+                        isSelected: _selectedReaction ==
+                            CharacterReaction.answerCorrect,
+                        onTap: () {
+                          setState(
+                            () => _selectedReaction =
+                                CharacterReaction.answerCorrect,
+                          );
+                          ref.read(audioServiceProvider).playClickSound();
+                        },
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -329,9 +349,11 @@ class _ReactionButton extends StatelessWidget {
     required this.label,
     required this.isSelected,
     required this.onTap,
+    this.semanticsLabel,
   });
 
   final String label;
+  final String? semanticsLabel;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -339,25 +361,30 @@ class _ReactionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final themeColors = context.appThemeColors;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? themeColors.primaryActionColor
-              : themeColors.cardColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? Colors.white : Colors.transparent,
-            width: 2,
+    return Semantics(
+      button: true,
+      selected: isSelected,
+      label: semanticsLabel ?? label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? themeColors.primaryActionColor
+                : themeColors.cardColor,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: isSelected ? Colors.white : Colors.transparent,
+              width: 2,
+            ),
           ),
-        ),
-        child: Text(
-          label,
-          style: theme.textTheme.labelLarge?.copyWith(
-            color: isSelected ? Colors.white : theme.colorScheme.onSurface,
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          child: Text(
+            label,
+            style: theme.textTheme.labelLarge?.copyWith(
+              color: isSelected ? Colors.white : theme.colorScheme.onSurface,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
           ),
         ),
       ),

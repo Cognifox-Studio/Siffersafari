@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Story/camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #85+). #11–48 + #51–84 + #20 levererade.
+**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #86+). #11–48 + #51–85 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Wardrobe pose labels** — #85
-2. **Next ROI** — se ROI_BACKLOG #86+
-3. **Release cadence** — ask before push (~60 ahead)
+1. **Next ROI** — se ROI_BACKLOG #86+
+2. **Release cadence** — ask before push (~62 ahead)
+3. **Play smoke** — när push önskas
 
 Lyft **en** till Now i taget.
 

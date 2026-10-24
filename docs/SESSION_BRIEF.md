@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Story/camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #85+).  
-**Status:** #84 auto-scroll story map klar. #11–48 + #51–84 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~60, ej pushad). Ask before push.
+**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #86+).  
+**Status:** #85 wardrobe pose labels klar. #11–48 + #51–85 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~62, ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Story map auto-scroll; badge PNG; pedestal arrival.
+**Klart sedan förra briefen:** Wardrobe poses; story map scroll; badge PNG.
 
 ---
 

@@ -54,7 +54,9 @@ void main() {
         find.byKey(const Key('wardrobe_item_item_safari_hat')),
       );
 
-      expect(find.text('Tänker'), findsOneWidget);
+      expect(find.text('Fel'), findsOneWidget);
+      expect(find.text('Vila'), findsOneWidget);
+      expect(find.text('Rätt'), findsOneWidget);
 
       await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
       await tester.pumpAndSettle();
