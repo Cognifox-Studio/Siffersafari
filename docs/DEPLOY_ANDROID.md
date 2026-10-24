@@ -209,6 +209,24 @@ Repo-facit for privacy policy:
 
 ---
 
+## 9b. Content rating / target age (snapshot — ROI #92)
+
+Play Console questionnaire answers should stay aligned with product reality. Re-check when ads, accounts, chat, location, or store listing age claims change.
+
+| Topic | Expected answer (current product) |
+|-------|-----------------------------------|
+| Target audience | Families / children (under 13 welcome); grade 1–9 math practice |
+| Ads | None |
+| User-generated content / chat / social | None |
+| Location / precise personal data | None collected |
+| In-app purchases | None (unless Console listing is updated first) |
+| COPPA-minded | Offline-first core; local profiles; parent PIN; no trackers |
+| IARC / content rating | Educational; no violence/sexual content; re-run questionnaire if store creatives imply otherwise |
+
+Also confirm **Data safety** against DoD B in `DEFINITION_OF_DONE.md` before promoting beyond internal.
+
+---
+
 ## 10. Troubleshooting
 
 ### Missing required secrets

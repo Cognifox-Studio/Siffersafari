@@ -53,6 +53,13 @@ Allt i A, plus:
 - [ ] GitHub Release / Play-spår entydigt
 - [ ] Go/No-go (`.github/prompts/release-go-no-go.prompt.md`)
 - [ ] `SESSION_BRIEF` uppdaterad med levererad version och nästa Now
+- [ ] **Play Console → App content → Data safety** stämmer mot [PRIVACY_POLICY.md](PRIVACY_POLICY.md) (ROI #91):
+  - [ ] Data collected? **No** (no account, no cloud sync in core)
+  - [ ] Data shared? **No**
+  - [ ] Encryption in transit N/A (offline-first core; no product telemetry)
+  - [ ] Users can request deletion? **Yes** — in-app clear profile / clear all data (no cloud export)
+  - [ ] Kids / COPPA answers match “designed for families / under 13” and no ads/trackers
+  - [ ] If privacy copy or SDK surface changed this release: re-open Data safety and save
 
 Staged production: börja lågt, övervaka, höj medvetet.
 
