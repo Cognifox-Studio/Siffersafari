@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Feedback glanceability ([ROI_BACKLOG](ROI_BACKLOG.md) #46). #11–45 + #20 levererade.
+**Produktspår:** Hard-quest vs hard-badge fairness ([ROI_BACKLOG](ROI_BACKLOG.md) #47). #11–46 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Hard-quest vs hard-badge fairness** — #47
+1. **Parent local analytics surface** — #48
 2. **Curriculum polish leftovers** — #51–62
-3. **Parent local analytics surface** — #48
+3. **Incremental facit→runtime** — #49
 
 Lyft **en** till Now i taget.
 

@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Feedback glanceability ([ROI_BACKLOG](ROI_BACKLOG.md) #46).  
-**Status:** #45 Öken-tema parity klar. #11–45 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~29 lokalt (ej pushad).
+**Mål:** Hard-quest vs hard-badge fairness ([ROI_BACKLOG](ROI_BACKLOG.md) #47).  
+**Status:** #46 feedback glanceability klar. #11–46 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~30 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Öken theme; a11y; cadence; matte #34–40.
+**Klart sedan förra briefen:** Feedback Nästa pinned; Öken; a11y; cadence; matte #34–40.
 
 ---
 

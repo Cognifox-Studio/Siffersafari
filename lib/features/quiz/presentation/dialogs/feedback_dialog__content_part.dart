@@ -74,6 +74,25 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
     final comboMultiplier = widget.feedback.comboMultiplier;
     final showComboBadge = comboMultiplier >= 1.5;
 
+    // Keep help glanceable: cap tip density and pin Nästa outside the scroll.
+    final tipLines = lines.length >= 3
+        ? lines
+            .sublist(2)
+            .where(
+              (line) =>
+                  line.startsWith('💡') ||
+                  line.startsWith('⚡') ||
+                  line.startsWith('🔥') ||
+                  line.startsWith('🪙'),
+            )
+            .take(2)
+            .toList(growable: false)
+        : const <String>[];
+    final denseHelp = tipLines.isNotEmpty ||
+        widget.feedback.numberLine != null ||
+        widget.feedback.groupModel != null;
+    final mascotHeight = denseHelp ? 88.h : 120.h;
+
     return Dialog(
       insetPadding: EdgeInsets.symmetric(
         horizontal: AppConstants.defaultPadding.w,
@@ -82,152 +101,179 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
       backgroundColor: dialogBackgroundColor,
       shape: dialogShape,
       child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: 420.w),
-        child: SingleChildScrollView(
+        constraints: BoxConstraints(
+          maxWidth: 420.w,
+          maxHeight: MediaQuery.sizeOf(context).height * 0.82,
+        ),
+        child: Padding(
           padding: EdgeInsets.all(AppConstants.largePadding.w),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (showComboBadge) ...[
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: AppConstants.defaultPadding.w,
-                    vertical: AppConstants.microSpacing6.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Color.alphaBlend(
-                      comboStartColor.withValues(alpha: 0.18),
-                      dialogBackgroundColor,
-                    ),
-                    borderRadius:
-                        BorderRadius.circular(AppConstants.borderRadius),
-                    border: Border.all(
-                      color: comboEndColor.withValues(alpha: 0.48),
-                    ),
-                  ),
-                  child: Text(
-                    '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: onSurface,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                SizedBox(height: AppConstants.smallPadding.h),
-              ],
-              ExcludeSemantics(
-                child: Container(
-                  height: 120.h,
-                  alignment: Alignment.center,
-                  child: activeUser != null
-                      ? GameCharacter(
-                          characterId: CharacterId.values.firstWhere(
-                            (e) => e.name == activeUser.selectedCharacterId,
-                            orElse: () => CharacterId.loke,
-                          ),
-                          equippedItems: activeUser.equippedItems,
-                          customItemOffsets: activeUser.customItemOffsets,
-                          reaction: isCorrect
-                              ? CharacterReaction.celebrate
-                              : CharacterReaction.answerWrong,
-                          height: 120.h,
-                        )
-                      : Icon(
-                          isCorrect
-                              ? Icons.check_rounded
-                              : Icons.psychology_alt_rounded,
-                          color: mainColor,
-                          size: AppConstants.feedbackDialogIconSize.sp,
-                        ),
-                ),
-              ),
-              SizedBox(height: AppConstants.defaultPadding.h),
-              Semantics(
-                header: true,
-                label: title,
-                child: ExcludeSemantics(
-                  child: Text(
-                    title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: mainColor,
-                        ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              SizedBox(height: AppConstants.defaultPadding.h),
-              Semantics(
-                label: widget.feedback.message,
-                child: ExcludeSemantics(
+              Flexible(
+                child: SingleChildScrollView(
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      if (lines.isNotEmpty)
-                        Text(
-                          lines.first,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyLarge
-                              ?.copyWith(
-                                color:
-                                    widget.messageTextColor ?? mutedOnSurface,
-                                fontWeight: FontWeight.w700,
-                              ),
-                          textAlign: TextAlign.center,
+                      if (showComboBadge) ...[
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AppConstants.defaultPadding.w,
+                            vertical: AppConstants.microSpacing6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color.alphaBlend(
+                              comboStartColor.withValues(alpha: 0.18),
+                              dialogBackgroundColor,
+                            ),
+                            borderRadius: BorderRadius.circular(
+                              AppConstants.borderRadius,
+                            ),
+                            border: Border.all(
+                              color: comboEndColor.withValues(alpha: 0.48),
+                            ),
+                          ),
+                          child: Text(
+                            '${comboMultiplier == comboMultiplier.roundToDouble() ? comboMultiplier.toStringAsFixed(0) : comboMultiplier.toStringAsFixed(1)}× COMBO! 🔥',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                  color: onSurface,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 1.2,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      if (lines.length >= 2) ...[
                         SizedBox(height: AppConstants.smallPadding.h),
-                        Text(
-                          lines[1],
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                color: onSurface,
-                                fontWeight: FontWeight.w900,
-                              ),
-                          textAlign: TextAlign.center,
-                        ),
                       ],
-                      if (lines.length >= 3) ...[
-                        SizedBox(height: AppConstants.defaultPadding.h),
-                        ..._buildExtraLines(
-                          context,
-                          lines.sublist(2),
-                          defaultColor:
-                              widget.messageTextColor ?? mutedOnSurface,
-                          accentColor:
-                              isCorrect ? correctColor : incorrectAccent,
+                      ExcludeSemantics(
+                        child: Container(
+                          height: mascotHeight,
+                          alignment: Alignment.center,
+                          child: activeUser != null
+                              ? GameCharacter(
+                                  characterId: CharacterId.values.firstWhere(
+                                    (e) =>
+                                        e.name ==
+                                        activeUser.selectedCharacterId,
+                                    orElse: () => CharacterId.loke,
+                                  ),
+                                  equippedItems: activeUser.equippedItems,
+                                  customItemOffsets:
+                                      activeUser.customItemOffsets,
+                                  reaction: isCorrect
+                                      ? CharacterReaction.celebrate
+                                      : CharacterReaction.answerWrong,
+                                  height: mascotHeight,
+                                )
+                              : Icon(
+                                  isCorrect
+                                      ? Icons.check_rounded
+                                      : Icons.psychology_alt_rounded,
+                                  color: mainColor,
+                                  size:
+                                      AppConstants.feedbackDialogIconSize.sp,
+                                ),
                         ),
-                      ],
-                      if (widget.feedback.numberLine != null) ...[
-                        SizedBox(height: AppConstants.defaultPadding.h),
-                        _FeedbackNumberLineView(
-                          numberLine: widget.feedback.numberLine!,
-                          accentColor:
-                              isCorrect ? correctColor : incorrectAccent,
-                          textColor: onSurface,
+                      ),
+                      SizedBox(height: AppConstants.smallPadding.h),
+                      Semantics(
+                        header: true,
+                        label: title,
+                        child: ExcludeSemantics(
+                          child: Text(
+                            title,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headlineSmall
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: mainColor,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ],
-                      if (widget.feedback.groupModel != null) ...[
-                        SizedBox(height: AppConstants.defaultPadding.h),
-                        _FeedbackGroupModelView(
-                          groupModel: widget.feedback.groupModel!,
-                          accentColor:
-                              isCorrect ? correctColor : incorrectAccent,
-                          textColor: onSurface,
+                      ),
+                      SizedBox(height: AppConstants.smallPadding.h),
+                      Semantics(
+                        label: widget.feedback.message,
+                        child: ExcludeSemantics(
+                          child: Column(
+                            children: [
+                              if (lines.isNotEmpty)
+                                Text(
+                                  lines.first,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        color: widget.messageTextColor ??
+                                            mutedOnSurface,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              if (lines.length >= 2) ...[
+                                SizedBox(height: AppConstants.microSpacing6.h),
+                                Text(
+                                  lines[1],
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineSmall
+                                      ?.copyWith(
+                                        color: onSurface,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                              if (tipLines.isNotEmpty) ...[
+                                SizedBox(height: AppConstants.smallPadding.h),
+                                ..._buildExtraLines(
+                                  context,
+                                  tipLines,
+                                  defaultColor: widget.messageTextColor ??
+                                      mutedOnSurface,
+                                  accentColor: isCorrect
+                                      ? correctColor
+                                      : incorrectAccent,
+                                ),
+                              ],
+                              if (widget.feedback.numberLine != null) ...[
+                                SizedBox(height: AppConstants.smallPadding.h),
+                                _FeedbackNumberLineView(
+                                  numberLine: widget.feedback.numberLine!,
+                                  accentColor: isCorrect
+                                      ? correctColor
+                                      : incorrectAccent,
+                                  textColor: onSurface,
+                                ),
+                              ],
+                              if (widget.feedback.groupModel != null) ...[
+                                SizedBox(height: AppConstants.smallPadding.h),
+                                _FeedbackGroupModelView(
+                                  groupModel: widget.feedback.groupModel!,
+                                  accentColor: isCorrect
+                                      ? correctColor
+                                      : incorrectAccent,
+                                  textColor: onSurface,
+                                ),
+                              ],
+                            ],
+                          ),
                         ),
-                      ],
+                      ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: AppConstants.largePadding.h),
+              SizedBox(height: AppConstants.defaultPadding.h),
               ElevatedButton(
+                key: const Key('feedback_continue_button'),
                 autofocus: true,
                 onPressed: () {
                   Navigator.of(context).pop();
@@ -263,16 +309,20 @@ class _FeedbackDialogState extends ConsumerState<FeedbackDialog> {
   }) {
     final widgets = <Widget>[];
 
-    for (final line in extraLines) {
+    for (var i = 0; i < extraLines.length; i++) {
+      final line = extraLines[i];
       final isHintOrMeta = line.startsWith('💡') ||
           line.startsWith('⚡') ||
           line.startsWith('🔥') ||
           line.startsWith('🪙');
 
+      if (i > 0) {
+        widgets.add(SizedBox(height: AppConstants.microSpacing6.h));
+      }
       widgets.add(
         Text(
           line,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: isHintOrMeta ? accentColor : defaultColor,
                 fontWeight: isHintOrMeta ? FontWeight.w800 : FontWeight.w600,
               ),
