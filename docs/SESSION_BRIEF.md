@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #86+).  
-**Status:** #85 wardrobe pose labels klar. #11–48 + #51–85 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~62, ej pushad). Ask before push.
+**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #87+).  
+**Status:** #86 locked pedestal vs filler klar. #11–48 + #51–86 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~63, ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Wardrobe poses; story map scroll; badge PNG.
+**Klart sedan förra briefen:** Pedestal souvenirs-only; wardrobe poses; story map scroll.
 
 ---
 

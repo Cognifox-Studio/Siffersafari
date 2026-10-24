@@ -87,7 +87,7 @@ void main() {
       );
     });
 
-    test('pedestal items prefer unlocked camp souvenirs before wearables', () {
+    test('pedestal items show only camp souvenirs (no wardrobe fillers)', () {
       final visible = InventoryConfig.visibleCampPedestalItems(const [
         'item_safari_hat',
         'item_hat_safari',
@@ -100,14 +100,9 @@ void main() {
 
       expect(
         visible.map((item) => item.id),
-        [
-          'item_camp_fruit_glade',
-          'item_binoculars_safari',
-          'item_compass_safari',
-          'item_map_safari',
-        ],
+        ['item_camp_fruit_glade'],
       );
-      expect(visible.every((item) => item.slot != 'pet'), isTrue);
+      expect(visible.every((item) => item.slot == 'camp'), isTrue);
     });
 
     test('pedestal overflow keeps the latest souvenirs only', () {

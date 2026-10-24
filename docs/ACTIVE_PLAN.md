@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #86+). #11–48 + #51–85 + #20 levererade.
+**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #87+). #11–48 + #51–86 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Next ROI** — se ROI_BACKLOG #86+
-2. **Release cadence** — ask before push (~62 ahead)
-3. **Play smoke** — när push önskas
+1. **Achievement for episode/nextBiome** — #87
+2. **Locked wardrobe “kommer snart”** — #88
+3. **Release cadence** — ask before push (~63 ahead)
 
 Lyft **en** till Now i taget.
 

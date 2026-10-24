@@ -190,16 +190,22 @@ class CampSceneView extends ConsumerWidget {
             ),
           ),
 
-          for (var index = 0; index < campRewards.length; index++)
+          for (var index = 0; index < _campRewardSpots.length; index++)
             Align(
               alignment: _campRewardSpots[index].alignment,
-              child: _CampRewardSpot(
-                item: campRewards[index],
-                pedestalWidth: _campRewardSpots[index].pedestalWidth,
-                rotation: _campRewardSpots[index].rotation,
-                height: height,
-                playArrival: arrivalItemId == campRewards[index].id,
-              ),
+              child: index < campRewards.length
+                  ? _CampRewardSpot(
+                      item: campRewards[index],
+                      pedestalWidth: _campRewardSpots[index].pedestalWidth,
+                      rotation: _campRewardSpots[index].rotation,
+                      height: height,
+                      playArrival: arrivalItemId == campRewards[index].id,
+                    )
+                  : _LockedCampPedestal(
+                      pedestalWidth: _campRewardSpots[index].pedestalWidth,
+                      rotation: _campRewardSpots[index].rotation,
+                      height: height,
+                    ),
             ),
 
           Align(
@@ -411,6 +417,59 @@ class _SceneDecoration extends StatelessWidget {
         width: width,
         fit: BoxFit.contain,
         cacheWidth: cacheWidth,
+      ),
+    );
+  }
+}
+
+class _LockedCampPedestal extends StatelessWidget {
+  const _LockedCampPedestal({
+    required this.pedestalWidth,
+    required this.rotation,
+    required this.height,
+  });
+
+  final double pedestalWidth;
+  final double rotation;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconSize = (height * 0.16).clamp(28.0, 44.0).toDouble();
+    final cacheSize = imageCacheExtent(context, iconSize);
+    return Transform.rotate(
+      angle: rotation,
+      child: Semantics(
+        label: 'Tom souvenirpiedestal, låst',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Opacity(
+              opacity: 0.45,
+              child: Image.asset(
+                'assets/images/ui/ic_reward_locked_nobg.png',
+                key: const Key('camp_scene_locked_pedestal'),
+                width: iconSize,
+                height: iconSize,
+                fit: BoxFit.contain,
+                cacheWidth: cacheSize,
+                cacheHeight: cacheSize,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Container(
+              width: pedestalWidth,
+              height: 14,
+              decoration: BoxDecoration(
+                color: const Color(0xFF5A4A32).withValues(alpha: 0.72),
+                borderRadius: BorderRadius.circular(999),
+                border: Border.all(
+                  color: Colors.black.withValues(alpha: 0.18),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
