@@ -22,7 +22,7 @@ class QuestionMixPolicy {
   bool get isLowGradeMix =>
       requestedOperation == OperationType.mixed &&
       gradeLevel != null &&
-      gradeLevel! >= 2 &&
+      gradeLevel! >= 1 &&
       gradeLevel! <= 3;
 
   bool get isM4Mix =>
@@ -44,6 +44,10 @@ class QuestionMixPolicy {
         clampedStep: clampedStep,
       );
   double get lowGradeChanceChance => lowGradeChanceChanceFor(
+        gradeLevel: gradeLevel,
+        clampedStep: clampedStep,
+      );
+  double get lowGradeDoubleHalfChance => lowGradeDoubleHalfChanceFor(
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
       );
@@ -123,6 +127,13 @@ class QuestionMixPolicy {
       lowGradeChanceChance > 0 &&
       roll >= 0.94 &&
       roll < (0.94 + lowGradeChanceChance);
+
+  bool get shouldTryLowGradeDoubleHalf =>
+      isLowGradeMix &&
+      lowGradeDoubleHalfChance > 0 &&
+      // Keep clear of M4a time window (~0.80–0.85) and later specials.
+      roll >= 0.74 &&
+      roll < (0.74 + lowGradeDoubleHalfChance);
 
   bool get shouldTryM4Percent =>
       isM4Mix &&
@@ -278,6 +289,30 @@ class QuestionMixPolicy {
               : clampedStep <= 9
                   ? 0.04
                   : 0.05,
+      _ => 0.0,
+    };
+  }
+
+  static double lowGradeDoubleHalfChanceFor({
+    required int? gradeLevel,
+    required int clampedStep,
+  }) {
+    return switch (gradeLevel) {
+      1 => clampedStep <= 3
+          ? 0.03
+          : clampedStep <= 6
+              ? 0.05
+              : 0.06,
+      2 => clampedStep <= 4
+          ? 0.03
+          : clampedStep <= 7
+              ? 0.05
+              : 0.06,
+      3 => clampedStep <= 4
+          ? 0.02
+          : clampedStep <= 7
+              ? 0.04
+              : 0.05,
       _ => 0.0,
     };
   }

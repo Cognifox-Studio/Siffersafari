@@ -34,6 +34,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Procentuell förändring = ?')) {
     return 'm4_percentage_change';
   }
+  if (promptText.startsWith('Dubbelt/hälften = ?')) {
+    return 'low_grade_double_half';
+  }
   if (promptText.startsWith('Sammansatt procent = ?')) {
     return 'm5a_compound_percent';
   }

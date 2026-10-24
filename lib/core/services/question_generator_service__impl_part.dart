@@ -2322,6 +2322,49 @@ Vilken typ av korrelation har variablerna?
 
   // region Low-grade Mix Generators (Åk 2-3)
 
+  Question _generateLowGradeDoubleHalfQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final askHalf = _random.nextBool();
+    final maxBase = step <= 4
+        ? 10
+        : step <= 7
+            ? 20
+            : 40;
+
+    if (askHalf) {
+      final half = 1 + _random.nextInt(maxBase ~/ 2);
+      final whole = half * 2;
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: whole,
+        operand2: 2,
+        correctAnswer: half,
+        wrongAnswers: _generateWrongAnswers(half, 3),
+        promptText: 'Dubbelt/hälften = ?\nVad är hälften av $whole?',
+        explanation: 'Hälften av $whole är $whole ÷ 2 = $half.',
+      );
+    }
+
+    final base = 1 + _random.nextInt(maxBase);
+    final doubled = base * 2;
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: base,
+      operand2: 2,
+      correctAnswer: doubled,
+      wrongAnswers: _generateWrongAnswers(doubled, 3),
+      promptText: 'Dubbelt/hälften = ?\nVad är dubbelt så mycket som $base?',
+      explanation: 'Dubbelt så mycket som $base är $base × 2 = $doubled.',
+    );
+  }
+
   Question _generateLowGradeStatisticsQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,

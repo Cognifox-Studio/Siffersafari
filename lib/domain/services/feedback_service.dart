@@ -281,6 +281,11 @@ class FeedbackService {
       }
       return 'Skillnad ÷ startvärde × 100 ger procenten.';
     }
+    if (prompt.startsWith('Dubbelt/hälften = ?')) {
+      return prompt.contains('hälften')
+          ? 'Dela talet i två lika stora delar.'
+          : 'Lägg till samma tal en gång till (× 2).';
+    }
     if (prompt.startsWith('Sammansatt procent = ?')) {
       return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
     }

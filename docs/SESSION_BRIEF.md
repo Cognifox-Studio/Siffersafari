@@ -9,9 +9,9 @@
 ## Now (2026-10-24)
 
 **Mål:** Widen Åk 9 geometry integer ([ROI_BACKLOG](ROI_BACKLOG.md) #30).  
-**Status:** #29 proportionalitet breddad. #11–29 + #20 + #32 klara. `v1.4.3+22` på Play internal draft.
+**Status:** #31 dubbelt/hälften i Mix. #11–29 + #20 + #31–32 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Åk 8 prop/compound %; Mix-tips; Åk 6 broar; home/parent polish.
+**Klart sedan förra briefen:** Dubbelt/hälften; Åk 8 prop/compound %; Mix-tips; Åk 6 broar.
 
 ---
 

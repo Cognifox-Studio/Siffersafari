@@ -42,6 +42,13 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
       );
     }
 
+    if (mixPolicy.shouldTryLowGradeDoubleHalf) {
+      return _generateLowGradeDoubleHalfQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+      );
+    }
+
     if (mixPolicy.shouldTryLowGradeStatistics) {
       return _generateLowGradeStatisticsQuestion(
         difficulty,
