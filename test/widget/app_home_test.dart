@@ -402,6 +402,7 @@ void main() {
       expect(find.byKey(const Key('home_badge_album')), findsOneWidget);
       expect(find.text('Märken'), findsOneWidget);
       expect(find.text('1 av $expectedBadgeCount'), findsOneWidget);
+      expect(find.text('Tryck på låsta för tips.'), findsOneWidget);
       expect(
         find.byKey(
           const Key('home_badge_icon_${AppConstants.firstQuizAchievement}'),
@@ -414,6 +415,28 @@ void main() {
             'home_badge_locked_${AppConstants.perfectScoreAchievement}',
           ),
         ),
+        findsOneWidget,
+      );
+
+      final lockedTap = find.byKey(
+        const Key(
+          'home_badge_tile_tap_${AppConstants.perfectScoreAchievement}',
+        ),
+      );
+      await tester.ensureVisible(lockedTap);
+      await tester.pumpAndSettle();
+      await tester.tap(lockedTap);
+      await tester.pump();
+      expect(
+        find.byKey(
+          const Key(
+            'home_badge_unlock_hint_${AppConstants.perfectScoreAchievement}',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text('Svara rätt på alla frågor i ett quiz.'),
         findsOneWidget,
       );
     },

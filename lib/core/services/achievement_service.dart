@@ -13,6 +13,7 @@ class AchievementDefinition {
     required this.displayName,
     required this.albumLabel,
     required this.emoji,
+    required this.unlockHint,
   });
 
   final String id;
@@ -20,11 +21,15 @@ class AchievementDefinition {
   final String albumLabel;
   final String emoji;
 
+  /// Short kid-facing how-to for locked tiles in the home badge album.
+  final String unlockHint;
+
   static const unknown = AchievementDefinition(
     id: 'unknown_achievement',
     displayName: 'Okänd prestation',
     albumLabel: 'Märke',
     emoji: '❔',
+    unlockHint: 'Spela mer och samla.',
   );
 }
 

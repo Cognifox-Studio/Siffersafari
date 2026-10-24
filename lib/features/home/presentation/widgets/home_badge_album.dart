@@ -21,10 +21,10 @@ class HomeBadgeAlbum extends ConsumerWidget {
     final theme = Theme.of(context);
     final countLabel = '$unlockedCount av ${entries.length}';
     final helperText = unlockedCount == 0
-        ? 'Spela och samla.'
+        ? 'Tryck på ett låst märke.'
         : unlockedCount == entries.length
             ? 'Alla märken klara!'
-            : 'Fler väntar.';
+            : 'Tryck på låsta för tips.';
 
     return PlayfulPanel(
       key: const Key('home_badge_album'),
@@ -108,67 +108,92 @@ class _BadgeTile extends StatelessWidget {
         : Colors.white.withValues(alpha: 0.18);
     final labelColor =
         unlocked ? Colors.white : Colors.white.withValues(alpha: 0.74);
+    final tipMessage =
+        unlocked ? entry.displayName : entry.unlockHint;
+    final semanticsLabel = unlocked
+        ? '${entry.albumLabel}, upplåst'
+        : '${entry.albumLabel}, låst. ${entry.unlockHint}';
 
     return Semantics(
-      label: unlocked
-          ? '${entry.albumLabel}, upplåst'
-          : '${entry.albumLabel}, låst',
+      button: !unlocked,
+      label: semanticsLabel,
       child: Tooltip(
-        message: entry.albumLabel,
-        child: SizedBox(
-          width: 48,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                key: Key('home_badge_tile_${entry.id}'),
-                width: 44,
-                height: 44,
-                decoration: BoxDecoration(
-                  color: tileColor,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: borderColor, width: 2),
-                  boxShadow: unlocked
-                      ? [
-                          BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.12),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ]
-                      : null,
-                ),
-                child: Center(
-                  child: unlocked
-                      ? Text(
-                          entry.emoji,
-                          key: Key('home_badge_icon_${entry.id}'),
-                          style: theme.textTheme.titleLarge,
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Image.asset(
-                            'assets/images/ui/locked_badge.png',
-                            key: Key('home_badge_locked_${entry.id}'),
-                            fit: BoxFit.contain,
-                            cacheWidth: lockedBadgeCacheSize,
-                            cacheHeight: lockedBadgeCacheSize,
-                          ),
-                        ),
-                ),
+        message: tipMessage,
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            key: Key('home_badge_tile_tap_${entry.id}'),
+            onTap: unlocked
+                ? null
+                : () {
+                    final messenger = ScaffoldMessenger.maybeOf(context);
+                    messenger?.hideCurrentSnackBar();
+                    messenger?.showSnackBar(
+                      SnackBar(
+                        key: Key('home_badge_unlock_hint_${entry.id}'),
+                        content: Text(entry.unlockHint),
+                        behavior: SnackBarBehavior.floating,
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  },
+            borderRadius: BorderRadius.circular(12),
+            child: SizedBox(
+              width: 48,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    key: Key('home_badge_tile_${entry.id}'),
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: tileColor,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: borderColor, width: 2),
+                      boxShadow: unlocked
+                          ? [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.12),
+                                blurRadius: 8,
+                                offset: const Offset(0, 4),
+                              ),
+                            ]
+                          : null,
+                    ),
+                    child: Center(
+                      child: unlocked
+                          ? Text(
+                              entry.emoji,
+                              key: Key('home_badge_icon_${entry.id}'),
+                              style: theme.textTheme.titleLarge,
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Image.asset(
+                                'assets/images/ui/locked_badge.png',
+                                key: Key('home_badge_locked_${entry.id}'),
+                                fit: BoxFit.contain,
+                                cacheWidth: lockedBadgeCacheSize,
+                                cacheHeight: lockedBadgeCacheSize,
+                              ),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(height: AppConstants.microSpacing6),
+                  Text(
+                    entry.albumLabel,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: labelColor,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppConstants.microSpacing6),
-              Text(
-                entry.albumLabel,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: theme.textTheme.labelSmall?.copyWith(
-                  color: labelColor,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

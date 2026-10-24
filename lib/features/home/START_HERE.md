@@ -25,7 +25,7 @@ Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, opp
 
 Home sparar inget direkt. Den laser state och navigerar vidare till quiz, story, settings eller parent flow.
 
-Camp-badgen oppnar ett read-only souveniralbum for `slot == 'camp'`. Piedestalerna prioriterar upplastade camp-souvenirer och fyller resten med andra props (inte pets). Garderoben oppnas via maskoten. Badgealbumet bygger pa `UserProgress.achievements`.
+Camp-badgen oppnar ett read-only souveniralbum for `slot == 'camp'`. Piedestalerna prioriterar upplastade camp-souvenirer och fyller resten med andra props (inte pets). Garderoben oppnas via maskoten. Badgealbumet bygger pa `UserProgress.achievements`; lasta brickor visar `unlockHint` vid tryck (SnackBar).
 
 ## Bra forsta test
 

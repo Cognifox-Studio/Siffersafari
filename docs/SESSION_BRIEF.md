@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Badge unlock-hints på låsta brickor ([ROI_BACKLOG](ROI_BACKLOG.md) #11).  
-**Status:** `v1.4.3+22` taggad, GitHub Release ute, AAB uppladdad till Play **internal** (draft). Release-spåret stängt.
+**Mål:** Namngivna unlocks på resultatskärmen ([ROI_BACKLOG](ROI_BACKLOG.md) #12).  
+**Status:** Badge unlock-hints (#11) inne — tryck på låst märke visar hur-tips. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Play Closed Beta internal draft (`40100575151`); tag/release `v1.4.3+22`; prefer_const CI-fix; what’s-new; ROI Top 100.
+**Klart sedan förra briefen:** badge `unlockHint` + SnackBar; Play Closed Beta internal; tag `v1.4.3+22`; ROI Top 100.
 
 ---
 
