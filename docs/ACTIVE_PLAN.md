@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Desert theme parity ([ROI_BACKLOG](ROI_BACKLOG.md) #45). #11–44 + #20 levererade.
+**Produktspår:** Feedback glanceability ([ROI_BACKLOG](ROI_BACKLOG.md) #46). #11–45 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Feedback glanceability** — #46
-2. **Hard-quest vs hard-badge fairness** — #47
-3. **Curriculum polish leftovers** — #51–62
+1. **Hard-quest vs hard-badge fairness** — #47
+2. **Curriculum polish leftovers** — #51–62
+3. **Parent local analytics surface** — #48
 
 Lyft **en** till Now i taget.
 

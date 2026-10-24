@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Desert theme parity ([ROI_BACKLOG](ROI_BACKLOG.md) #45).  
-**Status:** #44 a11y home/badges/story klar. #11–44 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~28 lokalt (ej pushad).
+**Mål:** Feedback glanceability ([ROI_BACKLOG](ROI_BACKLOG.md) #46).  
+**Status:** #45 Öken-tema parity klar. #11–45 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~29 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** A11y Semantics; cadence #41–43; matte #34–40.
+**Klart sedan förra briefen:** Öken theme; a11y; cadence; matte #34–40.
 
 ---
 

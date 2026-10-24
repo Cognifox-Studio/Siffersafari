@@ -77,15 +77,16 @@ class AppThemeConfig {
   static const List<AppTheme> implementedThemes = <AppTheme>[
     AppTheme.jungle,
     AppTheme.space,
+    AppTheme.fantasy, // Öken
   ];
 
   static AppTheme resolveTheme(AppTheme theme) {
     switch (theme) {
       case AppTheme.space:
       case AppTheme.jungle:
+      case AppTheme.fantasy:
         return theme;
       case AppTheme.underwater:
-      case AppTheme.fantasy:
         return AppTheme.space;
     }
   }
@@ -105,6 +106,23 @@ class AppThemeConfig {
         accentColor: AppColors.jungleAccent,
         cardColor: Color(0xCC2A4F36),
         disabledBackgroundColor: Color(0xCC3D6C50),
+      );
+    }
+
+    if (resolvedTheme == AppTheme.fantasy) {
+      // Desert palette + story biome preview until dedicated theme PNGs land.
+      return const AppThemeConfig(
+        theme: AppTheme.fantasy,
+        backgroundAsset:
+            'assets/images/story/biome_star_desert_preview.png',
+        questHeroAsset: 'assets/images/story/biome_star_desert_preview.png',
+        characterAsset: 'assets/images/themes/jungle/character.png',
+        baseBackgroundColor: AppColors.desertBackground,
+        primaryActionColor: AppColors.desertPrimary,
+        secondaryActionColor: AppColors.desertSecondary,
+        accentColor: AppColors.desertAccent,
+        cardColor: Color(0xCC6B4423),
+        disabledBackgroundColor: Color(0xCC8B5E34),
       );
     }
 

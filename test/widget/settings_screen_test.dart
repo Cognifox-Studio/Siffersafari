@@ -220,7 +220,7 @@ void main() {
   );
 
   testWidgets(
-    '[Widget] SettingsScreen – visar bara implementerade teman och fallbackar till rymd',
+    '[Widget] SettingsScreen – visar implementerade teman inklusive Öken',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;
       tester.view.physicalSize = const Size(375, 812);
@@ -248,7 +248,7 @@ void main() {
         UncontrolledProviderScope(
           container: container,
           child: MaterialApp(
-            theme: AppThemeConfig.forTheme(AppTheme.space).themeData(),
+            theme: AppThemeConfig.forTheme(AppTheme.fantasy).themeData(),
             home: const SettingsScreen(),
           ),
         ),
@@ -258,13 +258,14 @@ void main() {
       final themeDropdown = tester.widget<DropdownButton<AppTheme>>(
         find.byType(DropdownButton<AppTheme>),
       );
-      expect(themeDropdown.value, AppTheme.space);
+      expect(themeDropdown.value, AppTheme.fantasy);
 
       await tester.tap(find.byType(DropdownButton<AppTheme>));
       await tester.pumpAndSettle();
 
       expect(find.text('🚀 Rymd'), findsWidgets);
       expect(find.text('🌴 Djungel'), findsWidgets);
+      expect(find.text('🏜️ Öken'), findsWidgets);
       expect(find.text('🌊 Undervatten'), findsNothing);
       expect(find.text('🏰 Fantasy'), findsNothing);
     },

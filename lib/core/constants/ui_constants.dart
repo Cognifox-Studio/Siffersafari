@@ -130,6 +130,12 @@ class AppColors {
   static const Color jungleSecondary = Color(0xFF7BC96F);
   static const Color jungleAccent = Color(0xFFFFC94A);
 
+  // Desert / Öken Theme (AppTheme.fantasy)
+  static const Color desertBackground = Color(0xFF5C3B1E);
+  static const Color desertPrimary = Color(0xFFD97706);
+  static const Color desertSecondary = Color(0xFFF59E0B);
+  static const Color desertAccent = Color(0xFF38BDF8);
+
   // Common Colors
   static const Color correctAnswer = Color(0xFF22C55E);
   static const Color wrongAnswer = Color(0xFFEF4444);

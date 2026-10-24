@@ -16,8 +16,9 @@ enum AppTheme {
   @HiveField(2)
   underwater('Undervatten', '🌊'),
 
+  /// Desert / öken look (ROI #45). Hive id stays `fantasy` for save compat.
   @HiveField(3)
-  fantasy('Fantasy', '🏰');
+  fantasy('Öken', '🏜️');
 
   const AppTheme(this.displayName, this.emoji);
 
