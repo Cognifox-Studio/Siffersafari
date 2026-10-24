@@ -8,30 +8,33 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Stäng release `v1.4.3+22` innan nytt produktspår.  
-**Status:** #1 analyze infos fixade; #3 what’s-new uppdaterad. Kvar: tag `v1.4.3+22` + samma AAB till Play internal (DoD B). Senaste tagg `v1.4.3+21`.
+**Mål:** Play internal med samma AAB som `v1.4.3+22` (sista DoD B-biten).  
+**Status:** Tag + GitHub Release `v1.4.3+22` ute. Kvar: bygg/ladda AAB till Play internal testing.
 
 **Now-steg (i ordning):**
 1. ~~Fix 4 `prefer_const` infos så `--fatal-infos` CI passerar~~
-2. Tag `v1.4.3+22` + samma AAB till Play internal (DoD B)
-3. ~~What’s-new notes för +22 (camp, badges, nextBiome, polish)~~
+2. ~~Tag `v1.4.3+22` + GitHub Release~~ · **kvar:** samma AAB → Play internal (DoD B)
+3. ~~What’s-new notes för +22~~
 
-**Klart sedan förra briefen:** prefer_const CI-fix + what’s-new +22; ROI Top 100; playtest-polish lokalt; camp/nextBiome/badges.
+**Klart sedan förra briefen:** push/tag/release `v1.4.3+22`; prefer_const CI-fix; what’s-new; ROI Top 100.
 
 ---
 
 ## Nuläge (snapshot)
 
 **Version i repo:** `1.4.3+22` (`pubspec.yaml`)  
-**Senaste tagg:** `v1.4.3+21`  
-**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B21
+**Senaste tagg:** `v1.4.3+22`  
+**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22
 
 ---
 
 ## Senaste leveranser (kort)
 
+**2026-10-24 – Release `v1.4.3+22` (tag + GitHub)**  
+Camp/souvenirer, badges, nextBiome, quiz polish, CI fatal-infos-fix. Play internal kvar.
+
 **2026-10-24 – Top 100 ROI backlog**  
-`ROI_BACKLOG.md` med #1–100; Now fortfarande +22 release; Next = badge/unlocks/camp.
+`ROI_BACKLOG.md` med #1–100; Next = badge/unlocks/camp.
 
 **2026-10-24 – Top 50 ROI → Now/Next/Later**  
 Release +22 som Now; Next = collect-loop discoverability; SEN biome/cloud parkerade.

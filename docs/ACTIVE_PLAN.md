@@ -15,7 +15,7 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Release-spår:** stäng `v1.4.3+22` ([ROI_BACKLOG](ROI_BACKLOG.md) #1–3) — analyze infos → tag + internal AAB → what’s-new. Inget nytt produktspår förrän taggen finns.
+**Release-spår:** tag `v1.4.3+22` + GitHub Release klara. Kvar: samma AAB till Play internal. Därefter lyft Next #1 (badge unlock-hints) till Now.
 
 ---
 
