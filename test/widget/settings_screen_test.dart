@@ -110,6 +110,58 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] SettingsScreen – byt namn sparar nytt profilnamn (#63)',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: 'u1',
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+        ),
+      );
+      await repository.setActiveUserId('u1');
+
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      await container.read(userProvider.notifier).loadUsers();
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: SettingsScreen()),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('rename_profile_button')),
+      );
+      await tester
+          .ensureVisible(find.byKey(const Key('rename_profile_button')));
+      await tester.tap(find.byKey(const Key('rename_profile_button')));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+        find.byKey(const Key('rename_profile_field')),
+        'Nova',
+      );
+      await tester.tap(find.byKey(const Key('confirm_rename_profile_button')));
+      await tester.pumpAndSettle();
+
+      expect(repository.getUserProgress('u1')?.name, 'Nova');
+      expect(container.read(userProvider).activeUser?.name, 'Nova');
+    },
+  );
+
+  testWidgets(
     '[Widget] SettingsScreen – radera all data nollställer profiler och state',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;

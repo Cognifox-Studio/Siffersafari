@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #63–70).  
-**Status:** #62 Åk2 tiotalsövergång-tip klar. #11–48 + #51–62 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~42 lokalt (ej pushad).
+**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #64–70).  
+**Status:** #63 profil byt namn klar. #11–48 + #51–63 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~43 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Carry tip; undercovered; non-runtime; tiokompisar; ekvation.
+**Klart sedan förra briefen:** Rename; carry tip; undercovered; non-runtime; ekvation.
 
 ---
 

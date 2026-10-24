@@ -33,6 +33,62 @@ class SettingsScreen extends ConsumerWidget {
     return ok == true;
   }
 
+  Future<void> _renameProfile(
+    BuildContext context,
+    WidgetRef ref,
+    String currentName,
+  ) async {
+    final controller = TextEditingController(text: currentName);
+    final newName = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Byt namn'),
+          content: TextField(
+            key: const Key('rename_profile_field'),
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            decoration: const InputDecoration(
+              labelText: 'Namn',
+              hintText: 'Skriv ett namn',
+            ),
+            onSubmitted: (value) {
+              final trimmed = value.trim();
+              if (trimmed.isEmpty) return;
+              Navigator.of(dialogContext).pop(trimmed);
+            },
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: const Text('Avbryt'),
+            ),
+            TextButton(
+              key: const Key('confirm_rename_profile_button'),
+              onPressed: () {
+                final trimmed = controller.text.trim();
+                if (trimmed.isEmpty) return;
+                Navigator.of(dialogContext).pop(trimmed);
+              },
+              child: const Text('Spara'),
+            ),
+          ],
+        );
+      },
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.dispose();
+    });
+    if (newName == null || newName == currentName || !context.mounted) {
+      return;
+    }
+
+    final user = ref.read(userProvider).activeUser;
+    if (user == null) return;
+    await ref.read(userProvider.notifier).saveUser(user.copyWith(name: newName));
+  }
+
   Future<void> _confirmDeleteProfile(
     BuildContext context,
     WidgetRef ref,
@@ -357,6 +413,38 @@ class SettingsScreen extends ConsumerWidget {
                                       user.copyWith(musicEnabled: value),
                                     );
                               },
+                            ),
+                            const Divider(height: 1),
+                            ListTile(
+                              key: const Key('rename_profile_button'),
+                              title: Text(
+                                'Byt namn',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      color: mutedOnPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              subtitle: Text(
+                                'Nuvarande namn: ${user.name}',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: subtleOnPrimary,
+                                    ),
+                              ),
+                              leading: Icon(
+                                Icons.edit_outlined,
+                                color: mutedOnPrimary,
+                              ),
+                              onTap: () => _renameProfile(
+                                context,
+                                ref,
+                                user.name,
+                              ),
                             ),
                             const Divider(height: 1),
                             ListTile(
