@@ -26,6 +26,7 @@ Ansvar: sjalva spelpasset. Har genereras fragor, svar utvarderas, feedback visas
 - complete history som idempotency guard i `quiz_history`
 
 Nar episoden ar klar visar resultatpanelens “Sedan”-kort `StoryProgress.nextBiome` (read-only).
+Firandekortet namnger upplasta achievements (`displayName` + `unlockHint`) i stallet for generisk skatt-copy.
 
 ## Bra forsta test
 

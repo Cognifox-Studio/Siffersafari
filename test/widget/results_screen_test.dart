@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/domain/entities/question.dart';
@@ -136,6 +137,113 @@ void main() {
       expect(
         repository.getUserProgress(userId)?.unlockedItems,
         contains('item_safari_hat'),
+      );
+    },
+  );
+
+  testWidgets(
+    '[Widget] ResultsScreen – namnger upplåsta märken i firandekortet',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'badge-name-user';
+      const initialUser = UserProgress(
+        userId: userId,
+        name: 'Nova',
+        ageGroup: AgeGroup.middle,
+        totalQuizzesTaken: 0,
+        totalPoints: 0,
+      );
+
+      await repository.saveUserProgress(initialUser);
+      await repository.setActiveUserId(userId);
+
+      const question = Question(
+        id: 'badge_q1',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 2,
+        operand2: 3,
+        correctAnswer: 5,
+        wrongAnswers: [4, 6, 7],
+        explanation: '2 + 3 = 5',
+      );
+
+      // Perfect score unlocks first quiz + first addition + perfect score.
+      const session = QuizSession(
+        sessionId: 'badge_name_session',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [question],
+        targetQuestionCount: 1,
+        correctAnswers: 1,
+        wrongAnswers: 0,
+        totalPoints: 20,
+        answers: {'badge_q1': 5},
+      );
+
+      final container = ProviderContainer(
+        overrides: [
+          quizProvider.overrideWith(
+            (ref) => _SeededQuizNotifier(
+              repository: repository,
+              userId: userId,
+              session: session,
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(userProvider.notifier).loadUsers();
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: ResultsScreen()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('results_badge_unlock_body')),
+      );
+      await tester.ensureVisible(
+        find.byKey(const Key('results_badge_unlock_body')),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        find.textContaining('Nytt märke').evaluate().isNotEmpty ||
+            find.textContaining('Nya märken').evaluate().isNotEmpty,
+        isTrue,
+      );
+      final body = tester
+          .widget<Text>(find.byKey(const Key('results_badge_unlock_body')))
+          .data;
+      expect(body, isNotNull);
+      expect(
+        body!.contains('Första quizet') ||
+            body.contains('Första plusrundan') ||
+            body.contains('Perfekt resultat'),
+        isTrue,
+        reason: 'Unlock body should name at least one achievement: $body',
+      );
+      expect(
+        container.read(userProvider).lastReward?.unlockedIds,
+        contains(AppConstants.firstQuizAchievement),
       );
     },
   );

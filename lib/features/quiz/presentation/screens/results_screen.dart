@@ -11,6 +11,7 @@ import 'package:siffersafari/core/providers/parent_settings_provider.dart';
 import 'package:siffersafari/core/providers/quiz_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/providers/word_problems_settings_provider.dart';
+import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';

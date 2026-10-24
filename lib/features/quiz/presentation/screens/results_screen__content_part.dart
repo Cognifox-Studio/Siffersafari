@@ -132,7 +132,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       quizState: quizState,
       stars: stars,
       bonusPoints: bonusPoints,
-      didUnlockSomething: didUnlockSomething,
+      reward: reward,
     );
     final activeUser = userState.activeUser;
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
@@ -592,6 +592,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           SizedBox(height: AppConstants.smallPadding.h),
           Text(
             badgeTeaser.badgeBody,
+            key: const Key('results_badge_unlock_body'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: mutedOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -788,25 +789,22 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required QuizState quizState,
     required int stars,
     required int bonusPoints,
-    required bool didUnlockSomething,
+    required AchievementReward? reward,
   }) {
     final seed = session.sessionId;
+    final unlockedIds = reward?.unlockedIds ?? const <String>[];
 
     String badgeEmoji;
     String badgeTitle;
     String badgeBody;
     String? badgeImageAsset;
 
-    if (didUnlockSomething) {
-      badgeEmoji = '🎁';
-      badgeImageAsset = 'assets/images/ui/reward_chest.png';
-      badgeTitle = _mascotSays(
-        _pick(
-          seed,
-          const ['Ny skatt!', 'Upplåsning!', 'Du hittade en grej!'],
-        ),
-      );
-      badgeBody = 'Du låste upp något nytt. Fortsätt så!';
+    if (unlockedIds.isNotEmpty) {
+      final named = _namedUnlockCopy(unlockedIds);
+      badgeEmoji = named.emoji;
+      badgeImageAsset = null;
+      badgeTitle = _mascotSays(named.title);
+      badgeBody = named.body;
     } else if (stars >= 3) {
       badgeEmoji = '🏆';
       badgeTitle = _mascotSays(
@@ -899,6 +897,44 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     }
     return hash;
   }
+
+  /// Kid-facing names for newly unlocked achievements (closes collect loop).
+  _NamedUnlockCopy _namedUnlockCopy(List<String> unlockedIds) {
+    final achievements = AchievementService();
+    final defs = [
+      for (final id in unlockedIds) achievements.getDefinition(id),
+    ];
+    final primary = defs.first;
+    if (defs.length == 1) {
+      return _NamedUnlockCopy(
+        emoji: primary.emoji,
+        title: 'Nytt märke!',
+        body: '${primary.displayName}. ${primary.unlockHint}',
+      );
+    }
+
+    final names = defs.map((d) => d.displayName).toList(growable: false);
+    final listed = names.length <= 2
+        ? names.join(' och ')
+        : '${names.take(2).join(', ')} och ${names.length - 2} till';
+    return _NamedUnlockCopy(
+      emoji: primary.emoji,
+      title: 'Nya märken!',
+      body: listed,
+    );
+  }
+}
+
+class _NamedUnlockCopy {
+  const _NamedUnlockCopy({
+    required this.emoji,
+    required this.title,
+    required this.body,
+  });
+
+  final String emoji;
+  final String title;
+  final String body;
 }
 
 class _BadgeTeaser {

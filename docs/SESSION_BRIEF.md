@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Namngivna unlocks på resultatskärmen ([ROI_BACKLOG](ROI_BACKLOG.md) #12).  
-**Status:** Badge unlock-hints (#11) inne — tryck på låst märke visar hur-tips. `v1.4.3+22` på Play internal draft.
+**Mål:** Camp/wardrobe tom-tillstånd ([ROI_BACKLOG](ROI_BACKLOG.md) #13–14).  
+**Status:** Namngivna unlocks på resultat (#12) inne. Badge unlock-hints (#11) inne. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** badge `unlockHint` + SnackBar; Play Closed Beta internal; tag `v1.4.3+22`; ROI Top 100.
+**Klart sedan förra briefen:** resultat namnger märken; badge `unlockHint`; Play internal; tag `v1.4.3+22`.
 
 ---
 

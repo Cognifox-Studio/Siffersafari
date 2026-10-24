@@ -15,7 +15,7 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** namngivna unlocks på resultat ([ROI_BACKLOG](ROI_BACKLOG.md) #12). Badge unlock-hints (#11) levererade.
+**Produktspår:** camp/wardrobe tom-tillstånd ([ROI_BACKLOG](ROI_BACKLOG.md) #13–14). #11–12 levererade.
 
 ---
 
@@ -23,9 +23,9 @@ uppdaterad: 2026-10-24
 
 Collect-loop discoverability (Tier B), i ordning:
 
-1. **Camp/wardrobe tom-tillstånd** — collection-teaser vid 0 + tydlig garderobs-CTA — #13–14
-2. **TTS discoverability** för föräldrar (default-off) — #15
-3. **In-quiz TTS replay/stop clarity** — #16
+1. **TTS discoverability** för föräldrar (default-off) — #15
+2. **In-quiz TTS replay/stop clarity** — #16
+3. **Resume CTA visar op + progress** — #17
 
 Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa är klara eller uttryckligen byts ut här.
 
