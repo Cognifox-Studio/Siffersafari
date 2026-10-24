@@ -549,6 +549,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           100.0,
         );
 
+        final grade = ref.watch(userProvider).activeUser?.gradeLevel;
+        final holdToConfirm = grade != null && grade <= 2;
+
         final children = options.map((answer) {
           final isSelected = _selectedAnswer == answer;
           final isCorrect = question.correctAnswer == answer;
@@ -563,6 +566,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             idleTextColor: onPrimary,
             disabledBackgroundColor: buttonDisabledColor,
             minHeight: calculatedHeight,
+            requireHoldToConfirm: holdToConfirm,
             onPressed: () => _handleAnswerSelected(answer),
           );
 

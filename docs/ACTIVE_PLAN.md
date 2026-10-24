@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #78–80). #11–48 + #51–77 + #20 levererade.
+**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #79–80). #11–48 + #51–78 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Hold-to-confirm answers Åk1–2** — #78
-2. **Abandon → seed due keys if SRS** — #79
-3. **TTS SV digit/operator for Mix** — #80
+1. **Abandon → seed due keys if SRS** — #79
+2. **TTS SV digit/operator for Mix** — #80
+3. **Next ROI after #80** — se ROI_BACKLOG
 
 Lyft **en** till Now i taget.
 
