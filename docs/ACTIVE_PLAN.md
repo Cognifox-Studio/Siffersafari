@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Parent “tonight’s practice” ([ROI_BACKLOG](ROI_BACKLOG.md) #24). #11–23 levererade (#20 delvis via soft landing-copy).
+**Produktspår:** Home first-viewport play primär ([ROI_BACKLOG](ROI_BACKLOG.md) #25). #11–24 levererade (#20 delvis via soft landing-copy).
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Home first-viewport: play primär, camp sekundär** — #25
-2. **Align Sedan/Senare copy** (resterande map/results) — #20
-3. **Åk 6 %-policy** (matte-bro) — #26
+1. **Align Sedan/Senare copy** (resterande map/results) — #20
+2. **Åk 6 %-policy** (matte-bro) — #26
+3. **Mix-feedback polish** — #27
 
 Lyft **en** till Now i taget.
 

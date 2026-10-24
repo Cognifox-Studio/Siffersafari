@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Parent “tonight’s practice” från weakest areas ([ROI_BACKLOG](ROI_BACKLOG.md) #24).  
-**Status:** #21–23 inne (grade helper, first-run checklist, wipe bakom PIN). #11–23 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Home first-viewport play primär ([ROI_BACKLOG](ROI_BACKLOG.md) #25).  
+**Status:** #24 “Öva ikväll” inne. #11–24 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Onboarding grade helper; parent Kom igång; PIN före radera; Nattskogen soft landing.
+**Klart sedan förra briefen:** Parent tonight practice; grade helper; Kom igång; PIN före radera.
 
 ---
 

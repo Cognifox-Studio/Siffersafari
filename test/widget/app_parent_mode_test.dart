@@ -215,6 +215,10 @@ void main() {
         userId: userId,
         name: 'Test',
         ageGroup: AgeGroup.middle,
+        masteryLevels: {
+          'multiplication_easy': 0.4,
+          'addition_easy': 0.9,
+        },
       );
       await repository.saveUserProgress(user);
       await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
@@ -243,6 +247,13 @@ void main() {
       await pumpUntilFound(tester, find.text('Översikt'));
       expect(find.text('Föräldraläge'), findsOneWidget);
       expect(find.text('Översikt'), findsOneWidget);
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('parent_tonight_practice_button')),
+      );
+      expect(find.text('Ikväll'), findsOneWidget);
+      expect(find.textContaining('Gånger'), findsWidgets);
     },
   );
 }

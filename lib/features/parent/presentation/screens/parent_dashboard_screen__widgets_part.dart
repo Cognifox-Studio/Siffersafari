@@ -10,6 +10,18 @@ class _WeakArea {
   final String key;
   final double rate;
   final String label;
+
+  OperationType? get operationType {
+    final parts = key.split('_');
+    if (parts.isEmpty) return null;
+    return OperationType.values.asNameMap()[parts.first];
+  }
+
+  DifficultyLevel? get difficultyLevel {
+    final parts = key.split('_');
+    if (parts.length < 2) return null;
+    return DifficultyLevel.values.asNameMap()[parts[1]];
+  }
 }
 
 String _prettyEnumLabel(String raw) {

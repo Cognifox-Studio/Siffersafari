@@ -236,6 +236,99 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final opsDone = allowedOps.length >= 2;
     final showFirstRunChecklist = !gradeDone || !ttsDone || !opsDone;
 
+    Future<void> startTonightPractice(_WeakArea area) async {
+      final operation =
+          area.operationType ?? OperationType.addition;
+      final difficulty = area.difficultyLevel ?? DifficultyLevel.easy;
+      final effectiveAgeGroup = DifficultyConfig.effectiveAgeGroup(
+        fallback: user.ageGroup,
+        gradeLevel: user.gradeLevel,
+      );
+      final effectiveDifficulty = DifficultyConfig.effectiveDifficulty(
+        fallback: difficulty,
+        gradeLevel: user.gradeLevel,
+      );
+      final steps = DifficultyConfig.buildDifficultySteps(
+        storedSteps: user.operationDifficultySteps,
+        defaultDifficulty: effectiveDifficulty,
+        gradeLevel: user.gradeLevel,
+      );
+
+      ref.read(quizProvider.notifier).startSession(
+            userId: user.userId,
+            ageGroup: effectiveAgeGroup,
+            gradeLevel: user.gradeLevel,
+            operationType: operation,
+            difficulty: effectiveDifficulty,
+            initialDifficultyStepsByOperation: steps,
+            wordProblemsEnabled: wordProblemsEnabled,
+            missingNumberEnabled: missingNumberEnabled,
+          );
+
+      unawaited(
+        ref.read(appAnalyticsProvider).logEvent(
+          name: 'parent_tonight_practice_started',
+          userId: user.userId,
+          properties: {
+            'operation': operation.name,
+            'difficulty': effectiveDifficulty.name,
+            'masteryKey': area.key,
+          },
+        ),
+      );
+
+      if (!context.mounted) return;
+      await AppNavigator.resetStackToQuiz(context);
+    }
+
+    final tonightPracticeCard = weakestAreas.isEmpty
+        ? null
+        : _Card(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(
+                  'Ikväll',
+                  key: const Key('parent_tonight_practice_title'),
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing4),
+                Text(
+                  'Ett kort pass på det som känns svårast just nu.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: subtleOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.smallPadding),
+                Text(
+                  weakestAreas.first.label,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        color: onPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                ),
+                Text(
+                  '${(weakestAreas.first.rate * 100).toStringAsFixed(0)}% rätt hittills',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: mutedOnPrimary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                ),
+                const SizedBox(height: AppConstants.defaultPadding),
+                FilledButton.icon(
+                  key: const Key('parent_tonight_practice_button'),
+                  onPressed: () => startTonightPractice(weakestAreas.first),
+                  icon: const Icon(Icons.nightlight_round),
+                  label: const Text('Öva ikväll'),
+                ),
+              ],
+            ),
+          );
+
     final firstRunChecklistCard = _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -879,6 +972,10 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 firstRunChecklistCard,
                 sectionSpacing,
               ],
+              if (tonightPracticeCard != null) ...[
+                tonightPracticeCard,
+                sectionSpacing,
+              ],
               overviewCard,
               sectionSpacing,
               adaptationsCard,
@@ -900,6 +997,10 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                   children: [
                     if (showFirstRunChecklist) ...[
                       firstRunChecklistCard,
+                      sectionSpacing,
+                    ],
+                    if (tonightPracticeCard != null) ...[
+                      tonightPracticeCard,
                       sectionSpacing,
                     ],
                     overviewCard,
