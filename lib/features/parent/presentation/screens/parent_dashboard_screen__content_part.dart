@@ -231,6 +231,55 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
       },
     );
 
+    final gradeDone = user.gradeLevel != null;
+    final ttsDone = ttsEnabled;
+    final opsDone = allowedOps.length >= 2;
+    final showFirstRunChecklist = !gradeDone || !ttsDone || !opsDone;
+
+    final firstRunChecklistCard = _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Kom igång',
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: AppConstants.microSpacing4),
+          Text(
+            'Tre snabba steg innan första övningen.',
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: subtleOnPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          _FirstRunChecklistRow(
+            done: gradeDone,
+            label: gradeDone
+                ? 'Årskurs vald (Åk ${user.gradeLevel})'
+                : 'Välj årskurs under Snabba ändringar',
+          ),
+          const SizedBox(height: AppConstants.microSpacing6),
+          _FirstRunChecklistRow(
+            done: ttsDone,
+            label: ttsDone
+                ? 'Uppläsning är på'
+                : 'Slå på uppläsning (bra för tidiga läsare)',
+          ),
+          const SizedBox(height: AppConstants.microSpacing6),
+          _FirstRunChecklistRow(
+            done: opsDone,
+            label: opsDone
+                ? 'Räknesätt klara'
+                : 'Välj minst två räknesätt under Snabba ändringar',
+          ),
+        ],
+      ),
+    );
+
     final overviewCard = _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -826,6 +875,10 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         if (!layout.isExpandedWidth) {
           return ListView(
             children: [
+              if (showFirstRunChecklist) ...[
+                firstRunChecklistCard,
+                sectionSpacing,
+              ],
               overviewCard,
               sectionSpacing,
               adaptationsCard,
@@ -845,6 +898,10 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    if (showFirstRunChecklist) ...[
+                      firstRunChecklistCard,
+                      sectionSpacing,
+                    ],
                     overviewCard,
                     sectionSpacing,
                     historyCard,

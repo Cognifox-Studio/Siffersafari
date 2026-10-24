@@ -394,6 +394,49 @@ class _OverviewMetricTile extends StatelessWidget {
   }
 }
 
+class _FirstRunChecklistRow extends StatelessWidget {
+  const _FirstRunChecklistRow({
+    required this.done,
+    required this.label,
+  });
+
+  final bool done;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+    final accent = Theme.of(context).colorScheme.secondary;
+    final iconColor = done ? accent : onPrimary.withValues(alpha: 0.55);
+    final textColor = done
+        ? onPrimary.withValues(alpha: AppOpacities.mutedText)
+        : onPrimary;
+
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          done ? Icons.check_circle_rounded : Icons.radio_button_unchecked,
+          size: 20,
+          color: iconColor,
+        ),
+        const SizedBox(width: AppConstants.smallPadding),
+        Expanded(
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: textColor,
+                  fontWeight: FontWeight.w700,
+                  decoration: done ? TextDecoration.lineThrough : null,
+                  decorationColor: textColor,
+                ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _StatusBadge extends StatelessWidget {
   const _StatusBadge({
     required this.label,
