@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Feedback tips leftovers ([ROI_BACKLOG](ROI_BACKLOG.md) #55–56).  
-**Status:** #52–54 exception matrices publicerade. #11–48 + #51–54 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~35 lokalt (ej pushad).
+**Mål:** Widen Åk8 powers + curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #57–62).  
+**Status:** #55–56 feedback tips (prioritering + negativa tallinje) klara. #11–48 + #51–56 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~36 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Exception matrices; Förenkla@x; parent analytics; matte #34–40.
+**Klart sedan förra briefen:** Feedback tips; exception matrices; Förenkla@x; matte #34–40.
 
 ---
 

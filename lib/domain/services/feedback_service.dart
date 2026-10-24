@@ -132,8 +132,9 @@ class FeedbackService {
       final message = (hint != null && hint.isNotEmpty)
           ? 'Rätt svar: $correct\n✨ $hint'
           : 'Rätt svar: $correct';
-      final pedagogicalTip =
-          showPedagogicalTip ? _buildPedagogicalTip(question) : null;
+      final pedagogicalTip = showPedagogicalTip
+          ? _buildPedagogicalTip(question, userAnswer: userAnswer)
+          : null;
 
       final metaLines = _buildMetaLines(
         pointsEarned: safePointsEarned,
@@ -235,8 +236,9 @@ class FeedbackService {
     final hintLine = (hint != null && hint.isNotEmpty)
         ? '💡 $hint'
         : '💡 Titta lugnt en gång till nästa gång.';
-    final pedagogicalTip =
-        showPedagogicalTip ? _buildPedagogicalTip(question) : null;
+    final pedagogicalTip = showPedagogicalTip
+        ? _buildPedagogicalTip(question, userAnswer: userAnswer)
+        : null;
 
     final lines = <String>[
       'Ditt svar: $userAnswer',
@@ -273,7 +275,7 @@ class FeedbackService {
     return responseTime != null && responseTime >= _slowResponseTipThreshold;
   }
 
-  String? _mixBridgeTip(Question question) {
+  String? _mixBridgeTip(Question question, {int? userAnswer}) {
     final prompt = question.promptText?.trim() ?? '';
     if (prompt.startsWith('Procentuell förändring = ?')) {
       if (prompt.contains('Vad blir nya priset')) {
@@ -316,14 +318,35 @@ class FeedbackService {
       return 'Hitta hur många gånger större (k) och använd samma k.';
     }
     if (prompt.startsWith('Prioriteringsregler = ?')) {
-      return 'Parenteser först, sedan ×/÷, sist +/−.';
+      return _precedenceTip(question, userAnswer: userAnswer);
+    }
+    if (prompt.startsWith('Negativa tal = ?')) {
+      return 'Tänk tallinje: plus går åt höger, minus åt vänster.';
     }
     return null;
   }
 
-  String? _buildPedagogicalTip(Question question) {
+  String _precedenceTip(Question question, {int? userAnswer}) {
+    final expression = (question.promptText ?? '')
+        .split('\n')
+        .skip(1)
+        .join(' ')
+        .trim();
+    final hitMisconception = userAnswer != null &&
+        question.wrongAnswers.contains(userAnswer);
+    if (expression.contains('(')) {
+      return hitMisconception
+          ? 'Vanligt misstag: glömma parenteserna. Räkna alltid () först.'
+          : 'Parenteser först, sedan ×/÷, sist +/−.';
+    }
+    return hitMisconception
+        ? 'Vanligt misstag: vänster-till-höger. Gör ×/÷ före +/−.'
+        : '× och ÷ före + och −.';
+  }
+
+  String? _buildPedagogicalTip(Question question, {int? userAnswer}) {
     if (question.operationType == OperationType.mixed) {
-      return _mixBridgeTip(question);
+      return _mixBridgeTip(question, userAnswer: userAnswer);
     }
 
     switch (question.operationType) {
@@ -410,9 +433,34 @@ class FeedbackService {
           end: question.correctAnswer,
           operationType: OperationType.subtraction,
         );
+      case OperationType.mixed:
+        return _numberLineForNegativeMix(question);
       default:
         return null;
     }
+  }
+
+  FeedbackNumberLine? _numberLineForNegativeMix(Question question) {
+    final prompt = question.promptText?.trim() ?? '';
+    if (!prompt.startsWith('Negativa tal = ?')) {
+      return null;
+    }
+
+    final start = question.operand1;
+    final end = question.correctAnswer;
+    final delta = end - start;
+    final jump = delta.abs();
+    if (jump <= 0 || jump > 40) {
+      return null;
+    }
+
+    return _numberLineForJump(
+      start: start,
+      jump: jump,
+      end: end,
+      operationType:
+          delta >= 0 ? OperationType.addition : OperationType.subtraction,
+    );
   }
 
   String _twoHopTip({

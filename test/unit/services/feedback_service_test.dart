@@ -301,5 +301,77 @@ void main() {
         contains('💡 Gör ett steg i taget och spara mellanresultatet.'),
       );
     });
+
+    test('prioriteringsregler tipsar om parentes-misconception (#55)', () {
+      const question = Question(
+        id: 'q_prec_paren',
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.medium,
+        operand1: 0,
+        operand2: 0,
+        correctAnswer: 20,
+        wrongAnswers: [14, 10, 18],
+        promptText: 'Prioriteringsregler = ?\n(3 + 2) × 4',
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 14,
+        ageGroup: AgeGroup.older,
+      );
+
+      expect(
+        feedback.message,
+        contains('Vanligt misstag: glömma parenteserna'),
+      );
+    });
+
+    test('prioriteringsregler tipsar om vänster-till-höger (#55)', () {
+      const question = Question(
+        id: 'q_prec_ltr',
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.medium,
+        operand1: 0,
+        operand2: 0,
+        correctAnswer: 11,
+        wrongAnswers: [14, 10, 8],
+        promptText: 'Prioriteringsregler = ?\n3 + 2 × 4',
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 14,
+        ageGroup: AgeGroup.older,
+      );
+
+      expect(
+        feedback.message,
+        contains('Vanligt misstag: vänster-till-höger'),
+      );
+    });
+
+    test('negativa tal ger tip + tallinje (#56)', () {
+      const question = Question(
+        id: 'q_neg',
+        operationType: OperationType.mixed,
+        difficulty: DifficultyLevel.medium,
+        operand1: -3,
+        operand2: 8,
+        correctAnswer: 5,
+        promptText: 'Negativa tal = ?\nVad är -3 + 8?',
+      );
+
+      final feedback = service.buildFeedback(
+        question: question,
+        userAnswer: 11,
+        ageGroup: AgeGroup.middle,
+      );
+
+      expect(feedback.message, contains('Tänk tallinje'));
+      expect(feedback.numberLine?.start, -3);
+      expect(feedback.numberLine?.end, 5);
+      expect(feedback.numberLine?.jump, 8);
+      expect(feedback.numberLine?.operationType, OperationType.addition);
+    });
   });
 }

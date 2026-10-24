@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Feedback tips leftovers ([ROI_BACKLOG](ROI_BACKLOG.md) #55–56). #11–48 + #51–54 + #20 levererade.
+**Produktspår:** Widen Åk8 powers + curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #57–62). #11–48 + #51–56 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Feedback tips leftovers** — #55–56
-2. **Widen Åk8 powers** — #57
-3. **Normalize equation answers** — #58
+1. **Widen Åk8 powers** — #57
+2. **Normalize equation answers** — #58
+3. **Audit tiokompisar in Mix** — #59
 
 Lyft **en** till Now i taget.
 
