@@ -15,19 +15,19 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Release-spår:** tag `v1.4.3+22` + GitHub Release klara. Kvar: samma AAB till Play internal. Därefter lyft Next #1 (badge unlock-hints) till Now.
+**Produktspår:** badge unlock-hints ([ROI_BACKLOG](ROI_BACKLOG.md) #11). Release `v1.4.3+22` stängd (tag + Play internal draft).
 
 ---
 
 ## Next (kandidater — max tre)
 
-Efter +22, i denna ordning (collect-loop discoverability, Tier B):
+Collect-loop discoverability (Tier B), i ordning:
 
-1. **Badge unlock-hints** på låsta brickor (`home_badge_album`, `achievement_catalog`)
-2. **Namngivna unlocks** på resultatskärmen (inte generisk teaser)
-3. **Camp/wardrobe tom-tillstånd** — collection-teaser vid 0 + tydlig garderobs-CTA
+1. **Namngivna unlocks** på resultatskärmen (inte generisk teaser) — #12
+2. **Camp/wardrobe tom-tillstånd** — collection-teaser vid 0 + tydlig garderobs-CTA — #13–14
+3. **TTS discoverability** för föräldrar (default-off) — #15
 
-Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa tre är klara eller uttryckligen byts ut här.
+Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa är klara eller uttryckligen byts ut här.
 
 ---
 

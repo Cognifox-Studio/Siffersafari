@@ -8,15 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Play internal med samma AAB som `v1.4.3+22` (sista DoD B-biten).  
-**Status:** Tag + GitHub Release `v1.4.3+22` ute. Kvar: bygg/ladda AAB till Play internal testing.
+**Mål:** Badge unlock-hints på låsta brickor ([ROI_BACKLOG](ROI_BACKLOG.md) #11).  
+**Status:** `v1.4.3+22` taggad, GitHub Release ute, AAB uppladdad till Play **internal** (draft). Release-spåret stängt.
 
-**Now-steg (i ordning):**
-1. ~~Fix 4 `prefer_const` infos så `--fatal-infos` CI passerar~~
-2. ~~Tag `v1.4.3+22` + GitHub Release~~ · **kvar:** samma AAB → Play internal (DoD B)
-3. ~~What’s-new notes för +22~~
-
-**Klart sedan förra briefen:** push/tag/release `v1.4.3+22`; prefer_const CI-fix; what’s-new; ROI Top 100.
+**Klart sedan förra briefen:** Play Closed Beta internal draft (`40100575151`); tag/release `v1.4.3+22`; prefer_const CI-fix; what’s-new; ROI Top 100.
 
 ---
 
@@ -24,20 +19,21 @@
 
 **Version i repo:** `1.4.3+22` (`pubspec.yaml`)  
 **Senaste tagg:** `v1.4.3+22`  
-**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22
+**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
+**Play internal:** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40100575151 (draft)
 
 ---
 
 ## Senaste leveranser (kort)
 
-**2026-10-24 – Release `v1.4.3+22` (tag + GitHub)**  
-Camp/souvenirer, badges, nextBiome, quiz polish, CI fatal-infos-fix. Play internal kvar.
+**2026-10-24 – Release `v1.4.3+22` (tag + Play internal draft)**  
+Camp/souvenirer, badges, nextBiome, quiz polish, CI fatal-infos-fix. AAB via `play-closed-beta` track=`internal`.
 
 **2026-10-24 – Top 100 ROI backlog**  
-`ROI_BACKLOG.md` med #1–100; Next = badge/unlocks/camp.
+`ROI_BACKLOG.md` med #1–100; Next = named unlocks + camp/wardrobe.
 
 **2026-10-24 – Top 50 ROI → Now/Next/Later**  
-Release +22 som Now; Next = collect-loop discoverability; SEN biome/cloud parkerade.
+Release +22 som Now; collect-loop discoverability i Next; SEN biome/cloud parkerade.
 
 **2026-08-31 – Cursor-first rutin-slim**  
 DEV_SYSTEM/DoD-light, kort SESSION_BRIEF, `.cursor/rules`, TOOLING_SURFACE; arkiverade meta-prompts/skills under `.github/archive/`.
@@ -65,7 +61,7 @@ Feature borta; legacy Hive-nycklar endast för profil-wipe.
 
 Arbeta mot **Now** ovan. Next/Later: `ACTIVE_PLAN.md`.
 
-Efter +22: lyft en Next-kandidat till Now (max en i taget). Plan/slice-start bara vid risk.
+Plan/slice-start bara vid risk.
 
 **Guardrails:** inga trackers; inga stora experiment utan bet i Next.
 
