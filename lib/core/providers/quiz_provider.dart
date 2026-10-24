@@ -242,6 +242,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
     Map<OperationType, int>? initialDifficultyStepsByOperation,
     bool? wordProblemsEnabled,
     bool? missingNumberEnabled,
+    int? targetQuestionCountOverride,
   }) {
     debugPrint(
       '[QuizNotifier] startSession: userId=$userId, '
@@ -254,7 +255,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
       difficulty: difficulty,
     );
 
-    final count = DifficultyConfig.getQuestionsPerSession(ageGroup);
+    final defaultCount = DifficultyConfig.getQuestionsPerSession(ageGroup);
+    final count = (targetQuestionCountOverride ?? defaultCount).clamp(3, 20);
 
     final steps = Map<OperationType, int>.unmodifiable(
       initialDifficultyStepsByOperation ??

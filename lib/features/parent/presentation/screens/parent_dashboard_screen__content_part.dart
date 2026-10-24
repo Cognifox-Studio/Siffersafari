@@ -254,6 +254,11 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         gradeLevel: user.gradeLevel,
       );
 
+      final focusedCount =
+          (DifficultyConfig.getQuestionsPerSession(effectiveAgeGroup) / 2)
+              .round()
+              .clamp(5, 8);
+
       ref.read(quizProvider.notifier).startSession(
             userId: user.userId,
             ageGroup: effectiveAgeGroup,
@@ -263,6 +268,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             initialDifficultyStepsByOperation: steps,
             wordProblemsEnabled: wordProblemsEnabled,
             missingNumberEnabled: missingNumberEnabled,
+            targetQuestionCountOverride: focusedCount,
           );
 
       unawaited(
@@ -527,7 +533,12 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                                 padding: const EdgeInsets.symmetric(
                                   vertical: AppConstants.microSpacing4,
                                 ),
-                                child: _RecommendationRow(area: area),
+                                child: _RecommendationRow(
+                                  area: area,
+                                  onPractice: area.operationType == null
+                                      ? null
+                                      : () => startTonightPractice(area),
+                                ),
                               ),
                             ),
                           ],
@@ -823,7 +834,12 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                   padding: const EdgeInsets.symmetric(
                     vertical: AppConstants.microSpacing6,
                   ),
-                  child: _RecommendationRow(area: a),
+                  child: _RecommendationRow(
+                    area: a,
+                    onPractice: a.operationType == null
+                        ? null
+                        : () => startTonightPractice(a),
+                  ),
                 ),
               ),
             ],

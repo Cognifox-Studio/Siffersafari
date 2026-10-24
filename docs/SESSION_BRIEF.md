@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Struggle → focused practice ([ROI_BACKLOG](ROI_BACKLOG.md) #33).  
-**Status:** #30 geometry breddad. #11–32 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead 18 lokalt (ej pushad).
+**Mål:** SRS/due keys för Mix families ([ROI_BACKLOG](ROI_BACKLOG.md) #34).  
+**Status:** #33 focused practice från weak areas. #11–33 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~19 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Geometry/prop/compound/%-broar; Mix-tips; dubbelt/hälften; home/parent polish.
+**Klart sedan förra briefen:** Parent focused short passes; geometry/prop/%-broar; Mix-tips; home/parent polish.
 
 ---
 

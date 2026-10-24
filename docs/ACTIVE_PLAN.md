@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Struggle → focused practice ([ROI_BACKLOG](ROI_BACKLOG.md) #33). #11–32 + #20 levererade.
+**Produktspår:** SRS/due keys för Mix families ([ROI_BACKLOG](ROI_BACKLOG.md) #34). #11–33 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **SRS/due keys för Mix families** — #34
-2. **Åk 1–2 Sortera as MC order** — #35
-3. **Integer ½ of n text-bridge** — #36
+1. **Åk 1–2 Sortera as MC order** — #35
+2. **Integer ½ of n text-bridge** — #36
+3. **Åk 6 ASCII diagram** — #37
 
 Lyft **en** till Now i taget.
 

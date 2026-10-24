@@ -264,15 +264,19 @@ class _HistoryMetric extends StatelessWidget {
 }
 
 class _RecommendationRow extends StatelessWidget {
-  const _RecommendationRow({required this.area});
+  const _RecommendationRow({
+    required this.area,
+    this.onPractice,
+  });
 
   final _WeakArea area;
+  final VoidCallback? onPractice;
 
   @override
   Widget build(BuildContext context) {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
     final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
-    return Row(
+    final row = Row(
       children: [
         Expanded(
           child: Text(
@@ -290,7 +294,29 @@ class _RecommendationRow extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
+        if (onPractice != null) ...[
+          const SizedBox(width: AppConstants.smallPadding),
+          Icon(
+            Icons.play_circle_outline_rounded,
+            size: 20,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ],
       ],
+    );
+
+    if (onPractice == null) return row;
+
+    return InkWell(
+      key: Key('parent_weak_area_practice_${area.key}'),
+      onTap: onPractice,
+      borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: AppConstants.microSpacing4,
+        ),
+        child: row,
+      ),
     );
   }
 }
