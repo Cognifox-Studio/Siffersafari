@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #79–80).  
-**Status:** #78 hold-to-confirm Åk1–2 klar. #11–48 + #51–78 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
+**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #80).  
+**Status:** #79 abandon→seed due keys klar. #11–48 + #51–79 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Hold-to-confirm; live-region progress; confetti floor; haptic; TTS duck.
+**Klart sedan förra briefen:** Abandon SRS seed; hold-to-confirm; live-region progress.
 
 ---
 

@@ -1,4 +1,5 @@
 import 'package:siffersafari/domain/entities/question.dart';
+import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/domain/services/spaced_repetition_service.dart';
@@ -66,5 +67,37 @@ class QuizDueQuestionPlanner {
       initialQuestions: List<Question>.unmodifiable([firstDueQuestion]),
       pendingDueKeys: List<String>.unmodifiable(remainingDueKeys),
     );
+  }
+
+  /// Keys to resurface after an abandoned quiz so partial practice is not lost.
+  ///
+  /// Includes answered items, the current unseen-at-answer question, and any
+  /// remaining pending due keys from the session plan.
+  List<String> collectAbandonSeedKeys({
+    required QuizSession session,
+    required List<String> pendingDueKeys,
+    required String Function(Question question) keyForQuestion,
+  }) {
+    if (session.answers.isEmpty && pendingDueKeys.isEmpty) {
+      return const [];
+    }
+
+    final keys = <String>{};
+    for (final question in session.questions) {
+      if (session.answers.containsKey(question.id)) {
+        keys.add(keyForQuestion(question));
+      }
+    }
+
+    final current = session.currentQuestion;
+    if (current != null) {
+      keys.add(keyForQuestion(current));
+    }
+
+    for (final key in pendingDueKeys) {
+      if (key.isNotEmpty) keys.add(key);
+    }
+
+    return List<String>.unmodifiable(keys);
   }
 }

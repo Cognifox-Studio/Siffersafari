@@ -612,6 +612,37 @@ class QuizNotifier extends StateNotifier<QuizState> {
   void cancelSession(String userId) {
     final session = state.session;
     if (session == null) return;
+
+    final isSpacedRepetitionEnabled = userId.isNotEmpty &&
+        _reviewScheduleService.isSpacedRepetitionEnabled(userId);
+    if (isSpacedRepetitionEnabled) {
+      final seedKeys = _sessionPlanner.collectAbandonSeedKeys(
+        session: session,
+        pendingDueKeys: state.pendingDueKeys,
+        keyForQuestion: _reviewScheduleService.keyForQuestion,
+      );
+      if (seedKeys.isNotEmpty) {
+        final now = DateTime.now();
+        final updatedSchedules = _reviewScheduleService.seedDueKeys(
+          existing: state.reviewSchedulesByKey,
+          keys: seedKeys,
+          now: now,
+        );
+        final dueCount = _reviewScheduleService.countDueReviews(
+          updatedSchedules,
+          now,
+        );
+        state = state.copyWith(
+          reviewSchedulesByKey:
+              Map<String, ReviewSchedule>.unmodifiable(updatedSchedules),
+          dueReviewCount: dueCount,
+        );
+        unawaited(
+          _reviewScheduleService.saveReviewSchedules(userId, updatedSchedules),
+        );
+      }
+    }
+
     _persistInProgressSession(
       userId: userId,
       session: session,

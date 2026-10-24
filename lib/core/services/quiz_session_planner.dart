@@ -44,6 +44,18 @@ class QuizSessionPlanner {
   final QuestionGeneratorService _questionGenerator;
   final QuizDueQuestionPlanner _dueQuestionPlanner;
 
+  List<String> collectAbandonSeedKeys({
+    required QuizSession session,
+    required List<String> pendingDueKeys,
+    required String Function(Question question) keyForQuestion,
+  }) {
+    return _dueQuestionPlanner.collectAbandonSeedKeys(
+      session: session,
+      pendingDueKeys: pendingDueKeys,
+      keyForQuestion: keyForQuestion,
+    );
+  }
+
   QuizSessionQuestionPlan buildGeneratedSessionPlan({
     required AgeGroup ageGroup,
     required OperationType operationType,

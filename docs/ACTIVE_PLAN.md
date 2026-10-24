@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #79–80). #11–48 + #51–78 + #20 levererade.
+**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #80). #11–48 + #51–79 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Abandon → seed due keys if SRS** — #79
-2. **TTS SV digit/operator for Mix** — #80
-3. **Next ROI after #80** — se ROI_BACKLOG
+1. **TTS SV digit/operator for Mix** — #80
+2. **Hard quests on older-grade paths** — #81
+3. **Pedestal arrival anim** — #82
 
 Lyft **en** till Now i taget.
 

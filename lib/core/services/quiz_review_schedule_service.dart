@@ -5,6 +5,7 @@ import 'package:siffersafari/core/config/app_features.dart';
 import 'package:siffersafari/core/config/quiz_feature_settings.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
+import 'package:siffersafari/domain/constants/learning_constants.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
@@ -216,6 +217,29 @@ class QuizReviewScheduleService {
         .whereType<String>()
         .where((key) => key.isNotEmpty)
         .toList(growable: false);
+  }
+
+  /// Force [keys] to be due at [now] so abandoned practice resurfaces next session.
+  Map<String, ReviewSchedule> seedDueKeys({
+    required Map<String, ReviewSchedule> existing,
+    required Iterable<String> keys,
+    required DateTime now,
+  }) {
+    if (keys.isEmpty) return existing;
+
+    final updated = Map<String, ReviewSchedule>.from(existing);
+    for (final key in keys) {
+      if (key.isEmpty) continue;
+      final previous = updated[key];
+      updated[key] = ReviewSchedule(
+        questionId: key,
+        nextReviewDate: now,
+        intervalDays: previous?.intervalDays ??
+            LearningConstants.firstReviewInterval,
+        consecutiveCorrect: previous?.consecutiveCorrect ?? 0,
+      );
+    }
+    return updated;
   }
 
   String _packedReviewKey({
