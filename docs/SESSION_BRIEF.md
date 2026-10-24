@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Widen Åk 9 geometry integer ([ROI_BACKLOG](ROI_BACKLOG.md) #30).  
-**Status:** #31 dubbelt/hälften i Mix. #11–29 + #20 + #31–32 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Struggle → focused practice ([ROI_BACKLOG](ROI_BACKLOG.md) #33).  
+**Status:** #30 geometry breddad. #11–32 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead 18 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Dubbelt/hälften; Åk 8 prop/compound %; Mix-tips; Åk 6 broar.
+**Klart sedan förra briefen:** Geometry/prop/compound/%-broar; Mix-tips; dubbelt/hälften; home/parent polish.
 
 ---
 

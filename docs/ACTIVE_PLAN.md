@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Widen Åk 9 geometry integer ([ROI_BACKLOG](ROI_BACKLOG.md) #30). #11–29 + #20 + #31–32 levererade.
+**Produktspår:** Struggle → focused practice ([ROI_BACKLOG](ROI_BACKLOG.md) #33). #11–32 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Struggle → focused practice** — #33
-2. **SRS/due keys för Mix families** — #34
-3. **Åk 1–2 Sortera as MC order** — #35
+1. **SRS/due keys för Mix families** — #34
+2. **Åk 1–2 Sortera as MC order** — #35
+3. **Integer ½ of n text-bridge** — #36
 
 Lyft **en** till Now i taget.
 

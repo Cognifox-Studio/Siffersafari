@@ -1870,6 +1870,10 @@ Vad är $answerType efter transformationen?''';
       (8, 15, 17),
       (7, 24, 25),
       (10, 24, 26),
+      (12, 16, 20),
+      (18, 24, 30),
+      (20, 21, 29),
+      (9, 40, 41),
     ];
 
     final triple = triples[_random.nextInt(triples.length)];
@@ -1918,7 +1922,7 @@ Vad är $answerType efter transformationen?''';
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
-    final variant = _random.nextInt(6);
+    final variant = _random.nextInt(8);
 
     late final String body;
     late final int correct;
@@ -1970,11 +1974,31 @@ Vad är $answerType efter transformationen?''';
         operand2 = height;
         explanation =
             'Arean av en parallellogram är bas × höjd.\n$base × $height = $correct.';
+      case 5:
+        final width = 8 + _random.nextInt(difficultyStep >= 9 ? 14 : 9);
+        final height = 5 + _random.nextInt(difficultyStep >= 9 ? 12 : 8);
+        body = 'Omkrets av rektangel: $width × $height';
+        correct = 2 * (width + height);
+        operand1 = width;
+        operand2 = height;
+        explanation =
+            'Omkretsen av en rektangel är 2 × (längd + bredd).\n'
+            '2 × ($width + $height) = $correct.';
+      case 6:
+        final side = 4 + _random.nextInt(difficultyStep >= 9 ? 10 : 7);
+        body = 'Ytarea av kub: sida = $side';
+        correct = 6 * side * side;
+        operand1 = side;
+        operand2 = 6;
+        explanation =
+            'Ytan på en kub är 6 × sida².\n6 × $side × $side = $correct.';
       default:
         const triangles = <(int, int, int)>[
           (7, 9, 12),
           (9, 12, 15),
           (8, 15, 17),
+          (6, 8, 10),
+          (5, 12, 13),
         ];
         final triangle = triangles[_random.nextInt(triangles.length)];
         body =
