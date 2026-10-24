@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #58–62).  
-**Status:** #57 Åk8 powers widen klar. #11–48 + #51–57 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~37 lokalt (ej pushad).
+**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #59–62).  
+**Status:** #58 ekvation bare-int (`Vad är x?`) klar. #11–48 + #51–58 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~38 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Powers widen; feedback tips; exception matrices; Förenkla@x.
+**Klart sedan förra briefen:** Ekvation contract; powers; feedback tips; exception matrices.
 
 ---
 

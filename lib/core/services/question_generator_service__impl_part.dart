@@ -1587,7 +1587,8 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
         ? coefficient * solution + offset
         : coefficient * solution - offset;
     final operator = useAddition ? '+' : '−';
-    final prompt = 'Ekvation = ?\n${coefficient}x $operator $offset = $rhs';
+    final prompt =
+        'Ekvation = ?\n${coefficient}x $operator $offset = $rhs\nVad är x?';
 
     return Question(
       id: _uuid.v4(),
@@ -1618,7 +1619,8 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
         ? coefficient * (solution + inner)
         : coefficient * (solution - inner);
     final operator = useAddition ? '+' : '−';
-    final prompt = 'Ekvation = ?\n$coefficient(x $operator $inner) = $rhs';
+    final prompt =
+        'Ekvation = ?\n$coefficient(x $operator $inner) = $rhs\nVad är x?';
 
     return Question(
       id: _uuid.v4(),
@@ -1650,7 +1652,8 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
           ? (solution ~/ divisor) + offset
           : (solution ~/ divisor) - offset;
       final operator = useAddition ? '+' : '−';
-      final prompt = 'Ekvation = ?\nx/$divisor $operator $offset = $rhs';
+      final prompt =
+          'Ekvation = ?\nx/$divisor $operator $offset = $rhs\nVad är x?';
 
       return Question(
         id: _uuid.v4(),
@@ -1674,7 +1677,7 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     final constant = divisor * (difficultyStep <= 8 ? 3 : 5);
     final rhs = (offset + constant) ~/ divisor;
     final prompt =
-        'Ekvation = ?\n($coefficient' 'x + $constant)/$divisor = $rhs';
+        'Ekvation = ?\n($coefficient' 'x + $constant)/$divisor = $rhs\nVad är x?';
 
     return Question(
       id: _uuid.v4(),

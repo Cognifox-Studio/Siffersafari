@@ -312,7 +312,7 @@ class FeedbackService {
       return 'Gör ett steg i taget och spara mellanresultatet.';
     }
     if (prompt.startsWith('Ekvation = ?')) {
-      return 'Gör samma sak på båda sidor tills x står ensamt.';
+      return 'Svara med talet för x (bara siffran). Gör samma sak på båda sidor tills x står ensamt.';
     }
     if (prompt.startsWith('Proportionalitet = ?')) {
       return 'Hitta hur många gånger större (k) och använd samma k.';
