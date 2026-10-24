@@ -356,7 +356,21 @@ class QuestProgressionService {
     }
 
     if (basePath.length > targetLength) {
-      return basePath.sublist(0, targetLength);
+      // ROI #81: never trim away hard stops on older-grade paths.
+      final hard = basePath
+          .where((quest) => quest.difficulty == DifficultyLevel.hard)
+          .toList(growable: false);
+      if (hard.isEmpty) {
+        return basePath.sublist(0, targetLength);
+      }
+      final nonHard = basePath
+          .where((quest) => quest.difficulty != DifficultyLevel.hard)
+          .toList(growable: false);
+      final keepNonHard = (targetLength - hard.length).clamp(0, nonHard.length);
+      return [
+        ...nonHard.take(keepNonHard),
+        ...hard.take(targetLength - keepNonHard),
+      ];
     }
 
     final expanded = <QuestDefinition>[...basePath];

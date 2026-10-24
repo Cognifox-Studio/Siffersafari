@@ -58,6 +58,32 @@ void main() {
       );
     });
 
+    test('Åk 6–9 paths keep all four hard map stops (#81)', () {
+      for (final grade in [6, 7, 8, 9]) {
+        final user = UserProgress(
+          userId: 'u$grade',
+          name: 'Test',
+          ageGroup: AgeGroup.older,
+          gradeLevel: grade,
+        );
+        final path = service.questsForUser(user);
+        final hardIds = path
+            .where((quest) => quest.difficulty == DifficultyLevel.hard)
+            .map((quest) => quest.id.split('__del_').first)
+            .toSet();
+        expect(
+          hardIds,
+          containsAll([
+            'q_plus_hard',
+            'q_minus_hard',
+            'q_times_hard',
+            'q_div_hard',
+          ]),
+          reason: 'Åk $grade missing hard stops',
+        );
+      }
+    });
+
     test('Åk 1–2 får exakt 10 stopp även med bara plus och minus', () {
       const user = UserProgress(
         userId: 'u1',
