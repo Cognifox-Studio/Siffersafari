@@ -1,7 +1,7 @@
 ﻿# Session Status Brief
 
 > Syfte: **Now** + kort leveransläge.  
-> Arbetssätt: [DEV_SYSTEM.md](DEV_SYSTEM.md) · Klart när: [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) · Next/Later: [ACTIVE_PLAN.md](ACTIVE_PLAN.md)  
+> Arbetssätt: [DEV_SYSTEM.md](DEV_SYSTEM.md) · Klart när: [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md) · Next/Later: [ACTIVE_PLAN.md](ACTIVE_PLAN.md) · ROI: [ROI_BACKLOG.md](ROI_BACKLOG.md)  
 > Beslut: [DECISIONS_LOG.md](DECISIONS_LOG.md) · AI-yta: [TOOLING_SURFACE.md](TOOLING_SURFACE.md)
 
 ---
@@ -16,7 +16,7 @@
 2. Tag `v1.4.3+22` + samma AAB till Play internal (DoD B)
 3. What’s-new notes för +22 (camp, badges, nextBiome, polish)
 
-**Klart sedan förra briefen:** ROI-backlog (Top 50) låst i `ACTIVE_PLAN`; andra playtest-runda lokalt; Cursor-rutin-slim, camp-souvenirer, `nextBiome`, samlar-badges.
+**Klart sedan förra briefen:** ROI-backlog Top 100 i `ROI_BACKLOG.md` (Now/Next oförändrade); andra playtest-runda lokalt; Cursor-rutin-slim, camp-souvenirer, `nextBiome`, samlar-badges.
 
 ---
 
@@ -29,6 +29,9 @@
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-24 – Top 100 ROI backlog**  
+`ROI_BACKLOG.md` med #1–100; Now fortfarande +22 release; Next = badge/unlocks/camp.
 
 **2026-10-24 – Top 50 ROI → Now/Next/Later**  
 Release +22 som Now; Next = collect-loop discoverability; SEN biome/cloud parkerade.

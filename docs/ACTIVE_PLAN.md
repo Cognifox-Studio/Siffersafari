@@ -8,14 +8,14 @@ uppdaterad: 2026-10-24
 
 > Facit för **riktning**. Det som byggs just nu står i [SESSION_BRIEF.md](SESSION_BRIEF.md).  
 > Arbetssätt: [DEV_SYSTEM.md](DEV_SYSTEM.md) · Klart när: [DEFINITION_OF_DONE.md](DEFINITION_OF_DONE.md)  
-> ROI-ordning (Top 50): ship redan byggt → föräldrartillit → discoverability → matte-broar → cadence.
+> ROI-ordning (Top 100): [ROI_BACKLOG.md](ROI_BACKLOG.md) — ship redan byggt → föräldrartillit → discoverability → matte-broar → cadence.
 
 ---
 
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Release-spår:** stäng `v1.4.3+22` (Top-50 #1–3) — analyze infos → tag + internal AAB → what’s-new. Inget nytt produktspår förrän taggen finns.
+**Release-spår:** stäng `v1.4.3+22` ([ROI_BACKLOG](ROI_BACKLOG.md) #1–3) — analyze infos → tag + internal AAB → what’s-new. Inget nytt produktspår förrän taggen finns.
 
 ---
 
@@ -33,9 +33,12 @@ Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) f�
 
 ## Later (riktning, inga löften)
 
-- Ytterligare matte-broar (Åk 6 `%`/multi-step, Åk 8–9 integer-subset, Mix-feedback) — Top-50 Tier C
-- Store/trust-hygien efter release (listing, privacy-copy, screenshots) — Tier A #4–10
-- Cadence-multiplikatorer (release-guard, preflight-script, a11y-pass) — Tier D
+Full rangordning: [ROI_BACKLOG.md](ROI_BACKLOG.md) (#14–100 + near-miss). Hög nivå:
+
+- Ytterligare matte-broar (Åk 6 `%`/multi-step, Åk 8–9 integer-subset, Mix-feedback) — backlog #26–40, #51–62
+- Store/trust-hygien efter release (listing, privacy-copy, screenshots) — #4–10, #89–95
+- Cadence-multiplikatorer (release-guard, preflight-script, a11y-pass) — #41–50, #96–100
+- Curriculum/parent/quiz polish efter Next — #51–88
 - Full bråk / decimaler / diagram-UI (**SEN**-representation)
 - Nattskogen som **riktig** biome (inte bara soft landing-copy)
 - Mer pedagogisk hjälp *om* lokal data visar fastkörningar
