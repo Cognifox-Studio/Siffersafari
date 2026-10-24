@@ -49,6 +49,14 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
       );
     }
 
+    if (mixPolicy.shouldTryHalfOfN) {
+      return _generateHalfOfNTextBridgeQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+        gradeLevel: gradeLevel,
+      );
+    }
+
     if (mixPolicy.shouldTryLowGradeStatistics) {
       return _generateLowGradeStatisticsQuestion(
         difficulty,

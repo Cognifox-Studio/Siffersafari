@@ -37,6 +37,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Dubbelt/hälften = ?')) {
     return 'low_grade_double_half';
   }
+  if (promptText.startsWith('Bråk (½) = ?')) {
+    return 'm_half_of_n';
+  }
   if (promptText.startsWith('Sammansatt procent = ?')) {
     return 'm5a_compound_percent';
   }
@@ -165,6 +168,9 @@ void main() {
                   break;
                 case 'm4_negative_numbers':
                   negativeNumbers++;
+                  break;
+                case 'm_half_of_n':
+                  // Integer ½-of-n bridge (ROI #36); mid-band specialty.
                   break;
                 case 'normal':
                   normal++;

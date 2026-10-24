@@ -286,6 +286,9 @@ class FeedbackService {
           ? 'Dela talet i två lika stora delar.'
           : 'Lägg till samma tal en gång till (× 2).';
     }
+    if (prompt.startsWith('Bråk (½) = ?')) {
+      return '½ av ett tal betyder samma sak som att dela talet med 2.';
+    }
     if (prompt.startsWith('Sammansatt procent = ?')) {
       return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
     }

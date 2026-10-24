@@ -92,7 +92,7 @@ class _Observed {
     }
 
     // --- M5a / Åk 6 percentage-change + multi-step bridge
-    if (text.startsWith('Dubbelt/hälften')) {
+    if (text.startsWith('Dubbelt/hälften') || text.startsWith('Bråk (½)')) {
       return;
     }
 

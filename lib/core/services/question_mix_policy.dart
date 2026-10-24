@@ -51,6 +51,10 @@ class QuestionMixPolicy {
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
       );
+  double get halfOfNChance => halfOfNChanceFor(
+        gradeLevel: gradeLevel,
+        clampedStep: clampedStep,
+      );
   double get m4PercentChance => m4PercentChanceFor(
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
@@ -134,6 +138,18 @@ class QuestionMixPolicy {
       // Keep clear of M4a time window (~0.80–0.85) and later specials.
       roll >= 0.74 &&
       roll < (0.74 + lowGradeDoubleHalfChance);
+
+  /// Integer “½ of n” text-bridge (ROI #36) for Åk 3–6 — fraction notation,
+  /// integer answer (no SEN visual).
+  bool get shouldTryHalfOfN =>
+      requestedOperation == OperationType.mixed &&
+      gradeLevel != null &&
+      gradeLevel! >= 3 &&
+      gradeLevel! <= 6 &&
+      halfOfNChance > 0 &&
+      // Sit just before the M4a time window (~0.80–0.85).
+      roll >= 0.70 &&
+      roll < (0.70 + halfOfNChance);
 
   bool get shouldTryM4Percent =>
       isM4Mix &&
@@ -313,6 +329,35 @@ class QuestionMixPolicy {
           : clampedStep <= 7
               ? 0.04
               : 0.05,
+      _ => 0.0,
+    };
+  }
+
+  static double halfOfNChanceFor({
+    required int? gradeLevel,
+    required int clampedStep,
+  }) {
+    return switch (gradeLevel) {
+      3 => clampedStep <= 4
+          ? 0.02
+          : clampedStep <= 7
+              ? 0.03
+              : 0.04,
+      4 => clampedStep <= 5
+          ? 0.03
+          : clampedStep <= 8
+              ? 0.04
+              : 0.05,
+      5 => clampedStep <= 4
+          ? 0.03
+          : clampedStep <= 7
+              ? 0.045
+              : 0.055,
+      6 => clampedStep <= 4
+          ? 0.035
+          : clampedStep <= 7
+              ? 0.05
+              : 0.06,
       _ => 0.0,
     };
   }

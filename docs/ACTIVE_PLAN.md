@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Integer ½ of n text-bridge ([ROI_BACKLOG](ROI_BACKLOG.md) #36). #11–35 + #20 levererade.
+**Produktspår:** Åk 6 ASCII diagram ([ROI_BACKLOG](ROI_BACKLOG.md) #37). #11–36 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk 6 ASCII diagram** — #37
-2. **Rimlighets-/estimate integer checks** — #38
-3. **Åk 8–9 linear/functions integer text** — #39
+1. **Rimlighets-/estimate integer checks** — #38
+2. **Åk 8–9 linear/functions integer text** — #39
+3. **Åk 9 probability bag/table text** — #40
 
 Lyft **en** till Now i taget.
 

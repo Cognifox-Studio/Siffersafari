@@ -247,6 +247,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Dubbelt/hälften = ?')) {
     return 'm_double_half';
   }
+  if (prompt.startsWith('Bråk (½) = ?')) {
+    return 'm_half_of_n';
+  }
   if (prompt.startsWith('Flerstegsproblem = ?')) {
     return 'm_multi_step_word';
   }

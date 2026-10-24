@@ -2389,6 +2389,61 @@ Vilken typ av korrelation har variablerna?
     );
   }
 
+  /// Pre-SEN fraction bridge: “½ of n” with integer answer (ROI #36).
+  Question _generateHalfOfNTextBridgeQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+    required int? gradeLevel,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final grade = gradeLevel ?? 4;
+    final maxWhole = grade <= 3
+        ? (step <= 5 ? 20 : 40)
+        : grade <= 4
+            ? (step <= 5 ? 40 : 80)
+            : grade <= 5
+                ? (step <= 5 ? 60 : 120)
+                : (step <= 5 ? 80 : 200);
+
+    final half = 1 + _random.nextInt(max(1, maxWhole ~/ 2));
+    final whole = half * 2;
+
+    final askVariants = <String>[
+      'Vad är ½ av $whole?',
+      'Hur mycket är hälften av $whole?',
+      'En pizza delas i två lika stora bitar. Hur många bitar är ½ av $whole bitar?',
+    ];
+    final ask = askVariants[_random.nextInt(askVariants.length)];
+
+    final wrong = <int>{
+      whole,
+      half + 1,
+      half - 1,
+      whole ~/ 4,
+      (whole * 3) ~/ 4,
+      half * 2 ~/ 3,
+    }
+      ..remove(half)
+      ..removeWhere((n) => n <= 0);
+
+    while (wrong.length < 3) {
+      wrong.addAll(_generateWrongAnswers(half, 3));
+      wrong.remove(half);
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: whole,
+      operand2: 2,
+      correctAnswer: half,
+      wrongAnswers: wrong.take(3).toList(growable: false),
+      promptText: 'Bråk (½) = ?\n$ask',
+      explanation: '½ av $whole betyder $whole ÷ 2 = $half.',
+    );
+  }
+
   Question _generateLowGradeStatisticsQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,
