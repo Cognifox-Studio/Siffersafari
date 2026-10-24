@@ -67,7 +67,42 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     super.dispose();
   }
 
-  void _handleClose() {
+  Future<void> _handleClose() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        final onPrimary = Theme.of(ctx).colorScheme.onPrimary;
+        return AlertDialog(
+          title: Text(
+            'Avsluta quiz?',
+            style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
+          content: Text(
+            'Rundan sparas inte. Du kan börja om när du vill.',
+            style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Fortsätt spela'),
+            ),
+            TextButton(
+              key: const Key('confirm_quiz_abandon'),
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('Avsluta'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !mounted) return;
+
     unawaited(_textToSpeechService.stop());
     final quizState = ref.read(quizProvider);
     final session = quizState.session;
@@ -88,6 +123,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         ref.read(quizProvider.notifier).cancelSession(user.userId);
       }
     }
+    if (!mounted) return;
     Navigator.of(context).pop();
   }
 
@@ -231,7 +267,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final progress =
         (session.currentQuestionIndex + 1) / session.totalQuestions;
 
-    return ThemedBackgroundScaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) unawaited(_handleClose());
+      },
+      child: ThemedBackgroundScaffold(
       appBar: AppBar(
         title: Text(
           'Fråga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
@@ -240,7 +281,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         leading: IconButton(
           tooltip: 'Stäng quiz',
           icon: Icon(Icons.close, color: onPrimary),
-          onPressed: _handleClose,
+          onPressed: () => unawaited(_handleClose()),
         ),
       ),
       body: LayoutBuilder(
@@ -294,6 +335,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           );
         },
       ),
+    ),
     );
   }
 

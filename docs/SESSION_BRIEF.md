@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #72–75).  
-**Status:** #71 Skolverket null-Åk CTA klar. #11–48 + #51–71 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~50 lokalt (ej pushad).
+**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #74–75).  
+**Status:** #72–73 kid-safe ljudetiketter + quiz-avslut-bekräftelse. #11–48 + #51–73 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~51 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Benchmark CTA; profile/onboarding; grade defaults; Åk owner.
+**Klart sedan förra briefen:** Quiz abandon confirm; SFX labels; benchmark CTA; profile polish.
 
 ---
 

@@ -351,7 +351,7 @@ class SettingsScreen extends ConsumerWidget {
                             const Divider(height: 1),
                             SwitchListTile(
                               title: Text(
-                                'Ljudeffekter',
+                                'Ljud i spelet',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleSmall
@@ -361,7 +361,7 @@ class SettingsScreen extends ConsumerWidget {
                                     ),
                               ),
                               subtitle: Text(
-                                'Rätt/fel, klick, belöningar',
+                                'Pling när du svarar och får belöningar',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
@@ -384,7 +384,7 @@ class SettingsScreen extends ConsumerWidget {
                             const Divider(height: 1),
                             SwitchListTile(
                               title: Text(
-                                'Musik',
+                                'Musik i spelet',
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleSmall
@@ -394,7 +394,7 @@ class SettingsScreen extends ConsumerWidget {
                                     ),
                               ),
                               subtitle: Text(
-                                'Bakgrundsmusik',
+                                'Melodi i bakgrunden medan du spelar',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
