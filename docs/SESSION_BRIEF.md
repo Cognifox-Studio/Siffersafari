@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #75–76).  
-**Status:** #74 duck music under TTS klar. #11–48 + #51–74 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~52 lokalt (ej pushad).
+**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #77–80).  
+**Status:** #75–76 haptic + confetti threshold klara. #11–48 + #51–76 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~53 lokalt (ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** TTS duck; quiz abandon; SFX labels; benchmark CTA.
+**Klart sedan förra briefen:** Confetti floor; haptic; TTS duck; quiz abandon; SFX.
 
 ---
 

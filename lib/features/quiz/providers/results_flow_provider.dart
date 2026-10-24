@@ -16,8 +16,10 @@ class ResultsFlowService {
     _ref.read(userProvider.notifier).applyQuizResult(session);
 
     final reward = _ref.read(userProvider).lastReward;
-    final shouldCelebrate = session.successRate >= 0.8 ||
-        (reward?.unlockedIds.isNotEmpty ?? false);
+    // Never celebrate a wiped round (0/10); unlocks alone are not enough (#76).
+    final shouldCelebrate = session.successRate >= 0.5 &&
+        (session.successRate >= 0.8 ||
+            (reward?.unlockedIds.isNotEmpty ?? false));
     if (shouldCelebrate) {
       _ref.read(audioServiceProvider).playCelebrationSound();
     }

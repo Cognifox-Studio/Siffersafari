@@ -138,7 +138,6 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     unawaited(_textToSpeechService.stop());
     ref.read(audioServiceProvider).playClickSound();
-    HapticFeedback.lightImpact();
 
     setState(() {
       _ttsSpeaking = false;
@@ -154,6 +153,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       fallback: user.ageGroup,
       gradeLevel: user.gradeLevel,
     );
+
+    final question = ref.read(quizProvider).session?.currentQuestion;
+    final isCorrect = question?.isCorrect(answer) ?? false;
+    if (isCorrect) {
+      HapticFeedback.mediumImpact();
+    } else {
+      HapticFeedback.heavyImpact();
+    }
 
     ref.read(quizProvider.notifier).submitAnswer(
           answer: answer,

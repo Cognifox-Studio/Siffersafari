@@ -57,8 +57,9 @@ class ResultsReadModel {
 
     final reward = userState.lastReward;
     final stars = calculateStars(session.successRate);
-    final shouldCelebrate =
-        session.successRate >= 0.8 || (reward?.unlockedIds.isNotEmpty ?? false);
+    final shouldCelebrate = session.successRate >= 0.5 &&
+        (session.successRate >= 0.8 ||
+            (reward?.unlockedIds.isNotEmpty ?? false));
     final bonusPoints = reward?.bonusPoints ?? 0;
     final questCompletion = userState.lastQuestCompletion;
     final hasStoryCheckpoint = questCompletion != null && storyProgress != null;
