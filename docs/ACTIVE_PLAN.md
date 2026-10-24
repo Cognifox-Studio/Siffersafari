@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #68–70). #11–48 + #51–67 + #20 levererade.
+**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #69–70). #11–48 + #51–68 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Default word/saknat-tal by Åk** — #68
-2. **Profile empty-state + soft max-kids** — #69
-3. **Onboarding abandon copy** — #70
+1. **Profile empty-state + soft max-kids** — #69
+2. **Onboarding abandon copy** — #70
+3. **CTA when Skolverket panel null Åk** — #71
 
 Lyft **en** till Now i taget.
 

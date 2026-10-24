@@ -60,18 +60,48 @@ final class QuizFeatureSettings {
     );
   }
 
-  static bool readMissingNumberEnabled({
+  static bool defaultMissingNumberEnabled({
     required LocalStorageRepository repository,
     required String userId,
   }) {
     try {
-      final raw = repository.getSetting(
-        SettingsKeys.missingNumberEnabled(userId),
-        defaultValue: AppFeatures.missingNumberEnabled,
-      );
-      return raw is bool ? raw : AppFeatures.missingNumberEnabled;
+      final grade = repository.getUserProgress(userId)?.gradeLevel;
+      // Saknat tal is harder early; keep off for Åk 1–2 unless parent opts in.
+      if (grade != null && grade <= 2) return false;
     } catch (_) {
       return AppFeatures.missingNumberEnabled;
+    }
+    return AppFeatures.missingNumberEnabled;
+  }
+
+  static bool hasStoredMissingNumberEnabled({
+    required LocalStorageRepository repository,
+    required String userId,
+  }) {
+    try {
+      return repository.getSetting(SettingsKeys.missingNumberEnabled(userId))
+          is bool;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  static bool readMissingNumberEnabled({
+    required LocalStorageRepository repository,
+    required String userId,
+  }) {
+    final fallback = defaultMissingNumberEnabled(
+      repository: repository,
+      userId: userId,
+    );
+    try {
+      final raw = repository.getSetting(
+        SettingsKeys.missingNumberEnabled(userId),
+        defaultValue: fallback,
+      );
+      return raw is bool ? raw : fallback;
+    } catch (_) {
+      return fallback;
     }
   }
 

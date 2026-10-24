@@ -280,6 +280,22 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             await ref
                 .read(userProvider.notifier)
                 .saveUser(user.copyWith(gradeLevel: value));
+            // Soft defaults for early Åk when parent never opted in (#68).
+            if (value == 1 &&
+                !QuizFeatureSettings.hasStoredWordProblemsEnabled(
+                  repository: ref.read(localStorageRepositoryProvider),
+                  userId: user.userId,
+                )) {
+              await wordProblemsNotifier.setEnabled(false);
+            }
+            if (value != null &&
+                value <= 2 &&
+                !QuizFeatureSettings.hasStoredMissingNumberEnabled(
+                  repository: ref.read(localStorageRepositoryProvider),
+                  userId: user.userId,
+                )) {
+              await missingNumberNotifier.setEnabled(false);
+            }
           },
         ),
       ],

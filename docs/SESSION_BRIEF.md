@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #68–70).  
-**Status:** #67 Åk redigeras bara i Föräldraläge. #11–48 + #51–67 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~47 lokalt (ej pushad).
+**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #69–70).  
+**Status:** #68 Åk1–2 default av text/saknat-tal. #11–48 + #51–68 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~48 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Single Åk owner; grade path confirm; SRS; security Q.
+**Klart sedan förra briefen:** Grade feature defaults; single Åk owner; path confirm; SRS.
 
 ---
 
