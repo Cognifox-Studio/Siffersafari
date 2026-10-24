@@ -84,6 +84,7 @@ class CampSceneView extends ConsumerWidget {
       unlockedItemIds,
       maxVisible: _visibleCampRewardCount,
     );
+    final arrivalItemId = ref.watch(userProvider).newlyUnlockedItem?.id;
     final campPet = InventoryConfig.firstUnlockedCampCompanion(
       unlockedItemIds,
     );
@@ -197,6 +198,7 @@ class CampSceneView extends ConsumerWidget {
                 pedestalWidth: _campRewardSpots[index].pedestalWidth,
                 rotation: _campRewardSpots[index].rotation,
                 height: height,
+                playArrival: arrivalItemId == campRewards[index].id,
               ),
             ),
 
@@ -414,72 +416,147 @@ class _SceneDecoration extends StatelessWidget {
   }
 }
 
-class _CampRewardSpot extends StatelessWidget {
+class _CampRewardSpot extends StatefulWidget {
   const _CampRewardSpot({
     required this.item,
     required this.pedestalWidth,
     required this.rotation,
     required this.height,
+    this.playArrival = false,
   });
 
   final InventoryItem item;
   final double pedestalWidth;
   final double rotation;
   final double height;
+  final bool playArrival;
+
+  @override
+  State<_CampRewardSpot> createState() => _CampRewardSpotState();
+}
+
+class _CampRewardSpotState extends State<_CampRewardSpot>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _arrivalController;
+  late final Animation<double> _scale;
+  late final Animation<double> _offsetY;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _arrivalController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 720),
+    );
+    _scale = TweenSequence<double>([
+      TweenSequenceItem(tween: Tween(begin: 0.55, end: 1.12), weight: 55),
+      TweenSequenceItem(tween: Tween(begin: 1.12, end: 1.0), weight: 45),
+    ]).animate(
+      CurvedAnimation(parent: _arrivalController, curve: Curves.easeOutCubic),
+    );
+    _offsetY = Tween<double>(begin: -28, end: 0).animate(
+      CurvedAnimation(parent: _arrivalController, curve: Curves.easeOutBack),
+    );
+    _opacity = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(
+        parent: _arrivalController,
+        curve: const Interval(0, 0.45, curve: Curves.easeOut),
+      ),
+    );
+    if (widget.playArrival) {
+      _arrivalController.forward(from: 0);
+    } else {
+      _arrivalController.value = 1;
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _CampRewardSpot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!oldWidget.playArrival && widget.playArrival) {
+      _arrivalController.forward(from: 0);
+    }
+    if (oldWidget.item.id != widget.item.id && widget.playArrival) {
+      _arrivalController.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _arrivalController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final baseItemSize = (height * 0.22).clamp(42.0, 72.0);
-    final itemSize = (baseItemSize * (0.6 + (item.renderScale * 0.45)))
-        .clamp(38.0, 78.0)
-        .toDouble();
+    final baseItemSize = (widget.height * 0.22).clamp(42.0, 72.0);
+    final itemSize =
+        (baseItemSize * (0.6 + (widget.item.renderScale * 0.45)))
+            .clamp(38.0, 78.0)
+            .toDouble();
     final cacheSize = imageCacheExtent(context, itemSize);
 
-    return Transform.rotate(
-      angle: rotation,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DecoratedBox(
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+    return AnimatedBuilder(
+      animation: _arrivalController,
+      builder: (context, child) {
+        return Transform.rotate(
+          angle: widget.rotation,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Transform.translate(
+                offset: Offset(0, _offsetY.value),
+                child: Transform.scale(
+                  scale: _scale.value,
+                  child: Opacity(
+                    opacity: _opacity.value,
+                    child: child,
+                  ),
                 ),
-              ],
-            ),
-            child: Image.asset(
-              item.assetPath,
-              key: Key('camp_scene_prop_${item.id}'),
-              width: itemSize,
-              height: itemSize,
-              fit: BoxFit.contain,
-              cacheWidth: cacheSize,
-              cacheHeight: cacheSize,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Container(
-            width: pedestalWidth,
-            height: 14,
-            decoration: BoxDecoration(
-              color: const Color(0xFF7A603B),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: Colors.black.withValues(alpha: 0.12),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.12),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
+              const SizedBox(height: 6),
+              Container(
+                width: widget.pedestalWidth,
+                height: 14,
+                decoration: BoxDecoration(
+                  color: const Color(0xFF7A603B),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(
+                    color: Colors.black.withValues(alpha: 0.12),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        );
+      },
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Image.asset(
+          widget.item.assetPath,
+          key: Key('camp_scene_prop_${widget.item.id}'),
+          width: itemSize,
+          height: itemSize,
+          fit: BoxFit.contain,
+          cacheWidth: cacheSize,
+          cacheHeight: cacheSize,
+        ),
       ),
     );
   }

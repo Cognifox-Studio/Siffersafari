@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #82–83).  
-**Status:** #81 hard map stops Åk6–9 klar. #11–48 + #51–81 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
+**Mål:** Camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #83–84).  
+**Status:** #82 pedestal arrival anim klar. #11–48 + #51–82 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Hard quest path guard; TTS SV math; abandon SRS seed.
+**Klart sedan förra briefen:** Pedestal arrival; hard quest path; TTS SV math.
 
 ---
 
