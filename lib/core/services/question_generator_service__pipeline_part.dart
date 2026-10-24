@@ -58,6 +58,14 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
       );
     }
 
+    if (mixPolicy.shouldTryReasonableness) {
+      return _generateReasonablenessEstimateQuestion(
+        difficulty,
+        difficultyStep: mixBaselineStep,
+        gradeLevel: gradeLevel,
+      );
+    }
+
     if (mixPolicy.shouldTryLowGradeStatistics) {
       return _generateLowGradeStatisticsQuestion(
         difficulty,

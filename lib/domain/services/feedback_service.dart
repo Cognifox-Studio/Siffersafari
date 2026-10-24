@@ -289,6 +289,11 @@ class FeedbackService {
     if (prompt.startsWith('Bråk (½) = ?')) {
       return '½ av ett tal betyder samma sak som att dela talet med 2.';
     }
+    if (prompt.startsWith('Rimlighet = ?')) {
+      return prompt.contains('närmast')
+          ? 'Räkna ungefär (eller exakt) och jämför avståndet till varje alternativ.'
+          : 'Avrunda först, multiplicera de avrundade talen.';
+    }
     if (prompt.startsWith('Sammansatt procent = ?')) {
       return 'Räkna första ändringen, sedan den andra på det nya beloppet.';
     }

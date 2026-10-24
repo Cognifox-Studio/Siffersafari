@@ -250,6 +250,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Bråk (½) = ?')) {
     return 'm_half_of_n';
   }
+  if (prompt.startsWith('Rimlighet = ?')) {
+    return 'm_reasonableness';
+  }
   if (prompt.startsWith('Flerstegsproblem = ?')) {
     return 'm_multi_step_word';
   }

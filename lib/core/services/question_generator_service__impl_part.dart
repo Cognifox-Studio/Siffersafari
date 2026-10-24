@@ -2417,6 +2417,95 @@ Vilken typ av korrelation har variablerna?
     );
   }
 
+  /// Reasonableness / estimate: round then multiply (ROI #38).
+  Question _generateReasonablenessEstimateQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+    required int? gradeLevel,
+  }) {
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final grade = gradeLevel ?? 4;
+
+    final tensRound = grade <= 4 || step <= 5;
+    final aRaw = tensRound
+        ? (11 + _random.nextInt(grade <= 3 ? 40 : 80))
+        : (21 + _random.nextInt(grade <= 6 ? 150 : 400));
+    final bRaw = tensRound
+        ? (11 + _random.nextInt(grade <= 3 ? 30 : 60))
+        : (11 + _random.nextInt(grade <= 6 ? 80 : 200));
+
+    int roundToNice(int n) {
+      if (tensRound) {
+        return ((n + 5) ~/ 10) * 10;
+      }
+      if (n < 100) return ((n + 5) ~/ 10) * 10;
+      return ((n + 50) ~/ 100) * 100;
+    }
+
+    final aEst = max(10, roundToNice(aRaw));
+    final bEst = max(10, roundToNice(bRaw));
+    final estimate = aEst * bEst;
+    final exact = aRaw * bRaw;
+
+    final askNearest = _random.nextBool();
+    if (askNearest) {
+      // Pick nearest "nice" landmark among distractors around the exact product.
+      final landmarks = <int>{
+        estimate,
+        roundToNice(exact),
+        ((exact + 50) ~/ 100) * 100,
+        ((exact + 500) ~/ 1000) * 1000,
+        estimate ~/ 2,
+        estimate * 2,
+      }..removeWhere((n) => n <= 0);
+
+      var best = landmarks.first;
+      var bestDist = (exact - best).abs();
+      for (final n in landmarks) {
+        final d = (exact - n).abs();
+        if (d < bestDist) {
+          best = n;
+          bestDist = d;
+        }
+      }
+
+      final wrong = landmarks.where((n) => n != best).take(3).toList();
+      while (wrong.length < 3) {
+        wrong.addAll(_generateWrongAnswers(best, 3));
+        wrong.remove(best);
+      }
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: aRaw,
+        operand2: bRaw,
+        correctAnswer: best,
+        wrongAnswers: wrong.take(3).toList(growable: false),
+        promptText:
+            'Rimlighet = ?\n$aRaw × $bRaw är närmast vilket tal?',
+        explanation:
+            'Exakt $aRaw × $bRaw = $exact. Närmast bland alternativen är $best.',
+      );
+    }
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: aRaw,
+      operand2: bRaw,
+      correctAnswer: estimate,
+      wrongAnswers: _generateWrongAnswers(estimate, 3),
+      promptText: tensRound
+          ? 'Rimlighet = ?\nUppskatta $aRaw × $bRaw genom att avrunda till tiotal. Vad blir uppskattningen?'
+          : 'Rimlighet = ?\nUppskatta $aRaw × $bRaw genom att avrunda till närmaste tiotal/hundratal. Vad blir uppskattningen?',
+      explanation:
+          'Avrunda till $aEst och $bEst. Uppskattning: $aEst × $bEst = $estimate (exakt $exact).',
+    );
+  }
+
   /// Pre-SEN fraction bridge: “½ of n” with integer answer (ROI #36).
   Question _generateHalfOfNTextBridgeQuestion(
     DifficultyLevel difficulty, {

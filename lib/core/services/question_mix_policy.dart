@@ -55,6 +55,10 @@ class QuestionMixPolicy {
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
       );
+  double get reasonablenessChance => reasonablenessChanceFor(
+        gradeLevel: gradeLevel,
+        clampedStep: clampedStep,
+      );
   double get m4PercentChance => m4PercentChanceFor(
         gradeLevel: gradeLevel,
         clampedStep: clampedStep,
@@ -150,6 +154,16 @@ class QuestionMixPolicy {
       // Sit just before the M4a time window (~0.80–0.85).
       roll >= 0.70 &&
       roll < (0.70 + halfOfNChance);
+
+  /// Rimlighet / estimate (ROI #38) — round-then-compute integer checks.
+  bool get shouldTryReasonableness =>
+      requestedOperation == OperationType.mixed &&
+      gradeLevel != null &&
+      gradeLevel! >= 3 &&
+      gradeLevel! <= 9 &&
+      reasonablenessChance > 0 &&
+      roll >= 0.65 &&
+      roll < (0.65 + reasonablenessChance);
 
   bool get shouldTryM4Percent =>
       isM4Mix &&
@@ -360,6 +374,17 @@ class QuestionMixPolicy {
               : 0.06,
       _ => 0.0,
     };
+  }
+
+  static double reasonablenessChanceFor({
+    required int? gradeLevel,
+    required int clampedStep,
+  }) {
+    if (gradeLevel == null || gradeLevel < 3) return 0.0;
+    if (clampedStep <= 3) return 0.02;
+    if (clampedStep <= 6) return 0.035;
+    if (clampedStep <= 8) return 0.04;
+    return 0.045;
   }
 
   static double m4PercentChanceFor({

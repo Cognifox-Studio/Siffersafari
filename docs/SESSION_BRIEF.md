@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Rimlighets-/estimate integer checks ([ROI_BACKLOG](ROI_BACKLOG.md) #38).  
-**Status:** #37 Åk 6 ASCII diagram klar. #11–37 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~23 lokalt (ej pushad).
+**Mål:** Åk 8–9 linear/functions integer text ([ROI_BACKLOG](ROI_BACKLOG.md) #39).  
+**Status:** #38 Rimlighet/estimate klar. #11–38 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~24 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** ASCII stapeldiagram Åk 6; ½-of-n; Sortera MC; Mix SRS.
+**Klart sedan förra briefen:** Rimlighet Mix; ASCII diagram; ½-of-n; Sortera; Mix SRS.
 
 ---
 

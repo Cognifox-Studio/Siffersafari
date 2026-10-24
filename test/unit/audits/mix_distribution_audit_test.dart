@@ -40,6 +40,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Bråk (½) = ?')) {
     return 'm_half_of_n';
   }
+  if (promptText.startsWith('Rimlighet = ?')) {
+    return 'm_reasonableness';
+  }
   if (promptText.startsWith('Sammansatt procent = ?')) {
     return 'm5a_compound_percent';
   }
@@ -170,7 +173,8 @@ void main() {
                   negativeNumbers++;
                   break;
                 case 'm_half_of_n':
-                  // Integer ½-of-n bridge (ROI #36); mid-band specialty.
+                case 'm_reasonableness':
+                  // Mid-band Mix specialties (ROI #36/#38).
                   break;
                 case 'normal':
                   normal++;
