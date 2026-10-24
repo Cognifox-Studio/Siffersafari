@@ -107,11 +107,14 @@ class QuestionGenerationContext {
                 step >= 3)) &&
         random.nextDouble() < missingNumberChance;
 
-    final shouldTryGrade1NumberSense = gradeLevel == 1 &&
+    // Åk 1–2: number sense (+ Sortera as MC order). Åk 2 gets a lighter rate
+    // so missing-number / tens-transition still dominate.
+    final shouldTryGrade1NumberSense = gradeLevel != null &&
+        gradeLevel <= 2 &&
         step <= 6 &&
         (operation == OperationType.addition ||
             operation == OperationType.subtraction) &&
-        random.nextDouble() < 0.18;
+        random.nextDouble() < (gradeLevel == 1 ? 0.18 : 0.10);
 
     return QuestionGenerationContext(
       request: request,

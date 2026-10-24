@@ -281,7 +281,8 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         matches: (prompt) =>
             prompt.startsWith('Vilket tal kommer ') ||
             prompt.startsWith('Vilket är störst: ') ||
-            prompt.startsWith('Vilket tal saknas i ordningen: '),
+            prompt.startsWith('Vilket tal saknas i ordningen: ') ||
+            prompt.startsWith('Sortera minst till störst: '),
       );
     case '1:word_problems':
       _assertPromptRuntime(

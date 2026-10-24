@@ -569,12 +569,12 @@
         },
         {
           "id": "g1_compare_numbers_004",
-          "prompt": "Sortera: 4, 9, 2, 7",
+          "prompt": "Sortera minst till störst: 4, 9, 2, 7\nVilket tal kommer först?",
           "responseType": "mixed"
         },
         {
           "id": "g1_compare_numbers_005",
-          "prompt": "Sortera: 15, 11, 19, 13",
+          "prompt": "Sortera minst till störst: 15, 11, 19, 13\nVilket tal kommer sist?",
           "responseType": "mixed"
         },
         {
@@ -599,7 +599,7 @@
         },
         {
           "id": "g1_compare_numbers_010",
-          "prompt": "Sortera: 1, 10, 5, 7",
+          "prompt": "Sortera minst till störst: 1, 10, 5, 7\nVilket tal kommer på plats 2?",
           "responseType": "mixed"
         }
       ]

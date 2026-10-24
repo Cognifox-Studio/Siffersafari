@@ -244,6 +244,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Sannolikhet (konkret)')) return 'low_probability';
   if (prompt.startsWith('Skillnad i chans')) return 'm4_prob_compare';
   if (prompt.startsWith('Kombinationer')) return 'm4_combinatorics';
+  if (prompt.startsWith('Dubbelt/hälften = ?')) {
+    return 'm_double_half';
+  }
   if (prompt.startsWith('Flerstegsproblem = ?')) {
     return 'm_multi_step_word';
   }
@@ -279,6 +282,7 @@ String _classifyQuestion(Question question) {
   final isNumberSense = prompt.startsWith('Vilket tal kommer före ') ||
       prompt.startsWith('Vilket tal kommer efter ') ||
       prompt.startsWith('Vilket tal saknas i ordningen: ') ||
+      prompt.startsWith('Sortera minst till störst: ') ||
       prompt.startsWith('Vilket är störst: ') ||
       prompt.startsWith('Vilket är minst: ');
   if (isNumberSense) return 'number_sense';

@@ -107,6 +107,12 @@ void main() {
         prompts.any((prompt) => prompt.startsWith('Vilket är minst: ')),
         isTrue,
       );
+      expect(
+        prompts.any(
+          (prompt) => prompt.startsWith('Sortera minst till störst: '),
+        ),
+        isTrue,
+      );
 
       expect(
         _generatesPrompt(
@@ -167,6 +173,28 @@ void main() {
           operationType: OperationType.subtraction,
           difficultyStep: 4,
           matches: (prompt) => prompt.startsWith('Vilket är minst: '),
+        ),
+        isTrue,
+      );
+      expect(
+        _generatesPrompt(
+          seed: 0,
+          gradeLevel: 1,
+          operationType: OperationType.addition,
+          difficultyStep: 4,
+          matches: (prompt) =>
+              prompt.startsWith('Sortera minst till störst: '),
+        ),
+        isTrue,
+      );
+      expect(
+        _generatesPrompt(
+          seed: 0,
+          gradeLevel: 2,
+          operationType: OperationType.addition,
+          difficultyStep: 4,
+          matches: (prompt) =>
+              prompt.startsWith('Sortera minst till störst: '),
         ),
         isTrue,
       );

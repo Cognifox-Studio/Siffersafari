@@ -333,7 +333,8 @@ void main() {
               text.startsWith('Vilket tal kommer efter ') ||
               text.startsWith('Vilket tal saknas i ordningen: ') ||
               text.startsWith('Vilket är störst: ') ||
-              text.startsWith('Vilket är minst: ');
+              text.startsWith('Vilket är minst: ') ||
+              text.startsWith('Sortera minst till störst: ');
 
           if (!isNumberSense) {
             assertArithmeticRanges(

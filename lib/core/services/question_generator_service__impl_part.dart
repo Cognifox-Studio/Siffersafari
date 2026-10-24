@@ -2664,7 +2664,7 @@ Vilken typ av korrelation har variablerna?
     required int difficultyStep,
   }) {
     final variantRoll = _random.nextDouble();
-    final usesAfterPrompt = difficultyStep <= 3 || variantRoll < 0.45;
+    final usesAfterPrompt = difficultyStep <= 3 || variantRoll < 0.40;
 
     if (usesAfterPrompt) {
       final target = _randomInRange(
@@ -2685,7 +2685,16 @@ Vilken typ av korrelation har variablerna?
       );
     }
 
-    if (variantRoll < 0.75) {
+    // MC order: no drag-sort UI — ask which number lands in a sorted slot.
+    if (variantRoll < 0.62) {
+      return _generateSortOrderMcQuestion(
+        range: range,
+        difficulty: difficulty,
+        operationType: OperationType.addition,
+      );
+    }
+
+    if (variantRoll < 0.82) {
       final start = _randomInRange(
         DifficultyNumberRange(range.min, max(range.min, range.max - 3)),
       );
@@ -2725,6 +2734,56 @@ Vilken typ av korrelation har variablerna?
       wrongAnswers: _generateGrade1NumberSenseWrongAnswers(answer, range),
       promptText: 'Vilket är störst: $left eller $right?',
       explanation: '$answer är större än ${answer == left ? right : left}.',
+    );
+  }
+
+  /// "Sortera" as multiple-choice order (ROI #35): list four numbers, ask
+  /// which lands first / second / last after sorting ascending.
+  Question _generateSortOrderMcQuestion({
+    required DifficultyNumberRange range,
+    required DifficultyLevel difficulty,
+    required OperationType operationType,
+  }) {
+    final values = <int>{};
+    for (var attempt = 0; attempt < 80 && values.length < 4; attempt++) {
+      values.add(_randomInRange(range));
+    }
+    while (values.length < 4) {
+      values.add(range.min + values.length);
+    }
+
+    final shown = values.toList(growable: false)..shuffle(_random);
+    final sorted = [...shown]..sort();
+
+    final mode = _random.nextInt(3);
+    final int answer;
+    final String askLine;
+    switch (mode) {
+      case 0:
+        answer = sorted.first;
+        askLine = 'Vilket tal kommer först?';
+      case 1:
+        answer = sorted.last;
+        askLine = 'Vilket tal kommer sist?';
+      default:
+        answer = sorted[1];
+        askLine = 'Vilket tal kommer på plats 2?';
+    }
+
+    final distractors =
+        shown.where((n) => n != answer).take(3).toList(growable: false);
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: operationType,
+      difficulty: difficulty,
+      operand1: sorted.first,
+      operand2: sorted.last,
+      correctAnswer: answer,
+      wrongAnswers: distractors,
+      promptText: 'Sortera minst till störst: ${shown.join(', ')}\n$askLine',
+      explanation:
+          'Ordning: ${sorted.join(', ')}. $askLine Svar: $answer.',
     );
   }
 
@@ -2916,7 +2975,7 @@ Vilken typ av korrelation har variablerna?
     required int difficultyStep,
   }) {
     final variantRoll = _random.nextDouble();
-    final usesBeforePrompt = difficultyStep <= 3 || variantRoll < 0.45;
+    final usesBeforePrompt = difficultyStep <= 3 || variantRoll < 0.40;
 
     if (usesBeforePrompt) {
       final target = _randomInRange(
@@ -2937,7 +2996,15 @@ Vilken typ av korrelation har variablerna?
       );
     }
 
-    if (variantRoll < 0.75) {
+    if (variantRoll < 0.62) {
+      return _generateSortOrderMcQuestion(
+        range: range,
+        difficulty: difficulty,
+        operationType: OperationType.subtraction,
+      );
+    }
+
+    if (variantRoll < 0.82) {
       final startFloor = min(range.max, max(range.min + 3, 3));
       final start = _randomInRange(
         DifficultyNumberRange(startFloor, max(startFloor, range.max)),

@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk 1–2 Sortera as MC order ([ROI_BACKLOG](ROI_BACKLOG.md) #35). #11–34 + #20 levererade.
+**Produktspår:** Integer ½ of n text-bridge ([ROI_BACKLOG](ROI_BACKLOG.md) #36). #11–35 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Integer ½ of n text-bridge** — #36
-2. **Åk 6 ASCII diagram** — #37
-3. **Rimlighets-/estimate integer checks** — #38
+1. **Åk 6 ASCII diagram** — #37
+2. **Rimlighets-/estimate integer checks** — #38
+3. **Åk 8–9 linear/functions integer text** — #39
 
 Lyft **en** till Now i taget.
 
