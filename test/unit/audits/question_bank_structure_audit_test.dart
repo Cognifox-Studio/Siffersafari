@@ -114,6 +114,23 @@ void main() {
       });
     }
 
+    test('undercoveredConcepts is populated for every grade (#61)', () {
+      for (var grade = 1; grade <= 9; grade++) {
+        final bank = _loadQuestionBank(grade);
+        final coverage = Map<String, dynamic>.from(bank['coverage'] as Map);
+        final under = List<String>.from(
+          (coverage['undercoveredConcepts'] as List?) ?? const [],
+        );
+        expect(
+          under,
+          isNotEmpty,
+          reason:
+              'Grade $grade must list real Skolverket/facit gaps instead of hiding them behind [].',
+        );
+        expect(under.toSet().length, under.length);
+      }
+    });
+
     test(
       'requiresCompletedPrompt rows are marked non-runtime (#60)',
       () {

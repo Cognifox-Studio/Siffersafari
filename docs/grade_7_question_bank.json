@@ -66,7 +66,12 @@
       "simplify_expressions": 30,
       "percentage": 30
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "coordinate_system",
+      "function_graphs",
+      "non_integer_answer_formats",
+      "proportioner"
+    ],
     "requiresSupportingContext": []
   },
   "sections": [

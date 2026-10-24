@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #61–62).  
-**Status:** #60 requiresCompletedPrompt non-runtime klar. #11–48 + #51–60 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~40 lokalt (ej pushad).
+**Mål:** Åk2 tens-transition tip + profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #62–70).  
+**Status:** #61 undercoveredConcepts ifyllda. #11–48 + #51–61 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~41 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Non-runtime tags; tiokompisar audit; ekvation; powers.
+**Klart sedan förra briefen:** Undercovered; non-runtime tags; tiokompisar; ekvation; powers.
 
 ---
 

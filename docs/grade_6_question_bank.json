@@ -73,7 +73,15 @@
       "division": 20,
       "multi_step_word_problems": 20
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "coordinates",
+      "forhallanden",
+      "fractions_decimals",
+      "full_geometry",
+      "graphs",
+      "median_typvarde",
+      "proportionalitet"
+    ],
     "requiresSupportingContext": [
       {
         "sectionId": "diagram_interpretation",

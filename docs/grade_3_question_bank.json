@@ -60,7 +60,14 @@
       "multiplication": 40,
       "division": 20
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "dubbelt_halften",
+      "fractions_as_parts",
+      "positionssystem",
+      "tables_diagrams_ui",
+      "visual_geometry",
+      "visual_measurement"
+    ],
     "requiresSupportingContext": []
   },
   "sections": [

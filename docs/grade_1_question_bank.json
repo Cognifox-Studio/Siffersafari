@@ -61,7 +61,13 @@
       "compare_numbers": 10,
       "word_problems": 15
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "antal",
+      "dubbelt_halften_introduktion",
+      "fractions",
+      "visual_geometry",
+      "visual_measurement"
+    ],
     "requiresSupportingContext": []
   },
   "sections": [

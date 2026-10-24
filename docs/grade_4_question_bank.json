@@ -66,7 +66,14 @@
       "division": 20,
       "statistics": 10
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "area_omkrets",
+      "coordinates",
+      "enhetsbyten_cm_m_g_kg_ml_l",
+      "fractions_decimals",
+      "geometry_ui",
+      "sannolikhet"
+    ],
     "requiresSupportingContext": [
       {
         "sectionId": "statistics",

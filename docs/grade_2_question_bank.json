@@ -44,7 +44,12 @@
       "division": 15,
       "missing_number": 10
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "fractions",
+      "geometry",
+      "visual_clock",
+      "visual_measurement"
+    ],
     "requiresSupportingContext": []
   },
   "sections": [

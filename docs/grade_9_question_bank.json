@@ -74,7 +74,16 @@
       "geometry": 30,
       "probability": 30
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "forandringsfaktor",
+      "full_model_evaluation",
+      "geometry_figures",
+      "graphs",
+      "modellering_av_verkliga_situationer",
+      "procentuell_forandring",
+      "reasoning_modules",
+      "statistik_median_typvarde_spridning"
+    ],
     "requiresSupportingContext": [
       {
         "sectionId": "functions",

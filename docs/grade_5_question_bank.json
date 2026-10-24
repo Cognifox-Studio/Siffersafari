@@ -68,7 +68,16 @@
       "negative_numbers": 15,
       "mean": 15
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "coordinates",
+      "enhetsbyten",
+      "fractions_decimals",
+      "graphs",
+      "procent",
+      "procent_som_brak",
+      "procentuell_del_av_helhet",
+      "skala"
+    ],
     "requiresSupportingContext": []
   },
   "sections": [

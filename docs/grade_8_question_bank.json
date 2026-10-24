@@ -73,7 +73,12 @@
       "linear_relationships": 40,
       "compound_percent_change": 20
     },
-    "undercoveredConcepts": [],
+    "undercoveredConcepts": [
+      "forandringsfaktor",
+      "full_algebra",
+      "geometry_figures",
+      "graphs"
+    ],
     "requiresSupportingContext": [
       {
         "sectionId": "proportionality",
