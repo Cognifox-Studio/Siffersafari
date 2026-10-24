@@ -217,6 +217,19 @@ class _OnboardingGradePage extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          Text(
+            gradeLevel == null
+                ? 'Osäker? Välj «Vet inte än» — du kan byta årskurs senare under Föräldrar.'
+                : 'Du kan byta årskurs senare under Föräldrar om det inte stämmer.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onPrimary
+                      .withValues(alpha: 0.82),
+                ),
+          ),
         ],
       ),
     );

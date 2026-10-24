@@ -15,17 +15,17 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Onboarding grade helper ([ROI_BACKLOG](ROI_BACKLOG.md) #21). #11–19 levererade (#20 delvis via soft landing-copy).
+**Produktspår:** Parent “tonight’s practice” ([ROI_BACKLOG](ROI_BACKLOG.md) #24). #11–23 levererade (#20 delvis via soft landing-copy).
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Align Sedan/Senare copy** (resterande map/results) — #20
-2. **Parent first-run checklist** — #22
-3. **Gate wipe/delete bakom PIN** — #23
+1. **Home first-viewport: play primär, camp sekundär** — #25
+2. **Align Sedan/Senare copy** (resterande map/results) — #20
+3. **Åk 6 %-policy** (matte-bro) — #26
 
-Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa är klara eller uttryckligen byts ut här.
+Lyft **en** till Now i taget.
 
 ---
 

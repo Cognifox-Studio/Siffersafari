@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Onboarding grade helper ([ROI_BACKLOG](ROI_BACKLOG.md) #21).  
-**Status:** #19 soft landing inne (Hem & samla + “kommer senare”). #11–19 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Parent “tonight’s practice” från weakest areas ([ROI_BACKLOG](ROI_BACKLOG.md) #24).  
+**Status:** #21–23 inne (grade helper, first-run checklist, wipe bakom PIN). #11–23 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Nattskogen soft landing; TTS tip/stop; resume-kontext; snabbträna-CTA; camp/badges collect-loop.
+**Klart sedan förra briefen:** Onboarding grade helper; parent Kom igång; PIN före radera; Nattskogen soft landing.
 
 ---
 
