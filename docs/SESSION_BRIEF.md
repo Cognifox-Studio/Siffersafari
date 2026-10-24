@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #65–70).  
-**Status:** #64 säkerhetsfråga krävs vid PIN-skapande. #11–48 + #51–64 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~44 lokalt (ej pushad).
+**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #66–70).  
+**Status:** #65 SRS-toggle copy klar. #11–48 + #51–65 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~45 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Required security Q; rename; carry tip; undercovered.
+**Klart sedan förra briefen:** SRS copy; required security Q; rename; carry tip.
 
 ---
 

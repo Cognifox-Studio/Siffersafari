@@ -730,6 +730,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                 ),
                 const Divider(height: 1),
                 SwitchListTile(
+                  key: const Key('parent_srs_switch'),
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     'Repetition över tid',
@@ -739,7 +740,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                         ),
                   ),
                   subtitle: Text(
-                    'Planerad repetition över tid',
+                    spacedRepetitionEnabled
+                        ? 'På — quiz blandar in uppgifter som är dags idag (fel eller svåra sen sist).'
+                        : 'Av — bara nya uppgifter. Slå på för att repetera det som är dags idag.',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: subtleOnPrimary,
                         ),

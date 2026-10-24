@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #65–70). #11–48 + #51–64 + #20 levererade.
+**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #66–70). #11–48 + #51–65 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Parent SRS toggle copy** — #65
-2. **Confirm Åk change path 10↔30** — #66
-3. **Single Åk editor owner** — #67
+1. **Confirm Åk change path 10↔30** — #66
+2. **Single Åk editor owner** — #67
+3. **Default word/saknat-tal by Åk** — #68
 
 Lyft **en** till Now i taget.
 
