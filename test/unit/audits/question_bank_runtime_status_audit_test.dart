@@ -9,6 +9,142 @@ import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 
+/// Explicit ship/don't-ship contract for `supported_prompt_family_with_exceptions`.
+/// Keeps `with_exceptions` actionable: every bank row must classify as
+/// supported family or named deferred exception.
+class _ExceptionMatrix {
+  const _ExceptionMatrix({
+    required this.supportedRuntimeFamilies,
+    required this.deferredBankIds,
+    required this.deferredReasonById,
+    required this.forbiddenRuntimeMarkers,
+  });
+
+  final List<String> supportedRuntimeFamilies;
+  final Set<String> deferredBankIds;
+  final Map<String, String> deferredReasonById;
+  final List<String> forbiddenRuntimeMarkers;
+}
+
+const _exceptionMatrices = <String, _ExceptionMatrix>{
+  '4:statistics': _ExceptionMatrix(
+    supportedRuntimeFamilies: [
+      'Typvärde',
+      'Median',
+      'Medelvärde',
+      'Variationsbredd',
+      'Tabell (statistik)',
+      'Diagram (stapel)',
+    ],
+    deferredBankIds: {
+      'g4_statistics_001',
+      'g4_statistics_002',
+      'g4_statistics_003',
+      'g4_statistics_004',
+      'g4_statistics_005',
+      'g4_statistics_010',
+    },
+    deferredReasonById: {
+      'g4_statistics_001': 'external_diagram_context',
+      'g4_statistics_002': 'external_diagram_context',
+      'g4_statistics_003': 'external_diagram_context',
+      'g4_statistics_004': 'day_delta_without_embedded_table',
+      'g4_statistics_005': 'day_delta_without_embedded_table',
+      'g4_statistics_010': 'day_delta_without_embedded_table',
+    },
+    forbiddenRuntimeMarkers: const [],
+  ),
+  '8:proportionality': _ExceptionMatrix(
+    supportedRuntimeFamilies: ['Proportionalitet = ?'],
+    deferredBankIds: {
+      'g8_proportionality_003',
+      'g8_proportionality_005',
+      'g8_proportionality_008',
+      'g8_proportionality_009',
+      'g8_proportionality_010',
+      'g8_proportionality_011',
+      'g8_proportionality_012',
+      'g8_proportionality_013',
+      'g8_proportionality_014',
+      'g8_proportionality_015',
+      'g8_proportionality_018',
+      'g8_proportionality_019',
+      'g8_proportionality_026',
+      'g8_proportionality_028',
+      'g8_proportionality_030',
+      'g8_proportionality_033',
+      'g8_proportionality_034',
+      'g8_proportionality_037',
+      'g8_proportionality_038',
+      'g8_proportionality_039',
+      'g8_proportionality_040',
+    },
+    deferredReasonById: {
+      'g8_proportionality_003': 'decimal_coefficient',
+      'g8_proportionality_005': 'decimal_coefficient',
+      'g8_proportionality_008': 'table_context',
+      'g8_proportionality_009': 'graph_context',
+      'g8_proportionality_010': 'incomplete_word_prompt',
+      'g8_proportionality_011': 'incomplete_word_prompt',
+      'g8_proportionality_012': 'incomplete_word_prompt',
+      'g8_proportionality_013': 'incomplete_word_prompt',
+      'g8_proportionality_014': 'incomplete_word_prompt',
+      'g8_proportionality_015': 'incomplete_word_prompt',
+      'g8_proportionality_018': 'decimal_coefficient',
+      'g8_proportionality_019': 'decimal_coefficient',
+      'g8_proportionality_026': 'decimal_quantity',
+      'g8_proportionality_028': 'decimal_quantity',
+      'g8_proportionality_030': 'decimal_quantity',
+      'g8_proportionality_033': 'decimal_coefficient',
+      'g8_proportionality_034': 'decimal_coefficient',
+      'g8_proportionality_037': 'decimal_coefficient',
+      'g8_proportionality_038': 'decimal_coefficient',
+      'g8_proportionality_039': 'decimal_coefficient',
+      'g8_proportionality_040': 'decimal_coefficient',
+    },
+    forbiddenRuntimeMarkers: [
+      '0.',
+      'Graf →',
+      'Tabell →',
+      'är det proportionellt',
+    ],
+  ),
+  '9:geometry': _ExceptionMatrix(
+    supportedRuntimeFamilies: ['Geometri = ?'],
+    deferredBankIds: {
+      'g9_geometry_009',
+      'g9_geometry_010',
+      'g9_geometry_015',
+      'g9_geometry_016',
+      'g9_geometry_017',
+      'g9_geometry_018',
+      'g9_geometry_020',
+      'g9_geometry_024',
+      'g9_geometry_025',
+      'g9_geometry_026',
+    },
+    deferredReasonById: {
+      'g9_geometry_009': 'pi_circle_area',
+      'g9_geometry_010': 'pi_circle_circumference',
+      'g9_geometry_015': 'pi_cylinder_volume',
+      'g9_geometry_016': 'scale_context',
+      'g9_geometry_017': 'scale_context',
+      'g9_geometry_018': 'scale_context',
+      'g9_geometry_020': 'incomplete_trapezoid_formula',
+      'g9_geometry_024': 'pi_circle_area',
+      'g9_geometry_025': 'pi_circle_circumference',
+      'g9_geometry_026': 'pi_cylinder_volume',
+    },
+    forbiddenRuntimeMarkers: [
+      'cirkel',
+      'cylinder',
+      'Skala',
+      'π',
+      'trapets',
+    ],
+  ),
+};
+
 const _runtimeSectionStatuses = <int, Map<String, String>>{
   1: {
     'addition': 'supported_core_arithmetic',
@@ -664,5 +800,91 @@ void main() {
         }
       }
     });
+
+    test(
+      'with_exceptions sections publish an actionable ship/dont-ship matrix',
+      () {
+        for (var grade = 1; grade <= 9; grade++) {
+          final bank = _loadQuestionBank(grade);
+          final statuses = _runtimeSectionStatuses[grade]!;
+
+          for (final entry in statuses.entries) {
+            if (entry.value != 'supported_prompt_family_with_exceptions') {
+              continue;
+            }
+
+            final key = '$grade:${entry.key}';
+            final matrix = _exceptionMatrices[key];
+            expect(
+              matrix,
+              isNotNull,
+              reason: 'Missing exception matrix for $key (#52–54).',
+            );
+
+            final section = _section(bank, entry.key);
+            final bankIds =
+                _questions(section).map((q) => q['id'] as String).toSet();
+
+            expect(
+              matrix!.deferredBankIds.difference(bankIds),
+              isEmpty,
+              reason: '$key deferred ids must exist in the bank.',
+            );
+            expect(
+              matrix.deferredReasonById.keys.toSet(),
+              equals(matrix.deferredBankIds),
+              reason: '$key every deferred id needs an explicit reason.',
+            );
+
+            final uncovered = bankIds.difference(matrix.deferredBankIds);
+            expect(
+              uncovered,
+              isNotEmpty,
+              reason: '$key must keep at least one shippable bank row.',
+            );
+
+            // Runtime family proof already covered by supported-section audit;
+            // here we lock that generated prompts never leak deferred markers.
+            if (matrix.forbiddenRuntimeMarkers.isEmpty) {
+              continue;
+            }
+
+            final service = QuestionGeneratorService(
+              random: Random(42),
+              wordProblemsEnabled: false,
+              missingNumberEnabled: false,
+            );
+            for (var attempt = 0; attempt < 240; attempt++) {
+              final question = service.generateQuestion(
+                ageGroup: _ageGroupForGrade(grade),
+                operationType: OperationType.mixed,
+                difficulty: DifficultyLevel.medium,
+                difficultyStep: grade >= 9 ? 8 : 8,
+                gradeLevel: grade,
+                wordProblemsEnabledOverride: false,
+                missingNumberEnabledOverride: false,
+              );
+              final prompt = question.promptText;
+              if (prompt == null) {
+                continue;
+              }
+              final isFamily = matrix.supportedRuntimeFamilies
+                  .any((family) => prompt.startsWith(family) || prompt.contains(family));
+              if (!isFamily) {
+                continue;
+              }
+              for (final marker in matrix.forbiddenRuntimeMarkers) {
+                expect(
+                  prompt.toLowerCase().contains(marker.toLowerCase()),
+                  isFalse,
+                  reason:
+                      '$key runtime prompt must not contain deferred marker "$marker": $prompt',
+                );
+              }
+            }
+          }
+        }
+      },
+    );
   });
 }

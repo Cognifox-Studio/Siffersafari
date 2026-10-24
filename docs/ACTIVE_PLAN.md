@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Exception matrices + feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #52–56). #11–48 + #51 + #20 levererade.
+**Produktspår:** Feedback tips leftovers ([ROI_BACKLOG](ROI_BACKLOG.md) #55–56). #11–48 + #51–54 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Publish exception matrices** — #52–54
-2. **Feedback tips leftovers** — #55–56
-3. **Widen Åk8 powers** — #57
+1. **Feedback tips leftovers** — #55–56
+2. **Widen Åk8 powers** — #57
+3. **Normalize equation answers** — #58
 
 Lyft **en** till Now i taget.
 

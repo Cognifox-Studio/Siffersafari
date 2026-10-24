@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Exception matrices + feedback tips ([ROI_BACKLOG](ROI_BACKLOG.md) #52–56).  
-**Status:** #51 Åk7 Förenkla evaluate-at-x klar. #11–48 + #51 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~34 lokalt (ej pushad).
+**Mål:** Feedback tips leftovers ([ROI_BACKLOG](ROI_BACKLOG.md) #55–56).  
+**Status:** #52–54 exception matrices publicerade. #11–48 + #51–54 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~35 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Förenkla@x; parent analytics; hard fairness; feedback; Öken; matte #34–40.
+**Klart sedan förra briefen:** Exception matrices; Förenkla@x; parent analytics; matte #34–40.
 
 ---
 
