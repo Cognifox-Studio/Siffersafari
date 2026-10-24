@@ -270,6 +270,40 @@ class LocalStorageRepository {
     }
   }
 
+  /// Drop oldest completed sessions beyond [keep]; leave in-progress alone.
+  ///
+  /// Returns how many completed rows were deleted.
+  Future<int> pruneCompletedQuizHistoryForUser(
+    String userId, {
+    int keep = StorageConstants.maxCompletedQuizHistoryPerUser,
+  }) async {
+    if (userId.isEmpty || keep <= 0) return 0;
+
+    final completed = getQuizHistory(userId)
+        .where((session) => session['isComplete'] == true)
+        .toList(growable: false);
+    if (completed.length <= keep) return 0;
+
+    var deleted = 0;
+    for (final session in completed.skip(keep)) {
+      final sessionId = session['sessionId']?.toString();
+      if (sessionId == null || sessionId.isEmpty) continue;
+      await deleteQuizSession(sessionId);
+      deleted++;
+    }
+
+    if (deleted > 0 && Hive.isBoxOpen(AppConstants.quizHistoryBox)) {
+      try {
+        await _quizHistoryBox.compact();
+      } catch (e, st) {
+        debugPrint('[LocalStorage] quiz_history compact failed: $e');
+        debugPrintStack(stackTrace: st);
+      }
+    }
+
+    return deleted;
+  }
+
   /// Save a setting
   Future<void> saveSetting(String key, dynamic value) async {
     await _settingsBox.put(key, value);

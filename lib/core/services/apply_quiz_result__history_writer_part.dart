@@ -33,5 +33,7 @@ class _QuizResultHistoryWriter {
         operationTypeName: session.operationType.name,
       ),
     );
+
+    await _repository.pruneCompletedQuizHistoryForUser(userId);
   }
 }
