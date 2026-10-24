@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #66–70). #11–48 + #51–65 + #20 levererade.
+**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #67–70). #11–48 + #51–66 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Confirm Åk change path 10↔30** — #66
-2. **Single Åk editor owner** — #67
-3. **Default word/saknat-tal by Åk** — #68
+1. **Single Åk editor owner** — #67
+2. **Default word/saknat-tal by Åk** — #68
+3. **Profile empty-state + soft max-kids** — #69
 
 Lyft **en** till Now i taget.
 

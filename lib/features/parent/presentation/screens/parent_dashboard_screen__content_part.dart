@@ -234,6 +234,49 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             ),
           ],
           onChanged: (value) async {
+            final quests = const QuestProgressionService();
+            final before = quests.targetStopCountForUser(user);
+            final after = quests.targetStopCountForGrade(
+              gradeLevel: value,
+              ageGroup: user.ageGroup,
+            );
+            if (before != after) {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) {
+                  final onPrimary = Theme.of(ctx).colorScheme.onPrimary;
+                  return AlertDialog(
+                    title: Text(
+                      'Ändra årskurs?',
+                      style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                            color: onPrimary,
+                            fontWeight: FontWeight.w700,
+                          ),
+                    ),
+                    content: Text(
+                      'Storykartan skrivs om från $before till $after stopp. '
+                      'Framsteg på kartan kan se annorlunda ut.',
+                      style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                            color: onPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(ctx).pop(false),
+                        child: const Text('Avbryt'),
+                      ),
+                      TextButton(
+                        key: const Key('confirm_grade_path_change'),
+                        onPressed: () => Navigator.of(ctx).pop(true),
+                        child: const Text('Ändra'),
+                      ),
+                    ],
+                  );
+                },
+              );
+              if (confirmed != true || !mounted) return;
+            }
             await ref
                 .read(userProvider.notifier)
                 .saveUser(user.copyWith(gradeLevel: value));

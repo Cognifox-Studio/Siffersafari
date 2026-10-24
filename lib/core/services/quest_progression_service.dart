@@ -314,6 +314,28 @@ class QuestProgressionService {
     );
   }
 
+  /// Public so parent/settings can warn before an Åk change rewrites the map.
+  int targetStopCountForGrade({
+    required int? gradeLevel,
+    required AgeGroup ageGroup,
+  }) {
+    final includeMedium = (gradeLevel != null && gradeLevel > 2) ||
+        (gradeLevel == null && ageGroup != AgeGroup.young);
+    final includeHard = (gradeLevel != null && gradeLevel >= 5) ||
+        (gradeLevel == null && ageGroup == AgeGroup.older);
+    return _targetStopCountFor(
+      includeMedium: includeMedium,
+      includeHard: includeHard,
+    );
+  }
+
+  int targetStopCountForUser(UserProgress user) {
+    return targetStopCountForGrade(
+      gradeLevel: user.gradeLevel,
+      ageGroup: user.ageGroup,
+    );
+  }
+
   int _targetStopCountFor({
     required bool includeMedium,
     required bool includeHard,

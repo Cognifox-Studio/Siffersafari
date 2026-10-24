@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/parent_pin_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
+import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -317,6 +318,43 @@ class SettingsScreen extends ConsumerWidget {
                                 ),
                               ],
                               onChanged: (value) async {
+                                final quests = const QuestProgressionService();
+                                final before =
+                                    quests.targetStopCountForUser(user);
+                                final after = quests.targetStopCountForGrade(
+                                  gradeLevel: value,
+                                  ageGroup: user.ageGroup,
+                                );
+                                if (before != after) {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (ctx) => AlertDialog(
+                                      title: const Text('Ändra årskurs?'),
+                                      content: Text(
+                                        'Storykartan skrivs om från $before till $after stopp. '
+                                        'Framsteg på kartan kan se annorlunda ut.',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(false),
+                                          child: const Text('Avbryt'),
+                                        ),
+                                        TextButton(
+                                          key: const Key(
+                                            'confirm_grade_path_change',
+                                          ),
+                                          onPressed: () =>
+                                              Navigator.of(ctx).pop(true),
+                                          child: const Text('Ändra'),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                  if (confirmed != true || !context.mounted) {
+                                    return;
+                                  }
+                                }
                                 await ref.read(userProvider.notifier).saveUser(
                                       user.copyWith(gradeLevel: value),
                                     );
