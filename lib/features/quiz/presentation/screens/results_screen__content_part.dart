@@ -785,14 +785,31 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
             },
           ),
           SizedBox(height: AppConstants.defaultPadding.h),
-          ElevatedButton.icon(
-            onPressed: onContinueStory,
-            icon: Icon(storyButtonIcon),
-            label: Text(storyButtonLabel),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size.fromHeight(56),
+          if (isEpisodeComplete) ...[
+            ElevatedButton.icon(
+              key: const Key('results_soft_landing_home_button'),
+              onPressed: _goHomeFromResults,
+              icon: const Icon(Icons.home_rounded),
+              label: const Text('Hem & samla'),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(56),
+              ),
             ),
-          ),
+            SizedBox(height: AppConstants.smallPadding.h),
+            OutlinedButton.icon(
+              onPressed: onContinueStory,
+              icon: Icon(storyButtonIcon),
+              label: Text(storyButtonLabel),
+            ),
+          ] else
+            ElevatedButton.icon(
+              onPressed: onContinueStory,
+              icon: Icon(storyButtonIcon),
+              label: Text(storyButtonLabel),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(56),
+              ),
+            ),
         ],
       ),
     );

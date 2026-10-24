@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Nattskogen soft landing ([ROI_BACKLOG](ROI_BACKLOG.md) #19).  
-**Status:** #15–18 inne (TTS tip/stop, resume-kontext, snabbträna-CTA). Collect-loop #11–18 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Onboarding grade helper ([ROI_BACKLOG](ROI_BACKLOG.md) #21).  
+**Status:** #19 soft landing inne (Hem & samla + “kommer senare”). #11–19 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** TTS discoverability + Stoppa; Fortsätt op/progress; Snabbträna primär; camp teaser; namngivna unlocks; badge hints.
+**Klart sedan förra briefen:** Nattskogen soft landing; TTS tip/stop; resume-kontext; snabbträna-CTA; camp/badges collect-loop.
 
 ---
 

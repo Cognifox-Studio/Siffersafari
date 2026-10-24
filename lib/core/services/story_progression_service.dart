@@ -294,10 +294,11 @@ class StoryProgressionService {
 
     return StoryBiomePreview(
       name: base.name,
-      tagline: '${base.name} väntar.',
-      previewPrefix: base.previewPrefix,
+      tagline: '${base.name} kommer senare.',
+      previewPrefix: 'Senare',
       previewBody:
-          'Kapitlet är klart. ${base.name} öppnas i en senare uppdatering.',
+          'Ingen ny värld just nu. Samla märken och souvenirer hemma — '
+          '${base.name} öppnas i en senare uppdatering.',
     );
   }
 
@@ -338,7 +339,9 @@ class StoryProgressionService {
     final biomeName = _upcomingBiomes[difficulty]?.name ?? 'Nästa värld';
     return _StoryBeat(
       title: 'Djungeln klar!',
-      body: 'Episode 1 är klar. $biomeName kommer senare.',
+      body:
+          'Episode 1 är klar. Samla märken och souvenirer hemma — '
+          '$biomeName kommer i en senare uppdatering.',
     );
   }
 

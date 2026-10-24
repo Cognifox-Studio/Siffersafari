@@ -218,14 +218,15 @@ class _JourneyPreviewPanel extends StatelessWidget {
       subtleOnPrimary: subtleOnPrimary,
     );
 
+    final nextBiome = story.nextBiome;
     final nextCard = _JourneyStepCard(
       label: story.isEpisodeComplete ? 'Senare' : 'Sedan',
       title: story.isEpisodeComplete
-          ? 'Nästa värld'
+          ? (nextBiome?.name ?? 'Senare')
           : nextNode?.landmark ?? 'Djungeln klar snart',
-      meta: story.isEpisodeComplete ? 'Fortsättning' : 'Nästa stopp',
+      meta: story.isEpisodeComplete ? 'Kommer snart' : 'Nästa stopp',
       body: story.isEpisodeComplete
-          ? story.endingBody
+          ? (nextBiome?.previewBody ?? story.endingBody)
           : nextNode == null
               ? 'Ett sista steg kvar.'
               : nextNode?.title ?? 'Ett sista steg kvar.',

@@ -142,12 +142,14 @@ void main() {
       expect(progress.isEpisodeComplete, isTrue);
       expect(progress.actLabel, 'Akt 2 av 2');
       expect(progress.endingTitle, 'Djungeln klar!');
-      expect(progress.endingBody, contains('kommer senare'));
+      expect(progress.endingBody, contains('Samla märken'));
+      expect(progress.endingBody, contains('kommer i en senare uppdatering'));
       expect(progress.nextBiome?.name, 'Nattskogen');
-      expect(progress.nextBiome?.tagline, 'Nattskogen väntar.');
+      expect(progress.nextBiome?.tagline, 'Nattskogen kommer senare.');
+      expect(progress.nextBiome?.previewPrefix, 'Senare');
       expect(
         progress.nextBiome?.previewBody,
-        'Kapitlet är klart. Nattskogen öppnas i en senare uppdatering.',
+        contains('Samla märken och souvenirer hemma'),
       );
     });
   });
