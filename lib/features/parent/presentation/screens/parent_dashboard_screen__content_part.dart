@@ -126,6 +126,58 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
       ),
     ];
 
+    final analyticsCounts =
+        ref.read(appAnalyticsProvider).summarizeCounts(userId: userId);
+    String countLabel(String key, String label) {
+      final n = analyticsCounts[key] ?? 0;
+      return '$label: $n';
+    }
+
+    final localInsightCard = _InsetPanel(
+      key: const Key('parent_local_analytics_card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ParentSectionHeader(
+            title: 'Aktivitet på den här enheten',
+            subtitle: 'Ingen molnsynk — bara lokal översikt.',
+            trailing: infoButton(
+              title: 'Lokal aktivitet',
+              message:
+                  'Siffersafari sparar korta händelser lokalt (t.ex. quiz startat) så du kan se hur ofta appen används. Inget skickas till nätet.',
+            ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Wrap(
+            spacing: AppConstants.smallPadding,
+            runSpacing: AppConstants.smallPadding,
+            children: [
+              _StatusBadge(
+                label: countLabel('quiz_started', 'Quiz startade'),
+                icon: Icons.play_arrow_rounded,
+                toneColor: primaryColor,
+              ),
+              _StatusBadge(
+                label: countLabel('quiz_completed', 'Quiz klara'),
+                icon: Icons.check_circle_outline_rounded,
+                toneColor: accentColor,
+              ),
+              _StatusBadge(
+                label: countLabel('parent_mode_opened', 'Föräldraläge'),
+                icon: Icons.family_restroom_rounded,
+                toneColor: primaryColor,
+              ),
+              _StatusBadge(
+                label: countLabel('quiz_abandoned', 'Avbrutna quiz'),
+                icon: Icons.pause_circle_outline_rounded,
+                toneColor: accentColor,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+
     final gradePicker = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -994,6 +1046,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
               ],
               overviewCard,
               sectionSpacing,
+              localInsightCard,
+              sectionSpacing,
               adaptationsCard,
               sectionSpacing,
               historyCard,
@@ -1020,6 +1074,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                       sectionSpacing,
                     ],
                     overviewCard,
+                    sectionSpacing,
+                    localInsightCard,
                     sectionSpacing,
                     historyCard,
                   ],

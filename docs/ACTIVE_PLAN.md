@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Parent local analytics surface ([ROI_BACKLOG](ROI_BACKLOG.md) #48). #11–47 + #20 levererade.
+**Produktspår:** Incremental facit→runtime / strategy steps ([ROI_BACKLOG](ROI_BACKLOG.md) #49–50). #11–48 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Incremental facit→runtime** — #49
-2. **Difficulty steps add strategy** — #50
-3. **Curriculum polish leftovers** — #51–62
+1. **Åk7 simplify → evaluate-at-x** — #51
+2. **Publish exception matrices** — #52–54
+3. **Feedback tips leftovers** — #55–56
 
 Lyft **en** till Now i taget.
 

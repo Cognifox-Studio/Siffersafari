@@ -322,7 +322,7 @@ class _RecommendationRow extends StatelessWidget {
 }
 
 class _InsetPanel extends StatelessWidget {
-  const _InsetPanel({required this.child});
+  const _InsetPanel({required this.child, super.key});
 
   final Widget child;
 
@@ -764,10 +764,15 @@ class _LatestQuizSnapshot extends StatelessWidget {
 }
 
 class _ParentSectionHeader extends StatelessWidget {
-  const _ParentSectionHeader({required this.title, required this.subtitle});
+  const _ParentSectionHeader({
+    required this.title,
+    required this.subtitle,
+    this.trailing,
+  });
 
   final String title;
   final String subtitle;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -778,12 +783,19 @@ class _ParentSectionHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: onPrimary,
-                fontWeight: FontWeight.w800,
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w800,
+                    ),
               ),
+            ),
+            if (trailing != null) trailing!,
+          ],
         ),
         const SizedBox(height: AppConstants.microSpacing4),
         Text(

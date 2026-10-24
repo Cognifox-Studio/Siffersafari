@@ -59,4 +59,39 @@ class AppAnalyticsService {
 
     await _repository.saveSetting(SettingsKeys.analyticsEvents, events);
   }
+
+  /// Offline-only event maps newest-first (COPPA: never leaves the device).
+  List<Map<String, dynamic>> readEvents({String? userId}) {
+    final current = _repository.getSetting(
+      SettingsKeys.analyticsEvents,
+      defaultValue: const <dynamic>[],
+    );
+    if (current is! List) return const [];
+
+    final parsed = <Map<String, dynamic>>[];
+    for (final raw in current.reversed) {
+      if (raw is! Map) continue;
+      final map = Map<String, dynamic>.from(raw);
+      if (userId != null && map['userId'] != null && map['userId'] != userId) {
+        continue;
+      }
+      parsed.add(map);
+    }
+    return parsed;
+  }
+
+  /// Friendly counts for parent dashboard insight (ROI #48).
+  Map<String, int> summarizeCounts({
+    String? userId,
+    int lookback = 200,
+  }) {
+    final events = readEvents(userId: userId).take(lookback);
+    final counts = <String, int>{};
+    for (final event in events) {
+      final name = event['name'] as String? ?? '';
+      if (name.isEmpty) continue;
+      counts.update(name, (v) => v + 1, ifAbsent: () => 1);
+    }
+    return counts;
+  }
 }
