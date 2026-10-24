@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #64–70).  
-**Status:** #63 profil byt namn klar. #11–48 + #51–63 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~43 lokalt (ej pushad).
+**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #65–70).  
+**Status:** #64 säkerhetsfråga krävs vid PIN-skapande. #11–48 + #51–64 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~44 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Rename; carry tip; undercovered; non-runtime; ekvation.
+**Klart sedan förra briefen:** Required security Q; rename; carry tip; undercovered.
 
 ---
 

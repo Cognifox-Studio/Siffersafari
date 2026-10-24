@@ -61,10 +61,12 @@ void main() {
       await tester.enterText(find.byType(TextField).at(1), '1234');
       await tester.tap(find.text('Spara PIN'));
 
-      // Recovery setup dialog should appear after saving PIN.
+      // Recovery setup is required after saving PIN (#64).
       await pumpUntilFound(tester, find.text('Sätt säkerhetsfråga'));
-      await tester.ensureVisible(find.text('Hoppa över'));
-      await tester.tap(find.text('Hoppa över'), warnIfMissed: false);
+      expect(find.text('Hoppa över'), findsNothing);
+      await tester.enterText(find.byType(TextField).last, 'hemligt');
+      await tester.ensureVisible(find.text('Spara säkerhetsfråga'));
+      await tester.tap(find.text('Spara säkerhetsfråga'), warnIfMissed: false);
 
       await pumpUntilFound(tester, find.text('Översikt'));
       expect(find.text('Översikt'), findsOneWidget);

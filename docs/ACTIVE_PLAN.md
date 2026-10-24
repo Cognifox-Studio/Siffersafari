@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #64–70). #11–48 + #51–63 + #20 levererade.
+**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #65–70). #11–48 + #51–64 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Force security Q before PIN unlock** — #64
-2. **Parent SRS toggle copy** — #65
-3. **Confirm Åk change path 10↔30** — #66
+1. **Parent SRS toggle copy** — #65
+2. **Confirm Åk change path 10↔30** — #66
+3. **Single Åk editor owner** — #67
 
 Lyft **en** till Now i taget.
 

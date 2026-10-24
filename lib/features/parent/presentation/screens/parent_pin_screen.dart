@@ -94,16 +94,21 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
       await SchedulerBinding.instance.endOfFrame;
       if (!mounted) return;
 
-      // Set up security question for PIN recovery.
+      // Security question is required so PIN recovery cannot dead-end (#64).
       final completed = await _showRecoverySetupDialog(context, pinService);
       if (!mounted) return;
-      if (completed != null) {
+      if (completed == true) {
         FocusManager.instance.primaryFocus?.unfocus();
         await _waitForKeyboardToClose(context);
         await Future<void>.delayed(kThemeAnimationDuration);
         if (!mounted) return;
         Navigator.of(context, rootNavigator: true).pushReplacement(
           MaterialPageRoute(builder: (_) => const ParentDashboardScreen()),
+        );
+      } else {
+        setState(
+          () => _error =
+              'Säkerhetsfråga krävs för att kunna återställa PIN senare.',
         );
       }
       return;
@@ -278,6 +283,7 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                     ),
                     const SizedBox(height: 16),
                     ElevatedButton(
+                      key: const Key('save_security_question_button'),
                       onPressed: isLoading
                           ? null
                           : () async {
@@ -318,21 +324,6 @@ class _ParentPinScreenState extends ConsumerState<ParentPinScreen> {
                             },
                       child: Text(
                         isLoading ? 'Sparar…' : 'Spara säkerhetsfråga',
-                        style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
-                              color: onPrimary,
-                              fontWeight: FontWeight.w700,
-                            ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    OutlinedButton(
-                      onPressed: isLoading
-                          ? null
-                          : () async {
-                              await popSafely(ctx, false);
-                            },
-                      child: Text(
-                        'Hoppa över',
                         style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
                               color: onPrimary,
                               fontWeight: FontWeight.w700,
