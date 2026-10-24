@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #69–70).  
-**Status:** #68 Åk1–2 default av text/saknat-tal. #11–48 + #51–68 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~48 lokalt (ej pushad).
+**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #71–75).  
+**Status:** #69–70 profil empty-state/soft-max + onboarding abandon. #11–48 + #51–70 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~49 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Grade feature defaults; single Åk owner; path confirm; SRS.
+**Klart sedan förra briefen:** Profile/onboarding polish; grade defaults; Åk owner; path confirm.
 
 ---
 

@@ -6,6 +6,7 @@ import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/app/navigation/app_navigator.dart';
+import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -37,15 +38,24 @@ class ProfileSelectionScreen extends ConsumerWidget {
                 child: PlayfulPanel(
                   hero: true,
                   highlightColor: scheme.secondary,
-                  child: const Column(
+                  child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text('🦁', style: TextStyle(fontSize: 48)),
-                      SizedBox(height: AppConstants.defaultPadding),
-                      PlayfulSectionHeading(
+                      const Text('🦁', style: TextStyle(fontSize: 48)),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      const PlayfulSectionHeading(
                         title: 'Inga spelare ännu',
-                        subtitle: 'Be en vuxen skapa en profil.',
+                        subtitle: 'Skapa en profil för att börja.',
                         center: true,
+                      ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      ElevatedButton(
+                        key: const Key('profile_empty_create_button'),
+                        onPressed: () => showCreateUserDialog(
+                          context: context,
+                          ref: ref,
+                        ),
+                        child: const Text('Skapa profil'),
                       ),
                     ],
                   ),

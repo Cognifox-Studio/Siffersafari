@@ -238,6 +238,33 @@ class _CreateUserDialogState extends ConsumerState<_CreateUserDialog> {
               return;
             }
 
+            final profileCount = ref.read(userProvider).allUsers.length;
+            if (profileCount >= AppConstants.softMaxChildProfiles) {
+              final proceed = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Många profiler'),
+                  content: Text(
+                    'Det finns redan $profileCount profiler '
+                    '(rekommenderat max ${AppConstants.softMaxChildProfiles}). '
+                    'Vill du skapa en till?',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(ctx).pop(false),
+                      child: const Text('Avbryt'),
+                    ),
+                    TextButton(
+                      key: const Key('confirm_soft_max_profile'),
+                      onPressed: () => Navigator.of(ctx).pop(true),
+                      child: const Text('Skapa ändå'),
+                    ),
+                  ],
+                ),
+              );
+              if (proceed != true || !context.mounted) return;
+            }
+
             await ref.read(userProvider.notifier).createUser(
                   userId: const Uuid().v4(),
                   name: name,

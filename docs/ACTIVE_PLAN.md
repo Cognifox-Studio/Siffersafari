@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Profile/parent polish ([ROI_BACKLOG](ROI_BACKLOG.md) #69–70). #11–48 + #51–68 + #20 levererade.
+**Produktspår:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #71–75). #11–48 + #51–70 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Profile empty-state + soft max-kids** — #69
-2. **Onboarding abandon copy** — #70
-3. **CTA when Skolverket panel null Åk** — #71
+1. **CTA when Skolverket panel null Åk** — #71
+2. **Kid-safe SFX labels** — #72
+3. **Confirm before quiz abandon** — #73
 
 Lyft **en** till Now i taget.
 

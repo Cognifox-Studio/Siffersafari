@@ -20,6 +20,9 @@ class AppConstants {
   // Mascot
   static const String mascotName = 'Loke';
 
+  /// Soft cap for local child profiles (store multi-kid claim). Not a hard lock.
+  static const int softMaxChildProfiles = 4;
+
   // Session Configuration
   static const int questionsPerSession = 10;
   static const int timerDurationSeconds = 30;

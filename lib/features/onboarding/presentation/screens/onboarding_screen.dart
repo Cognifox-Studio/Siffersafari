@@ -73,6 +73,49 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, _) async {
+        if (didPop || _isInitializing) return;
+        final leave = await showDialog<bool>(
+          context: context,
+          builder: (ctx) {
+            final onPrimary = Theme.of(ctx).colorScheme.onPrimary;
+            return AlertDialog(
+              title: Text(
+                'Avsluta utan att starta?',
+                style: Theme.of(ctx).textTheme.titleMedium?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              content: Text(
+                'Profilen finns kvar. Vi sätter Åk ${_gradeLevel ?? 1} '
+                'tills vidare — du kan ändra i Föräldraläge.',
+                style: Theme.of(ctx).textTheme.bodyMedium?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(ctx).pop(false),
+                  child: const Text('Fortsätt'),
+                ),
+                TextButton(
+                  key: const Key('confirm_onboarding_abandon'),
+                  onPressed: () => Navigator.of(ctx).pop(true),
+                  child: const Text('Avsluta'),
+                ),
+              ],
+            );
+          },
+        );
+        if (leave != true || !mounted) return;
+        await ref
+            .read(onboardingControllerProvider(widget.userId))
+            .complete(gradeLevel: _gradeLevel ?? 1);
+        if (!mounted) return;
+        Navigator.of(context).pop();
+      },
       child: ThemedBackgroundScaffold(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
         body: LayoutBuilder(
