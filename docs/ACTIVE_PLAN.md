@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #89+). #11–48 + #51–88 + #20 levererade.
+**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #90+). #11–48 + #51–89 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Honest privacy export** — #89
-2. **Align en-US listing** — #90
-3. **Release cadence** — ask before push (~66 ahead)
+1. **Align en-US listing** — #90
+2. **Play Data safety in DoD B** — #91
+3. **Release cadence** — ask before push (~67 ahead)
 
 Lyft **en** till Now i taget.
 

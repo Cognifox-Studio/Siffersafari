@@ -59,9 +59,16 @@ Profile data (quizzes, progress) is permanently deleted from the device.
 All profiles, scores, and settings are erased. This cannot be undone.
 
 ### Access Your Data
-All stored data is on YOUR device. To view or export:
-- Open the app storage folder on your Android/iOS device
-- Access backup files directly (technical users: Hive box files are in app cache)
+All stored data is on YOUR device. There is **no cloud export button** in the app.
+
+To review progress:
+- Open the child profile in the app (home, badges, parent dashboard)
+
+To remove data:
+- Delete a profile or use **Clear All Data** under Settings (see above)
+- Uninstalling the app also removes local Hive data on that device
+
+Advanced users who need a raw copy can use platform backup tools for the app’s private storage; Siffersafari does not ship a file-export flow.
 
 ## Data Security
 

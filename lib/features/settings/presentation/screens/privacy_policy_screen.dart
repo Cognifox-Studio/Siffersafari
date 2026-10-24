@@ -99,7 +99,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 content:
                     'Radera en barnprofil:\n1. Öppna ${AppConstants.appName}\n2. Gå till Inställningar\n3. Välj barnets profil\n4. Tryck på "Radera profil"\n5. Bekräfta borttagning\n\n'
                     'Radera all data:\n1. Öppna ${AppConstants.appName}\n2. Gå till Inställningar\n3. Tryck på "Radera all data"\n4. Bekräfta borttagning\n\n'
-                    'All data raderas permanent från enheten.',
+                    'All data raderas permanent från enheten.\n\n'
+                    'Det finns ingen molnexport i appen. Framsteg syns i profilen och på föräldradashboards; '
+                    'avinstallation tar bort lokal data på enheten.',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
