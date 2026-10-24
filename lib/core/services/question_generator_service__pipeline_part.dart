@@ -169,6 +169,7 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
       return _generateM5bLinearFunctionQuestion(
         difficulty,
         difficultyStep: linearStep,
+        gradeLevel: gradeLevel,
       );
     }
 

@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk 8–9 linear/functions integer text ([ROI_BACKLOG](ROI_BACKLOG.md) #39).  
-**Status:** #38 Rimlighet/estimate klar. #11–38 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~24 lokalt (ej pushad).
+**Mål:** Åk 9 probability bag/table text ([ROI_BACKLOG](ROI_BACKLOG.md) #40).  
+**Status:** #39 linjär/funktioner text-bridge klar. #11–39 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~25 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Rimlighet Mix; ASCII diagram; ½-of-n; Sortera; Mix SRS.
+**Klart sedan förra briefen:** Linjär k/m/y; rimlighet; ASCII diagram; ½-of-n; Sortera.
 
 ---
 

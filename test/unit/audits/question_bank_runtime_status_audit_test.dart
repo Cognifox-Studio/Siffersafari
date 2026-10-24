@@ -62,11 +62,11 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
   8: {
     'powers': 'supported_prompt_family',
     'proportionality': 'supported_prompt_family_with_exceptions',
-    'linear_relationships': 'deferred_representation',
+    'linear_relationships': 'supported_prompt_family',
     'compound_percent_change': 'supported_prompt_family',
   },
   9: {
-    'functions': 'deferred_representation',
+    'functions': 'supported_prompt_family',
     'equations': 'supported_prompt_family',
     'geometry': 'supported_prompt_family_with_exceptions',
     'probability': 'deferred_representation',
@@ -540,6 +540,20 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 8,
         matches: (prompt) => prompt.startsWith('Sammansatt procent = ?'),
+      );
+    case '8:linear_relationships':
+      _assertPromptRuntime(
+        gradeLevel: 8,
+        operationType: OperationType.mixed,
+        difficultyStep: 8,
+        matches: (prompt) => prompt.startsWith('Linjär funktion = ?'),
+      );
+    case '9:functions':
+      _assertPromptRuntime(
+        gradeLevel: 9,
+        operationType: OperationType.mixed,
+        difficultyStep: 8,
+        matches: (prompt) => prompt.startsWith('Linjär funktion = ?'),
       );
     case '9:equations':
       _assertPromptRuntime(

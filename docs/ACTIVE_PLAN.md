@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk 8–9 linear/functions integer text ([ROI_BACKLOG](ROI_BACKLOG.md) #39). #11–38 + #20 levererade.
+**Produktspår:** Åk 9 probability bag/table text ([ROI_BACKLOG](ROI_BACKLOG.md) #40). #11–39 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk 9 probability bag/table text** — #40
-2. **Cadence: release-guard / preflight** — #41+
-3. **Parent/trust polish leftovers** — #65+
+1. **Cadence: release-guard / preflight** — #41+
+2. **Parent/trust polish leftovers** — #65+
+3. **Store/trust hygiene** — #4–10
 
 Lyft **en** till Now i taget.
 

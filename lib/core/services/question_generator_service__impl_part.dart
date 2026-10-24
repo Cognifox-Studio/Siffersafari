@@ -1675,18 +1675,21 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
   Question _generateM5bLinearFunctionQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,
+    int? gradeLevel,
   }) {
-    // M5b (Åk 7–9, introduktion till visualiserad matematik): linjära funktioner
-    // i textformat med koordinatvisualisering.
-    // Formatet är y = mx + b, där vi ber eleverna beräkna y för ett givet x.
+    // Integer text-bridge for y = kx + m (ROI #39) — no graph UI.
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final grade = gradeLevel ?? 8;
 
     final maxSlope = step <= 3
         ? 3
         : step <= 6
             ? 5
             : 10;
-    final slope = 1 + _random.nextInt(maxSlope);
+    var slope = 1 + _random.nextInt(maxSlope);
+    if (_random.nextBool() && grade >= 8) {
+      slope = -slope;
+    }
 
     final maxIntercept = step <= 3
         ? 5
@@ -1700,38 +1703,117 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
         : step <= 6
             ? 10
             : 20;
-    final testX = 1 + _random.nextInt(maxX);
 
-    final correct = slope * testX + intercept;
-
-    // Skapa en enkel koordinatvisualisering med några punkter för att hjälpa
-    // eleverna att förstå funktionen visuellt.
-    final coordinatePoints = <String>[];
-    for (int x = 0; x <= min(3, testX); x++) {
-      final y = slope * x + intercept;
-      coordinatePoints.add('  x=$x, y=$y');
+    String formatLine(int k, int m) {
+      final kPart = k == 1
+          ? 'x'
+          : k == -1
+              ? '−x'
+              : '${k}x';
+      if (m == 0) return 'y = $kPart';
+      if (m > 0) return 'y = $kPart + $m';
+      return 'y = $kPart − ${-m}';
     }
-    final coordinateList = coordinatePoints.join('\n');
 
-    final prompt = '''Linjär funktion = ?
-y = ${slope}x + $intercept
+    final line = formatLine(slope, intercept);
+    final mode = _random.nextInt(grade >= 9 ? 5 : 4);
 
-Koordinater:
-$coordinateList
+    if (mode == 0) {
+      // Bestäm k
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: slope,
+        operand2: intercept,
+        correctAnswer: slope,
+        wrongAnswers: _generateWrongAnswers(slope, 3),
+        promptText: 'Linjär funktion = ?\n$line\nBestäm k (lutningen).',
+        explanation: 'I y = kx + m är k = $slope.',
+      );
+    }
 
-Beräkna y när x = $testX''';
+    if (mode == 1) {
+      // Bestäm m
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: slope,
+        operand2: intercept,
+        correctAnswer: intercept,
+        wrongAnswers: _generateWrongAnswers(intercept, 3),
+        promptText: 'Linjär funktion = ?\n$line\nBestäm m (skärningen med y-axeln).',
+        explanation: 'I y = kx + m är m = $intercept.',
+      );
+    }
+
+    if (mode == 2 && slope != 0 && intercept % slope == 0) {
+      // När är y = 0?
+      final root = -intercept ~/ slope;
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: slope,
+        operand2: intercept,
+        correctAnswer: root,
+        wrongAnswers: _generateWrongAnswers(root, 3),
+        promptText: 'Linjär funktion = ?\n$line\nNär är y = 0? Svara med x.',
+        explanation: '0 = $slope·x + $intercept ⇒ x = $root.',
+      );
+    }
+
+    if (mode == 4 || (mode == 3 && grade >= 9 && _random.nextBool())) {
+      // Steeper slope compare
+      var otherSlope = 1 + _random.nextInt(maxSlope);
+      if (otherSlope == slope.abs()) {
+        otherSlope = slope.abs() + 1;
+      }
+      if (_random.nextBool()) otherSlope = -otherSlope;
+      final otherIntercept =
+          _random.nextInt(2 * maxIntercept + 1) - maxIntercept;
+      final steeper = slope.abs() >= otherSlope.abs() ? 1 : 2;
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: slope,
+        operand2: otherSlope,
+        correctAnswer: steeper,
+        wrongAnswers: steeper == 1 ? const [2, 3, 0] : const [1, 3, 0],
+        promptText:
+            'Linjär funktion = ?\n1) ${formatLine(slope, intercept)}\n2) ${formatLine(otherSlope, otherIntercept)}\nVilken har störst lutning (absolutvärde)? Svara 1 eller 2.',
+        explanation:
+            '|k₁|=${slope.abs()}, |k₂|=${otherSlope.abs()} ⇒ funktion $steeper.',
+      );
+    }
+
+    // Evaluate y at x (with optional small table).
+    final testX = 1 + _random.nextInt(maxX);
+    final correct = slope * testX + intercept;
+    final coordinatePoints = <String>[];
+    for (var x = 0; x <= min(3, testX); x++) {
+      coordinatePoints.add('  x=$x, y=${slope * x + intercept}');
+    }
 
     return Question(
       id: _uuid.v4(),
       operationType: OperationType.mixed,
       difficulty: difficulty,
-      operand1: 0,
-      operand2: 0,
+      operand1: testX,
+      operand2: slope,
       correctAnswer: correct,
       wrongAnswers: _generateWrongAnswers(correct, 3),
-      promptText: prompt,
+      promptText: '''Linjär funktion = ?
+$line
+
+Koordinater:
+${coordinatePoints.join('\n')}
+
+Beräkna y när x = $testX''',
       explanation:
-          'y = $slope x + $intercept\ny = $slope ×$testX + $intercept = $correct',
+          'y = $slope·$testX + $intercept = $correct',
     );
   }
 

@@ -223,7 +223,8 @@ class QuestionMixPolicy {
 
   bool get shouldTryM5bLinearFunction =>
       isM5Mix &&
-      clampedStep >= 8 &&
+      clampedStep >= 7 &&
+      m5bLinearChance > 0 &&
       roll >= _m5bLinearStart &&
       roll < _m5bGeometricStart;
 
@@ -498,10 +499,12 @@ class QuestionMixPolicy {
     required bool isM5Mix,
     required int clampedStep,
   }) {
-    if (!isM5Mix || clampedStep < 8) return 0.0;
-    if (clampedStep == 8) return 0.10;
-    if (clampedStep == 9) return 0.12;
-    return 0.13;
+    // ROI #39: open integer linear/function text a step earlier.
+    if (!isM5Mix || clampedStep < 7) return 0.0;
+    if (clampedStep == 7) return 0.08;
+    if (clampedStep == 8) return 0.11;
+    if (clampedStep == 9) return 0.13;
+    return 0.14;
   }
 
   static double m5bGeometricChanceFor({
