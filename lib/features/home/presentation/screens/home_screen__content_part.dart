@@ -6,6 +6,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   bool _onboardingPushInFlight = false;
   CharacterReaction _mascotReaction = CharacterReaction.idle;
   int _mascotReactionNonce = 0;
+  final GlobalKey _campSectionKey = GlobalKey();
 
   @override
   void initState() {
@@ -573,14 +574,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               shrinkWrap: true,
                               children: operationCards,
                             ),
-                            const SizedBox(height: AppConstants.defaultPadding),
-                            RepaintBoundary(
-                              child: CampSceneView(
-                                mascotReaction: _mascotReaction,
-                                mascotReactionNonce: _mascotReactionNonce,
-                                isWideScreen: isWideScreen,
+                            // Phone-height home: keep play/ops above the fold;
+                            // camp lives under "Mer att göra".
+                            if (constraints.maxHeight < 780) ...[
+                              const SizedBox(
+                                height: AppConstants.defaultPadding,
                               ),
-                            ),
+                              OutlinedButton.icon(
+                                key: const Key('home_open_camp_button'),
+                                onPressed: () {
+                                  final campContext =
+                                      _campSectionKey.currentContext;
+                                  if (campContext == null) return;
+                                  Scrollable.ensureVisible(
+                                    campContext,
+                                    duration: const Duration(milliseconds: 320),
+                                    curve: Curves.easeOutCubic,
+                                    alignment: 0.08,
+                                  );
+                                },
+                                icon: const Icon(Icons.cabin_rounded),
+                                label: const Text('Läger & samlarobjekt'),
+                              ),
+                            ],
                           ] else ...[
                             const SizedBox(height: AppConstants.largePadding),
                             ElevatedButton(
@@ -642,6 +658,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           },
                           onOpenMap: _openStoryMap,
                         ),
+                      const SizedBox(height: AppConstants.defaultPadding),
+                      KeyedSubtree(
+                        key: _campSectionKey,
+                        child: RepaintBoundary(
+                          child: CampSceneView(
+                            mascotReaction: _mascotReaction,
+                            mascotReactionNonce: _mascotReactionNonce,
+                            isWideScreen: isWideScreen,
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: AppConstants.defaultPadding),
                       RepaintBoundary(
                         child: HomeBadgeAlbum(
