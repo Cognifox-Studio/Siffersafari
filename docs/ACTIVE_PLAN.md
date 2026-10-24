@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #59–62). #11–48 + #51–58 + #20 levererade.
+**Produktspår:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #60–62). #11–48 + #51–59 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Audit tiokompisar in Mix** — #59
-2. **Mark requiresCompletedPrompt non-runtime** — #60
-3. **Fill undercoveredConcepts** — #61
+1. **Mark requiresCompletedPrompt non-runtime** — #60
+2. **Fill undercoveredConcepts** — #61
+3. **Tip: Åk2 tens-transition** — #62
 
 Lyft **en** till Now i taget.
 

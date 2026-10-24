@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #59–62).  
-**Status:** #58 ekvation bare-int (`Vad är x?`) klar. #11–48 + #51–58 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~38 lokalt (ej pushad).
+**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #60–62).  
+**Status:** #59 tiokompisar Mix-audit klar. #11–48 + #51–59 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~39 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Ekvation contract; powers; feedback tips; exception matrices.
+**Klart sedan förra briefen:** Tiokompisar audit; ekvation contract; powers; feedback tips.
 
 ---
 
