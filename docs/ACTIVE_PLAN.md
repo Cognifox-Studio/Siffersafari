@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Åk 6 %-change policy ([ROI_BACKLOG](ROI_BACKLOG.md) #26). #11–25 + #20 levererade.
+**Produktspår:** Åk 6 multi-step word → integer ([ROI_BACKLOG](ROI_BACKLOG.md) #27). #11–26 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Åk 6 multi-step word → integer** — #27
-2. **Mix-feedback tips** — #32
-3. **Åk 8 compound % integer** — #28
+1. **Mix-feedback tips** — #32
+2. **Åk 8 compound % integer** — #28
+3. **Widen Åk 8 proportionality** — #29
 
 Lyft **en** till Now i taget.
 

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updated": "2026-05-26",
+  "updated": "2026-10-24",
   "purpose": "Structured grade 6 seed bank for manual review, example prompts and future generator audits.",
   "grade": 6,
   "stage": "4-6",
@@ -48,7 +48,8 @@
   },
   "qualityNotes": [
     "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
-    "Some prompts require diagram, graph, table, card-deck, bag-model, scale context or an explicit answer policy."
+    "percentage_change uses a fixed integer answer policy: apply-% asks for final price; before→after asks for percent-change magnitude.",
+    "Some prompts still require diagram, graph, table, card-deck, bag-model or scale context."
   ],
   "coverage": {
     "questionCount": 130,
@@ -73,10 +74,6 @@
     "undercoveredConcepts": [],
     "requiresSupportingContext": [
       {
-        "sectionId": "percentage_change",
-        "questionCount": 30
-      },
-      {
         "sectionId": "diagram_interpretation",
         "questionCount": 20
       },
@@ -92,189 +89,189 @@
       "label": "Procentuell förändring",
       "questionCount": 30,
       "declaredQuestionCount": 30,
-      "defaultResponseType": "numeric_or_text",
+      "defaultResponseType": "numeric",
       "defaultConceptTags": [],
       "defaultStrategyTags": [],
       "questions": [
         {
           "id": "g6_percentage_change_001",
-          "prompt": "Priset sänks med 20% från 500",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset sänks med 20% från 500. Vad blir nya priset?",
+          "responseType": "numeric",
+          "correctAnswer": 400
         },
         {
           "id": "g6_percentage_change_002",
-          "prompt": "Priset höjs med 15% från 800",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset höjs med 15% från 800. Vad blir nya priset?",
+          "responseType": "numeric",
+          "correctAnswer": 920
         },
         {
           "id": "g6_percentage_change_003",
-          "prompt": "En vara kostar 300, sänks till 240 → förändring?",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 300 till 240. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_004",
-          "prompt": "En vara kostar 1200, höjs till 1500 → procentuell ökning?",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 1200 till 1500. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_percentage_change_005",
-          "prompt": "1000 → 750",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 1000 till 750. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_percentage_change_006",
-          "prompt": "400 → 500",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 400 till 500. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_percentage_change_007",
-          "prompt": "900 → 810",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 900 till 810. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 10
         },
         {
           "id": "g6_percentage_change_008",
-          "prompt": "250 → 200",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 250 till 200. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_009",
-          "prompt": "600 → 720",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 600 till 720. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_010",
-          "prompt": "150 → 120",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 150 till 120. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_011",
-          "prompt": "80 → 100",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 80 till 100. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_percentage_change_012",
-          "prompt": "200 → 160",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 200 till 160. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_013",
-          "prompt": "350 → 280",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 350 till 280. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_014",
-          "prompt": "500 → 450",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 500 till 450. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 10
         },
         {
           "id": "g6_percentage_change_015",
-          "prompt": "700 → 840",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 700 till 840. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_016",
-          "prompt": "1200 → 960",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 1200 till 960. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_017",
-          "prompt": "1500 → 1800",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 1500 till 1800. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_018",
-          "prompt": "2000 → 1500",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 2000 till 1500. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_percentage_change_019",
-          "prompt": "750 → 900",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 750 till 900. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_020",
-          "prompt": "900 → 720",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 900 till 720. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_021",
-          "prompt": "300 → 390",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 300 till 390. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 30
         },
         {
           "id": "g6_percentage_change_022",
-          "prompt": "450 → 360",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 450 till 360. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_023",
-          "prompt": "600 → 540",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 600 till 540. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 10
         },
         {
           "id": "g6_percentage_change_024",
-          "prompt": "800 → 640",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 800 till 640. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_025",
-          "prompt": "1000 → 1100",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 1000 till 1100. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 10
         },
         {
           "id": "g6_percentage_change_026",
-          "prompt": "200 → 260",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 200 till 260. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 30
         },
         {
           "id": "g6_percentage_change_027",
-          "prompt": "500 → 400",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 500 till 400. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_028",
-          "prompt": "900 → 990",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 900 till 990. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 10
         },
         {
           "id": "g6_percentage_change_029",
-          "prompt": "120 → 96",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 120 till 96. Hur många procent minskar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_percentage_change_030",
-          "prompt": "75 → 90",
-          "responseType": "numeric_or_text",
-          "answerPolicyNote": "Requires explicit policy for whether answer is final value, difference or percentage change."
+          "prompt": "Procentuell förändring = ?\\nPriset går från 75 till 90. Hur många procent ökar det?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         }
       ]
     },

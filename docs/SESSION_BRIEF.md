@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Åk 6 %-change policy ([ROI_BACKLOG](ROI_BACKLOG.md) #26).  
-**Status:** #20 Sedan/Senare aligned home↔map↔results. #11–25 + #20 klara. `v1.4.3+22` på Play internal draft.
+**Mål:** Åk 6 multi-step word → integer ([ROI_BACKLOG](ROI_BACKLOG.md) #27).  
+**Status:** #26 %-change unlocked (bank + Mix). #11–26 + #20 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** Sedan/Senare-align; home play-first; Öva ikväll; parent trust/setup.
+**Klart sedan förra briefen:** Åk 6 %-change policy; Sedan/Senare-align; home play-first; parent trust.
 
 ---
 

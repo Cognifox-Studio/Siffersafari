@@ -58,6 +58,12 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
 
     if (mixPolicy.shouldTryM4Percent) {
       final percentStep = mixBaselineStep;
+      if (gradeLevel != null && gradeLevel >= 6) {
+        return _generateM4PercentageChangeQuestion(
+          difficulty,
+          difficultyStep: percentStep,
+        );
+      }
 
       return _generateM5aPercentQuestion(
         difficulty,

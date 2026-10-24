@@ -244,6 +244,9 @@ String _classifyQuestion(Question question) {
   if (prompt.startsWith('Sannolikhet (konkret)')) return 'low_probability';
   if (prompt.startsWith('Skillnad i chans')) return 'm4_prob_compare';
   if (prompt.startsWith('Kombinationer')) return 'm4_combinatorics';
+  if (prompt.startsWith('Procentuell förändring = ?')) {
+    return 'm_percentage_change';
+  }
   if (prompt.startsWith('Procent = ?')) return 'm_percent';
   if (prompt.startsWith('Negativa tal = ?')) return 'm_negative';
   if (prompt.startsWith('Potenser = ?')) return 'm_power';

@@ -817,6 +817,90 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
 
   // region M5a Generators (Åk 7-9 Core Topics)
 
+  Question _generateM4PercentageChangeQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    // Åk 6 policy (fixed integer answer):
+    // - Apply-% prompts ask for the new price (final value).
+    // - Before→after prompts ask for the percent change magnitude.
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final askFinalValue = _random.nextBool();
+
+    if (askFinalValue) {
+      final percents = step <= 6
+          ? const <int>[10, 20, 25, 50]
+          : const <int>[5, 10, 15, 20, 25, 30, 40, 50];
+      final percent = percents[_random.nextInt(percents.length)];
+      final bases = step <= 6
+          ? const <int>[100, 200, 400, 500, 800, 1000]
+          : const <int>[80, 120, 250, 300, 600, 750, 1200, 1500];
+      final base = bases[_random.nextInt(bases.length)];
+      final decrease = _random.nextBool();
+      final correct =
+          decrease ? (base * (100 - percent)) ~/ 100 : (base * (100 + percent)) ~/ 100;
+      final verb = decrease ? 'sänks' : 'höjs';
+      final prompt =
+          'Procentuell förändring = ?\nPriset $verb med $percent% från $base. Vad blir nya priset?';
+
+      return Question(
+        id: _uuid.v4(),
+        operationType: OperationType.mixed,
+        difficulty: difficulty,
+        operand1: base,
+        operand2: percent,
+        correctAnswer: correct,
+        wrongAnswers: _generateWrongAnswers(correct, 3),
+        promptText: prompt,
+        explanation: decrease
+            ? 'Nytt pris = $base − $percent% = $base × ${100 - percent}/100 = $correct.'
+            : 'Nytt pris = $base + $percent% = $base × ${100 + percent}/100 = $correct.',
+      );
+    }
+
+    final pairs = step <= 6
+        ? const <(int, int)>[
+            (1000, 750),
+            (400, 500),
+            (900, 810),
+            (250, 200),
+            (600, 720),
+            (200, 160),
+            (500, 450),
+            (80, 100),
+          ]
+        : const <(int, int)>[
+            (1200, 960),
+            (1500, 1800),
+            (2000, 1500),
+            (300, 390),
+            (800, 640),
+            (1000, 1100),
+            (120, 96),
+            (75, 90),
+          ];
+    final pair = pairs[_random.nextInt(pairs.length)];
+    final before = pair.$1;
+    final after = pair.$2;
+    final correct = (((after - before).abs() * 100) ~/ before);
+    final direction = after >= before ? 'ökar' : 'minskar';
+    final prompt =
+        'Procentuell förändring = ?\nPriset går från $before till $after. Hur många procent $direction det?';
+
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: before,
+      operand2: after,
+      correctAnswer: correct,
+      wrongAnswers: _generateWrongPercentAnswers(correct, 3),
+      promptText: prompt,
+      explanation:
+          'Förändring = |$after − $before| / $before × 100 = $correct%.',
+    );
+  }
+
   Question _generateM5aPercentQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,

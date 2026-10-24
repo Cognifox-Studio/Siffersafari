@@ -37,6 +37,7 @@ Princip: senaste datum vinner vid konflikt.
 - Grade-bankerna är nu låsta mot runtime för alla årskurser via en explicit auditmatris. Numeriska ekvationer i Åk 7 och Åk 9 räknas nu som stödda textbroar i dagens quizformat, medan sektioner som kräver symboliskt svar, diagram, grafer, decimal/bråkpolicy eller flera giltiga svar förblir avsiktligt senare arbete.
 - När en banksektion bara delvis passar dagens text+heltal-UI ska vi flytta just den representerbara delmängden till runtime och lämna resten explicit kvar i status-auditen. Åk 8 proportionalitet är nu första tydliga exemplet: heltalsfall med `y = kx`, `x -> y`, `y -> x` och enkla enhetsproblem är stödda, medan decimalfall, grafer och ofullständiga prompts fortfarande är deferred.
 - Samma princip gäller nu Åk 9 geometri: Pythagoras, area, omkrets och volym med heltalssvar kan gå direkt i dagens quizmodell, medan cirkel/cylinder-frågor med pi/avrundning, skala och annan figur-/kontextbunden geometri ska stanna som explicit deferred tills representation och svarspolicy finns.
+- **Åk 6 procentuell förändring (2026-10-24):** Fast integer-policy. Apply-%-prompts frågar efter nytt pris (slutvärde). Före→efter-prompts frågar efter förändringens storlek i procent (positiv heltal). Runtime: `Procentuell förändring = ?` via M4 Mix för Åk ≥ 6; Åk 5 behåller `Procent = ?` (`x% av y`).
 
 ## Historik (kort)
 
