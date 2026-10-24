@@ -6,12 +6,17 @@
 
 ---
 
-## Now (2026-10-09)
+## Now (2026-10-24)
 
-**Mål:** Inget öppet produktspår.  
-**Status:** Andra playtest-runda (feedback-scrim, tallinje +1, story-banner, ikon) lokalt på `1.4.3+22`. Senaste tagg `v1.4.3+21`.
+**Mål:** Stäng release `v1.4.3+22` (Top-50 #1–3) innan nytt produktspår.  
+**Status:** Playtest-polish (feedback-scrim, tallinje +1, story-banner, ikon) ligger lokalt på `1.4.3+22` (`e93c0fe`); `main` 1 commit ahead of origin. Senaste tagg `v1.4.3+21`.
 
-**Klart sedan förra briefen:** Cursor-rutin-slim, camp-souvenirer, `nextBiome` i slutskedet, fler samlar-badges (`7090fd3`).
+**Now-steg (i ordning):**
+1. Fix 4 `prefer_const` infos så `--fatal-infos` CI passerar
+2. Tag `v1.4.3+22` + samma AAB till Play internal (DoD B)
+3. What’s-new notes för +22 (camp, badges, nextBiome, polish)
+
+**Klart sedan förra briefen:** ROI-backlog (Top 50) låst i `ACTIVE_PLAN`; andra playtest-runda lokalt; Cursor-rutin-slim, camp-souvenirer, `nextBiome`, samlar-badges.
 
 ---
 
@@ -24,6 +29,9 @@
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-24 – Top 50 ROI → Now/Next/Later**  
+Release +22 som Now; Next = collect-loop discoverability; SEN biome/cloud parkerade.
 
 **2026-08-31 – Cursor-first rutin-slim**  
 DEV_SYSTEM/DoD-light, kort SESSION_BRIEF, `.cursor/rules`, TOOLING_SURFACE; arkiverade meta-prompts/skills under `.github/archive/`.
@@ -51,7 +59,7 @@ Feature borta; legacy Hive-nycklar endast för profil-wipe.
 
 Arbeta mot **Now** ovan. Next/Later: `ACTIVE_PLAN.md`.
 
-När Now saknas: välj uttryckligen (release *eller* produktspår). Plan/slice-start bara vid risk.
+Efter +22: lyft en Next-kandidat till Now (max en i taget). Plan/slice-start bara vid risk.
 
 **Guardrails:** inga trackers; inga stora experiment utan bet i Next.
 
