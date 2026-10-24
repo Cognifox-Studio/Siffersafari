@@ -141,5 +141,13 @@ abstract final class AchievementCatalog {
       assetPath: 'assets/images/ui/img_badge_level.png',
       unlockHint: 'Spela 30 dagar i rad.',
     ),
+    AchievementDefinition(
+      id: AppConstants.episodeCompleteAchievement,
+      displayName: 'Episoden klar',
+      albumLabel: 'Episod',
+      emoji: '🌴',
+      assetPath: 'assets/images/ui/ic_ui_map.png',
+      unlockHint: 'Klara hela djungelkartan så nästa värld syns.',
+    ),
   ];
 }

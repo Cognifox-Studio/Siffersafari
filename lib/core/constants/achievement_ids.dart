@@ -19,4 +19,5 @@ class AchievementIds {
   static const String questions500Achievement = 'questions_500';
   static const String questions1000Achievement = 'questions_1000';
   static const String collectAllSouvenirsAchievement = 'collect_all_souvenirs';
+  static const String episodeCompleteAchievement = 'episode_complete';
 }

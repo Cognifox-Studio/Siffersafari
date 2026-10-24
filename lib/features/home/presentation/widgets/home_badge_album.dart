@@ -236,6 +236,8 @@ class _BadgeTile extends StatelessWidget {
         return const Color(0xFFC76A2C);
       case AppConstants.streak30Achievement:
         return const Color(0xFF8B4BB3);
+      case AppConstants.episodeCompleteAchievement:
+        return const Color(0xFF2F7A4B);
       default:
         return const Color(0xFF5C6B73);
     }

@@ -1,3 +1,4 @@
+import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/services/user_quest_state_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
@@ -85,28 +86,61 @@ class ApplyQuizResultUseCase {
       oldLevel: merge.oldLevel,
     );
 
+    // ROI #87: award a collectible when the story path ends (nextBiome teaser).
+    final episodeComplete = questResult.resolvedQuestCompletion != null &&
+        questResult.resolvedQuestCompletion!.nextQuestTitle == null;
+    final episodeReward = _applyEpisodeCompleteAchievement(
+      user: unlockResult.finalUser,
+      reward: merge.reward,
+      episodeComplete: episodeComplete,
+    );
+
     await _QuizResultHistoryWriter(_repository).saveCompletedSession(
       userId: user.userId,
       session: session,
-      reward: merge.reward,
+      reward: episodeReward.reward,
       completedAt: merge.completedAt,
     );
 
     try {
-      await _repository.saveUserProgress(unlockResult.finalUser);
+      await _repository.saveUserProgress(episodeReward.user);
     } catch (_) {
       await _repository.deleteQuizSession(session.sessionId);
       rethrow;
     }
 
     return ApplyQuizResultResult(
-      finalUser: unlockResult.finalUser,
-      reward: merge.reward,
+      finalUser: episodeReward.user,
+      reward: episodeReward.reward,
       questStatus: questResult.questStatus,
       questCompletion: questResult.resolvedQuestCompletion,
       newlyUnlockedItem: unlockResult.newlyUnlockedItem,
       levelUpEvent: unlockResult.levelUpEvent,
       questNotice: questResult.questNotice,
+    );
+  }
+
+  ({UserProgress user, AchievementReward reward})
+      _applyEpisodeCompleteAchievement({
+    required UserProgress user,
+    required AchievementReward reward,
+    required bool episodeComplete,
+  }) {
+    const id = AppConstants.episodeCompleteAchievement;
+    const bonus = 100;
+    if (!episodeComplete || user.achievements.contains(id)) {
+      return (user: user, reward: reward);
+    }
+
+    return (
+      user: user.copyWith(
+        achievements: [...user.achievements, id],
+        totalPoints: user.totalPoints + bonus,
+      ),
+      reward: AchievementReward(
+        unlockedIds: [...reward.unlockedIds, id],
+        bonusPoints: reward.bonusPoints + bonus,
+      ),
     );
   }
 

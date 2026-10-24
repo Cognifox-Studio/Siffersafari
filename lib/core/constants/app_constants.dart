@@ -162,4 +162,6 @@ class AppConstants {
       AchievementIds.questions1000Achievement;
   static const String collectAllSouvenirsAchievement =
       AchievementIds.collectAllSouvenirsAchievement;
+  static const String episodeCompleteAchievement =
+      AchievementIds.episodeCompleteAchievement;
 }

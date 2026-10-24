@@ -129,6 +129,7 @@ void main() {
           AppConstants.master100Achievement,
           AppConstants.streak7Achievement,
           AppConstants.streak30Achievement,
+          AppConstants.episodeCompleteAchievement,
         ]),
       );
       expect(
