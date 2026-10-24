@@ -30,8 +30,9 @@ jobs:
       - name: Fast release checks
         run: |
           flutter analyze lib test
-          flutter test test/spaced_repetition_service_test.dart
-          flutter test test/profile_backup_service_test.dart
+          flutter test test/unit/logic/spaced_repetition_test.dart
+          flutter test test/unit/logic/quiz_provider_srs_test.dart
+          flutter test test/unit/audits/question_bank_runtime_status_audit_test.dart
 
       - name: Build debug APK
         run: flutter build apk --debug

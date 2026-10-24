@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Cadence #41+ ([ROI_BACKLOG](ROI_BACKLOG.md)).  
-**Status:** #40 Åk 9 sannolikhet klar. #11–40 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~26 lokalt (ej pushad).
+**Mål:** A11y pass home/wardrobe/story/badges ([ROI_BACKLOG](ROI_BACKLOG.md) #44).  
+**Status:** #41–43 cadence (release-guard paths, preflight, DEPLOY +22) klara. #11–43 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~27 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Sannolikhet bag/table; linjär; rimlighet; ASCII; ½-of-n; Sortera; Mix SRS.
+**Klart sedan förra briefen:** Matte #34–40; release-guard/preflight; sannolikhet; linjär; rimlighet.
 
 ---
 
