@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Camp/wardrobe tom-tillstånd ([ROI_BACKLOG](ROI_BACKLOG.md) #13–14).  
-**Status:** Namngivna unlocks på resultat (#12) inne. Badge unlock-hints (#11) inne. `v1.4.3+22` på Play internal draft.
+**Mål:** TTS discoverability för föräldrar ([ROI_BACKLOG](ROI_BACKLOG.md) #15).  
+**Status:** Camp tom-tillstånd (#13–14) inne — “Samla”-teaser + garderobs-CTA. Collect-loop #11–14 klara. `v1.4.3+22` på Play internal draft.
 
-**Klart sedan förra briefen:** resultat namnger märken; badge `unlockHint`; Play internal; tag `v1.4.3+22`.
+**Klart sedan förra briefen:** camp teaser/CTA; namngivna unlocks; badge hints; Play internal; tag `v1.4.3+22`.
 
 ---
 

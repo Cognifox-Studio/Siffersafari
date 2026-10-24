@@ -611,6 +611,71 @@ void main() {
   );
 
   testWidgets(
+    '[Widget] App home – tomt camp visar samlar-teaser och garderobs-CTA',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'camp-empty-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Noa',
+        ageGroup: AgeGroup.middle,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_scene_view')),
+      );
+      await tester.ensureVisible(
+        find.byKey(const Key('camp_scene_collection_badge')),
+      );
+
+      expect(find.byKey(const Key('camp_scene_collection_badge')), findsOneWidget);
+      expect(find.text('Samla'), findsOneWidget);
+      expect(
+        find.byKey(const Key('camp_scene_collection_empty_hint')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('camp_scene_wardrobe_cta')),
+        findsOneWidget,
+      );
+
+      await tester.tap(find.byKey(const Key('camp_scene_collection_badge')));
+      await tester.pump();
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('camp_collection_album')),
+      );
+      expect(find.text('Spela quiz — då fylls campet.'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('camp_collection_album_close')));
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(
+        find.byKey(const Key('camp_scene_wardrobe_cta')),
+      );
+      await tester.tap(find.byKey(const Key('camp_scene_wardrobe_cta')));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('garderob'), findsWidgets);
+    },
+  );
+
+  testWidgets(
     '[Widget] App home – camp-badge öppnar souveniralbum med lasta platser',
     (WidgetTester tester) async {
       tester.view.devicePixelRatio = 1.0;

@@ -35,7 +35,7 @@ class CampCollectionAlbumDialog extends StatelessWidget {
         InventoryConfig.unlockedCampSouvenirCount(unlockedIds);
     final countLabel = '$unlockedCount av ${souvenirs.length}';
     final helperText = unlockedCount == 0
-        ? 'Spela och samla.'
+        ? 'Spela quiz — då fylls campet.'
         : unlockedCount == souvenirs.length
             ? 'Alla camp-saker klara!'
             : 'Fler väntar.';

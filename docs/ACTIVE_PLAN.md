@@ -15,17 +15,17 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** camp/wardrobe tom-tillstånd ([ROI_BACKLOG](ROI_BACKLOG.md) #13–14). #11–12 levererade.
+**Produktspår:** TTS discoverability för föräldrar ([ROI_BACKLOG](ROI_BACKLOG.md) #15). Collect-loop #11–14 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-Collect-loop discoverability (Tier B), i ordning:
+Collect/loop polish (Tier B), i ordning:
 
-1. **TTS discoverability** för föräldrar (default-off) — #15
-2. **In-quiz TTS replay/stop clarity** — #16
-3. **Resume CTA visar op + progress** — #17
+1. **In-quiz TTS replay/stop clarity** — #16
+2. **Resume CTA visar op + progress** — #17
+3. **Results focused-practice CTA prominence** — #18
 
 Lyft **en** till Now i taget. Alternativt matte-spår (Åk 6 `%`-policy m.m.) får vänta tills dessa är klara eller uttryckligen byts ut här.
 

@@ -231,28 +231,51 @@ class CampSceneView extends ConsumerWidget {
               left: 16,
               right: 16,
               bottom: 18,
-              child: IgnorePointer(
-                child: Text(
-                  'Fler saker dyker upp här.',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.84),
-                    fontWeight: FontWeight.w700,
+              child: Center(
+                child: Semantics(
+                  button: true,
+                  label: 'Öppna garderoben',
+                  child: GestureDetector(
+                    key: const Key('camp_scene_wardrobe_cta'),
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      ref.read(audioServiceProvider).playClickSound();
+                      _openWardrobe(context, ref);
+                    },
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.28),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                        child: Text(
+                          'Tryck här för garderoben',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.white.withValues(alpha: 0.96),
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
 
-          if (unlockedCampItemCount > 0)
-            Positioned(
-              top: isWideScreen ? 16 : 12,
-              right: isWideScreen ? 16 : 12,
-              child: _CampCollectionBadge(
-                itemCount: unlockedCampItemCount,
-                hiddenCount: hiddenCampItemCount,
-                onTap: () => _openCampCollection(context, ref),
-              ),
+          Positioned(
+            top: isWideScreen ? 16 : 12,
+            right: isWideScreen ? 16 : 12,
+            child: _CampCollectionBadge(
+              itemCount: unlockedCampItemCount,
+              hiddenCount: hiddenCampItemCount,
+              onTap: () => _openCampCollection(context, ref),
             ),
+          ),
         ],
       ),
     );
@@ -282,14 +305,18 @@ class _CampCollectionBadge extends StatelessWidget {
   final int hiddenCount;
   final VoidCallback onTap;
 
-  String get _countLabel => '$itemCount ${itemCount == 1 ? 'sak' : 'saker'}';
+  String get _countLabel => itemCount == 0
+      ? 'Samla'
+      : '$itemCount ${itemCount == 1 ? 'sak' : 'saker'}';
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final semanticsLabel = hiddenCount > 0
-        ? 'Visa camp-samling. Du har $_countLabel i campet. $hiddenCount till syns inte här.'
-        : 'Visa camp-samling. Du har $_countLabel i campet.';
+    final semanticsLabel = itemCount == 0
+        ? 'Visa camp-samling. Inga saker än — se vad du kan samla.'
+        : hiddenCount > 0
+            ? 'Visa camp-samling. Du har $_countLabel i campet. $hiddenCount till syns inte här.'
+            : 'Visa camp-samling. Du har $_countLabel i campet.';
 
     return Semantics(
       button: true,
@@ -326,7 +353,16 @@ class _CampCollectionBadge extends StatelessWidget {
                     fontWeight: FontWeight.w900,
                   ),
                 ),
-                if (hiddenCount > 0)
+                if (itemCount == 0)
+                  Text(
+                    'Vad kan du få?',
+                    key: const Key('camp_scene_collection_empty_hint'),
+                    style: theme.textTheme.labelSmall?.copyWith(
+                      color: const Color(0xFF6C5425),
+                      fontWeight: FontWeight.w800,
+                    ),
+                  )
+                else if (hiddenCount > 0)
                   Text(
                     '+$hiddenCount till',
                     key: const Key('camp_scene_collection_hidden_count'),
