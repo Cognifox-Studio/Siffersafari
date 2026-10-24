@@ -28,6 +28,9 @@ String _classifyPrompt(String? promptText) {
   if (promptText.startsWith('Kombinationer')) return 'm4_combinatorics';
 
   // Late M4 additions (Åk 5–6, high steps): percent and negative numbers.
+  if (promptText.startsWith('Flerstegsproblem = ?')) {
+    return 'm4_multi_step_word';
+  }
   if (promptText.startsWith('Procentuell förändring = ?')) {
     return 'm4_percentage_change';
   }
@@ -150,6 +153,8 @@ void main() {
                   combinatorics++;
                   break;
                 case 'm4_percent_of':
+                case 'm4_percentage_change':
+                case 'm4_multi_step_word':
                   percentOf++;
                   break;
                 case 'm4_negative_numbers':

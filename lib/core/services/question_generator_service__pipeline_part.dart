@@ -59,6 +59,13 @@ mixin _QuestionGeneratorServicePipeline on _QuestionGeneratorServiceImpl {
     if (mixPolicy.shouldTryM4Percent) {
       final percentStep = mixBaselineStep;
       if (gradeLevel != null && gradeLevel >= 6) {
+        // Same Mix slot: single-% change vs short multi-step integer bridge.
+        if (_random.nextDouble() < 0.35) {
+          return _generateM4MultiStepWordQuestion(
+            difficulty,
+            difficultyStep: percentStep,
+          );
+        }
         return _generateM4PercentageChangeQuestion(
           difficulty,
           difficultyStep: percentStep,

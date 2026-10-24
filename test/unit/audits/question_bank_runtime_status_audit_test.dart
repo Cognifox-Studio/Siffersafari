@@ -51,7 +51,7 @@ const _runtimeSectionStatuses = <int, Map<String, String>>{
     'diagram_interpretation': 'deferred_representation',
     'multiplication': 'supported_core_arithmetic',
     'division': 'supported_core_arithmetic',
-    'multi_step_word_problems': 'deferred_answer_policy',
+    'multi_step_word_problems': 'supported_prompt_family',
   },
   7: {
     'order_of_operations': 'supported_prompt_family',
@@ -462,6 +462,13 @@ void _assertSupportedSectionRuntime(int grade, String sectionId) {
         operationType: OperationType.mixed,
         difficultyStep: 8,
         matches: (prompt) => prompt.startsWith('Procentuell förändring = ?'),
+      );
+    case '6:multi_step_word_problems':
+      _assertPromptRuntime(
+        gradeLevel: 6,
+        operationType: OperationType.mixed,
+        difficultyStep: 8,
+        matches: (prompt) => prompt.startsWith('Flerstegsproblem = ?'),
       );
     case '6:negative_numbers':
       _assertPromptRuntime(

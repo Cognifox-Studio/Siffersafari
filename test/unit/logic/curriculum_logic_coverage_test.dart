@@ -91,8 +91,10 @@ class _Observed {
       return;
     }
 
-    // --- M5a / Åk 6 percentage-change bridge
-    if (text.startsWith('Procentuell förändring') || text.contains('% av')) {
+    // --- M5a / Åk 6 percentage-change + multi-step bridge
+    if (text.startsWith('Flerstegsproblem') ||
+        text.startsWith('Procentuell förändring') ||
+        text.contains('% av')) {
       if (grade <= 6) {
         m4Percent++;
       } else {

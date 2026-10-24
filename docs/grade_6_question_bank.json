@@ -49,6 +49,7 @@
   "qualityNotes": [
     "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
     "percentage_change uses a fixed integer answer policy: apply-% asks for final price; before→after asks for percent-change magnitude.",
+    "multi_step_word_problems asks for one final integer after completed Swedish word text (no open answer targets).",
     "Some prompts still require diagram, graph, table, card-deck, bag-model or scale context."
   ],
   "coverage": {
@@ -75,10 +76,6 @@
     "requiresSupportingContext": [
       {
         "sectionId": "diagram_interpretation",
-        "questionCount": 20
-      },
-      {
-        "sectionId": "multi_step_word_problems",
         "questionCount": 20
       }
     ]
@@ -811,145 +808,129 @@
       "label": "Flerstegsproblem",
       "questionCount": 20,
       "declaredQuestionCount": 20,
-      "defaultResponseType": "mixed",
+      "defaultResponseType": "numeric",
       "defaultConceptTags": [],
       "defaultStrategyTags": [],
       "questions": [
         {
           "id": "g6_multi_step_word_problems_001",
-          "prompt": "En butik sänker priset med 20%, sedan ytterligare 10%…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn butik sänker ett pris på 1000 kr med 20% och sedan ytterligare 10%. Vad blir priset?",
+          "responseType": "numeric",
+          "correctAnswer": 720
         },
         {
           "id": "g6_multi_step_word_problems_002",
-          "prompt": "En klass samlar 450 burkar, nästa vecka 30% fler…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn klass samlar 450 burkar. Nästa vecka 30% fler. Hur många burkar totalt då?",
+          "responseType": "numeric",
+          "correctAnswer": 585
         },
         {
           "id": "g6_multi_step_word_problems_003",
-          "prompt": "En cykel kostar 4000, höjs med 15%, sänks sedan med 10%…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn cykel kostar 4000 kr. Priset höjs med 15% och sänks sedan med 10%. Vad kostar den då?",
+          "responseType": "numeric",
+          "correctAnswer": 4140
         },
         {
           "id": "g6_multi_step_word_problems_004",
-          "prompt": "Temperaturen går från −5 till 7, sedan ner till 2…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nTemperaturen går från −5° till 7° och sedan ner till 2°. Hur många grader är det till slut?",
+          "responseType": "numeric",
+          "correctAnswer": 2
         },
         {
           "id": "g6_multi_step_word_problems_005",
-          "prompt": "En sträcka ökar från 120 km till 150 km…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn sträcka ökar från 120 km till 150 km. Hur många procent ökar den?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_multi_step_word_problems_006",
-          "prompt": "En låda innehåller 24 flaskor. 1/3 används. 25% av resten tappas…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn låda har 24 flaskor. 8 används. 25% av resten tappas. Hur många flaskor finns kvar?",
+          "responseType": "numeric",
+          "correctAnswer": 12
         },
         {
           "id": "g6_multi_step_word_problems_007",
-          "prompt": "En butik säljer 80 varor. 40% säljs på rea. 20% av resterande returneras…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn butik har 80 varor. 40% säljs på rea. 25% av resterande returneras. Hur många varor är kvar?",
+          "responseType": "numeric",
+          "correctAnswer": 36
         },
         {
           "id": "g6_multi_step_word_problems_008",
-          "prompt": "En elev springer 2 km, sedan 50% längre, sedan 1 km till…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn elev springer 2 km, sedan 50% längre, sedan 1 km till. Hur långt totalt?",
+          "responseType": "numeric",
+          "correctAnswer": 4
         },
         {
           "id": "g6_multi_step_word_problems_009",
-          "prompt": "En tank rymmer 60 liter. 30% fylls. Sedan fylls 40% av det som saknas…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn tank rymmer 60 liter. 30% fylls. Sedan fylls 50% av det som saknas. Hur många liter är i tanken?",
+          "responseType": "numeric",
+          "correctAnswer": 39
         },
         {
           "id": "g6_multi_step_word_problems_010",
-          "prompt": "En klass har 25 elever. 20% är sjuka. 3 går hem. Hur många är kvar?",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+          "prompt": "Flerstegsproblem = ?\\nEn klass har 25 elever. 20% är sjuka och 3 går hem. Hur många är kvar i skolan?",
+          "responseType": "numeric",
+          "correctAnswer": 17
         },
         {
           "id": "g6_multi_step_word_problems_011",
-          "prompt": "En bok kostar 200 kr. Rabatt 15%. Sedan höjs priset med 10%…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn bok kostar 200 kr. Rabatt 15%, sedan höjs priset med 10%. Vad kostar den då?",
+          "responseType": "numeric",
+          "correctAnswer": 187
         },
         {
           "id": "g6_multi_step_word_problems_012",
-          "prompt": "En låda har 90 kulor. 1/2 tas bort. 30% av resten tappas…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn låda har 90 kulor. Hälften tas bort. 20% av resten tappas. Hur många kulor finns kvar?",
+          "responseType": "numeric",
+          "correctAnswer": 36
         },
         {
           "id": "g6_multi_step_word_problems_013",
-          "prompt": "En butik har 500 varor. 20% säljs. 10% av resten reas ut…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn butik har 500 varor. 20% säljs och 10% av resten reas ut. Hur många varor är kvar?",
+          "responseType": "numeric",
+          "correctAnswer": 360
         },
         {
           "id": "g6_multi_step_word_problems_014",
-          "prompt": "En bil kör 120 km. Sedan 25% längre. Sedan 10 km till…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn bil kör 120 km, sedan 25% längre och sedan 10 km till. Hur långt totalt?",
+          "responseType": "numeric",
+          "correctAnswer": 160
         },
         {
           "id": "g6_multi_step_word_problems_015",
-          "prompt": "En elev har 40 poäng. Får +20%. Tappar sedan 10%…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn elev har 50 poäng. Får +20%. Tappar sedan 10%. Hur många poäng har eleven då?",
+          "responseType": "numeric",
+          "correctAnswer": 54
         },
         {
           "id": "g6_multi_step_word_problems_016",
-          "prompt": "En butik höjer priset 20%, sänker 20%. Är priset samma?",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+          "prompt": "Flerstegsproblem = ?\\nEtt pris på 100 kr höjs med 20% och sänks sedan med 20%. Vad blir priset?",
+          "responseType": "numeric",
+          "correctAnswer": 96
         },
         {
           "id": "g6_multi_step_word_problems_017",
-          "prompt": "En klass ökar från 20 till 25 elever. Procentuell ökning?",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+          "prompt": "Flerstegsproblem = ?\\nEn klass ökar från 20 till 25 elever. Hur många procent ökar den?",
+          "responseType": "numeric",
+          "correctAnswer": 25
         },
         {
           "id": "g6_multi_step_word_problems_018",
-          "prompt": "En klass minskar från 30 till 24 elever. Procentuell minskning?",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target."
+          "prompt": "Flerstegsproblem = ?\\nEn klass minskar från 30 till 24 elever. Hur många procent minskar den?",
+          "responseType": "numeric",
+          "correctAnswer": 20
         },
         {
           "id": "g6_multi_step_word_problems_019",
-          "prompt": "En vara kostar 500. Höjs 10%. Höjs 10% igen…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn vara kostar 500 kr. Priset höjs 10% och sedan 10% igen. Vad kostar den då?",
+          "responseType": "numeric",
+          "correctAnswer": 605
         },
         {
           "id": "g6_multi_step_word_problems_020",
-          "prompt": "En vara kostar 800. Sänks 25%. Sänks 10% till…",
-          "responseType": "mixed",
-          "answerPolicyNote": "Requires completed word-problem text and explicit answer target.",
-          "requiresCompletedPrompt": true
+          "prompt": "Flerstegsproblem = ?\\nEn vara kostar 800 kr. Priset sänks 25% och sedan 10%. Vad kostar den då?",
+          "responseType": "numeric",
+          "correctAnswer": 540
         }
       ]
     }

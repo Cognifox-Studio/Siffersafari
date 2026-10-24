@@ -817,6 +817,116 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
 
   // region M5a Generators (Åk 7-9 Core Topics)
 
+  Question _generateM4MultiStepWordQuestion(
+    DifficultyLevel difficulty, {
+    required int difficultyStep,
+  }) {
+    // Åk 6 policy: every multi-step prompt asks for one final integer.
+    final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
+    final templates = step <= 7
+        ? const <({String prompt, int answer, String explanation})>[
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn klass samlar 450 burkar. Nästa vecka 30% fler. Hur många burkar totalt då?',
+              answer: 585,
+              explanation: '450 × 1,30 = 585 burkar.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn cykel kostar 4000 kr. Priset höjs med 15% och sänks sedan med 10%. Vad kostar den då?',
+              answer: 4140,
+              explanation: '4000 × 1,15 × 0,90 = 4140 kr.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn klass har 25 elever. 20% är sjuka och 3 går hem. Hur många är kvar i skolan?',
+              answer: 17,
+              explanation: '25 − 5 sjuka − 3 hem = 17.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn elev springer 2 km, sedan 50% längre, sedan 1 km till. Hur långt totalt?',
+              answer: 4,
+              explanation: '2 + 1 + 1 = 4 km.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn sträcka ökar från 120 km till 150 km. Hur många procent ökar den?',
+              answer: 25,
+              explanation: '(150 − 120) / 120 × 100 = 25%.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn klass ökar från 20 till 25 elever. Hur många procent ökar den?',
+              answer: 25,
+              explanation: '(25 − 20) / 20 × 100 = 25%.',
+            ),
+          ]
+        : const <({String prompt, int answer, String explanation})>[
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn butik sänker ett pris på 1000 kr med 20% och sedan ytterligare 10%. Vad blir priset?',
+              answer: 720,
+              explanation: '1000 × 0,80 × 0,90 = 720 kr.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn bok kostar 200 kr. Rabatt 15%, sedan höjs priset med 10%. Vad kostar den då?',
+              answer: 187,
+              explanation: '200 × 0,85 × 1,10 = 187 kr.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn bil kör 120 km, sedan 25% längre och sedan 10 km till. Hur långt totalt?',
+              answer: 160,
+              explanation: '120 × 1,25 + 10 = 160 km.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn vara kostar 500 kr. Priset höjs 10% och sedan 10% igen. Vad kostar den då?',
+              answer: 605,
+              explanation: '500 × 1,10 × 1,10 = 605 kr.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn vara kostar 800 kr. Priset sänks 25% och sedan 10%. Vad kostar den då?',
+              answer: 540,
+              explanation: '800 × 0,75 × 0,90 = 540 kr.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn butik har 500 varor. 20% säljs och 10% av resten reas ut. Hur många varor är kvar?',
+              answer: 360,
+              explanation: '500 − 100 − 40 = 360 kvar.',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEtt pris på 100 kr höjs med 20% och sänks sedan med 20%. Vad blir priset?',
+              answer: 96,
+              explanation: '100 × 1,20 × 0,80 = 96 kr (inte samma som start).',
+            ),
+            (
+              prompt:
+                  'Flerstegsproblem = ?\nEn klass minskar från 30 till 24 elever. Hur många procent minskar den?',
+              answer: 20,
+              explanation: '(30 − 24) / 30 × 100 = 20%.',
+            ),
+          ];
+
+    final picked = templates[_random.nextInt(templates.length)];
+    return Question(
+      id: _uuid.v4(),
+      operationType: OperationType.mixed,
+      difficulty: difficulty,
+      operand1: 0,
+      operand2: 0,
+      correctAnswer: picked.answer,
+      wrongAnswers: _generateWrongAnswers(picked.answer, 3),
+      promptText: picked.prompt,
+      explanation: picked.explanation,
+    );
+  }
+
   Question _generateM4PercentageChangeQuestion(
     DifficultyLevel difficulty, {
     required int difficultyStep,
