@@ -266,6 +266,26 @@ class InventoryConfig {
     return List<String>.unmodifiable(errors);
   }
 
+  /// Kid-facing hint for locked wardrobe tiles (ROI #88).
+  static String lockedWardrobeHint(
+    String itemId,
+    Iterable<String> unlockedItemIds,
+  ) {
+    final unlocked = unlockedItemIds.toSet();
+    final index = levelUnlockOrderIds.indexOf(itemId);
+    if (index < 0) return 'Kommer snart — spela mer!';
+
+    final unlockedFromOrder =
+        levelUnlockOrderIds.where(unlocked.contains).length;
+    if (index < unlockedFromOrder) {
+      return 'Kommer snart — spela mer!';
+    }
+
+    final levelsAway = index - unlockedFromOrder + 1;
+    if (levelsAway <= 1) return 'Kommer snart — nästa nivå!';
+    return 'Kommer snart — om $levelsAway nivåer till.';
+  }
+
   static InventoryItem? nextLevelUnlock(Iterable<String> unlockedItemIds) {
     final unlocked = unlockedItemIds.toSet();
 

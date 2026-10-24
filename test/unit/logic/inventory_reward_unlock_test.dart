@@ -87,6 +87,27 @@ void main() {
       );
     });
 
+    test('locked wardrobe hint scales with unlock order (#88)', () {
+      expect(
+        InventoryConfig.lockedWardrobeHint('item_safari_hat', const []),
+        'Kommer snart — nästa nivå!',
+      );
+      expect(
+        InventoryConfig.lockedWardrobeHint(
+          'item_binoculars_safari',
+          const ['item_safari_hat', 'item_hat_safari'],
+        ),
+        'Kommer snart — nästa nivå!',
+      );
+      expect(
+        InventoryConfig.lockedWardrobeHint(
+          'item_map_safari',
+          const ['item_safari_hat'],
+        ),
+        'Kommer snart — om 4 nivåer till.',
+      );
+    });
+
     test('pedestal items show only camp souvenirs (no wardrobe fillers)', () {
       final visible = InventoryConfig.visibleCampPedestalItems(const [
         'item_safari_hat',

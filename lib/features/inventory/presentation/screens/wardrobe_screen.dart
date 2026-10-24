@@ -283,59 +283,84 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                 equippedItems.entries
                     .any((e) => e.value == item.id && !e.key.contains('_')));
 
-        return GestureDetector(
-          key: Key('wardrobe_item_${item.id}'),
-          onTap: () {
-            if (isUnlocked) {
-              ref.read(audioServiceProvider).playClickSound();
-              if (isEquippedInPose) {
-                final existingKey =
-                    equippedItems.containsKey(poseKey) ? poseKey : item.id;
-                ref.read(userProvider.notifier).unequipItem(existingKey);
-              } else {
-                ref.read(userProvider.notifier).equipItem(poseKey, item.id);
+        final lockedHint = InventoryConfig.lockedWardrobeHint(
+          item.id,
+          unlockedItems,
+        );
+
+        return Semantics(
+          button: true,
+          enabled: isUnlocked,
+          label: isUnlocked
+              ? item.name
+              : '${item.name}, låst. $lockedHint',
+          child: GestureDetector(
+            key: Key('wardrobe_item_${item.id}'),
+            onTap: () {
+              if (isUnlocked) {
+                ref.read(audioServiceProvider).playClickSound();
+                if (isEquippedInPose) {
+                  final existingKey =
+                      equippedItems.containsKey(poseKey) ? poseKey : item.id;
+                  ref.read(userProvider.notifier).unequipItem(existingKey);
+                } else {
+                  ref.read(userProvider.notifier).equipItem(poseKey, item.id);
+                }
+                return;
               }
-            }
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: isEquippedInPose
-                  ? themeColors.secondaryActionColor
-                  : themeColors.cardColor.withValues(alpha: 0.8),
-              borderRadius:
-                  BorderRadius.circular(AppConstants.borderRadius * 1.5),
-              border: Border.all(
-                color: isEquippedInPose
-                    ? themeColors.primaryActionColor
-                    : Colors.transparent,
-                width: isEquippedInPose ? 4 : 0,
-              ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Opacity(
-                    opacity: isUnlocked ? 1.0 : 0.3,
-                    child: Image.asset(
-                      item.assetPath,
-                      cacheWidth: itemCacheSize,
-                      cacheHeight: itemCacheSize,
-                    ),
-                  ),
+
+              ref.read(audioServiceProvider).playClickSound();
+              final messenger = ScaffoldMessenger.maybeOf(context);
+              messenger?.hideCurrentSnackBar();
+              messenger?.showSnackBar(
+                SnackBar(
+                  key: Key('wardrobe_locked_hint_${item.id}'),
+                  content: Text(lockedHint),
+                  behavior: SnackBarBehavior.floating,
+                  duration: const Duration(seconds: 3),
                 ),
-                if (!isUnlocked)
-                  const Positioned(
-                    bottom: 4,
-                    right: 4,
-                    child: Icon(
-                      Icons.lock,
-                      size: 24,
-                      color: Colors.black54,
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: isEquippedInPose
+                    ? themeColors.secondaryActionColor
+                    : themeColors.cardColor.withValues(alpha: 0.8),
+                borderRadius:
+                    BorderRadius.circular(AppConstants.borderRadius * 1.5),
+                border: Border.all(
+                  color: isEquippedInPose
+                      ? themeColors.primaryActionColor
+                      : Colors.transparent,
+                  width: isEquippedInPose ? 4 : 0,
+                ),
+              ),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Opacity(
+                      opacity: isUnlocked ? 1.0 : 0.3,
+                      child: Image.asset(
+                        item.assetPath,
+                        cacheWidth: itemCacheSize,
+                        cacheHeight: itemCacheSize,
+                      ),
                     ),
                   ),
-              ],
+                  if (!isUnlocked)
+                    const Positioned(
+                      bottom: 4,
+                      right: 4,
+                      child: Icon(
+                        Icons.lock,
+                        size: 24,
+                        color: Colors.black54,
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         );
