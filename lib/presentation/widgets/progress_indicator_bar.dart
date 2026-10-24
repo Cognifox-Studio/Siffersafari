@@ -8,21 +8,29 @@ class ProgressIndicatorBar extends StatelessWidget {
     required this.progress,
     this.backgroundColor,
     this.valueColor,
+    this.currentQuestion,
+    this.totalQuestions,
     super.key,
   });
 
   final double progress;
   final Color? backgroundColor;
   final Color? valueColor;
+  final int? currentQuestion;
+  final int? totalQuestions;
 
   @override
   Widget build(BuildContext context) {
     final percent = (progress.clamp(0.0, 1.0) * 100).round();
     final scheme = Theme.of(context).colorScheme;
     final fallbackValueColor = Theme.of(context).colorScheme.secondary;
+    final questionLabel =
+        currentQuestion != null && totalQuestions != null
+            ? 'Fråga $currentQuestion av $totalQuestions. '
+            : '';
     return Semantics(
-      label: 'Framsteg',
-      value: '$percent procent',
+      liveRegion: true,
+      label: '${questionLabel}Framsteg $percent procent',
       child: ExcludeSemantics(
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppConstants.borderRadius),

@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #77–80).  
-**Status:** #75–76 haptic + confetti threshold klara. #11–48 + #51–76 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~53 lokalt (ej pushad). Ask before push.
+**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #78–80).  
+**Status:** #77 live-region “fråga X av Y” klar. #11–48 + #51–77 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Confetti floor; haptic; TTS duck; quiz abandon; SFX.
+**Klart sedan förra briefen:** Live-region progress; confetti floor; haptic; TTS duck; quiz abandon; SFX.
 
 ---
 

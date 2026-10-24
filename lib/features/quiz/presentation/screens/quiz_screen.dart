@@ -287,9 +287,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       },
       child: ThemedBackgroundScaffold(
       appBar: AppBar(
-        title: Text(
-          'Fråga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
-          style: TextStyle(color: onPrimary),
+        title: Semantics(
+          liveRegion: true,
+          label:
+              'Fråga ${session.currentQuestionIndex + 1} av ${session.totalQuestions}',
+          child: Text(
+            'Fråga ${session.currentQuestionIndex + 1}/${session.totalQuestions}',
+            style: TextStyle(color: onPrimary),
+          ),
         ),
         leading: IconButton(
           tooltip: 'Stäng quiz',
@@ -381,6 +386,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           padding: EdgeInsets.all(AppConstants.defaultPadding.w),
           child: ProgressIndicatorBar(
             progress: progress,
+            currentQuestion: currentQuestionNumber,
+            totalQuestions: totalQuestions,
             valueColor: accentColor,
             backgroundColor:
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
@@ -458,6 +465,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           padding: EdgeInsets.all(AppConstants.defaultPadding.w),
           child: ProgressIndicatorBar(
             progress: progress,
+            currentQuestion: currentQuestionNumber,
+            totalQuestions: totalQuestions,
             valueColor: accentColor,
             backgroundColor:
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),

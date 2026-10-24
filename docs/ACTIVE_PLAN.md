@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #77–80). #11–48 + #51–76 + #20 levererade.
+**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #78–80). #11–48 + #51–77 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Live-region fråga X av Y** — #77
-2. **Hold-to-confirm answers Åk1–2** — #78
-3. **Abandon → seed due keys if SRS** — #79
+1. **Hold-to-confirm answers Åk1–2** — #78
+2. **Abandon → seed due keys if SRS** — #79
+3. **TTS SV digit/operator for Mix** — #80
 
 Lyft **en** till Now i taget.
 
