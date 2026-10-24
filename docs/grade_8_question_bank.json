@@ -394,37 +394,43 @@
           "id": "g8_proportionality_010",
           "prompt": "Pris per kg är 40 kr…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_011",
           "prompt": "Taxi kostar 12 kr/km…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_012",
           "prompt": "En maskin producerar 5 delar/min…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_013",
           "prompt": "En pump fyller 3 liter/min…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_014",
           "prompt": "En bil kör 0.6 liter/mil…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_015",
           "prompt": "En cyklist håller 25 km/h…",
           "responseType": "mixed",
-          "requiresCompletedPrompt": true
+          "requiresCompletedPrompt": true,
+          "runtimeEligible": false
         },
         {
           "id": "g8_proportionality_016",

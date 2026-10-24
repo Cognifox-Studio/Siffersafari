@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #60–62).  
-**Status:** #59 tiokompisar Mix-audit klar. #11–48 + #51–59 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~39 lokalt (ej pushad).
+**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #61–62).  
+**Status:** #60 requiresCompletedPrompt non-runtime klar. #11–48 + #51–60 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~40 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Tiokompisar audit; ekvation contract; powers; feedback tips.
+**Klart sedan förra briefen:** Non-runtime tags; tiokompisar audit; ekvation; powers.
 
 ---
 

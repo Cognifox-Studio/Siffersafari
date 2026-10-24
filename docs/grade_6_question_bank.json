@@ -50,7 +50,8 @@
     "Source prompts were normalized from Uppgitstabell.txt into structured JSON records.",
     "percentage_change uses a fixed integer answer policy: apply-% asks for final price; before→after asks for percent-change magnitude.",
     "multi_step_word_problems asks for one final integer after completed Swedish word text (no open answer targets).",
-    "Some prompts still require diagram, graph, table, card-deck, bag-model or scale context."
+    "Some prompts still require diagram, graph, table, card-deck, bag-model or scale context.",
+    "Incomplete multi-blank prompts must use requiresCompletedPrompt + runtimeEligible:false (structure audit #60); none currently in Åk 6."
   ],
   "coverage": {
     "questionCount": 130,
