@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #90+).  
-**Status:** #89 honest privacy export copy klar. #11–48 + #51–89 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~67, ej pushad). Ask before push.
+**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #91+).  
+**Status:** #90/#93 listing beats klar. #11–48 + #51–90 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~68, ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Privacy export honesty; wardrobe level hints; episode badge.
+**Klart sedan förra briefen:** Store listing; privacy honesty; wardrobe level hints.
 
 ---
 
