@@ -24,7 +24,69 @@ class _InteractiveMapCanvas extends StatefulWidget {
 }
 
 class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
+  static const double _viewportHeight = 320;
+  static const double _minRowHeight = 64;
+  static const int _cols = 5;
+
+  final ScrollController _scrollController = ScrollController();
   StoryNode? _tapped;
+  int? _scrolledToIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _scrollToCurrentStop();
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant _InteractiveMapCanvas oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.story.currentNodeIndex != widget.story.currentNodeIndex) {
+      _scrolledToIndex = null;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _scrollToCurrentStop();
+      });
+    }
+  }
+
+  void _scrollToCurrentStop() {
+    if (!_scrollController.hasClients) return;
+    final nodes = widget.story.nodes;
+    final currentIndex = nodes.indexWhere(
+      (node) => node.state == StoryNodeState.current,
+    );
+    if (currentIndex < 0) return;
+    if (_scrolledToIndex == currentIndex) return;
+
+    final contentHeight = _contentHeightFor(nodes.length);
+    if (contentHeight <= _viewportHeight) {
+      _scrolledToIndex = currentIndex;
+      return;
+    }
+
+    final rows = (nodes.length / _cols).ceil();
+    final cellH = contentHeight / rows;
+    final row = currentIndex ~/ _cols;
+    final rowCenter = row * cellH + cellH / 2;
+    final target = (rowCenter - _viewportHeight / 2)
+        .clamp(0.0, _scrollController.position.maxScrollExtent);
+    _scrollController.jumpTo(target);
+    _scrolledToIndex = currentIndex;
+  }
+
+  static double _contentHeightFor(int count) {
+    if (count <= 0) return _viewportHeight;
+    final rows = (count / _cols).ceil();
+    return (rows * _minRowHeight).clamp(_viewportHeight, double.infinity);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,123 +97,148 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(AppConstants.borderRadius),
       child: SizedBox(
-        height: 320,
+        height: _viewportHeight,
         child: LayoutBuilder(
           builder: (context, constraints) {
             final w = constraints.maxWidth.isFinite
                 ? constraints.maxWidth
                 : MediaQuery.sizeOf(context).width;
-            const h = 320.0;
+            final contentHeight = _contentHeightFor(nodes.length);
             final backgroundCacheWidth = imageCacheExtent(context, w);
-            final backgroundCacheHeight = imageCacheExtent(context, h);
-            final positions = _computePositions(nodes.length, w, h);
+            final backgroundCacheHeight =
+                imageCacheExtent(context, contentHeight);
+            final positions =
+                _computePositions(nodes.length, w, contentHeight);
 
             return Stack(
-              fit: StackFit.expand,
               children: [
-                Image.asset(
-                  widget.backgroundAsset,
-                  fit: BoxFit.cover,
-                  excludeFromSemantics: true,
-                  cacheWidth: backgroundCacheWidth,
-                  cacheHeight: backgroundCacheHeight,
-                  errorBuilder: (_, __, ___) => ColoredBox(
-                    color: widget.accentColor.withValues(alpha: 0.35),
-                  ),
-                ),
-                ColoredBox(
-                  color: shadowColor.withValues(alpha: 0.32),
-                ),
-                CustomPaint(
-                  painter: _MapPathPainter(
-                    positions: positions,
-                    nodes: nodes,
-                    completedColor: widget.completedColor,
-                    currentColor: widget.currentColor,
-                    accentColor: widget.accentColor,
-                    onPrimary: widget.onPrimary,
-                  ),
-                ),
-                ...List.generate(nodes.length, (i) {
-                  final pos = positions[i];
-                  final node = nodes[i];
-                  final isActive = node.state == StoryNodeState.current;
-                  const radius = _MapPathPainter.nodeRadius;
-                  const tapArea = 52.0;
+                SingleChildScrollView(
+                  key: const Key('story_map_canvas_scroll'),
+                  controller: _scrollController,
+                  child: SizedBox(
+                    width: w,
+                    height: contentHeight,
+                    child: Stack(
+                      children: [
+                        Positioned.fill(
+                          child: Image.asset(
+                            widget.backgroundAsset,
+                            fit: BoxFit.cover,
+                            excludeFromSemantics: true,
+                            cacheWidth: backgroundCacheWidth,
+                            cacheHeight: backgroundCacheHeight,
+                            errorBuilder: (_, __, ___) => ColoredBox(
+                              color:
+                                  widget.accentColor.withValues(alpha: 0.35),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: ColoredBox(
+                            color: shadowColor.withValues(alpha: 0.32),
+                          ),
+                        ),
+                        CustomPaint(
+                          size: Size(w, contentHeight),
+                          painter: _MapPathPainter(
+                            positions: positions,
+                            nodes: nodes,
+                            completedColor: widget.completedColor,
+                            currentColor: widget.currentColor,
+                            accentColor: widget.accentColor,
+                            onPrimary: widget.onPrimary,
+                          ),
+                        ),
+                        ...List.generate(nodes.length, (i) {
+                          final pos = positions[i];
+                          final node = nodes[i];
+                          final isActive =
+                              node.state == StoryNodeState.current;
+                          const radius = _MapPathPainter.nodeRadius;
+                          const tapArea = 52.0;
 
-                  return Positioned(
-                    left: pos.dx - tapArea / 2,
-                    top: pos.dy - tapArea / 2,
-                    child: GestureDetector(
-                      onTap: () => setState(() => _tapped = node),
-                      child: SizedBox(
-                        width: tapArea,
-                        height: tapArea,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            if (isActive)
-                              Container(
-                                width: radius * 2 + 12,
-                                height: radius * 2 + 12,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: widget.currentColor.withValues(
-                                      alpha: 0.80,
+                          return Positioned(
+                            left: pos.dx - tapArea / 2,
+                            top: pos.dy - tapArea / 2,
+                            child: GestureDetector(
+                              onTap: () => setState(() => _tapped = node),
+                              child: SizedBox(
+                                width: tapArea,
+                                height: tapArea,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    if (isActive)
+                                      Container(
+                                        width: radius * 2 + 12,
+                                        height: radius * 2 + 12,
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color:
+                                                widget.currentColor.withValues(
+                                              alpha: 0.80,
+                                            ),
+                                            width: 3,
+                                          ),
+                                        ),
+                                      ),
+                                    if (_storyLandmarkAssetPath(node.sceneTag)
+                                        case final assetPath?)
+                                      Positioned(
+                                        bottom: 6,
+                                        child: Builder(
+                                          builder: (context) {
+                                            final size =
+                                                node.sceneTag == 'baslager'
+                                                    ? 48.0
+                                                    : 54.0;
+                                            final cacheSize =
+                                                imageCacheExtent(context, size);
+                                            return Image.asset(
+                                              assetPath,
+                                              width: size,
+                                              height: size,
+                                              cacheWidth: cacheSize,
+                                              cacheHeight: cacheSize,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                    Positioned(
+                                      bottom: 0,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: shadowColor.withValues(
+                                            alpha: 0.55,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(999),
+                                        ),
+                                        child: Text(
+                                          '${node.stepIndex + 1}',
+                                          style: TextStyle(
+                                            color: widget.onPrimary,
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                        ),
+                                      ),
                                     ),
-                                    width: 3,
-                                  ),
-                                ),
-                              ),
-                            if (_storyLandmarkAssetPath(node.sceneTag)
-                                case final assetPath?)
-                              Positioned(
-                                bottom: 6,
-                                child: Builder(
-                                  builder: (context) {
-                                    final size = node.sceneTag == 'baslager'
-                                        ? 48.0
-                                        : 54.0;
-                                    final cacheSize =
-                                        imageCacheExtent(context, size);
-                                    return Image.asset(
-                                      assetPath,
-                                      width: size,
-                                      height: size,
-                                      cacheWidth: cacheSize,
-                                      cacheHeight: cacheSize,
-                                    );
-                                  },
-                                ),
-                              ),
-                            Positioned(
-                              bottom: 0,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 5,
-                                  vertical: 2,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: shadowColor.withValues(alpha: 0.55),
-                                  borderRadius: BorderRadius.circular(999),
-                                ),
-                                child: Text(
-                                  '${node.stepIndex + 1}',
-                                  style: TextStyle(
-                                    color: widget.onPrimary,
-                                    fontSize: 9,
-                                    fontWeight: FontWeight.w800,
-                                  ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ],
-                        ),
-                      ),
+                          );
+                        }),
+                      ],
                     ),
-                  );
-                }),
+                  ),
+                ),
                 if (_tapped != null)
                   Positioned(
                     bottom: 12,
@@ -179,16 +266,15 @@ class _InteractiveMapCanvasState extends State<_InteractiveMapCanvas> {
 
   static List<Offset> _computePositions(int count, double w, double h) {
     if (count == 0) return [];
-    const cols = 5;
-    final rows = (count / cols).ceil();
-    final cellW = w / cols;
+    final rows = (count / _cols).ceil();
+    final cellW = w / _cols;
     final cellH = h / rows;
     final positions = <Offset>[];
 
     for (var i = 0; i < count; i++) {
-      final row = i ~/ cols;
-      final col = i % cols;
-      final effectiveCol = row.isOdd ? (cols - 1 - col) : col;
+      final row = i ~/ _cols;
+      final col = i % _cols;
+      final effectiveCol = row.isOdd ? (_cols - 1 - col) : col;
       final x = cellW * effectiveCol + cellW / 2;
       final y = cellH * row + cellH / 2;
       positions.add(Offset(x, y));

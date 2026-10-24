@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Story/camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #84–85).  
-**Status:** #83 badge PNG-tiles klar. #11–48 + #51–83 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
+**Mål:** Story/camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #85+).  
+**Status:** #84 auto-scroll story map klar. #11–48 + #51–84 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~60, ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Badge PNG album; pedestal arrival; hard quest path.
+**Klart sedan förra briefen:** Story map auto-scroll; badge PNG; pedestal arrival.
 
 ---
 
