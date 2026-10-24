@@ -244,6 +244,38 @@ class QuestProgressionService {
       difficulty: DifficultyLevel.medium,
       requiredMastery: MasteryLevel.proficient,
     ),
+    QuestDefinition(
+      id: 'q_plus_hard',
+      title: 'Storma bergstoppen',
+      description: 'Klara plus på svår nivå.',
+      operation: OperationType.addition,
+      difficulty: DifficultyLevel.hard,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_minus_hard',
+      title: 'Korsa ravinen',
+      description: 'Klara minus på svår nivå.',
+      operation: OperationType.subtraction,
+      difficulty: DifficultyLevel.hard,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_times_hard',
+      title: 'Tämj djungeldraken',
+      description: 'Klara gånger på svår nivå.',
+      operation: OperationType.multiplication,
+      difficulty: DifficultyLevel.hard,
+      requiredMastery: MasteryLevel.proficient,
+    ),
+    QuestDefinition(
+      id: 'q_div_hard',
+      title: 'Dela stjärnkartan',
+      description: 'Klara delat på svår nivå.',
+      operation: OperationType.division,
+      difficulty: DifficultyLevel.hard,
+      requiredMastery: MasteryLevel.proficient,
+    ),
   ];
 
   QuestPath questsForUser(
@@ -254,14 +286,18 @@ class QuestProgressionService {
 
     // Grade-based paths (recommended guidance). Keep it simple and predictable.
     // - Åk 1-2 & Age.young: only Easy
-    // - Åk 3-4, 5+ & Age.middle, Age.older: Easy + Medium (Hard quests can be added later)
+    // - Åk 3-4 & Age.middle: Easy + Medium
+    // - Åk 5+ / Age.older: Easy + Medium + Hard (ROI #47 badge fairness)
     final includeMedium = (grade != null && grade > 2) ||
         (grade == null && user.ageGroup != AgeGroup.young);
+    final includeHard = (grade != null && grade >= 5) ||
+        (grade == null && user.ageGroup == AgeGroup.older);
 
     final basePath = defaultQuests.where((q) {
       if (q.difficulty == DifficultyLevel.easy) return true;
       if (includeMedium && q.difficulty == DifficultyLevel.medium) return true;
-      return false; // Ignorera hard tills det lanseras
+      if (includeHard && q.difficulty == DifficultyLevel.hard) return true;
+      return false;
     }).toList(growable: false);
 
     final filteredPath = _applyAllowedOperations(
@@ -271,12 +307,20 @@ class QuestProgressionService {
 
     return _normalizePathLength(
       basePath: filteredPath,
-      targetLength: _targetStopCountFor(includeMedium: includeMedium),
+      targetLength: _targetStopCountFor(
+        includeMedium: includeMedium,
+        includeHard: includeHard,
+      ),
     );
   }
 
-  int _targetStopCountFor({required bool includeMedium}) {
-    return includeMedium ? 30 : 10;
+  int _targetStopCountFor({
+    required bool includeMedium,
+    required bool includeHard,
+  }) {
+    if (includeHard) return 34;
+    if (includeMedium) return 30;
+    return 10;
   }
 
   QuestPath _normalizePathLength({

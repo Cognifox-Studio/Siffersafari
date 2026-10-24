@@ -40,6 +40,23 @@ void main() {
       expect(path.last.id, 'q_div_medium_4__del_2');
     });
 
+    test('older/Åk5+ path inkluderar hard-quests för badge-fairness', () {
+      const user = UserProgress(
+        userId: 'u1h',
+        name: 'Test',
+        ageGroup: AgeGroup.older,
+        gradeLevel: 5,
+      );
+
+      final path = service.questsForUser(user);
+
+      expect(path, hasLength(34));
+      expect(
+        path.any((quest) => quest.difficulty == DifficultyLevel.hard),
+        isTrue,
+      );
+    });
+
     test('Åk 1–2 får exakt 10 stopp även med bara plus och minus', () {
       const user = UserProgress(
         userId: 'u1',

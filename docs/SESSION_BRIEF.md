@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Hard-quest vs hard-badge fairness ([ROI_BACKLOG](ROI_BACKLOG.md) #47).  
-**Status:** #46 feedback glanceability klar. #11–46 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~30 lokalt (ej pushad).
+**Mål:** Parent local analytics surface ([ROI_BACKLOG](ROI_BACKLOG.md) #48).  
+**Status:** #47 hard-quest/badge fairness klar. #11–47 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~31 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Feedback Nästa pinned; Öken; a11y; cadence; matte #34–40.
+**Klart sedan förra briefen:** Hard quests + badge fairness; feedback; Öken; a11y; cadence; matte #34–40.
 
 ---
 

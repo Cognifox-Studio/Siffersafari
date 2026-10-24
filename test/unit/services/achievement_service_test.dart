@@ -165,6 +165,29 @@ void main() {
       expect(reward.unlockedIds, contains(AppConstants.points500Achievement));
     });
 
+    test('låser upp svår-badge på perfekt medel-quiz (quest-fairness)', () {
+      const user = UserProgress(
+        userId: 'u10b',
+        name: 'Kim',
+        ageGroup: AgeGroup.middle,
+      );
+
+      const session = QuizSession(
+        sessionId: 's10b',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.multiplication,
+        difficulty: DifficultyLevel.medium,
+        questions: [],
+        targetQuestionCount: 10,
+        correctAnswers: 10,
+        wrongAnswers: 0,
+        totalPoints: 50,
+      );
+
+      final reward = service.evaluate(user: user, session: session);
+      expect(reward.unlockedIds, contains(AppConstants.hardQuizAchievement));
+    });
+
     test('låser upp 1000- och 2000-poängsbadge när gränserna passeras', () {
       const user = UserProgress(
         userId: 'u11',

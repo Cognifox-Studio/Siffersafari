@@ -199,8 +199,14 @@ class AchievementService {
   }
 
   bool _shouldUnlockHardQuiz(QuizSession session, UserProgress user) {
-    return session.difficulty == DifficultyLevel.hard &&
-        !user.achievements.contains(AppConstants.hardQuizAchievement);
+    if (user.achievements.contains(AppConstants.hardQuizAchievement)) {
+      return false;
+    }
+    // Fairness (ROI #47): hard badge must be reachable via quests.
+    // Hard quiz unlocks it; a perfect medium quiz also counts.
+    if (session.difficulty == DifficultyLevel.hard) return true;
+    return session.difficulty == DifficultyLevel.medium &&
+        session.successRate == 1.0;
   }
 
   bool _shouldUnlockQuizCount(

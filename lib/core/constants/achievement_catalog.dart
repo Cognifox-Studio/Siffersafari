@@ -52,7 +52,7 @@ abstract final class AchievementCatalog {
       displayName: 'Klarade svår nivå',
       albumLabel: 'Svår',
       emoji: '🧗',
-      unlockHint: 'Klara ett quiz på svår nivå.',
+      unlockHint: 'Klara ett svårt quiz, eller ett medel-quiz med alla rätt.',
     ),
     AchievementDefinition(
       id: AppConstants.quiz10Achievement,

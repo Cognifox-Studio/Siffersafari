@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Hard-quest vs hard-badge fairness ([ROI_BACKLOG](ROI_BACKLOG.md) #47). #11–46 + #20 levererade.
+**Produktspår:** Parent local analytics surface ([ROI_BACKLOG](ROI_BACKLOG.md) #48). #11–47 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Parent local analytics surface** — #48
-2. **Curriculum polish leftovers** — #51–62
-3. **Incremental facit→runtime** — #49
+1. **Incremental facit→runtime** — #49
+2. **Difficulty steps add strategy** — #50
+3. **Curriculum polish leftovers** — #51–62
 
 Lyft **en** till Now i taget.
 
