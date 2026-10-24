@@ -12,6 +12,8 @@ class _DashboardBody extends ConsumerStatefulWidget {
 }
 
 class _DashboardBodyState extends ConsumerState<_DashboardBody> {
+  final _gradeSectionKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
@@ -19,6 +21,17 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
       if (!mounted) return;
       ref.read(appAnalyticsProvider).logEvent(name: 'parent_mode_opened');
     });
+  }
+
+  Future<void> _scrollToGradePicker() async {
+    final context = _gradeSectionKey.currentContext;
+    if (context == null) return;
+    await Scrollable.ensureVisible(
+      context,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeOutCubic,
+      alignment: 0.1,
+    );
   }
 
   @override
@@ -179,6 +192,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     );
 
     final gradePicker = Column(
+      key: _gradeSectionKey,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Wrap(
@@ -902,12 +916,24 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     );
 
     final benchmarkSectionContent = user.gradeLevel == null
-        ? Text(
-            'Sätt Årskurs (Åk) för att få Under/I linje/Över-indikator.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: mutedOnPrimary,
-                  fontWeight: FontWeight.w600,
-                ),
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Sätt Årskurs (Åk) för att få Under/I linje/Över-indikator.',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: mutedOnPrimary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              const SizedBox(height: AppConstants.smallPadding),
+              OutlinedButton.icon(
+                key: const Key('parent_set_grade_cta'),
+                onPressed: _scrollToGradePicker,
+                icon: const Icon(Icons.school_outlined),
+                label: const Text('Välj årskurs'),
+              ),
+            ],
           )
         : _BenchmarkSection(
             userId: user.userId,

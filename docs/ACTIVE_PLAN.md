@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #71–75). #11–48 + #51–70 + #20 levererade.
+**Produktspår:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #72–75). #11–48 + #51–71 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **CTA when Skolverket panel null Åk** — #71
-2. **Kid-safe SFX labels** — #72
-3. **Confirm before quiz abandon** — #73
+1. **Kid-safe SFX labels** — #72
+2. **Confirm before quiz abandon** — #73
+3. **Duck music while TTS speaks** — #74
 
 Lyft **en** till Now i taget.
 

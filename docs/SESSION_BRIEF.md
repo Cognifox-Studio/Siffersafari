@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #71–75).  
-**Status:** #69–70 profil empty-state/soft-max + onboarding abandon. #11–48 + #51–70 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~49 lokalt (ej pushad).
+**Mål:** Parent trust + quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #72–75).  
+**Status:** #71 Skolverket null-Åk CTA klar. #11–48 + #51–71 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~50 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Profile/onboarding polish; grade defaults; Åk owner; path confirm.
+**Klart sedan förra briefen:** Benchmark CTA; profile/onboarding; grade defaults; Åk owner.
 
 ---
 
