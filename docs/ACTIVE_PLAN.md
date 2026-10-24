@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #80). #11–48 + #51–79 + #20 levererade.
+**Produktspår:** Camp/story polish ([ROI_BACKLOG](ROI_BACKLOG.md) #81–83). #11–48 + #51–80 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **TTS SV digit/operator for Mix** — #80
-2. **Hard quests on older-grade paths** — #81
-3. **Pedestal arrival anim** — #82
+1. **Hard quests on older-grade paths** — #81
+2. **Pedestal arrival anim** — #82
+3. **Badge album emoji → PNG tiles** — #83
 
 Lyft **en** till Now i taget.
 

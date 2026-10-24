@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Camp/quiz polish ([ROI_BACKLOG](ROI_BACKLOG.md) #80).  
-**Status:** #79 abandon→seed due keys klar. #11–48 + #51–79 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
+**Mål:** Camp/story polish ([ROI_BACKLOG](ROI_BACKLOG.md) #81–83).  
+**Status:** #80 TTS SV digit/operator klar. #11–48 + #51–80 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (ej pushad). Ask before push.
 
-**Klart sedan förra briefen:** Abandon SRS seed; hold-to-confirm; live-region progress.
+**Klart sedan förra briefen:** TTS SV math speech; abandon SRS seed; hold-to-confirm.
 
 ---
 
