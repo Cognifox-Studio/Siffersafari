@@ -1229,22 +1229,63 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
     DifficultyLevel difficulty, {
     required int difficultyStep,
   }) {
-    // M5a (Åk 8–9, utan ny UI): potenser i textformat med heltalssvar.
+    // M5a (Åk 8): bank-aligned integer powers (ROI #57). Cap keeps MC keypadable.
     final step = DifficultyConfig.clampDifficultyStep(difficultyStep);
 
-    final exponent = step <= 3
-        ? 2
-        : step <= 6
-            ? (2 + _random.nextInt(2))
-            : (2 + _random.nextInt(3));
+    const easy = <(int, int)>[
+      (2, 2),
+      (3, 2),
+      (4, 2),
+      (5, 2),
+      (6, 2),
+      (7, 2),
+      (8, 2),
+      (9, 2),
+      (10, 2),
+      (2, 3),
+      (3, 3),
+      (4, 3),
+      (5, 3),
+    ];
+    const medium = <(int, int)>[
+      ...easy,
+      (11, 2),
+      (12, 2),
+      (15, 2),
+      (20, 2),
+      (2, 4),
+      (2, 5),
+      (2, 6),
+      (3, 4),
+      (6, 3),
+      (7, 3),
+      (10, 3),
+    ];
+    const hard = <(int, int)>[
+      ...medium,
+      (2, 7),
+      (2, 8),
+      (2, 9),
+      (3, 5),
+      (4, 4),
+      (5, 4),
+      (8, 3),
+      (9, 3),
+      (25, 2),
+      (30, 2),
+      (50, 2),
+      (10, 4),
+      (100, 2),
+    ];
 
-    final maxBase = step <= 3
-        ? 12
-        : step <= 6
-            ? 10
-            : 8;
-    final base = 2 + _random.nextInt(max(1, maxBase - 1));
-
+    final pool = step <= 4
+        ? easy
+        : step <= 7
+            ? medium
+            : hard;
+    final pair = pool[_random.nextInt(pool.length)];
+    final base = pair.$1;
+    final exponent = pair.$2;
     final correct = pow(base, exponent).toInt();
     final prompt = 'Potenser = ?\nVad är $base^$exponent?';
 
@@ -1252,8 +1293,8 @@ mixin _QuestionGeneratorServiceImpl on _QuestionGeneratorServiceHelpers {
       id: _uuid.v4(),
       operationType: OperationType.mixed,
       difficulty: difficulty,
-      operand1: 0,
-      operand2: 0,
+      operand1: base,
+      operand2: exponent,
       correctAnswer: correct,
       wrongAnswers: _generateWrongAnswers(correct, 3),
       promptText: prompt,

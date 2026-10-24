@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Widen Åk8 powers + curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #57–62).  
-**Status:** #55–56 feedback tips (prioritering + negativa tallinje) klara. #11–48 + #51–56 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~36 lokalt (ej pushad).
+**Mål:** Curriculum hygiene ([ROI_BACKLOG](ROI_BACKLOG.md) #58–62).  
+**Status:** #57 Åk8 powers widen klar. #11–48 + #51–57 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead ~37 lokalt (ej pushad).
 
-**Klart sedan förra briefen:** Feedback tips; exception matrices; Förenkla@x; matte #34–40.
+**Klart sedan förra briefen:** Powers widen; feedback tips; exception matrices; Förenkla@x.
 
 ---
 
