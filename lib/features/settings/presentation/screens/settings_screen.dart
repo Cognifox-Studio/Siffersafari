@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/providers/parent_pin_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
+import 'package:siffersafari/core/utils/input_validators.dart';
 import 'package:siffersafari/core/utils/page_transitions.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
+import 'package:siffersafari/domain/services/parent_pin_service.dart';
 import 'package:siffersafari/features/profiles/presentation/dialogs/create_user_dialog.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
 
@@ -17,13 +21,25 @@ class SettingsScreen extends ConsumerWidget {
 
   static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
 
+  Future<bool> _requireParentPin(BuildContext context, WidgetRef ref) async {
+    final pinService = ref.read(parentPinServiceProvider);
+    if (!pinService.hasPinSet()) return true;
+
+    final ok = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) => _DestructivePinDialog(pinService: pinService),
+    );
+    return ok == true;
+  }
+
   Future<void> _confirmDeleteProfile(
     BuildContext context,
     WidgetRef ref,
     String userId,
     String userName,
   ) async {
-    await showDialog<void>(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text('Radera $userName?'),
@@ -32,21 +48,12 @@ class SettingsScreen extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('Avbryt'),
           ),
           TextButton(
             key: const Key('confirm_delete_profile_button'),
-            onPressed: () async {
-              Navigator.of(dialogContext).pop();
-              await ref.read(userProvider.notifier).deleteUser(userId);
-              if (!context.mounted) return;
-
-              final hasUsers = ref.read(userProvider).allUsers.isNotEmpty;
-              if (!hasUsers) {
-                Navigator.of(context).maybePop();
-              }
-            },
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(
               'Radera',
               style: TextStyle(color: Colors.red.shade400),
@@ -55,10 +62,22 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
+    if (confirmed != true || !context.mounted) return;
+
+    final pinOk = await _requireParentPin(context, ref);
+    if (!pinOk || !context.mounted) return;
+
+    await ref.read(userProvider.notifier).deleteUser(userId);
+    if (!context.mounted) return;
+
+    final hasUsers = ref.read(userProvider).allUsers.isNotEmpty;
+    if (!hasUsers) {
+      Navigator.of(context).maybePop();
+    }
   }
 
   Future<void> _confirmClearAllData(BuildContext context, WidgetRef ref) async {
-    await showDialog<void>(
+    final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Radera all data?'),
@@ -68,17 +87,12 @@ class SettingsScreen extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
             child: const Text('Avbryt'),
           ),
           TextButton(
             key: const Key('confirm_clear_all_data_button'),
-            onPressed: () async {
-              Navigator.of(dialogContext).pop();
-              await ref.read(userProvider.notifier).clearAllData();
-              if (!context.mounted) return;
-              Navigator.of(context).maybePop();
-            },
+            onPressed: () => Navigator.of(dialogContext).pop(true),
             child: Text(
               'Radera',
               style: TextStyle(color: Colors.red.shade400),
@@ -87,6 +101,14 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
+    if (confirmed != true || !context.mounted) return;
+
+    final pinOk = await _requireParentPin(context, ref);
+    if (!pinOk || !context.mounted) return;
+
+    await ref.read(userProvider.notifier).clearAllData();
+    if (!context.mounted) return;
+    Navigator.of(context).maybePop();
   }
 
   @override
@@ -540,6 +562,115 @@ class _AdaptiveDropdownTile<T> extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _DestructivePinDialog extends StatefulWidget {
+  const _DestructivePinDialog({required this.pinService});
+
+  final ParentPinService pinService;
+
+  @override
+  State<_DestructivePinDialog> createState() => _DestructivePinDialogState();
+}
+
+class _DestructivePinDialogState extends State<_DestructivePinDialog> {
+  final _controller = TextEditingController();
+  String? _errorText;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    if (_busy) return;
+    setState(() {
+      _busy = true;
+      _errorText = null;
+    });
+
+    final pinError = InputValidators.validatePin(_controller.text);
+    if (pinError != null) {
+      setState(() {
+        _errorText = pinError;
+        _busy = false;
+      });
+      return;
+    }
+
+    final pin = InputValidators.sanitizePin(_controller.text.trim());
+    try {
+      final isCorrect = await widget.pinService.verifyPin(pin);
+      if (!mounted) return;
+      if (!isCorrect) {
+        final remaining = widget.pinService.getRemainingAttempts();
+        setState(() {
+          _errorText =
+              remaining > 0 ? 'Fel PIN. $remaining försök kvar.' : 'Fel PIN.';
+          _busy = false;
+        });
+        return;
+      }
+      Navigator.of(context).pop(true);
+    } on PinLockoutException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorText = e.toString();
+        _busy = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _errorText = 'Kunde inte verifiera PIN.';
+        _busy = false;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      key: const Key('confirm_destructive_pin_dialog'),
+      title: const Text('Bekräfta med PIN'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Ange föräldra-PIN för att radera data.'),
+          const SizedBox(height: AppConstants.defaultPadding),
+          TextField(
+            key: const Key('confirm_destructive_pin_field'),
+            controller: _controller,
+            obscureText: true,
+            keyboardType: TextInputType.number,
+            autofocus: true,
+            enabled: !_busy,
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+              LengthLimitingTextInputFormatter(6),
+            ],
+            decoration: InputDecoration(
+              labelText: 'PIN',
+              errorText: _errorText,
+            ),
+            onSubmitted: (_) => _submit(),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+          child: const Text('Avbryt'),
+        ),
+        TextButton(
+          key: const Key('confirm_destructive_pin_submit'),
+          onPressed: _busy ? null : _submit,
+          child: const Text('Bekräfta'),
+        ),
+      ],
     );
   }
 }

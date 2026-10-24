@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:get_it/get_it.dart';
 import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
@@ -8,9 +9,12 @@ import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/age_group.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/services/parent_pin_service.dart';
 import 'package:siffersafari/features/settings/presentation/screens/settings_screen.dart';
 
 import '../test_utils.dart';
+
+final getIt = GetIt.instance;
 
 void main() {
   late InMemoryLocalStorageRepository repository;
@@ -152,6 +156,65 @@ void main() {
       expect(repository.getAllUserProfiles(), isEmpty);
       expect(repository.getActiveUserId(), isNull);
       expect(container.read(userProvider).allUsers, isEmpty);
+      expect(container.read(userProvider).activeUser, isNull);
+    },
+  );
+
+  testWidgets(
+    '[Widget] SettingsScreen – radera profil kräver PIN när PIN är satt',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: 'u1',
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+        ),
+      );
+      await repository.setActiveUserId('u1');
+      await getIt<ParentPinService>().setPin('1234');
+
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      await container.read(userProvider.notifier).loadUsers();
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const MaterialApp(home: SettingsScreen()),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('delete_profile_button')),
+      );
+      await tester
+          .ensureVisible(find.byKey(const Key('delete_profile_button')));
+      await tester.tap(find.byKey(const Key('delete_profile_button')));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const Key('confirm_delete_profile_button')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('confirm_destructive_pin_dialog')), findsOneWidget);
+      expect(repository.getUserProgress('u1'), isNotNull);
+
+      await tester.enterText(
+        find.byKey(const Key('confirm_destructive_pin_field')),
+        '1234',
+      );
+      await tester.tap(find.byKey(const Key('confirm_destructive_pin_submit')));
+      await tester.pumpAndSettle();
+
+      expect(repository.getUserProgress('u1'), isNull);
       expect(container.read(userProvider).activeUser, isNull);
     },
   );
