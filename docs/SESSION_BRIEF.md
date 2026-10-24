@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** ROI Top 100 klar — vänta på push/PR.  
-**Status:** #77–100 levererade (denna loop). #11–48 + #51–100 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~74, ej pushad). **Ask before push.**
+**Mål:** Near-miss polish efter Top 100; vänta på push/PR.  
+**Status:** Top 100 klar. Near-miss: bank-audit CI, drop unused BGM, Om appen version, haptic↔sound, camp/wardrobe precache. `v1.4.3+22` Play internal draft. `main` ahead lokalt (~75+, ej pushad). **Ask before push.**
 
-**Klart sedan förra briefen:** START_HERE UTF-8 + TRACE_MAP; collect album tests; CI AAB gate.
+**Klart sedan förra briefen:** Near-miss batch; START_HERE/TRACE_MAP; CI AAB gate.
 
 ---
 

@@ -53,7 +53,7 @@ flutter:
   assets:
     # Lista ljudfiler explicit så att backups (t.ex. *.wav.backup_*)
     # inte råkar packas in i APK:n.
-    - assets/sounds/background_music.wav
+    # background_music.wav is unused (home/story/quiz_music.mp3 are the tracks).
     - assets/sounds/celebration.wav
     - assets/sounds/click.wav
     - assets/sounds/correct.wav

@@ -163,12 +163,12 @@ uppdaterad: 2026-10-24
 
 ## Near-miss (just outside 100 — Later notes)
 
-- Bank-audit on PR CI (`question_bank_runtime_status_audit_test`)
-- Drop unused `assets/sounds/background_music.wav` from pubspec
-- Precache camp/wardrobe thumbs on first home frame
+- ~~Bank-audit on PR CI~~ (done — `ci.yaml` analyze job)
+- ~~Drop unused `background_music.wav` from pubspec~~
+- ~~Precache camp/wardrobe thumbs on first home frame~~
+- ~~Vibration toggle vs START_HERE~~ (haptic follows `soundEnabled`; START_HERE fixed)
+- ~~Settings “Om appen” version/build~~ (`AppConstants.appVersionLabel`)
 - Hive `quiz_history` growth hygiene (compact/prune)
-- Vibration toggle vs START_HERE claim
-- Settings “Om appen” version/build body
 - Parent sibling picker in parent mode
 - Practice planner filler when no weak items
 - Music handoff reliability home ↔ quiz ↔ story

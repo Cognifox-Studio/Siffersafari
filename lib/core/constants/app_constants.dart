@@ -17,6 +17,12 @@ class AppConstants {
   // App Info
   static const String appName = 'Siffersafari';
 
+  /// Keep in sync with `pubspec.yaml` `version:` (name+build).
+  static const String appVersionName = '1.4.3';
+  static const int appBuildNumber = 22;
+
+  static String get appVersionLabel => '$appVersionName ($appBuildNumber)';
+
   // Mascot
   static const String mascotName = 'Loke';
 

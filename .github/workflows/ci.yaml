@@ -16,6 +16,8 @@ jobs:
           flutter-version: '3.41.x'
       - run: flutter pub get
       - run: flutter analyze --fatal-infos lib test integration_test
+      - name: Question bank runtime audit
+        run: flutter test test/unit/audits/question_bank_runtime_status_audit_test.dart
 
   core-smoke:
     if: github.event_name == 'pull_request'

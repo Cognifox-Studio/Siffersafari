@@ -156,10 +156,12 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
     final question = ref.read(quizProvider).session?.currentQuestion;
     final isCorrect = question?.isCorrect(answer) ?? false;
-    if (isCorrect) {
-      HapticFeedback.mediumImpact();
-    } else {
-      HapticFeedback.heavyImpact();
+    if (user.soundEnabled) {
+      if (isCorrect) {
+        HapticFeedback.mediumImpact();
+      } else {
+        HapticFeedback.heavyImpact();
+      }
     }
 
     ref.read(quizProvider.notifier).submitAnswer(
@@ -230,10 +232,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             !_feedbackDialogVisible) {
           _feedbackDialogVisible = true;
 
-          if (feedback.isCorrect) {
-            HapticFeedback.mediumImpact();
-          } else {
-            HapticFeedback.heavyImpact();
+          final hapticUser = ref.read(userProvider).activeUser;
+          if (hapticUser?.soundEnabled ?? false) {
+            if (feedback.isCorrect) {
+              HapticFeedback.mediumImpact();
+            } else {
+              HapticFeedback.heavyImpact();
+            }
           }
 
           final currentSession = ref.read(quizProvider).session;

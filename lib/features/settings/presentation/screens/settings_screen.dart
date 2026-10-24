@@ -84,7 +84,9 @@ class SettingsScreen extends ConsumerWidget {
 
     final user = ref.read(userProvider).activeUser;
     if (user == null) return;
-    await ref.read(userProvider.notifier).saveUser(user.copyWith(name: newName));
+    await ref
+        .read(userProvider.notifier)
+        .saveUser(user.copyWith(name: newName));
   }
 
   Future<void> _confirmDeleteProfile(
@@ -209,48 +211,48 @@ class SettingsScreen extends ConsumerWidget {
                           children: [
                             _AdaptiveDropdownTile<String>(
                               title: 'Profiler',
-                            subtitle: 'Välj eller skapa en profil',
-                            value: user?.userId,
-                            isCompact: layout.isCompactWidth,
-                            textColor: onPrimary,
-                            subtitleColor: subtleOnPrimary,
-                            dropdownColor: themeColors.baseBackgroundColor,
-                            items: [
-                              ...allUsers.map(
-                                (u) => DropdownMenuItem<String>(
-                                  value: u.userId,
-                                  child: Text(u.name),
-                                ),
-                              ),
-                            ],
-                            onChanged: allUsers.isEmpty
-                                ? null
-                                : (value) async {
-                                    if (value == null) return;
-                                    await ref
-                                        .read(userProvider.notifier)
-                                        .selectUser(value);
-                                  },
-                          ),
-                          const Divider(height: 1),
-                          ListTile(
-                            title: Text(
-                              'Skapa profil',
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
-                                  ?.copyWith(
-                                    color: mutedOnPrimary,
-                                    fontWeight: FontWeight.w600,
+                              subtitle: 'Välj eller skapa en profil',
+                              value: user?.userId,
+                              isCompact: layout.isCompactWidth,
+                              textColor: onPrimary,
+                              subtitleColor: subtleOnPrimary,
+                              dropdownColor: themeColors.baseBackgroundColor,
+                              items: [
+                                ...allUsers.map(
+                                  (u) => DropdownMenuItem<String>(
+                                    value: u.userId,
+                                    child: Text(u.name),
                                   ),
+                                ),
+                              ],
+                              onChanged: allUsers.isEmpty
+                                  ? null
+                                  : (value) async {
+                                      if (value == null) return;
+                                      await ref
+                                          .read(userProvider.notifier)
+                                          .selectUser(value);
+                                    },
                             ),
-                            leading:
-                                Icon(Icons.person_add, color: mutedOnPrimary),
-                            onTap: () => showCreateUserDialog(
-                              context: context,
-                              ref: ref,
+                            const Divider(height: 1),
+                            ListTile(
+                              title: Text(
+                                'Skapa profil',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleSmall
+                                    ?.copyWith(
+                                      color: mutedOnPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                              ),
+                              leading:
+                                  Icon(Icons.person_add, color: mutedOnPrimary),
+                              onTap: () => showCreateUserDialog(
+                                context: context,
+                                ref: ref,
+                              ),
                             ),
-                          ),
                           ],
                         ),
                       ),
@@ -322,163 +324,170 @@ class SettingsScreen extends ConsumerWidget {
                                   color: mutedOnPrimary,
                                 ),
                               ),
-                            const Divider(height: 1),
-                            _AdaptiveDropdownTile<AppTheme>(
-                              title: 'Tema',
-                              subtitle: 'Byt bakgrund och stil.',
-                              value: AppThemeConfig.resolveTheme(
-                                user.selectedTheme,
-                              ),
-                              isCompact: layout.isCompactWidth,
-                              textColor: onPrimary,
-                              subtitleColor: subtleOnPrimary,
-                              dropdownColor: themeColors.baseBackgroundColor,
-                              items: [
-                                ...availableThemes.map(
-                                  (t) => DropdownMenuItem<AppTheme>(
-                                    value: t,
-                                    child: Text('${t.emoji} ${t.displayName}'),
-                                  ),
+                              const Divider(height: 1),
+                              _AdaptiveDropdownTile<AppTheme>(
+                                title: 'Tema',
+                                subtitle: 'Byt bakgrund och stil.',
+                                value: AppThemeConfig.resolveTheme(
+                                  user.selectedTheme,
                                 ),
-                              ],
-                              onChanged: (value) async {
-                                if (value == null) return;
-                                await ref.read(userProvider.notifier).saveUser(
-                                      user.copyWith(selectedTheme: value),
-                                    );
-                              },
-                            ),
-                            const Divider(height: 1),
-                            SwitchListTile(
-                              title: Text(
-                                'Ljud i spelet',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      color: mutedOnPrimary,
-                                      fontWeight: FontWeight.w600,
+                                isCompact: layout.isCompactWidth,
+                                textColor: onPrimary,
+                                subtitleColor: subtleOnPrimary,
+                                dropdownColor: themeColors.baseBackgroundColor,
+                                items: [
+                                  ...availableThemes.map(
+                                    (t) => DropdownMenuItem<AppTheme>(
+                                      value: t,
+                                      child:
+                                          Text('${t.emoji} ${t.displayName}'),
                                     ),
+                                  ),
+                                ],
+                                onChanged: (value) async {
+                                  if (value == null) return;
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .saveUser(
+                                        user.copyWith(selectedTheme: value),
+                                      );
+                                },
                               ),
-                              subtitle: Text(
-                                'Pling när du svarar och får belöningar',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
+                              const Divider(height: 1),
+                              SwitchListTile(
+                                title: Text(
+                                  'Ljud i spelet',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: mutedOnPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Pling när du svarar och får belöningar',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                value: user.soundEnabled,
+                                activeThumbColor: themeColors.accentColor,
+                                activeTrackColor:
+                                    themeColors.accentColor.withValues(
+                                  alpha: AppOpacities.highlightStrong,
+                                ),
+                                onChanged: (value) async {
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .saveUser(
+                                        user.copyWith(soundEnabled: value),
+                                      );
+                                },
                               ),
-                              value: user.soundEnabled,
-                              activeThumbColor: themeColors.accentColor,
-                              activeTrackColor: themeColors.accentColor
-                                  .withValues(
-                                alpha: AppOpacities.highlightStrong,
+                              const Divider(height: 1),
+                              SwitchListTile(
+                                title: Text(
+                                  'Musik i spelet',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: mutedOnPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Melodi i bakgrunden medan du spelar',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                value: user.musicEnabled,
+                                activeThumbColor: themeColors.accentColor,
+                                activeTrackColor:
+                                    themeColors.accentColor.withValues(
+                                  alpha: AppOpacities.highlightStrong,
+                                ),
+                                onChanged: (value) async {
+                                  await ref
+                                      .read(userProvider.notifier)
+                                      .saveUser(
+                                        user.copyWith(musicEnabled: value),
+                                      );
+                                },
                               ),
-                              onChanged: (value) async {
-                                await ref.read(userProvider.notifier).saveUser(
-                                      user.copyWith(soundEnabled: value),
-                                    );
-                              },
-                            ),
-                            const Divider(height: 1),
-                            SwitchListTile(
-                              title: Text(
-                                'Musik i spelet',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      color: mutedOnPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                              const Divider(height: 1),
+                              ListTile(
+                                key: const Key('rename_profile_button'),
+                                title: Text(
+                                  'Byt namn',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: mutedOnPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Nuvarande namn: ${user.name}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.edit_outlined,
+                                  color: mutedOnPrimary,
+                                ),
+                                onTap: () => _renameProfile(
+                                  context,
+                                  ref,
+                                  user.name,
+                                ),
                               ),
-                              subtitle: Text(
-                                'Melodi i bakgrunden medan du spelar',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
+                              const Divider(height: 1),
+                              ListTile(
+                                key: const Key('delete_profile_button'),
+                                title: Text(
+                                  'Radera profil',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: Colors.red.shade400,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Ta bort ${user.name} permanent',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.person_remove_outlined,
+                                  color: Colors.red.shade400,
+                                ),
+                                onTap: () => _confirmDeleteProfile(
+                                  context,
+                                  ref,
+                                  user.userId,
+                                  user.name,
+                                ),
                               ),
-                              value: user.musicEnabled,
-                              activeThumbColor: themeColors.accentColor,
-                              activeTrackColor: themeColors.accentColor
-                                  .withValues(
-                                alpha: AppOpacities.highlightStrong,
-                              ),
-                              onChanged: (value) async {
-                                await ref.read(userProvider.notifier).saveUser(
-                                      user.copyWith(musicEnabled: value),
-                                    );
-                              },
-                            ),
-                            const Divider(height: 1),
-                            ListTile(
-                              key: const Key('rename_profile_button'),
-                              title: Text(
-                                'Byt namn',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      color: mutedOnPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                              subtitle: Text(
-                                'Nuvarande namn: ${user.name}',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
-                              ),
-                              leading: Icon(
-                                Icons.edit_outlined,
-                                color: mutedOnPrimary,
-                              ),
-                              onTap: () => _renameProfile(
-                                context,
-                                ref,
-                                user.name,
-                              ),
-                            ),
-                            const Divider(height: 1),
-                            ListTile(
-                              key: const Key('delete_profile_button'),
-                              title: Text(
-                                'Radera profil',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      color: Colors.red.shade400,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                              ),
-                              subtitle: Text(
-                                'Ta bort ${user.name} permanent',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
-                              ),
-                              leading: Icon(
-                                Icons.person_remove_outlined,
-                                color: Colors.red.shade400,
-                              ),
-                              onTap: () => _confirmDeleteProfile(
-                                context,
-                                ref,
-                                user.userId,
-                                user.name,
-                              ),
-                            ),
                             ],
                           ),
                         ),
@@ -501,74 +510,98 @@ class SettingsScreen extends ConsumerWidget {
                               ListTile(
                                 title: Text(
                                   'Om appen',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleSmall
-                                    ?.copyWith(
-                                      color: mutedOnPrimary,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: mutedOnPrimary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  '${AppConstants.appName} ${AppConstants.appVersionLabel}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.info_outline,
+                                  color: mutedOnPrimary,
+                                ),
+                                onTap: () {
+                                  showAboutDialog(
+                                    context: context,
+                                    applicationName: AppConstants.appName,
+                                    applicationVersion:
+                                        AppConstants.appVersionLabel,
+                                    applicationLegalese:
+                                        'Offline-first · utan annonser eller trackers',
+                                  );
+                                },
                               ),
-                            ),
-                            const Divider(height: 1),
-                            ListTile(
-                              title: Text(
-                                'Sekretesspolicy',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: onPrimary,
-                                    ),
+                              const Divider(height: 1),
+                              ListTile(
+                                title: Text(
+                                  'Sekretesspolicy',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: onPrimary,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Läs om hur vi hanterar data',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.privacy_tip_outlined,
+                                  color: mutedOnPrimary,
+                                ),
+                                trailing: Icon(
+                                  Icons.chevron_right,
+                                  color: mutedOnPrimary,
+                                ),
+                                onTap: () {
+                                  context
+                                      .pushSmooth(const PrivacyPolicyScreen());
+                                },
                               ),
-                              subtitle: Text(
-                                'Läs om hur vi hanterar data',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
+                              const Divider(height: 1),
+                              ListTile(
+                                key: const Key('clear_all_data_button'),
+                                title: Text(
+                                  'Radera all data',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Colors.red.shade400,
+                                      ),
+                                ),
+                                subtitle: Text(
+                                  'Radera alla profiler och data permanent',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.red.shade400,
+                                ),
+                                onTap: () => _confirmClearAllData(context, ref),
                               ),
-                              leading: Icon(
-                                Icons.privacy_tip_outlined,
-                                color: mutedOnPrimary,
-                              ),
-                              trailing: Icon(
-                                Icons.chevron_right,
-                                color: mutedOnPrimary,
-                              ),
-                              onTap: () {
-                                context.pushSmooth(const PrivacyPolicyScreen());
-                              },
-                            ),
-                            const Divider(height: 1),
-                            ListTile(
-                              key: const Key('clear_all_data_button'),
-                              title: Text(
-                                'Radera all data',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.copyWith(
-                                      color: Colors.red.shade400,
-                                    ),
-                              ),
-                              subtitle: Text(
-                                'Radera alla profiler och data permanent',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.copyWith(
-                                      color: subtleOnPrimary,
-                                    ),
-                              ),
-                              leading: Icon(
-                                Icons.delete_outline,
-                                color: Colors.red.shade400,
-                              ),
-                              onTap: () => _confirmClearAllData(context, ref),
-                            ),
                             ],
                           ),
                         ),

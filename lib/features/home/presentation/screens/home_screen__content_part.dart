@@ -26,12 +26,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       ref.read(audioServiceProvider).playHomeMusic();
 
       if (mounted) {
+        unawaited(_precacheCollectibleThumbs(activeUser));
         setState(() {
           _mascotReaction = CharacterReaction.enter;
           _mascotReactionNonce++;
         });
       }
     });
+  }
+
+  /// Warm camp pedestal + nearby wardrobe thumbs so album/wardrobe open crisp.
+  Future<void> _precacheCollectibleThumbs(UserProgress? user) async {
+    if (!mounted) return;
+    final unlocked = user?.unlockedItems.toSet() ?? const <String>{};
+    final paths = <String>{
+      ...InventoryConfig.visibleCampPedestalItems(unlocked)
+          .map((i) => i.assetPath),
+      ...InventoryConfig.campSouvenirItems.take(4).map((i) => i.assetPath),
+      ...InventoryConfig.wardrobeItems.take(6).map((i) => i.assetPath),
+    };
+    for (final path in paths) {
+      if (!mounted) return;
+      await precacheImage(AssetImage(path), context);
+    }
   }
 
   void _checkUserData(String userId) {

@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** ROI Top 100 i mål — release hygiene. #11–48 + #51–100 + #20 levererade.
+**Produktspår:** Near-miss efter Top 100. #11–48 + #51–100 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Push / PR** — ask once (lokalt ~74 ahead of origin)
-2. **Play internal smoke** efter push
-3. **Near-miss / Later** — se ROI_BACKLOG near-miss
+1. **Push / PR** — ask once (lokalt ~75+ ahead of origin)
+2. **Practice planner filler** när weak areas saknas
+3. **Hive quiz_history prune** / music handoff
 
 Lyft **en** till Now i taget.
 
