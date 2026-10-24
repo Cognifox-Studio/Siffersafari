@@ -267,4 +267,61 @@ void main() {
       expect(find.textContaining('Gånger'), findsWidgets);
     },
   );
+
+  testWidgets(
+    '[Widget] Parent mode – sibling picker switches active child',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const mira = UserProgress(
+        userId: 'mira',
+        name: 'Mira',
+        ageGroup: AgeGroup.middle,
+      );
+      const leo = UserProgress(
+        userId: 'leo',
+        name: 'Leo',
+        ageGroup: AgeGroup.middle,
+      );
+      await repository.saveUserProgress(mira);
+      await repository.saveUserProgress(leo);
+      await repository.setActiveUserId('mira');
+      await repository.saveSetting(SettingsKeys.onboardingDone('mira'), true);
+      await repository.saveSetting(SettingsKeys.onboardingDone('leo'), true);
+      final pinService = getIt<ParentPinService>();
+      await pinService.setPin('1234');
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      await pumpUntilFound(tester, find.text('Välj spelare'));
+      await tester.tap(find.text('Mira'));
+      await pumpUntilFound(tester, find.byTooltip('Föräldraläge'));
+      await tester.tap(find.byTooltip('Föräldraläge'));
+      await pumpUntilFound(tester, find.text('Ange PIN'));
+      await tester.enterText(find.byType(TextField), '1234');
+      await tester.tap(find.text('Öppna'));
+      await pumpUntilFound(tester, find.text('Översikt'));
+      expect(find.textContaining('för Mira'), findsOneWidget);
+
+      await pumpUntilFound(tester, find.byKey(const Key('parent_sibling_picker')));
+      await tester.ensureVisible(find.byKey(const Key('parent_sibling_picker')));
+      await tester.tap(find.byKey(const Key('parent_sibling_picker')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.textContaining('Leo').last);
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('för Leo'), findsOneWidget);
+    },
+  );
 }

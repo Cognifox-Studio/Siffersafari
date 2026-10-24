@@ -168,10 +168,12 @@ uppdaterad: 2026-10-24
 - ~~Precache camp/wardrobe thumbs on first home frame~~
 - ~~Vibration toggle vs START_HERE~~ (haptic follows `soundEnabled`; START_HERE fixed)
 - ~~Settings “Om appen” version/build~~ (`AppConstants.appVersionLabel`)
-- Hive `quiz_history` growth hygiene (compact/prune)
-- Parent sibling picker in parent mode
-- Practice planner filler when no weak items
-- Music handoff reliability home ↔ quiz ↔ story
+- ~~Hive `quiz_history` growth hygiene~~ (keep newest 40 completed / user)
+- ~~Parent sibling picker in parent mode~~
+- ~~Practice planner filler when no weak items~~ (tonight CTA always)
+- ~~Music handoff reliability home ↔ quiz ↔ story~~ (serialized track switches)
+
+*(Near-miss list cleared — Top 100 + near-miss shipped. Next: push/PR ask.)*
 
 ---
 

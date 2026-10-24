@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Near-miss polish efter Top 100; vänta på push/PR.  
-**Status:** Top 100 klar. Near-miss: bank-audit CI, drop unused BGM, Om appen version, haptic↔sound, camp/wardrobe precache. `v1.4.3+22` Play internal draft. `main` ahead lokalt (~75+, ej pushad). **Ask before push.**
+**Mål:** Top 100 + near-miss klar — **ask before push/PR**.  
+**Status:** Near-miss empty. `v1.4.3+22` Play internal draft. `main` ahead lokalt (~78+, ej pushad).
 
-**Klart sedan förra briefen:** Near-miss batch; START_HERE/TRACE_MAP; CI AAB gate.
+**Klart sedan förra briefen:** sibling picker, music handoff, quiz_history prune, tonight filler, Om appen/CI/precache.
 
 ---
 

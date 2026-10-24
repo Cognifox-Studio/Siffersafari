@@ -1,7 +1,7 @@
 part of 'parent_dashboard_screen.dart';
 
 class _DashboardBody extends ConsumerStatefulWidget {
-  const _DashboardBody({required this.userId});
+  const _DashboardBody({super.key, required this.userId});
 
   static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
 
@@ -87,9 +87,9 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final subtleOnPrimary =
         onPrimary.withValues(alpha: AppOpacities.subtleText);
     final userId = widget.userId;
-    final user = ref.watch(
-      userProvider.select((state) => state.activeUser),
-    )!;
+    final userState = ref.watch(userProvider);
+    final user = userState.activeUser!;
+    final siblingProfiles = userState.allUsers;
     final history = ref.watch(parentRecentCompletedQuizHistoryProvider(userId));
     final readModel = _ParentDashboardReadModel.from(
       user: user,
@@ -519,6 +519,43 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
       ),
     );
 
+    final siblingPicker = siblingProfiles.length < 2
+        ? null
+        : DropdownButtonFormField<String>(
+            key: const Key('parent_sibling_picker'),
+            initialValue: user.userId,
+            decoration: InputDecoration(
+              labelText: 'Barnprofil',
+              labelStyle: TextStyle(color: mutedOnPrimary),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                borderSide:
+                    BorderSide(color: mutedOnPrimary.withValues(alpha: 0.35)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppConstants.borderRadius),
+                borderSide: BorderSide(color: accentColor),
+              ),
+            ),
+            dropdownColor: Theme.of(context).colorScheme.surface,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: onPrimary,
+                  fontWeight: FontWeight.w700,
+                ),
+            items: siblingProfiles
+                .map(
+                  (profile) => DropdownMenuItem<String>(
+                    value: profile.userId,
+                    child: Text('${profile.avatarEmoji} ${profile.name}'),
+                  ),
+                )
+                .toList(growable: false),
+            onChanged: (nextUserId) async {
+              if (nextUserId == null || nextUserId == user.userId) return;
+              await ref.read(userProvider.notifier).selectUser(nextUserId);
+            },
+          );
+
     final overviewCard = _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -544,6 +581,10 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                   fontWeight: FontWeight.w600,
                 ),
           ),
+          if (siblingPicker != null) ...[
+            const SizedBox(height: AppConstants.smallPadding),
+            siblingPicker,
+          ],
           const SizedBox(height: AppConstants.smallPadding),
           Wrap(
             spacing: AppConstants.smallPadding,

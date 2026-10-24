@@ -111,6 +111,7 @@ class AudioService {
   AppMusicTrack? _currentMusicTrack;
   Timer? _musicRecoveryTimer;
   bool _pausedForAppLifecycle = false;
+  Future<void> _musicHandoffChain = Future<void>.value();
 
   bool get soundEnabled => _soundEnabled;
   bool get musicEnabled => _musicEnabled;
@@ -231,15 +232,23 @@ class AudioService {
     }
   }
 
-  Future<void> playMusicTrack(AppMusicTrack track) async {
-    if (!_musicEnabled) {
-      _currentMusicTrack = track;
-      return;
-    }
+  Future<void> playMusicTrack(AppMusicTrack track) {
+    // Serialize handoffs so home↔quiz↔story never race stop/play.
+    final handoff =
+        _musicHandoffChain.then((_) => _playMusicTrackSerialized(track));
+    _musicHandoffChain = handoff.catchError((_) {});
+    return handoff;
+  }
 
-    final isSameTrackStillPlaying = _currentMusicTrack == track &&
+  Future<void> _playMusicTrackSerialized(AppMusicTrack track) async {
+    _musicRecoveryTimer?.cancel();
+
+    final alreadyPlayingSameTrack = _currentMusicTrack == track &&
+        _musicEnabled &&
         _musicPlayer.state == PlayerState.playing;
-    if (isSameTrackStillPlaying) {
+    _currentMusicTrack = track;
+
+    if (!_musicEnabled || alreadyPlayingSameTrack) {
       return;
     }
 
@@ -248,7 +257,11 @@ class AudioService {
 
     try {
       await _ensurePlayersConfigured();
+      if (_currentMusicTrack != track) return;
+
       await _musicPlayer.stop();
+      if (_currentMusicTrack != track) return;
+
       await _musicPlayer.setReleaseMode(ReleaseMode.loop);
       await _playAssetWithFallback(
         player: _musicPlayer,
@@ -256,7 +269,7 @@ class AudioService {
         fallback: spec.fallback,
         volume: _resolveVolume(spec.volume, _musicVolume),
       );
-      _currentMusicTrack = track;
+      if (_currentMusicTrack != track) return;
       _pausedForAppLifecycle = false;
     } catch (_) {
       // Handle error silently for now

@@ -83,7 +83,10 @@ class ParentDashboardScreen extends ConsumerWidget {
                       mutedOnPrimary: mutedOnPrimary,
                       onPrimary: onPrimary,
                     )
-                  : _DashboardBody(userId: user.userId),
+                  : _DashboardBody(
+                      key: ValueKey(user.userId),
+                      userId: user.userId,
+                    ),
             ),
           );
         },
