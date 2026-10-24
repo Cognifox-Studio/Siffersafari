@@ -21,8 +21,8 @@ uppdaterad: 2026-10-24
 
 ## Next (kandidater — max tre)
 
-1. **Push / PR** — ask once (lokalt ~78+ ahead of origin)
-2. **Play internal smoke** efter push
+1. **Play internal smoke** — verifiera draft/build efter push
+2. **CI green** på `main` efter 78-commit push
 3. **Parked Later** — se ROI_BACKLOG Parked
 
 Lyft **en** till Now i taget.

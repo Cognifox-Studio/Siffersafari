@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** Top 100 + near-miss klar — **ask before push/PR**.  
-**Status:** Near-miss empty. `v1.4.3+22` Play internal draft. `main` ahead lokalt (~78+, ej pushad).
+**Mål:** Play internal smoke efter push.  
+**Status:** Top 100 + near-miss pushat till `origin/main` (`844954f`). `v1.4.3+22` Play internal draft.
 
-**Klart sedan förra briefen:** sibling picker, music handoff, quiz_history prune, tonight filler, Om appen/CI/precache.
+**Klart sedan förra briefen:** push 78 commits (ROI #77–100 + near-miss).
 
 ---
 
