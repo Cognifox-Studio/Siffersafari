@@ -4,7 +4,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/parent_pin_service_provider.dart';
 import 'package:siffersafari/core/providers/user_provider.dart';
-import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/theme/app_theme_config.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
@@ -19,8 +18,6 @@ import 'privacy_policy_screen.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
-
-  static const _gradeItems = <int>[1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   Future<bool> _requireParentPin(BuildContext context, WidgetRef ref) async {
     final pinService = ref.read(parentPinServiceProvider);
@@ -297,69 +294,34 @@ class SettingsScreen extends ConsumerWidget {
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              _AdaptiveDropdownTile<int?>(
-                                title: 'Årskurs',
-                              subtitle: 'Styr svårighetsnivå (Åk 1–9).',
-                              value: user.gradeLevel,
-                              isCompact: layout.isCompactWidth,
-                              textColor: onPrimary,
-                              subtitleColor: subtleOnPrimary,
-                              dropdownColor: themeColors.baseBackgroundColor,
-                              items: [
-                                const DropdownMenuItem<int?>(
-                                  value: null,
-                                  child: Text('Ingen'),
-                                ),
-                                ..._gradeItems.map(
-                                  (g) => DropdownMenuItem<int?>(
-                                    value: g,
-                                    child: Text('Åk $g'),
-                                  ),
-                                ),
-                              ],
-                              onChanged: (value) async {
-                                final quests = const QuestProgressionService();
-                                final before =
-                                    quests.targetStopCountForUser(user);
-                                final after = quests.targetStopCountForGrade(
-                                  gradeLevel: value,
-                                  ageGroup: user.ageGroup,
-                                );
-                                if (before != after) {
-                                  final confirmed = await showDialog<bool>(
-                                    context: context,
-                                    builder: (ctx) => AlertDialog(
-                                      title: const Text('Ändra årskurs?'),
-                                      content: Text(
-                                        'Storykartan skrivs om från $before till $after stopp. '
-                                        'Framsteg på kartan kan se annorlunda ut.',
+                              ListTile(
+                                key: const Key('settings_grade_readonly'),
+                                title: Text(
+                                  'Årskurs',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
+                                        color: mutedOnPrimary,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(false),
-                                          child: const Text('Avbryt'),
-                                        ),
-                                        TextButton(
-                                          key: const Key(
-                                            'confirm_grade_path_change',
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.of(ctx).pop(true),
-                                          child: const Text('Ändra'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                  if (confirmed != true || !context.mounted) {
-                                    return;
-                                  }
-                                }
-                                await ref.read(userProvider.notifier).saveUser(
-                                      user.copyWith(gradeLevel: value),
-                                    );
-                              },
-                            ),
+                                ),
+                                subtitle: Text(
+                                  user.gradeLevel == null
+                                      ? 'Ingen vald — ändras i Föräldraläge'
+                                      : 'Åk ${user.gradeLevel} — ändras i Föräldraläge',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(
+                                        color: subtleOnPrimary,
+                                      ),
+                                ),
+                                leading: Icon(
+                                  Icons.school_outlined,
+                                  color: mutedOnPrimary,
+                                ),
+                              ),
                             const Divider(height: 1),
                             _AdaptiveDropdownTile<AppTheme>(
                               title: 'Tema',
