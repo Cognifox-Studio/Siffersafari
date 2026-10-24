@@ -8,10 +8,10 @@
 
 ## Now (2026-10-24)
 
-**Mål:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #95, #98–100).  
-**Status:** #96–97 CI analyze+AAB size gate klar. #11–48 + #51–94 + #96–97 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~72, ej pushad). Ask before push.
+**Mål:** ROI Top 100 klar — vänta på push/PR.  
+**Status:** #77–100 levererade (denna loop). #11–48 + #51–100 + #20 klara. `v1.4.3+22` på Play internal draft. `main` ahead lokalt (~74, ej pushad). **Ask before push.**
 
-**Klart sedan förra briefen:** CI fatal-infos + AAB size; what’s-new template; Data safety.
+**Klart sedan förra briefen:** START_HERE UTF-8 + TRACE_MAP; collect album tests; CI AAB gate.
 
 ---
 

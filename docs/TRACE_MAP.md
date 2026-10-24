@@ -52,7 +52,8 @@ flowchart LR
 | Jag vill andra | Borja i | Las sedan | Data landar har |
 | --- | --- | --- | --- |
 | Home-CTA, hero och resume-logik | `lib/features/home/presentation/screens/home_screen.dart` | `lib/features/home/providers/home_read_model_provider.dart`, `lib/features/home/presentation/home_read_model.dart` | Ingen direkt skrivning |
-| Camp-souveniralbum / piedestaler | `lib/features/home/presentation/widgets/camp_scene_view.dart` | `camp_collection_album.dart`, `InventoryConfig.campSouvenirItems`, `InventoryConfig.visibleCampPedestalItems` | Ingen direkt skrivning |
+| Camp-souveniralbum / piedestaler | `lib/features/home/presentation/widgets/camp_scene_view.dart` | `camp_collection_album.dart`, `InventoryConfig.campSouvenirItems`, `InventoryConfig.visibleCampPedestalItems` (souvenirs only + locked placeholders) | Ingen direkt skrivning |
+| Badgealbum (märken) | `lib/features/home/presentation/widgets/home_badge_album.dart` | `achievement_catalog.dart`, `achievement_service.dart`, `UserProgress.achievements` | Upplåsning via `apply_quiz_result_use_case` |
 | Garderob / utrustning | `lib/features/inventory/presentation/screens/wardrobe_screen.dart` | `lib/presentation/widgets/game_character.dart`, `lib/domain/entities/inventory_item.dart` | `user_progress` (equipped/unlocked) |
 | Hur en fraga byggs | `lib/core/providers/quiz_provider.dart` | `lib/core/services/quiz_session_planner.dart`, `lib/core/services/question_generator_service.dart`, `lib/core/services/question_mix_policy.dart` | Pagaende session i `quiz_history` |
 | Vad som hander nar quiz slutar | `lib/features/quiz/presentation/screens/results_screen.dart` | `lib/core/providers/user_provider.dart`, `lib/core/services/apply_quiz_result_use_case.dart`, `storyProgressProvider` (`nextBiome` vid episodslut) | `user_progress` och complete `quiz_history` |

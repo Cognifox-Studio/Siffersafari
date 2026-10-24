@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** ROI polish ([ROI_BACKLOG](ROI_BACKLOG.md) #95, #98–100). #11–48 + #51–94 + #96–97 + #20 levererade.
+**Produktspår:** ROI Top 100 i mål — release hygiene. #11–48 + #51–100 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Screenshot beat: parent PIN + no-ads** — #95
-2. **Widget tests badge + camp albums** — #98
-3. **Release cadence** — ask before push (~72 ahead)
+1. **Push / PR** — ask once (lokalt ~74 ahead of origin)
+2. **Play internal smoke** efter push
+3. **Near-miss / Later** — se ROI_BACKLOG near-miss
 
 Lyft **en** till Now i taget.
 

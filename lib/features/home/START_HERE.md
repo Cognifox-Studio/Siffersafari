@@ -1,8 +1,8 @@
 # Home
 
-Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, oppna storykartan eller starta ett nytt pass.
+Ansvar: hubben efter profilval. Här avgörs om barnet ska fortsätta ett quiz, öppna storykartan eller starta ett nytt pass.
 
-## Borja har
+## Börja här
 
 - `presentation/screens/home_screen.dart`
 - `providers/home_read_model_provider.dart`
@@ -13,23 +13,25 @@ Ansvar: hubben efter profilval. Har avgors om barnet ska fortsatta ett quiz, opp
 - `presentation/widgets/home_story_progress_card.dart`
 - `presentation/widgets/home_badge_album.dart`
 
-## Laser fran
+## Läser från
 
 - `userProvider`
 - `quizProvider`
 - `storyProgressProvider`
-- `InventoryConfig.campSouvenirItems` for camp-albumet (ingen egen lagring)
-- `InventoryConfig.visibleCampPedestalItems` for vilka props som syns pa piedestalerna
+- `InventoryConfig.campSouvenirItems` för camp-albumet (ingen egen lagring)
+- `InventoryConfig.visibleCampPedestalItems` för vilka souvenirs som syns på piedestalerna
+- `AchievementCatalog` / `achievementServiceProvider` för badgealbumet
 
 ## Sparar
 
-Home sparar inget direkt. Den laser state och navigerar vidare till quiz, story, settings eller parent flow.
-Resume-CTA visar raknesatt + progress via `homeResumeQuizSessionProvider` (t.ex. “Fortsatt Plus (3/10)”).
+Home sparar inget direkt. Den läser state och navigerar vidare till quiz, story, settings eller parent flow.
+Resume-CTA visar räknesätt + progress via `homeResumeQuizSessionProvider` (t.ex. “Fortsätt Plus (3/10)”).
 
-Camp-badgen syns aven vid 0 saker (teaser “Samla”) och oppnar ett read-only souveniralbum for `slot == 'camp'`. Tomt camp visar garderobs-CTA. Piedestalerna prioriterar upplastade camp-souvenirer och fyller resten med andra props (inte pets). Garderoben oppnas via maskoten eller CTA. Badgealbumet bygger pa `UserProgress.achievements`; lasta brickor visar `unlockHint` vid tryck (SnackBar).
+Camp-badgen syns även vid 0 saker (teaser “Samla”) och öppnar ett read-only souveniralbum för `slot == 'camp'`. Tomt camp visar garderobs-CTA. Piedestalerna visar endast upplåsta camp-souvenirer; lediga platser är låsta placeholders (inga wardrobe-fillers). Garderoben öppnas via maskoten eller CTA. Badgealbumet bygger på `UserProgress.achievements` med PNG-tiles; låsta brickor visar `unlockHint` vid tryck (SnackBar).
 
-## Bra forsta test
+## Bra första test
 
 - `test/widget/app_home_test.dart`
+- `test/widget/collect_albums_test.dart`
 - `test/unit/logic/home_read_model_test.dart`
-- `test/unit/logic/inventory_reward_unlock_test.dart` for camp-souvenirkatalogen
+- `test/unit/logic/inventory_reward_unlock_test.dart` för camp-souvenirkatalogen
