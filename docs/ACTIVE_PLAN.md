@@ -15,15 +15,15 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #83–84). #11–48 + #51–82 + #20 levererade.
+**Produktspår:** Story/camp polish ([ROI_BACKLOG](ROI_BACKLOG.md) #84–85). #11–48 + #51–83 + #20 levererade.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Badge album emoji → PNG tiles** — #83
-2. **Auto-scroll story map** — #84
-3. **Wardrobe pose labels** — #85
+1. **Auto-scroll story map** — #84
+2. **Wardrobe pose labels** — #85
+3. **Next ROI** — se ROI_BACKLOG #86+
 
 Lyft **en** till Now i taget.
 

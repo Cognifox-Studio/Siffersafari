@@ -14,12 +14,18 @@ class AchievementDefinition {
     required this.albumLabel,
     required this.emoji,
     required this.unlockHint,
+    this.assetPath,
   });
 
   final String id;
   final String displayName;
   final String albumLabel;
+
+  /// Legacy/semantic glyph; album UI prefers [assetPath] (PNG-first).
   final String emoji;
+
+  /// Optional PNG tile for the home badge album.
+  final String? assetPath;
 
   /// Short kid-facing how-to for locked tiles in the home badge album.
   final String unlockHint;
@@ -30,6 +36,7 @@ class AchievementDefinition {
     albumLabel: 'Märke',
     emoji: '❔',
     unlockHint: 'Spela mer och samla.',
+    assetPath: 'assets/images/ui/img_badge_level.png',
   );
 }
 

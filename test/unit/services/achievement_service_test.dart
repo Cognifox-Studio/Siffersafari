@@ -97,6 +97,15 @@ void main() {
       );
     });
 
+    test('badgealbum använder PNG-tiles (#83)', () {
+      final service = AchievementService();
+      for (final entry in service.albumEntries) {
+        expect(entry.assetPath, isNotNull, reason: entry.id);
+        expect(entry.assetPath, isNotEmpty, reason: entry.id);
+        expect(entry.assetPath, endsWith('.png'), reason: entry.id);
+      }
+    });
+
     test('exponerar badgealbum i stabil ordning', () {
       final entries = service.albumEntries;
 

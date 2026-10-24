@@ -167,11 +167,7 @@ class _BadgeTile extends StatelessWidget {
                     ),
                     child: Center(
                       child: unlocked
-                          ? Text(
-                              entry.emoji,
-                              key: Key('home_badge_icon_${entry.id}'),
-                              style: theme.textTheme.titleLarge,
-                            )
+                          ? _UnlockedBadgeIcon(entry: entry)
                           : Padding(
                               padding: const EdgeInsets.all(10),
                               child: Image.asset(
@@ -243,5 +239,34 @@ class _BadgeTile extends StatelessWidget {
       default:
         return const Color(0xFF5C6B73);
     }
+  }
+}
+
+class _UnlockedBadgeIcon extends StatelessWidget {
+  const _UnlockedBadgeIcon({required this.entry});
+
+  final AchievementDefinition entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final path = entry.assetPath;
+    if (path == null || path.isEmpty) {
+      return Text(
+        entry.emoji,
+        key: Key('home_badge_icon_${entry.id}'),
+        style: Theme.of(context).textTheme.titleLarge,
+      );
+    }
+    final cacheSize = imageCacheExtent(context, 28);
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: Image.asset(
+        path,
+        key: Key('home_badge_icon_${entry.id}'),
+        fit: BoxFit.contain,
+        cacheWidth: cacheSize,
+        cacheHeight: cacheSize,
+      ),
+    );
   }
 }
