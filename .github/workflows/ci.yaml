@@ -28,11 +28,16 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.41.x'
+      - name: Linux desktop deps (integration_test target)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+          flutter config --enable-linux-desktop
       - run: flutter pub get
       - name: Run core smoke test
         run: |
           set -o pipefail
-          flutter test integration_test/app_smoke_test.dart --dart-define=FULL_SMOKE=false 2>&1 | tee core_smoke.log
+          flutter test integration_test/app_smoke_test.dart -d linux --dart-define=FULL_SMOKE=false 2>&1 | tee core_smoke.log
       - name: Upload core smoke log
         uses: actions/upload-artifact@v4
         with:
@@ -52,11 +57,16 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.41.x'
+      - name: Linux desktop deps (integration_test target)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+          flutter config --enable-linux-desktop
       - run: flutter pub get
       - name: Run full smoke test
         run: |
           set -o pipefail
-          flutter test integration_test/app_smoke_test.dart --dart-define=FULL_SMOKE=true 2>&1 | tee full_smoke.log
+          flutter test integration_test/app_smoke_test.dart -d linux --dart-define=FULL_SMOKE=true 2>&1 | tee full_smoke.log
       - name: Upload full smoke log
         uses: actions/upload-artifact@v4
         with:

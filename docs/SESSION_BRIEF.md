@@ -9,7 +9,7 @@
 ## Now (2026-10-25)
 
 **Mål:** Play internal smoke efter push.  
-**Status:** CI `--fatal-infos` fix (ROI #1) — grön analyze lokalt; PR väntar merge. `v1.4.3+22` Play internal draft kvar att smoke-testa.
+**Status:** PR #2 (analyze + CI linux smoke target) — merga när analyze/core-smoke gröna. Kvar: 11 unit/widget-tester driftar mot produkt (pre-existerande). Play internal smoke på `v1.4.3+22`.
 
 **Klart sedan förra briefen:** push 78 commits (ROI #77–100 + near-miss).
 
