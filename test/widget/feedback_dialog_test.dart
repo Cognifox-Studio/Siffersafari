@@ -71,7 +71,10 @@ void main() {
         find.text('💡 Titta lugnt en gång till nästa gång.'),
         findsOneWidget,
       );
-      expect(find.text('💡 Börja på 7 och räkna 3 steg till.'), findsOneWidget);
+      expect(
+        find.text('💡 Entalen blir 10 — skriv 0 och växla 1 tiotal.'),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('feedback_number_line')), findsOneWidget);
       expect(
         find.byKey(const Key('feedback_number_line_jump')),

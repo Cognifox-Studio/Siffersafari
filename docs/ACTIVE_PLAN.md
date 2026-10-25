@@ -21,9 +21,9 @@ uppdaterad: 2026-10-24
 
 ## Next (kandidater — max tre)
 
-1. **Test-suite drift** — 11 fallande tester (feedback-copy, camp home, a11y progress, curriculum audit m.fl.)
-2. **Play internal smoke** — verifiera draft/build efter push
-3. **CI analyze + core-smoke** — PR #2 / linux `-d` target
+1. **Play internal smoke** — verifiera draft/build `v1.4.3+22`
+2. **ROI discoverability** — badge unlock-hints (#11), namngivna unlocks (#12)
+3. **Store/trust** — listing/screenshots (#4–10) vid behov
 
 Lyft **en** till Now i taget.
 

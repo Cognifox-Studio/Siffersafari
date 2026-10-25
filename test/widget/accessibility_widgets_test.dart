@@ -39,7 +39,7 @@ void main() {
       await tester
           .pumpWidget(wrapForTest(const ProgressIndicatorBar(progress: 0.42)));
 
-      expect(find.bySemanticsLabel('Framsteg'), findsOneWidget);
+      expect(find.bySemanticsLabel('Framsteg 42 procent'), findsOneWidget);
       semantics.dispose();
     });
 
@@ -103,13 +103,13 @@ void main() {
       final compactSize = tester.getSize(
         find.descendant(
           of: find.byKey(const Key('compact-answer')),
-          matching: find.byType(ElevatedButton),
+          matching: find.byType(InkWell),
         ),
       );
       final defaultSize = tester.getSize(
         find.descendant(
           of: find.byKey(const Key('default-answer')),
-          matching: find.byType(ElevatedButton),
+          matching: find.byType(InkWell),
         ),
       );
 

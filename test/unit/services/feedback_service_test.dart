@@ -61,7 +61,7 @@ void main() {
       expect(feedback.numberLine?.end, 10);
       expect(
         feedback.message,
-        contains('💡 Börja på 7 och räkna 3 steg till.'),
+        contains('💡 Entalen blir 10 — skriv 0 och växla 1 tiotal.'),
       );
     });
 
@@ -170,7 +170,7 @@ void main() {
       expect(feedback.numberLine?.end, 10);
       expect(
         feedback.message,
-        contains('💡 Börja på 7 och räkna 3 steg till.'),
+        contains('💡 Entalen blir 10 — skriv 0 och växla 1 tiotal.'),
       );
     });
 
