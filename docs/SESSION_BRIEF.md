@@ -9,7 +9,7 @@
 ## Now (2026-10-25)
 
 **Mål:** Play internal smoke efter push.  
-**Status:** PR #2 (analyze + CI linux smoke target) — merga när analyze/core-smoke gröna. Kvar: 11 unit/widget-tester driftar mot produkt (pre-existerande). Play internal smoke på `v1.4.3+22`.
+**Status:** PR #2 mergad (`deb7343`) — analyze grön; integration smoke kör Android-emulator i CI. **Next:** 11 driftande unit/widget-tester + Play internal smoke på `v1.4.3+22`.
 
 **Klart sedan förra briefen:** push 78 commits (ROI #77–100 + near-miss).
 
