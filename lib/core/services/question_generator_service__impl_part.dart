@@ -2328,7 +2328,6 @@ Vad är $answerType efter transformationen?''';
       final boysNo = 2 + _random.nextInt(step <= 8 ? 6 : 10);
       final girlsYes = 2 + _random.nextInt(step <= 8 ? 6 : 10);
       final girlsNo = 2 + _random.nextInt(step <= 8 ? 6 : 10);
-      final total = boysYes + boysNo + girlsYes + girlsNo;
       // Force percent-friendly total by adjusting girlsNo.
       final targetTotals = <int>[10, 20, 25, 50];
       final target = targetTotals[_random.nextInt(targetTotals.length)];

@@ -21,9 +21,9 @@ uppdaterad: 2026-10-24
 
 ## Next (kandidater — max tre)
 
-1. **Play internal smoke** — verifiera draft/build efter push
-2. **CI green** på `main` efter 78-commit push
-3. **Parked Later** — se ROI_BACKLOG Parked
+1. **Test-suite drift** — 11 fallande tester (feedback-copy, camp home, a11y progress, curriculum audit m.fl.)
+2. **Play internal smoke** — verifiera draft/build efter push
+3. **CI analyze + core-smoke** — PR #2 / linux `-d` target
 
 Lyft **en** till Now i taget.
 

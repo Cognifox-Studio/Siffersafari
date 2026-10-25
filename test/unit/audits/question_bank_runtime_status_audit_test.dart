@@ -52,7 +52,7 @@ const _exceptionMatrices = <String, _ExceptionMatrix>{
       'g4_statistics_005': 'day_delta_without_embedded_table',
       'g4_statistics_010': 'day_delta_without_embedded_table',
     },
-    forbiddenRuntimeMarkers: const [],
+    forbiddenRuntimeMarkers: [],
   ),
   '8:proportionality': _ExceptionMatrix(
     supportedRuntimeFamilies: ['Proportionalitet = ?'],

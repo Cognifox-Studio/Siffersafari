@@ -113,7 +113,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
         await ref
             .read(onboardingControllerProvider(widget.userId))
             .complete(gradeLevel: _gradeLevel ?? 1);
-        if (!mounted) return;
+        if (!context.mounted) return;
         Navigator.of(context).pop();
       },
       child: ThemedBackgroundScaffold(

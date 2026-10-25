@@ -30,8 +30,8 @@ void main() {
     final total = AchievementService().albumEntries.length;
     await pumpAlbum(
       tester,
-      HomeBadgeAlbum(
-        achievementIds: const [AppConstants.firstQuizAchievement],
+      const HomeBadgeAlbum(
+        achievementIds: [AppConstants.firstQuizAchievement],
       ),
     );
 
@@ -51,8 +51,8 @@ void main() {
     final total = InventoryConfig.campSouvenirItems.length;
     await pumpAlbum(
       tester,
-      CampCollectionAlbumDialog(
-        unlockedItemIds: const ['item_camp_fruit_glade'],
+      const CampCollectionAlbumDialog(
+        unlockedItemIds: ['item_camp_fruit_glade'],
       ),
     );
 
