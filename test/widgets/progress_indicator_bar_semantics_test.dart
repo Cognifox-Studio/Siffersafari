@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/presentation/widgets/progress_indicator_bar.dart';
@@ -25,9 +24,6 @@ void main() {
     final semantics = tester.getSemantics(find.byType(ProgressIndicatorBar));
     expect(semantics.label, contains('Fråga 3 av 10'));
     expect(semantics.label, contains('30 procent'));
-    expect(
-      semantics.hasFlag(SemanticsFlag.isLiveRegion),
-      isTrue,
-    );
+    expect(semantics.flagsCollection.isLiveRegion, isTrue);
   });
 }

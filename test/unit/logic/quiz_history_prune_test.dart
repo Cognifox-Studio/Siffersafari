@@ -45,8 +45,10 @@ void main() {
       final history = repository.getQuizHistory('u1');
       final completed =
           history.where((s) => s['isComplete'] == true).toList(growable: false);
-      expect(completed,
-          hasLength(StorageConstants.maxCompletedQuizHistoryPerUser));
+      expect(
+        completed,
+        hasLength(StorageConstants.maxCompletedQuizHistoryPerUser),
+      );
       expect(completed.first['sessionId'], 'done_44');
       expect(completed.last['sessionId'], 'done_5');
       expect(

@@ -6,10 +6,10 @@
 
 ---
 
-## Now (2026-10-24)
+## Now (2026-10-25)
 
 **Mål:** Play internal smoke efter push.  
-**Status:** Top 100 + near-miss pushat till `origin/main` (`844954f`). `v1.4.3+22` Play internal draft.
+**Status:** CI `--fatal-infos` fix (ROI #1) — grön analyze lokalt; PR väntar merge. `v1.4.3+22` Play internal draft kvar att smoke-testa.
 
 **Klart sedan förra briefen:** push 78 commits (ROI #77–100 + near-miss).
 
