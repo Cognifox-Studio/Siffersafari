@@ -329,7 +329,7 @@ void main() {
         userId: userId,
         name: 'Iris',
         ageGroup: AgeGroup.middle,
-        unlockedItems: ['item_safari_hat'],
+        unlockedItems: ['item_camp_fruit_glade'],
       );
       await repository.saveUserProgress(user);
       await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
@@ -352,7 +352,7 @@ void main() {
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('camp_scene_prop_item_safari_hat')),
+        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
         findsOneWidget,
       );
       expect(
@@ -502,9 +502,9 @@ void main() {
         name: 'Nils',
         ageGroup: AgeGroup.middle,
         unlockedItems: [
-          'item_safari_hat',
-          'item_hat_safari',
-          'item_binoculars_safari',
+          'item_camp_fruit_glade',
+          'item_camp_bridge',
+          'item_camp_cartography',
           'item_pet_zebra_companion',
         ],
       );
@@ -523,15 +523,15 @@ void main() {
       );
 
       expect(
-        find.byKey(const Key('camp_scene_prop_item_safari_hat')),
+        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('camp_scene_prop_item_hat_safari')),
+        find.byKey(const Key('camp_scene_prop_item_camp_bridge')),
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('camp_scene_prop_item_binoculars_safari')),
+        find.byKey(const Key('camp_scene_prop_item_camp_cartography')),
         findsOneWidget,
       );
       expect(
@@ -572,11 +572,11 @@ void main() {
         name: 'Alva',
         ageGroup: AgeGroup.middle,
         unlockedItems: [
-          'item_safari_hat',
-          'item_hat_safari',
-          'item_binoculars_safari',
-          'item_compass_safari',
-          'item_map_safari',
+          'item_camp_fruit_glade',
+          'item_camp_bridge',
+          'item_camp_cartography',
+          'item_camp_temple_gate',
+          'item_camp_treasure_cache',
         ],
       );
       await repository.saveUserProgress(user);
@@ -596,11 +596,11 @@ void main() {
       expect(find.text('5 saker'), findsOneWidget);
       expect(find.text('+1 till'), findsOneWidget);
       expect(
-        find.byKey(const Key('camp_scene_prop_item_map_safari')),
+        find.byKey(const Key('camp_scene_prop_item_camp_treasure_cache')),
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('camp_scene_prop_item_safari_hat')),
+        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
         findsNothing,
       );
       expect(
@@ -813,11 +813,12 @@ void main() {
         ageGroup: AgeGroup.middle,
         unlockedItems: [
           'item_safari_hat',
-          'item_hat_safari',
-          'item_binoculars_safari',
-          'item_compass_safari',
           'item_map_safari',
           'item_camp_fruit_glade',
+          'item_camp_bridge',
+          'item_camp_cartography',
+          'item_camp_temple_gate',
+          'item_camp_treasure_cache',
         ],
       );
       await repository.saveUserProgress(user);
@@ -835,19 +836,23 @@ void main() {
       );
 
       expect(
-        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
+        find.byKey(const Key('camp_scene_prop_item_camp_treasure_cache')),
         findsOneWidget,
       );
       expect(
-        find.byKey(const Key('camp_scene_prop_item_map_safari')),
+        find.byKey(const Key('camp_scene_prop_item_camp_bridge')),
         findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('camp_scene_prop_item_camp_fruit_glade')),
+        findsNothing,
       );
       expect(
         find.byKey(const Key('camp_scene_prop_item_safari_hat')),
         findsNothing,
       );
-      expect(find.text('6 saker'), findsOneWidget);
-      expect(find.text('+2 till'), findsOneWidget);
+      expect(find.text('7 saker'), findsOneWidget);
+      expect(find.text('+3 till'), findsOneWidget);
     },
   );
 

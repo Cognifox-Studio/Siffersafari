@@ -584,8 +584,24 @@ void main() {
             expectSometimes(obs.m5aPower, 'M5a potenser', context: ctx);
           }
 
-          if (step < 8) {
+          if (step < 7) {
             expectNever(
+              obs.m5bLinearFunction,
+              'M5b linjär funktion',
+              context: ctx,
+            );
+            expectNever(
+              obs.m5bGeometricTransformation,
+              'M5b transformation',
+              context: ctx,
+            );
+            expectNever(
+              obs.m5bAdvancedStatistics,
+              'M5b avancerad statistik',
+              context: ctx,
+            );
+          } else if (step < 8) {
+            expectSometimes(
               obs.m5bLinearFunction,
               'M5b linjär funktion',
               context: ctx,
