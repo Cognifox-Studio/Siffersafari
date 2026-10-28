@@ -6,12 +6,12 @@
 
 ---
 
-## Now (2026-10-25)
+## Now (2026-10-28)
 
-**Mål:** Play internal smoke efter push.  
-**Status:** CI analyze + **353/353 tester gröna** lokalt (test-drift fix). Play internal smoke på `v1.4.3+22` kvar (manuell).
+**Mål:** ROI discoverability — audit #11–14 (badge/camp/wardrobe) mot kod; stäng luckor som fortfarande missar första session.  
+**Status:** Release +22 smoke **Soft go** på `main` @ `05e4a20` (analyze + **353/353** tester, Android integration smoke, camp/badge widget-tester, nextBiome unit). Play internal draft @ `6e70548` (**79 commits** äldre än `main`) — ny AAB kräver **+23** innan testare ska lita på Console-build.
 
-**Klart sedan förra briefen:** push 78 commits (ROI #77–100 + near-miss).
+**Klart sedan förra briefen:** Play-smoke-loop dokumenterad; `main` synkad med `origin/main` (PR #3).
 
 ---
 
@@ -20,11 +20,15 @@
 **Version i repo:** `1.4.3+22` (`pubspec.yaml`)  
 **Senaste tagg:** `v1.4.3+22`  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
-**Play internal:** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40100575151 (draft)
+**Play internal (draft, stale vs main):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40100575151 (`6e70548`)  
+**Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B Play-paritet = bump + ny `play-closed-beta` internal. Tagg `v1.4.3+22` → `bc3be87` (≠ Play SHA).
 
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-28 – Release +22 smoke (Soft go)**  
+Verifierat: `flutter analyze`, full `flutter test`, `integration_test/app_smoke_test` (emulator), camp/badge/nextBiome-tester. Play-upload oförändrad tills +23.
 
 **2026-10-24 – Release `v1.4.3+22` (tag + Play internal draft)**  
 Camp/souvenirer, badges, nextBiome, quiz polish, CI fatal-infos-fix. AAB via `play-closed-beta` track=`internal`.

@@ -1,7 +1,7 @@
 <!--
 typ: explanation
 syfte: Now / Next / Later — aktiv prioritering utan falska datumlöften
-uppdaterad: 2026-10-24
+uppdaterad: 2026-10-28
 -->
 
 # Aktiv plan — Now / Next / Later
@@ -15,14 +15,14 @@ uppdaterad: 2026-10-24
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Release hygiene — Top 100 + near-miss levererade.
+**Produktspår:** Discoverability-audit (#11–14); Play +23 internal när Console ska matcha `main`.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Play internal smoke** — verifiera draft/build `v1.4.3+22`
-2. **ROI discoverability** — badge unlock-hints (#11), namngivna unlocks (#12)
+1. **ROI discoverability audit** — #11–14 (hints/unlocks/camp-teaser/wardrobe CTA); mycket redan på `main`, hitta luckor
+2. **Play +23 internal** — ny AAB från `main` efter smoke Soft go (ersätter stale draft @ `6e70548`)
 3. **Store/trust** — listing/screenshots (#4–10) vid behov
 
 Lyft **en** till Now i taget.
