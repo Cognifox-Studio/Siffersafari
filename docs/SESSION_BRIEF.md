@@ -20,7 +20,7 @@
 **Version i repo:** `1.4.3+23` (`pubspec.yaml`)  
 **Senaste tagg:** `v1.4.3+22` (ny tagg efter +23 smoke)  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
-**Play internal (draft, stale vs main):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40100575151 (`6e70548`)  
+**Play internal (draft):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40672386468 (`1.4.3+23`, ersätter stale @ `6e70548`)  
 **Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B Play-paritet = bump + ny `play-closed-beta` internal. Tagg `v1.4.3+22` → `bc3be87` (≠ Play SHA).
 
 ---
