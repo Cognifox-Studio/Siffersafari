@@ -662,7 +662,10 @@ void main() {
         tester,
         find.byKey(const Key('camp_collection_album')),
       );
-      expect(find.text('Spela quiz — då fylls campet.'), findsOneWidget);
+      expect(
+        find.text('Spela quiz — då fylls campet. Tryck på låsta för tips.'),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(const Key('camp_collection_album_close')));
       await tester.pumpAndSettle();
 

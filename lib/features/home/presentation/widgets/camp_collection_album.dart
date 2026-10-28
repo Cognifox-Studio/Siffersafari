@@ -35,10 +35,10 @@ class CampCollectionAlbumDialog extends StatelessWidget {
         InventoryConfig.unlockedCampSouvenirCount(unlockedIds);
     final countLabel = '$unlockedCount av ${souvenirs.length}';
     final helperText = unlockedCount == 0
-        ? 'Spela quiz — då fylls campet.'
+        ? 'Spela quiz — då fylls campet. Tryck på låsta för tips.'
         : unlockedCount == souvenirs.length
             ? 'Alla camp-saker klara!'
-            : 'Fler väntar.';
+            : 'Fler väntar. Tryck på låsta för tips.';
 
     return Dialog(
       key: const Key('camp_collection_album'),
@@ -69,7 +69,8 @@ class CampCollectionAlbumDialog extends StatelessWidget {
                         vertical: AppConstants.microSpacing6,
                       ),
                       decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withValues(alpha: 0.12),
+                        color:
+                            theme.colorScheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(999),
                       ),
                       child: Text(
@@ -97,6 +98,7 @@ class CampCollectionAlbumDialog extends StatelessWidget {
                       _CampSouvenirTile(
                         item: item,
                         unlocked: unlockedIds.contains(item.id),
+                        unlockedItemIds: unlockedItemIds,
                       ),
                   ],
                 ),
@@ -122,10 +124,12 @@ class _CampSouvenirTile extends StatelessWidget {
   const _CampSouvenirTile({
     required this.item,
     required this.unlocked,
+    required this.unlockedItemIds,
   });
 
   final InventoryItem item;
   final bool unlocked;
+  final List<String> unlockedItemIds;
 
   @override
   Widget build(BuildContext context) {
@@ -135,58 +139,85 @@ class _CampSouvenirTile extends StatelessWidget {
     final labelColor = unlocked
         ? theme.colorScheme.onSurface
         : theme.colorScheme.onSurface.withValues(alpha: 0.64);
+    final unlockHint = InventoryConfig.lockedWardrobeHint(
+      item.id,
+      unlockedItemIds,
+    );
 
     return Semantics(
-      label: unlocked ? '${item.name}, upplåst' : '${item.name}, låst',
-      child: SizedBox(
-        width: 88,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              key: Key('camp_collection_album_tile_${item.id}'),
-              width: 72,
-              height: 72,
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: unlocked
-                    ? theme.colorScheme.primary.withValues(alpha: 0.12)
-                    : theme.colorScheme.onSurface.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: unlocked
-                      ? theme.colorScheme.primary.withValues(alpha: 0.35)
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.12),
-                ),
-              ),
-              child: unlocked
-                  ? Image.asset(
-                      item.assetPath,
-                      key: Key('camp_collection_album_unlocked_${item.id}'),
-                      fit: BoxFit.contain,
-                      cacheWidth: imageCacheSize,
-                      cacheHeight: imageCacheSize,
-                    )
-                  : Image.asset(
-                      'assets/images/ui/ic_reward_locked_nobg.png',
-                      key: Key('camp_collection_album_locked_${item.id}'),
-                      fit: BoxFit.contain,
-                      cacheWidth: lockedCacheSize,
-                      cacheHeight: lockedCacheSize,
+      button: !unlocked,
+      label: unlocked
+          ? '${item.name}, upplåst'
+          : '${item.name}, låst. $unlockHint',
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: unlocked
+              ? null
+              : () {
+                  final messenger = ScaffoldMessenger.maybeOf(context);
+                  messenger?.hideCurrentSnackBar();
+                  messenger?.showSnackBar(
+                    SnackBar(
+                      key: Key('camp_collection_unlock_hint_${item.id}'),
+                      content: Text(unlockHint),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 3),
                     ),
+                  );
+                },
+          borderRadius: BorderRadius.circular(16),
+          child: SizedBox(
+            width: 88,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  key: Key('camp_collection_album_tile_${item.id}'),
+                  width: 72,
+                  height: 72,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: unlocked
+                        ? theme.colorScheme.primary.withValues(alpha: 0.12)
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: unlocked
+                          ? theme.colorScheme.primary.withValues(alpha: 0.35)
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.12),
+                    ),
+                  ),
+                  child: unlocked
+                      ? Image.asset(
+                          item.assetPath,
+                          key: Key('camp_collection_album_unlocked_${item.id}'),
+                          fit: BoxFit.contain,
+                          cacheWidth: imageCacheSize,
+                          cacheHeight: imageCacheSize,
+                        )
+                      : Image.asset(
+                          'assets/images/ui/ic_reward_locked_nobg.png',
+                          key: Key('camp_collection_album_locked_${item.id}'),
+                          fit: BoxFit.contain,
+                          cacheWidth: lockedCacheSize,
+                          cacheHeight: lockedCacheSize,
+                        ),
+                ),
+                const SizedBox(height: AppConstants.microSpacing6),
+                Text(
+                  unlocked ? item.name : 'Låst',
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: labelColor,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: AppConstants.microSpacing6),
-            Text(
-              unlocked ? item.name : 'Låst',
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: theme.textTheme.labelSmall?.copyWith(
-                color: labelColor,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

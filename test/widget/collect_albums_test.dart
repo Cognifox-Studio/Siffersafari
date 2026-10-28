@@ -38,12 +38,52 @@ void main() {
     expect(find.byKey(const Key('home_badge_album')), findsOneWidget);
     expect(find.text('1 av $total'), findsOneWidget);
     expect(find.text('Tryck på låsta för tips.'), findsOneWidget);
+    expect(find.byKey(const Key('home_badge_album_helper')), findsOneWidget);
     expect(
       find.byKey(
         const Key('home_badge_icon_${AppConstants.firstQuizAchievement}'),
       ),
       findsOneWidget,
     );
+  });
+
+  testWidgets('HomeBadgeAlbum zero unlocked shows first-session helper', (
+    tester,
+  ) async {
+    final total = AchievementService().albumEntries.length;
+    await pumpAlbum(
+      tester,
+      const HomeBadgeAlbum(achievementIds: []),
+    );
+
+    expect(find.text('0 av $total'), findsOneWidget);
+    expect(find.text('Tryck på ett låst märke.'), findsOneWidget);
+  });
+
+  testWidgets('CampCollectionAlbumDialog locked souvenir shows unlock hint',
+      (tester) async {
+    await pumpAlbum(
+      tester,
+      const CampCollectionAlbumDialog(unlockedItemIds: []),
+    );
+
+    expect(
+      find.text('Spela quiz — då fylls campet. Tryck på låsta för tips.'),
+      findsOneWidget,
+    );
+    final lockedTile = find.byKey(
+      const Key('camp_collection_album_tile_item_camp_fruit_glade'),
+    );
+    expect(lockedTile, findsOneWidget);
+    await tester.tap(lockedTile);
+    await tester.pump();
+    expect(
+      find.byKey(
+        const Key('camp_collection_unlock_hint_item_camp_fruit_glade'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.textContaining('nivå'), findsOneWidget);
   });
 
   testWidgets('CampCollectionAlbumDialog shows souvenir progress (#98)',
@@ -59,6 +99,6 @@ void main() {
     expect(find.byKey(const Key('camp_collection_album')), findsOneWidget);
     expect(find.text('Campet'), findsOneWidget);
     expect(find.text('1 av $total'), findsOneWidget);
-    expect(find.text('Fler väntar.'), findsOneWidget);
+    expect(find.text('Fler väntar. Tryck på låsta för tips.'), findsOneWidget);
   });
 }

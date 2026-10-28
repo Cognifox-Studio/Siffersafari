@@ -70,6 +70,7 @@ class HomeBadgeAlbum extends ConsumerWidget {
           const SizedBox(height: AppConstants.microSpacing6),
           Text(
             helperText,
+            key: const Key('home_badge_album_helper'),
             style: theme.textTheme.bodySmall?.copyWith(
               color: Colors.white.withValues(alpha: 0.84),
               fontWeight: FontWeight.w600,

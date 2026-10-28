@@ -27,7 +27,7 @@ Ansvar: hubben efter profilval. Här avgörs om barnet ska fortsätta ett quiz, 
 Home sparar inget direkt. Den läser state och navigerar vidare till quiz, story, settings eller parent flow.
 Resume-CTA visar räknesätt + progress via `homeResumeQuizSessionProvider` (t.ex. “Fortsätt Plus (3/10)”).
 
-Camp-badgen syns även vid 0 saker (teaser “Samla”) och öppnar ett read-only souveniralbum för `slot == 'camp'`. Tomt camp visar garderobs-CTA. Piedestalerna visar endast upplåsta camp-souvenirer; lediga platser är låsta placeholders (inga wardrobe-fillers). Garderoben öppnas via maskoten eller CTA. Badgealbumet bygger på `UserProgress.achievements` med PNG-tiles; låsta brickor visar `unlockHint` vid tryck (SnackBar).
+Camp-badgen syns även vid 0 saker (teaser “Samla”) och öppnar souveniralbum. Låsta rader i albumet visar nivå-hint vid tryck (samma modell som badge-`unlockHint`). Tomt camp visar garderobs-CTA.
 
 ## Bra första test
 

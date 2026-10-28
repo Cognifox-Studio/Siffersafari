@@ -15,15 +15,15 @@ uppdaterad: 2026-10-28
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Discoverability-audit (#11–14); Play +23 internal när Console ska matcha `main`.
+**Produktspår:** Play +23 device smoke; därefter store/trust eller tagg `v1.4.3+23`.
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **ROI discoverability audit** — #11–14 (hints/unlocks/camp-teaser/wardrobe CTA); mycket redan på `main`, hitta luckor
-2. **Play +23 internal** — ny AAB från `main` efter smoke Soft go (ersätter stale draft @ `6e70548`)
-3. **Store/trust** — listing/screenshots (#4–10) vid behov
+1. **Play +23 device smoke** — internal build 23, DoD B kärnflöde + collect-loop
+2. **Store/trust** — listing/screenshots (#4–10) vid behov
+3. **ROI #15–18** — parent TTS, resume CTA, results practice (discoverability follow-ups)
 
 Lyft **en** till Now i taget.
 

@@ -591,9 +591,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               shrinkWrap: true,
                               children: operationCards,
                             ),
-                            // Phone-height home: keep play/ops above the fold;
+                            // Phone-width home: keep play/ops above the fold;
                             // camp lives under "Mer att göra".
-                            if (constraints.maxHeight < 780) ...[
+                            if (isWideScreen == false) ...[
                               const SizedBox(
                                 height: AppConstants.defaultPadding,
                               ),
@@ -633,13 +633,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       const SizedBox(height: AppConstants.largePadding),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Mer att göra',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Mer att göra',
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(
                                     color: mutedOnPrimary,
                                     fontWeight: FontWeight.w800,
                                   ),
+                            ),
+                            const SizedBox(height: AppConstants.microSpacing6),
+                            Text(
+                              'Camp, märken och äventyr — scrolla eller tryck knappen ovan.',
+                              key: const Key('home_collect_section_hint'),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: mutedOnPrimary,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(height: AppConstants.defaultPadding),
