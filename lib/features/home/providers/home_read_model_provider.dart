@@ -21,7 +21,7 @@ final homeReadModelProvider = Provider.autoDispose<HomeReadModel>((ref) {
     quizProvider.select(
       (state) => (
         userId: state.userId,
-        hasSession: state.session != null,
+        hasSession: state.session != null && !state.session!.isComplete,
       ),
     ),
   );

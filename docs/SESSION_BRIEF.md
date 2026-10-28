@@ -11,7 +11,7 @@
 **Mål:** Play **+24** internal smoke på enhet (Console build 24) — kort DoD B efter discoverability-pass.  
 **Status:** ROI **#11–14 audit klart** (camp-album lås-hints, hem-hint under “Mer att göra”, camp-knapp på alla telefoner). Play +23 [40672386468](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40672386468) success; **+24 upload efter discoverability-fix**.
 
-**Klart sedan förra briefen:** discoverability-luckor; +23 bump och Play draft.
+**Klart sedan förra briefen:** discoverability-luckor; +23 bump och Play draft. Lokal debug: hem-CTA återupptar inte en redan avslutad runda (inte i +24-AAB).
 
 ---
 
@@ -26,6 +26,9 @@
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-28 – Hem-CTA efter avslutat quiz**  
+Avslutad runda tas bort som pågående och räknas inte som “Fortsätt”. Story-CTA (“Spela nästa stopp”) visas i stället.
 
 **2026-10-28 – Discoverability #11–14 (audit + gap)**  
 Camp-album: tap-hints på låsta souvenirer; hem: `home_collect_section_hint` + camp-knapp på alla mobilbredder.

@@ -25,7 +25,7 @@ Ansvar: hubben efter profilval. Här avgörs om barnet ska fortsätta ett quiz, 
 ## Sparar
 
 Home sparar inget direkt. Den läser state och navigerar vidare till quiz, story, settings eller parent flow.
-Resume-CTA visar räknesätt + progress via `homeResumeQuizSessionProvider` (t.ex. “Fortsätt Plus (3/10)”).
+Resume-CTA visar räknesätt + progress via `homeResumeQuizSessionProvider` (t.ex. “Fortsätt Plus (3/10)”). En avslutad runda (`isComplete`) återupptas inte.
 
 Camp-badgen syns även vid 0 saker (teaser “Samla”) och öppnar souveniralbum. Låsta rader i albumet visar nivå-hint vid tryck (samma modell som badge-`unlockHint`). Tomt camp visar garderobs-CTA.
 

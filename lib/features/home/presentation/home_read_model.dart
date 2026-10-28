@@ -96,10 +96,13 @@ class HomeReadModel {
       parentAllowedOperations: parentAllowedOps,
       gradeLevel: user?.gradeLevel,
     );
-    final hasActiveInMemorySession =
-        user != null && quizUserId == user.userId && hasActiveQuizSession;
-    final hasResumableSession =
-        hasActiveInMemorySession || hasPersistedInProgressSession;
+    final resumeIsOpen = resumeSession != null && !resumeSession.isComplete;
+    final hasActiveInMemorySession = user != null &&
+        quizUserId == user.userId &&
+        hasActiveQuizSession &&
+        resumeIsOpen;
+    final hasResumableSession = hasActiveInMemorySession ||
+        (hasPersistedInProgressSession && resumeIsOpen);
     final hasStoryQuest = user != null &&
         storyProgress != null &&
         questStatus != null &&

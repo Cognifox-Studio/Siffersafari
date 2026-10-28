@@ -19,6 +19,7 @@ final homeResumeQuizSessionProvider =
   final liveSession = live.session;
   if (live.userId == userId &&
       liveSession != null &&
+      !liveSession.isComplete &&
       liveSession.endTime == null) {
     return liveSession;
   }
@@ -28,7 +29,9 @@ final homeResumeQuizSessionProvider =
   if (sessionMap == null) return null;
 
   try {
-    return QuizSessionJson.fromJson(sessionMap);
+    final restored = QuizSessionJson.fromJson(sessionMap);
+    if (restored.isComplete) return null;
+    return restored;
   } catch (_) {
     return null;
   }

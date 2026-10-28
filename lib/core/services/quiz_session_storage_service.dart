@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
@@ -8,9 +6,13 @@ import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 
 class QuizSessionStorageService {
-  const QuizSessionStorageService(this._repository);
+  QuizSessionStorageService(this._repository);
 
   final LocalStorageRepository _repository;
+
+  /// Serializes Hive writes so a late in-progress save cannot land after the
+  /// row was cleared for a finished quiz.
+  Future<void> _writes = Future<void>.value();
 
   void persistInProgressSession({
     required String userId,
@@ -23,6 +25,15 @@ class QuizSessionStorageService {
       'userId=$userId, operationType=${session.operationType.name}',
     );
     final answered = session.correctAnswers + session.wrongAnswers;
+    if (session.isComplete) {
+      _enqueue(
+        () => _clearInProgressSession(
+          userId: userId,
+          operationTypeName: session.operationType.name,
+        ),
+      );
+      return;
+    }
     if (answered <= 0 && !persistEvenWithoutAnswers) {
       debugPrint(
         '[QuizSessionStorageService] persistInProgressSession: no answers yet, skipping',
@@ -33,14 +44,6 @@ class QuizSessionStorageService {
     final inProgressId = _repository.inProgressQuizSessionId(
       userId: userId,
       operationTypeName: session.operationType.name,
-    );
-
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
-        userId: userId,
-        operationTypeName: session.operationType.name,
-        exceptSessionId: inProgressId,
-      ),
     );
 
     final sessionMap = session.toJson();
@@ -56,7 +59,34 @@ class QuizSessionStorageService {
       sessionMap['totalPoints'] = 0;
     }
 
-    unawaited(_repository.saveQuizSession(sessionMap));
+    _enqueue(() async {
+      await _repository.purgeInProgressQuizSessions(
+        userId: userId,
+        operationTypeName: session.operationType.name,
+        exceptSessionId: inProgressId,
+      );
+      await _repository.saveQuizSession(sessionMap);
+    });
+  }
+
+  void _enqueue(Future<void> Function() action) {
+    _writes = _writes
+        .then((_) => action())
+        .catchError((Object error, StackTrace stack) {
+      debugPrint('[QuizSessionStorageService] write failed: $error');
+      debugPrintStack(stackTrace: stack);
+    });
+  }
+
+  Future<void> _clearInProgressSession({
+    required String userId,
+    required String operationTypeName,
+  }) {
+    final inProgressId = _repository.inProgressQuizSessionId(
+      userId: userId,
+      operationTypeName: operationTypeName,
+    );
+    return _repository.deleteQuizSession(inProgressId);
   }
 
   void prepareInProgressStorage({
@@ -106,16 +136,13 @@ class QuizSessionStorageService {
       operationTypeName: operationType.name,
     );
 
-    unawaited(
-      _repository.purgeInProgressQuizSessions(
+    _enqueue(() async {
+      await _repository.purgeInProgressQuizSessions(
         userId: userId,
         operationTypeName: operationType.name,
         exceptSessionId: inProgressId,
-      ),
-    );
-
-    unawaited(
-      _repository.saveQuizSession({
+      );
+      await _repository.saveQuizSession({
         'sessionId': inProgressId,
         'userId': userId,
         'operationType': operationType.name,
@@ -129,7 +156,7 @@ class QuizSessionStorageService {
         'startTime': start.toIso8601String(),
         'endTime': end.toIso8601String(),
         'isComplete': false,
-      }),
-    );
+      });
+    });
   }
 }

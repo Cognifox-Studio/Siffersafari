@@ -44,6 +44,30 @@ void main() {
       expect(model.primaryButtonLabel, 'Fortsätt Plusraketer (0/10)');
     });
 
+    test('visar story-CTA när quizet redan är klart', () {
+      final user = _user();
+      final session = _session().copyWith(
+        currentQuestionIndex: 10,
+        endTime: DateTime(2026, 10, 28),
+        answers: {
+          for (var i = 0; i < 8; i++) 'q$i': i,
+        },
+      );
+      final model = HomeReadModel.fromState(
+        userState: UserState(activeUser: user, questStatus: _questStatus()),
+        quizState: QuizState(userId: user.userId, session: session),
+        storyProgress: _storyProgress(),
+        parentAllowedOps: _baseOperations,
+        hasPersistedInProgressSession: true,
+        resumeSession: session,
+      );
+
+      expect(session.isComplete, isTrue);
+      expect(model.hasResumableSession, isFalse);
+      expect(model.primaryAction, HomePrimaryAction.startStoryQuest);
+      expect(model.primaryButtonLabel, 'Spela nästa stopp');
+    });
+
     test('visar story-CTA när aktivt uppdrag matchar tillåtna räknesätt', () {
       final user = _user();
       final model = HomeReadModel.fromState(
