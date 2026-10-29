@@ -9,7 +9,7 @@
 ## Now (2026-10-29)
 
 **Mål:** Play **+25** internal smoke på enhet (Console build 25) — DoD B: discoverability + resume-fix (`366ea40`).  
-**Status:** Play +25 dispatch [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568); device-smoke när build finns i Console.
+**Status:** Play +25 [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568) success; GitHub APK [40865482193](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40865482193) bygger från tagg `v1.4.3+25`.
 
 **Klart sedan förra briefen:** hem-CTA efter avslutat quiz; ROI **#11–14**; Play +24 [40674563631](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40674563631) (discoverability, utan resume-fix).
 
@@ -18,14 +18,17 @@
 ## Nuläge (snapshot)
 
 **Version i repo:** `1.4.3+25` (`pubspec.yaml`)  
-**Senaste tagg:** `v1.4.3+22` (ny tagg efter +25 device smoke)  
-**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
-**Play internal (draft):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568 (`1.4.3+25`, resume-fix + discoverability)
-**Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B = installera internal build 25 + smoke. Tagg efter smoke.
+**Senaste tagg:** `v1.4.3+25`  
+**GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B25 (APK när build är klar)  
+**Play internal (draft):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568 (`1.4.3+25`)  
+**Go/no-go:** Soft go — device-smoke internal/APK build 25; tagg skapad.
 
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-29 – Tagg `v1.4.3+25` + GitHub APK**  
+Signerad `app-release.apk` via `build.yml` (resume-fix + discoverability).
 
 **2026-10-29 – Bump `1.4.3+25` + Play internal**  
 What's-new sv/en (resume på hem + discoverability); [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568).
