@@ -1,21 +1,26 @@
 # Privacy Policy – Siffersafari
 
-**Last Updated:** April 22, 2026
+**Last Updated:** October 29, 2026
 
 ## Overview
 
 Siffersafari is a mathematics game app designed for children ages 6–12. This Privacy Policy explains how we handle data when you use our app.
 
-**Important:** We do NOT collect, use, or disclose personal information from children or their parents. All gameplay data is stored locally on your device.
+**Default mode:** Gameplay data is stored **locally on your device**. We do not require an account to play.
+
+**Optional cloud backup (parent opt-in):** When enabled by a parent/guardian behind the parent PIN, progress may be copied to **Google Firebase** (Authentication + Firestore) so it can be restored on a new device. This is **off by default** and not required for any core feature.
 
 ## Data We Collect
 
-We collect **NO personal information** such as:
-- ❌ Child's name, email, address, or phone number
-- ❌ Parent's contact information
-- ❌ Photos, videos, or audio recordings
-- ❌ Location data (GPS, address)
-- ❌ Persistent device identifiers (fingerprinting, cross-device tracking)
+**Without cloud backup:** We do not operate a central account system and do not collect child email, address, or location.
+
+**With cloud backup enabled by a parent:** We store the minimum needed to restore learning progress (profile name, scores, unlocks, session summaries) in **Firebase Firestore**, tied to the **parent’s** sign-in. Child profiles are not separate login accounts.
+
+We do **not** collect:
+- ❌ Photos, videos, or audio recordings for upload
+- ❌ GPS / precise location
+- ❌ Cross-app advertising identifiers
+- ❌ Analytics or behavioral tracking (no Firebase Analytics, no ad SDKs)
 
 ## Data We Store Locally
 
@@ -29,15 +34,26 @@ The following information is stored **only on your device** using encrypted loca
 | Parent PIN (hashed) | Parent access control | Device storage (Hive), encrypted with BCrypt |
 | Session history | Cumulative statistics | Device storage (Hive) |
 
-**All data remains on your device.** We do NOT sync data to our servers.
+**Local-first:** Hive remains the source of truth while playing offline.
+
+### Optional cloud copy (Firebase)
+
+When a parent turns on cloud backup:
+
+| Data Type | Purpose | Stored Where |
+|-----------|---------|--------------|
+| Child profile + progress snapshot | Restore after device change | Firebase Firestore (EU/US per Firebase project region) |
+| Parent sign-in identifier | Secure access to that household’s backup | Firebase Authentication |
+
+You can turn cloud backup off in parent settings; deleting the parent account or all data should remove cloud copies (see Phase 2 implementation in app release notes).
 
 ## Data NOT Collected
 
-- ❌ **No Server Uploads:** Your child's data never leaves your device
-- ❌ **No Analytics:** We don't use Google Analytics, Firebase, Mixpanel, or similar services
-- ❌ **No Advertising:** The app contains no ads, ad networks, or behavioral advertising
-- ❌ **No Tracking:** We don't track your child across apps or websites
-- ❌ **No Third-Party Data Sharing:** We share data with no external companies
+- ❌ **No analytics or ads:** No Google Analytics, **Firebase Analytics**, Mixpanel, or ad networks
+- ❌ **No behavioral tracking** across apps or websites
+- ❌ **No selling data** to third parties
+
+Without cloud backup enabled, child progress does not leave the device.
 
 ## How You Control Your Data
 
@@ -80,20 +96,21 @@ Your data is protected by:
 
 ## Children's Privacy (COPPA)
 
-Siffersafari is designed for children under 13. We comply with the **Children's Online Privacy Protection Act (COPPA)** by:
-1. **Collecting zero personal information** from children or parents
-2. **Storing data locally only** (no cloud servers)
-3. **Providing easy data deletion** (see "How You Control Your Data" above)
-4. **No tracking or profiling** across devices or apps
+Siffersafari is designed for children under 13. We comply with **COPPA** by:
+1. **No child login** — children use local profiles; any cloud account is **parent/guardian** only
+2. **Opt-in cloud backup** — off by default; enabled only behind the parent PIN
+3. **No ads or analytics SDKs** in the app
+4. **Easy deletion** on device (and cloud deletion when backup is enabled — see in-app controls)
 
 ## Third-Party Services
 
-We use the following open-source libraries, all operating **offline on your device:**
-- **Hive** (local database) — [Apache 2.0 License](https://github.com/isar/hive)
-- **Riverpod** (state management) — [MIT License](https://github.com/rrousselGit/riverpod)
-- **bcrypt** (PIN hashing) — [BSD 3-Clause](https://github.com/google/bcrypt-dart)
+**Offline libraries** (device only): Hive, Riverpod, bcrypt — no phone-home.
 
-None of these libraries phone home or collect data.
+**Optional cloud (only when backup is on):**
+- **Firebase Authentication** — parent sign-in
+- **Cloud Firestore** — encrypted in transit (HTTPS/TLS); access controlled by security rules
+
+We do **not** embed Firebase Analytics, Crashlytics with user profiling, or Firebase Ads.
 
 ## Data Retention
 
@@ -127,10 +144,10 @@ For reports of COPPA violations, contact:
 
 ## Compliance Summary
 
-✅ **COPPA Compliant:** App collects zero personal information  
-✅ **GDPR-Friendly:** No data processing; GDPR not applicable to offline apps  
-✅ **Child-Safe:** Designed with children 6–12 in mind  
-✅ **Transparent:** This policy explains everything we do (and don't do)
+✅ **COPPA-minded:** No child accounts; optional parent-gated backup only  
+✅ **Offline-first core:** Play without network  
+✅ **No analytics/ads SDKs**  
+✅ **Transparent:** This policy describes local and optional cloud handling
 
 ---
 

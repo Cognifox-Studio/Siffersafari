@@ -77,7 +77,8 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                     '• Upplåsta svårighetsnivåer\n'
                     '• Föräldra-PIN (hashad med BCrypt)\n'
                     '• Sessionshistorik\n\n'
-                    'All data stannar på din enhet. Vi synkroniserar INTE data till våra servrar.',
+                    'All data stannar på din enhet som standard. '
+                    'Valfri molnsäkerhetskopia (Firebase) kan aktiveras av förälder bakom PIN — se avsnittet om moln nedan.',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -86,7 +87,7 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 title: 'Data vi INTE samlar in',
                 content:
                     '❌ Inga serveruppladdningar - barnets data lämnar aldrig enheten\n'
-                    '❌ Ingen analys - vi använder inte Google Analytics, Firebase eller liknande\n'
+                    '❌ Ingen analys eller reklam — vi använder inte Firebase Analytics, Google Analytics eller annonsnätverk\n'
                     '❌ Ingen reklam - appen innehåller inga annonser\n'
                     '❌ Ingen spårning - vi spårar inte ditt barn mellan appar eller webbplatser\n'
                     '❌ Ingen datadelning - vi delar inte data med externa företag',
@@ -110,9 +111,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 title: 'Datasäkerhet',
                 content: 'Din data skyddas av:\n\n'
                     '• Lokal kryptering - Föräldra-PIN hashas med BCrypt\n'
-                    '• Enhetslagring - Data sparas i krypterad Hive-databas\n'
-                    '• Ingen nätverksöverföring - ingen data lämnar enheten\n'
-                    '• Inget kontosystem - ingen risk för kontointrång',
+                    '• Enhetslagring - Data sparas i Hive på enheten\n'
+                    '• Offline som standard - quiz och story kräver inte nätverk\n'
+                    '• Valfri molnbackup - endast om förälder aktiverar det (Firebase, krypterat i transit)',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -121,10 +122,10 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 title: 'Barns integritet (COPPA)',
                 content:
                     '${AppConstants.appName} är designad för barn under 13 år. Vi följer COPPA genom att:\n\n'
-                    '1. Samla in noll personlig information från barn eller föräldrar\n'
-                    '2. Spara data endast lokalt (inga molnservrar)\n'
-                    '3. Tillhandahålla enkel dataradering\n'
-                    '4. Ingen spårning eller profilering mellan enheter',
+                    '1. Inte låta barn logga in — profiler är lokala; ev. molnkonto är endast för vuxen\n'
+                    '2. Molnsäkerhetskopia är av som standard och kräver förälder-PIN\n'
+                    '3. Ingen analys eller reklam i appen\n'
+                    '4. Enkel radering på enheten (och i molnet när backup är på)',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),
@@ -132,12 +133,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                 context,
                 title: 'Tredjepartstjänster',
                 content:
-                    'Vi använder följande bibliotek. Alla fungerar offline på din enhet:\n\n'
-                    '• Hive (lokal databas)\n'
-                    '• Riverpod (tillståndshantering)\n'
-                    '• Just Audio (ljuduppspelning)\n'
-                    '• BCrypt (lösenordshashning)\n\n'
-                    'Inget av dessa bibliotek samlar in data.',
+                    'Offline-bibliotek: Hive, Riverpod, BCrypt m.fl.\n\n'
+                    'Valfri molnsäkerhetskopia (när den är på): Firebase Authentication och Cloud Firestore.\n'
+                    'Vi använder inte Firebase Analytics eller annonser.',
                 onPrimary: onPrimary,
                 mutedOnPrimary: mutedOnPrimary,
               ),

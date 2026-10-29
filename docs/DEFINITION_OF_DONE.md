@@ -54,7 +54,8 @@ Allt i A, plus:
 - [ ] Go/No-go (`.github/prompts/release-go-no-go.prompt.md`)
 - [ ] `SESSION_BRIEF` uppdaterad med levererad version och nästa Now
 - [ ] **Play Console → App content → Data safety** stämmer mot [PRIVACY_POLICY.md](PRIVACY_POLICY.md) (ROI #91):
-  - [ ] Data collected? **No** (no account, no cloud sync in core)
+  - [ ] Data collected? **No** by default; **Yes (progress backup)** only when parent enables cloud backup (Firebase Auth + Firestore)
+  - [ ] Account optional? **Yes** — required only for cloud backup, not for play
   - [ ] Data shared? **No**
   - [ ] Encryption in transit N/A (offline-first core; no product telemetry)
   - [ ] Users can request deletion? **Yes** — in-app clear profile / clear all data (no cloud export)

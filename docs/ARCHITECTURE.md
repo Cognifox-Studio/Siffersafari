@@ -14,7 +14,7 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-29)
 - State: Riverpod (`StateNotifierProvider` + `Provider`)
 - DI: GetIt
 - Navigation: Imperativ standardnavigering (`Navigator` med lokala helpers, inget externt router-paket)
-- Persistens: Hive (`user_progress`, `settings`, `quiz_history`)
+- Persistens: Hive (`user_progress`, `settings`, `quiz_history`); valfri Firebase Firestore-backup (föräldraopt-in, se `docs/FIREBASE_CLOUD_BACKUP.md`)
 - Assets & Animation:
   - Custom PNG-assets för både UI-ikoner (`ic_*`), avatarer (`img_*`) och karaktärer. Emojis och Flutter standard-ikoner är under utfasning.
   - PNG-first för mascot-runtime i produkt-UI

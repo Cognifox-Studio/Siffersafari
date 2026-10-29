@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
+import 'package:siffersafari/core/services/cloud_backup_service.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/services/question_generator_service.dart';
@@ -84,6 +86,13 @@ Future<void> initializeDependencies({
   _registerLazy<ParentPinService>(
     () => ParentPinService(getIt<LocalStorageRepository>()),
   );
+  _registerLazy<CloudBackupService>(() {
+    final repo = getIt<LocalStorageRepository>();
+    return FirebaseCloudBackupService(() {
+      final raw = repo.getSetting(SettingsKeys.cloudBackupOptInAt);
+      return raw != null && raw.toString().isNotEmpty;
+    });
+  });
 
   if (total != null) {
     total.stop();

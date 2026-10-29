@@ -38,6 +38,9 @@ class SettingsKeys {
 
   static String musicVolume(String userId) => 'music_volume_$userId';
 
+  /// ISO-8601 timestamp when parent opted in to Firebase cloud backup; absent = off.
+  static const String cloudBackupOptInAt = 'cloud_backup_opt_in_at';
+
   static const String analyticsEvents = 'analytics_events';
 
   /// Legacy Daily Challenge keys — kept so profile delete still wipes orphans.

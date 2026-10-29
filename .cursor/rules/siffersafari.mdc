@@ -17,7 +17,7 @@ AGENTS.md är referensindex; arkiverade prompts/skills ligger under `.github/arc
 
 ## Alltid
 
-- COPPA / offline-first: inga trackers, annonser eller onlinekrav i kärnflödet
+- COPPA / offline-first kärna: inga trackers, annonser eller **nätverkskrav** i quiz/story-flödet. **Valfri** Firebase Auth + Firestore endast för föräldraopt-in backup (se `docs/FIREBASE_CLOUD_BACKUP.md`); ingen Firebase Analytics/Ads.
 - Feature-first UI under `lib/features/.../presentation/`
 - PNG-first maskot (Loke); ingen ny Rive/SVG-runtime
 - Hive via repository; quiz-session mergas tillbaka till `UserProgress` vid slut

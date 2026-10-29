@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:siffersafari/core/firebase/firebase_bootstrap.dart';
 import 'package:siffersafari/app/bootstrap/presentation/startup_flow_gate.dart';
 import 'package:siffersafari/app/bootstrap/presentation/startup_splash_gate.dart';
 import 'package:siffersafari/domain/enums/app_theme.dart';
@@ -92,6 +93,11 @@ Future<String?> _initializeAsync() async {
     await _measureAsync(
       'initializeDependencies(openQuizHistoryBox: false)',
       () => initializeDependencies(openQuizHistoryBox: false),
+    );
+
+    await _measureAsync(
+      'FirebaseBootstrap.initialize',
+      FirebaseBootstrap.initialize,
     );
 
     // Boxen quiz_history öppnas asynkront efter primära core-beroenden

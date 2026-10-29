@@ -8,8 +8,8 @@
 
 ## Now (2026-10-29)
 
-**Mål:** Play **+25** internal smoke på enhet (Console build 25) — DoD B: discoverability + resume-fix (`366ea40`).  
-**Status:** Play +25 [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568) success; GitHub APK [40865482193](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40865482193) bygger från tagg `v1.4.3+25`.
+**Mål:** Firebase **Phase 2** — förälder-UI + Firestore-sync efter +25 smoke. **Phase 1** (SDK, bootstrap, policy) på `main`.  
+**Status:** Play +25 success; GitHub APK `v1.4.3+25`. Konfigurera projekt: `docs/FIREBASE_SETUP.md`.
 
 **Klart sedan förra briefen:** hem-CTA efter avslutat quiz; ROI **#11–14**; Play +24 [40674563631](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40674563631) (discoverability, utan resume-fix).
 
@@ -26,6 +26,9 @@
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-29 – Firebase Phase 1 (foundation)**  
+SDK + bootstrap + `CloudBackupService` + policy/spec; ingen inloggning/sync i UI än. Setup: `docs/FIREBASE_SETUP.md`.
 
 **2026-10-29 – Tagg `v1.4.3+25` + GitHub APK**  
 Signerad `app-release.apk` via `build.yml` (resume-fix + discoverability).

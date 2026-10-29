@@ -12,15 +12,17 @@ Siffersafari är en app riktad mot barn (6-12 år). Google Plays strikta COPPA-r
 ## Arbetsflöde
 
 1. **Skanna Beroenden (`pubspec.yaml`):**
-   - Letar efter förbjudna tredjepartsverktyg för analys eller reklam (t.ex. `firebase_analytics`, `appsflyer`, reklamnätverk).
-   - Tillser att auto-update paket (som `ota_update`) **inte** existerar, då det förbjuds av policy för barnappar.
+   - Förbjudet: `firebase_analytics`, `firebase_crashlytics` med PII, reklam-SDK, `appsflyer`, m.m.
+   - Tillåtet **endast** med föräldraopt-in-backup: `firebase_core`, `firebase_auth`, `cloud_firestore` (se `docs/FIREBASE_CLOUD_BACKUP.md`).
+   - Tillser att auto-update paket (som `ota_update`) **inte** existerar.
 
 2. **Kolla Manifest (`android/app/src/main/AndroidManifest.xml`):**
    - Måste absolut sakna permissions för `REQUEST_INSTALL_PACKAGES`.
    - Ska undvika onödiga permissions utöver nätverk för eventuellt framtida in-app godkända upplägg. Inga plats-, kamera- eller telefonboksbehörigheter får smugglas in.
 
-3. **Granska Datatrafik och Exfiltrering (`lib/data/**`):**
-   - Skanna efter gömda http-anrop eller telemetri som skickar iväg användardata/profiler till nätet. Allt ska lagras stängt i Hive lokalt.
+3. **Granska Datatrafik (`lib/data/**`, `lib/core/firebase/**`):**
+   - Kärnflöde ska fungera offline; Hive är source of truth.
+   - Molnsync får bara ske via `CloudBackupService` när förälder optat in — ingen dold telemetri.
 
 4. **Sammanställ Rapport:**
    - Om allt ser snyggt ut, returnera en grön "Pass"-rapport.

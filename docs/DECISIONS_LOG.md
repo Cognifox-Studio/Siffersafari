@@ -8,6 +8,10 @@ uppdaterad: 2026-05-26
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
+## Gällande nuläge (2026-10-29)
+
+- **Valfri Firebase-molnsäkerhetskopia:** Produktriktning ändrad från “aldrig molnsync” till **offline-first kärna + opt-in** backup via Firebase Auth + Firestore (ingen Firebase Analytics/Ads). Hive fortsätter som source of truth lokalt. Spec: `docs/FIREBASE_CLOUD_BACKUP.md`, setup: `docs/FIREBASE_SETUP.md`. Phase 2 = förälder-UI + sync.
+
 ## Gällande nuläge (2026-07-24)
 
 - **Utvecklingssystem:** Now/Next/Later + Definition of Done + Plan→Execute→Review är kanoniskt i `docs/DEV_SYSTEM.md` och `docs/DEFINITION_OF_DONE.md`. Agent-/skill-routing pekar dit; chattvanor får inte åsidosätta DoD.
