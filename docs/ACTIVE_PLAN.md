@@ -1,7 +1,7 @@
 <!--
 typ: explanation
 syfte: Now / Next / Later — aktiv prioritering utan falska datumlöften
-uppdaterad: 2026-10-28
+uppdaterad: 2026-10-29
 -->
 
 # Aktiv plan — Now / Next / Later
@@ -15,15 +15,15 @@ uppdaterad: 2026-10-28
 ## Now
 
 **Se `SESSION_BRIEF.md`.**  
-**Produktspår:** Play +23 device smoke; därefter store/trust eller tagg `v1.4.3+23`.
+**Produktspår:** Play **+25** device smoke; därefter tagg `v1.4.3+25` eller store/trust (#4–10).
 
 ---
 
 ## Next (kandidater — max tre)
 
-1. **Play +23 device smoke** — internal build 23, DoD B kärnflöde + collect-loop
+1. **Playtest polish** — camp-badge räknar rätt sak; håll-inne-hint på svar (Åk 1–2)
 2. **Store/trust** — listing/screenshots (#4–10) vid behov
-3. **ROI #15–18** — parent TTS, resume CTA, results practice (discoverability follow-ups)
+3. **ROI #15–18 audit** — TTS/practice redan i appen; verifiera innan ny kod
 
 Lyft **en** till Now i taget.
 

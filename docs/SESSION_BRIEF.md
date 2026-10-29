@@ -6,26 +6,29 @@
 
 ---
 
-## Now (2026-10-28)
+## Now (2026-10-29)
 
-**Mål:** Play **+24** internal smoke på enhet (Console build 24) — kort DoD B efter discoverability-pass.  
-**Status:** ROI **#11–14 audit klart** (camp-album lås-hints, hem-hint under “Mer att göra”, camp-knapp på alla telefoner). Play +23 [40672386468](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40672386468) success; **+24 upload efter discoverability-fix**.
+**Mål:** Play **+25** internal smoke på enhet (Console build 25) — DoD B: discoverability + resume-fix (`366ea40`).  
+**Status:** Bump +25 och Play internal draft efter push; device-smoke: avsluta quiz → **Spela nästa stopp** (inte Fortsätt 8/8), camp/märken-hints, resultat → hem.
 
-**Klart sedan förra briefen:** discoverability-luckor; +23 bump och Play draft. Lokal debug: hem-CTA återupptar inte en redan avslutad runda (inte i +24-AAB).
+**Klart sedan förra briefen:** hem-CTA efter avslutat quiz; ROI **#11–14**; Play +24 [40674563631](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40674563631) (discoverability, utan resume-fix).
 
 ---
 
 ## Nuläge (snapshot)
 
-**Version i repo:** `1.4.3+24` (`pubspec.yaml`)  
-**Senaste tagg:** `v1.4.3+22` (ny tagg efter +24 smoke)  
+**Version i repo:** `1.4.3+25` (`pubspec.yaml`)  
+**Senaste tagg:** `v1.4.3+22` (ny tagg efter +25 device smoke)  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
-**Play internal (draft):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40674563631 (`1.4.3+24`, discoverability)  
-**Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B Play-paritet = bump + ny `play-closed-beta` internal. Tagg `v1.4.3+22` → `bc3be87` (≠ Play SHA).
+**Play internal (draft):** se senaste `play-closed-beta` run för `1.4.3+25` (ersätter +24 @ `366ea40`+)  
+**Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B = installera internal build 25 + smoke. Tagg efter smoke.
 
 ---
 
 ## Senaste leveranser (kort)
+
+**2026-10-29 – Bump `1.4.3+25` + Play internal**  
+What's-new sv/en (resume på hem + discoverability); internal draft med resume-fix.
 
 **2026-10-28 – Hem-CTA efter avslutat quiz**  
 Avslutad runda tas bort som pågående och räknas inte som “Fortsätt”. Story-CTA (“Spela nästa stopp”) visas i stället.
