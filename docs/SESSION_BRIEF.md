@@ -9,7 +9,7 @@
 ## Now (2026-10-29)
 
 **Mål:** Play **+25** internal smoke på enhet (Console build 25) — DoD B: discoverability + resume-fix (`366ea40`).  
-**Status:** Bump +25 och Play internal draft efter push; device-smoke: avsluta quiz → **Spela nästa stopp** (inte Fortsätt 8/8), camp/märken-hints, resultat → hem.
+**Status:** Play +25 dispatch [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568); device-smoke när build finns i Console.
 
 **Klart sedan förra briefen:** hem-CTA efter avslutat quiz; ROI **#11–14**; Play +24 [40674563631](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40674563631) (discoverability, utan resume-fix).
 
@@ -20,7 +20,7 @@
 **Version i repo:** `1.4.3+25` (`pubspec.yaml`)  
 **Senaste tagg:** `v1.4.3+22` (ny tagg efter +25 device smoke)  
 **GitHub Release:** https://github.com/Cognifox-Studio/Siffersafari/releases/tag/v1.4.3%2B22  
-**Play internal (draft):** se senaste `play-closed-beta` run för `1.4.3+25` (ersätter +24 @ `366ea40`+)  
+**Play internal (draft):** https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568 (`1.4.3+25`, resume-fix + discoverability)
 **Go/no-go:** Soft go — produkt-QA på `main`; strikt DoD B = installera internal build 25 + smoke. Tagg efter smoke.
 
 ---
@@ -28,7 +28,7 @@
 ## Senaste leveranser (kort)
 
 **2026-10-29 – Bump `1.4.3+25` + Play internal**  
-What's-new sv/en (resume på hem + discoverability); internal draft med resume-fix.
+What's-new sv/en (resume på hem + discoverability); [40860107568](https://github.com/Cognifox-Studio/Siffersafari/actions/runs/40860107568).
 
 **2026-10-28 – Hem-CTA efter avslutat quiz**  
 Avslutad runda tas bort som pågående och räknas inte som “Fortsätt”. Story-CTA (“Spela nästa stopp”) visas i stället.
