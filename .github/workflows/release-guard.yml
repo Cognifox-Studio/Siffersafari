@@ -18,6 +18,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Gradle 8.14 / AGP 8.11 cannot run on the JDK 25 that ubuntu-latest now
+      # ships with; the build fails with a bare "25.0.5" message. Pin the same
+      # JDK as ci.yaml and build.yml.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.41.x'

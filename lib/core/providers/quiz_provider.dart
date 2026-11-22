@@ -119,7 +119,7 @@ class QuizState {
 ///
 /// Use [startSession] to begin a quiz; [submitAnswer] to record responses.
 class QuizNotifier extends StateNotifier<QuizState> {
-  factory QuizNotifier(
+  QuizNotifier(
     QuestionGeneratorService questionGenerator,
     FeedbackService feedbackService,
     AudioService audioService,
@@ -129,57 +129,44 @@ class QuizNotifier extends StateNotifier<QuizState> {
     QuizReviewScheduleService? reviewScheduleService,
     QuizSessionPlanner? sessionPlanner,
     QuizSessionStorageService? sessionStorageService,
-  }) {
-    // Resolve the review-schedule service exactly once; both the notifier and
-    // the planner must share the same instance.
-    final reviewService = reviewScheduleService ??
-        QuizReviewScheduleService(
-          questionGenerator: questionGenerator,
-          repository: repository,
-          spacedRepetitionService: spacedRepetitionService,
-        );
-
-    return QuizNotifier._(
-      feedbackService,
-      audioService,
-      repository,
-      adaptiveDifficultyService: adaptiveDifficultyService,
-      spacedRepetitionService: spacedRepetitionService,
-      reviewScheduleService: reviewService,
-      sessionPlanner: sessionPlanner ??
-          QuizSessionPlanner(
-            questionGenerator: questionGenerator,
-            reviewScheduleService: reviewService,
-          ),
-      sessionStorageService:
-          sessionStorageService ?? QuizSessionStorageService(repository),
-    );
-  }
-
-  QuizNotifier._(
-    this._feedbackService,
-    this._audioService,
-    this._repository, {
-    required AdaptiveDifficultyService adaptiveDifficultyService,
-    required SpacedRepetitionService spacedRepetitionService,
-    required QuizReviewScheduleService reviewScheduleService,
-    required QuizSessionPlanner sessionPlanner,
-    required QuizSessionStorageService sessionStorageService,
-  })  : _adaptiveDifficultyService = adaptiveDifficultyService,
+  })  : _questionGenerator = questionGenerator,
+        _feedbackService = feedbackService,
+        _audioService = audioService,
+        _repository = repository,
+        _adaptiveDifficultyService = adaptiveDifficultyService,
         _spacedRepetitionService = spacedRepetitionService,
-        _reviewScheduleService = reviewScheduleService,
-        _sessionPlanner = sessionPlanner,
-        _sessionStorageService = sessionStorageService,
+        // Build the review-schedule service exactly once: the lazily created
+        // [_sessionPlanner] must share this very instance instead of building
+        // a second one from the same collaborators.
+        _reviewScheduleService = reviewScheduleService ??
+            QuizReviewScheduleService(
+              questionGenerator: questionGenerator,
+              repository: repository,
+              spacedRepetitionService: spacedRepetitionService,
+            ),
+        _providedSessionPlanner = sessionPlanner,
+        _sessionStorageService =
+            sessionStorageService ?? QuizSessionStorageService(repository),
         super(const QuizState());
 
+  final QuestionGeneratorService _questionGenerator;
   final FeedbackService _feedbackService;
   final AudioService _audioService;
   final LocalStorageRepository _repository;
   final AdaptiveDifficultyService _adaptiveDifficultyService;
   final SpacedRepetitionService _spacedRepetitionService;
   final QuizReviewScheduleService _reviewScheduleService;
-  final QuizSessionPlanner _sessionPlanner;
+  final QuizSessionPlanner? _providedSessionPlanner;
   final QuizSessionStorageService _sessionStorageService;
+
+  /// Resolved on first use so the constructor stays generative (tests subclass
+  /// this notifier to seed state) while still reusing [_reviewScheduleService].
+  late final QuizSessionPlanner _sessionPlanner =
+      _providedSessionPlanner ??
+          QuizSessionPlanner(
+            questionGenerator: _questionGenerator,
+            reviewScheduleService: _reviewScheduleService,
+          );
   final _uuid = const Uuid();
 
   void hydrateReviewSummaryForUser(String userId) {
