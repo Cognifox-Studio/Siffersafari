@@ -21,7 +21,7 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 2 | Delvis — `app_open`, `streak_extended`, `streak_lost` loggas, och `quiz_started` bär `cta`. Kvar: egna namn för `home_cta_tapped`/`results_cta_tapped` och `session_resumed`. |
 | 3 | Delvis — `DailyActivityService`: en post per dag och profil, 90 dagar, inga trackers. Kvar: vyn i föräldradelen (blir aktuell med steg 14). |
 | 4 | Klar — `HomeStreakBadge` överst på hem, med sviten, längsta sviten och dagsstatus. |
-| 5 | **Inte gjord** — resultatskärmen har ingen svit i sin read model; kräver egen slice. |
+| 5 | Klar — `streakCelebration` ger resultatvyn en svitrad ("5 · Dagar i rad – rekord!") som stat-pill, och konfetti/figur firar även när rundan bara förlängde sviten. Ingen ny lagring: läser `UserProgress` efter commit. |
 | 6 | Klar — "Dagen är gjord" när dagens session är registrerad. |
 | 7 | Klar — nåd-dag i `StreakResolver`: en per vecka, bara en enstaka missad dag, aldrig en betalning. |
 | 8 | Klar — "Välkommen tillbaka!" med längsta sviten, aldrig en tillrättavisning. |
