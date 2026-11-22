@@ -31,6 +31,8 @@ class AppThemeConfig {
     required this.accentColor,
     required this.cardColor,
     required this.disabledBackgroundColor,
+    required this.backgroundArtP99Luminance,
+    required this.backgroundScrim,
   });
 
   final AppTheme theme;
@@ -49,6 +51,19 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
+
+  /// 99th-percentile relative luminance of [backgroundAsset], measured rather
+  /// than guessed (`test/unit/theme/background_scrim_test.dart` decodes the
+  /// real WebP and fails if this drifts). Changing the artwork means
+  /// re-measuring this, which then re-derives [backgroundScrim].
+  final double backgroundArtP99Luminance;
+
+  /// Alpha of [baseBackgroundColor] laid over [backgroundAsset] so that light
+  /// text sitting on the backdrop keeps [AppConstants.minBackdropContrastRatio].
+  /// Derived from [backgroundArtP99Luminance] with `scrimAlphaFor`, not picked
+  /// by eye: dark art earns a light scrim and can actually be seen, bright art
+  /// needs a heavy one to stay legible.
+  final double backgroundScrim;
 
   Color get panelBackgroundColor => cardColor;
   Color get panelBorderColor =>
@@ -106,6 +121,8 @@ class AppThemeConfig {
         accentColor: AppColors.jungleAccent,
         cardColor: Color(0xCC2A4F36),
         disabledBackgroundColor: Color(0xCC3D6C50),
+        backgroundArtP99Luminance: 0.96,
+        backgroundScrim: 0.75,
       );
     }
 
@@ -121,6 +138,8 @@ class AppThemeConfig {
         accentColor: AppColors.desertAccent,
         cardColor: Color(0xCC6B4423),
         disabledBackgroundColor: Color(0xCC8B5E34),
+        backgroundArtP99Luminance: 0.79,
+        backgroundScrim: 0.70,
       );
     }
 
@@ -135,6 +154,8 @@ class AppThemeConfig {
       accentColor: AppColors.spaceAccent,
       cardColor: Color(0xCC485466),
       disabledBackgroundColor: Color(0xCC5B6575),
+      backgroundArtP99Luminance: 0.60,
+      backgroundScrim: 0.55,
     );
   }
 

@@ -46,3 +46,28 @@ Color legibleInkOn(
       ? preferred
       : readableInkOn(background);
 }
+
+/// Highest backdrop luminance that can still carry light text at [ratio].
+///
+/// A backdrop at luminance L leaves light text (#FFFFFF) at
+/// `1.05 / (L + 0.05)`, so inverting that gives the ceiling.
+double maxBackdropLuminance([double ratio = AppConstants.minBackdropContrastRatio]) =>
+    1.05 / ratio - 0.05;
+
+/// Smallest scrim alpha that keeps [art] -- composited over [base] -- at or
+/// below [limit] luminance.
+///
+/// The scrim replaces part of the artwork with the theme's dark base colour, so
+/// the composite is `alpha * base + (1 - alpha) * art`. Solving that for the
+/// limit gives the alpha below. A theme with dark art needs very little scrim;
+/// a theme with bright art needs a lot, and that is a property of the art, not
+/// a global design constant.
+double scrimAlphaFor({
+  required double art,
+  required double base,
+  required double limit,
+}) {
+  if (art <= limit) return 0.0;
+  if (art <= base) return 1.0;
+  return ((art - limit) / (art - base)).clamp(0.0, 1.0);
+}

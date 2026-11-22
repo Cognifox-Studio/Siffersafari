@@ -41,9 +41,6 @@ class UiConstants {
   static const Duration momentDisplayDuration = Duration(milliseconds: 1600);
   static const Duration celebrationPopDuration = Duration(milliseconds: 650);
 
-  // Background overlay (scrim) used on top of themed background images.
-  static const double backgroundOverlayOpacity = 0.72;
-
   // Component sizing
   static const double answerButtonHeight = 64.0;
   static const double feedbackDialogIconSize = 64.0;
@@ -54,6 +51,10 @@ class UiConstants {
   // Contrast: WCAG 2.1 AA for text. Large display text may legally go to 3.0,
   // but Åk 1-2 reads the answer digits, so this pass keeps the stricter bar.
   static const double minTextContrastRatio = 4.5;
+
+  // Contrast for whatever sits directly on a themed background image: large
+  // display text and icon buttons, i.e. WCAG's 3:1 band rather than 4.5:1.
+  static const double minBackdropContrastRatio = 3.0;
 
   // Tap targets
   static const double minTouchTargetSizeSmall = 44.0;
