@@ -18,6 +18,18 @@ void main() {
     repository = await setupWidgetTestDependencies();
   });
 
+  /// Taps a wardrobe tile, scrolling the grid to it first.
+  ///
+  /// The grid shares the panel with the look chips, so which tiles are on screen
+  /// depends on the device height -- the test should not.
+  Future<void> tapItem(WidgetTester tester, String itemId) async {
+    final finder = find.byKey(Key('wardrobe_item_$itemId'));
+    await tester.ensureVisible(finder);
+    await tester.pumpAndSettle();
+    await tester.tap(finder);
+    await tester.pumpAndSettle();
+  }
+
   testWidgets(
     '[Widget] Wardrobe – barn kan välja upplåst item',
     (WidgetTester tester) async {
@@ -58,8 +70,7 @@ void main() {
       expect(find.text('Vila'), findsOneWidget);
       expect(find.text('Rätt'), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
-      await tester.pumpAndSettle();
+      await tapItem(tester, 'item_safari_hat');
 
       expect(
         repository.getUserProgress(userId)?.equippedItems,
@@ -108,8 +119,7 @@ void main() {
       // Barnet förhandsvisar "Rätt" och klär på sig där.
       await tester.tap(find.text('Rätt'));
       await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
-      await tester.pumpAndSettle();
+      await tapItem(tester, 'item_safari_hat');
 
       final equipped = repository.getUserProgress(userId)!.equippedItems;
       expect(
@@ -162,10 +172,8 @@ void main() {
         find.byKey(const Key('wardrobe_item_item_safari_hat')),
       );
 
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_hat_pirate')));
-      await tester.pumpAndSettle();
+      await tapItem(tester, 'item_safari_hat');
+      await tapItem(tester, 'item_hat_pirate');
 
       final equipped = repository.getUserProgress(userId)!.equippedItems;
       expect(
@@ -218,10 +226,8 @@ void main() {
         find.byKey(const Key('wardrobe_item_item_safari_hat')),
       );
 
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
-      await tester.pumpAndSettle();
-      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
-      await tester.pumpAndSettle();
+      await tapItem(tester, 'item_safari_hat');
+      await tapItem(tester, 'item_safari_hat');
 
       expect(
         repository.getUserProgress(userId)!.equippedItems,
