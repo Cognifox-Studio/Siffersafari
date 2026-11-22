@@ -25,7 +25,8 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 6 | Klar — "Dagen är gjord" när dagens session är registrerad. |
 | 7 | Klar — nåd-dag i `StreakResolver`: en per vecka, bara en enstaka missad dag, aldrig en betalning. |
 | 8 | Klar — "Välkommen tillbaka!" med längsta sviten, aldrig en tillrättavisning. |
-| 9–25 | Kvar. |
+| 9 | Klar — åldersanpassat dagsmål (`dailyGoalSessions`: 1 runda för Åk 1–2, 2 från Åk 3) som räknas upp i svitbadgen på hem, med a11y-etikett. Bygger på `DailyActivityService`, ingen ny lagring. |
+| 10–25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 

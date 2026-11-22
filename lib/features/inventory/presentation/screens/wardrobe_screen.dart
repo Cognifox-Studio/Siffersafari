@@ -147,8 +147,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                     icon: const Icon(Icons.casino_rounded),
                     label: const Text('Slumpa outfit'),
                     style: FilledButton.styleFrom(
-                      minimumSize: Size(
-                        AppConstants.minTouchTargetSize,
+                      minimumSize: const Size.square(
                         AppConstants.minTouchTargetSize,
                       ),
                     ),

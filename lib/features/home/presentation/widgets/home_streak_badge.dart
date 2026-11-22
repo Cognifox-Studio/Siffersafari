@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:siffersafari/domain/services/daily_goal.dart';
 
 /// The daily practice streak, on the home screen.
 ///
@@ -17,6 +18,8 @@ class HomeStreakBadge extends StatelessWidget {
     required this.lastSessionDate,
     this.brokenStreak,
     this.now,
+    this.sessionsToday,
+    this.gradeLevel,
   });
 
   final int streak;
@@ -29,10 +32,17 @@ class HomeStreakBadge extends StatelessWidget {
   /// Injectable clock so the states can be tested without waiting a day.
   final DateTime? now;
 
+  /// Finished rounds today, when known. Null hides the goal line.
+  final int? sessionsToday;
+
+  /// Drives the size of today's goal (see [dailyGoalSessions]).
+  final int? gradeLevel;
+
   static const Key badgeKey = Key('home_streak_badge');
   static const Key textKey = Key('home_streak_badge_text');
   static const Key dayDoneKey = Key('home_day_done');
   static const Key comebackKey = Key('home_streak_comeback');
+  static const Key goalKey = Key('home_daily_goal');
 
   static bool isSameDay(DateTime? a, DateTime b) {
     if (a == null) return false;
@@ -46,10 +56,23 @@ class HomeStreakBadge extends StatelessWidget {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final state = _resolveState(scheme);
+    final sessions = sessionsToday;
+    final goal = sessions == null
+        ? null
+        : dailyGoalProgress(
+            sessionsToday: sessions,
+            gradeLevel: gradeLevel,
+          );
+    final goalLabel = goal == null
+        ? null
+        : dailyGoalLabel(done: goal.done, target: goal.target);
+    final goalAchieved = goal?.achieved ?? false;
 
     return Semantics(
       container: true,
-      label: '${state.headline}. ${state.detail}',
+      label: goalLabel == null
+          ? '${state.headline}. ${state.detail}'
+          : '${state.headline}. ${state.detail}. $goalLabel.',
       child: ExcludeSemantics(
         child: Container(
           key: badgeKey,
@@ -86,6 +109,19 @@ class HomeStreakBadge extends StatelessWidget {
                         color: scheme.onSurfaceVariant,
                       ),
                     ),
+                    if (goalLabel != null) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        goalLabel,
+                        key: goalKey,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: goalAchieved
+                              ? scheme.primary
+                              : scheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),
