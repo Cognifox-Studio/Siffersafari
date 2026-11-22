@@ -129,6 +129,11 @@ void main() {
 
       await pumpUntilFound(tester, find.text('Översikt'));
       expect(find.text('Översikt'), findsOneWidget);
+      expect(
+        find.byKey(const Key('parent_activity_card')),
+        findsOneWidget,
+        reason: 'De 90 dagarnas rullning ska gå att läsa i föräldravyn',
+      );
 
       // Ensure recovery config actually got stored.
       final pinService = getIt<ParentPinService>();

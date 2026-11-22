@@ -91,6 +91,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
     final user = userState.activeUser!;
     final siblingProfiles = userState.allUsers;
     final history = ref.watch(parentRecentCompletedQuizHistoryProvider(userId));
+    final activity = ref.watch(parentActivityProvider(userId));
     final readModel = _ParentDashboardReadModel.from(
       user: user,
       history: history,
@@ -544,6 +545,32 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
               await ref.read(userProvider.notifier).selectUser(nextUserId);
             },
           );
+
+    final activityCard = _InsetPanel(
+      key: const Key('parent_activity_card'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _ParentSectionHeader(
+            title: 'Dagar med spel',
+            subtitle: 'Senaste 90 dagarna. En ruta per dag — mörkare när det '
+                'spelats mer.',
+            trailing: infoButton(
+              title: 'Dagar med spel',
+              message:
+                  'En ruta är en dag. Ljus ruta betyder att appen inte '
+                  'användes. Siffrorna räknas på enheten och skickas ingenstans.',
+            ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          _ActivityStrip(
+            summary: activity,
+            accentColor: accentColor,
+            onPrimary: onPrimary,
+          ),
+        ],
+      ),
+    );
 
     final overviewCard = _Card(
       child: Column(
@@ -1177,6 +1204,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
               sectionSpacing,
               overviewCard,
               sectionSpacing,
+              activityCard,
+              sectionSpacing,
               localInsightCard,
               sectionSpacing,
               adaptationsCard,
@@ -1203,6 +1232,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
                     tonightPracticeCard,
                     sectionSpacing,
                     overviewCard,
+                    sectionSpacing,
+                    activityCard,
                     sectionSpacing,
                     localInsightCard,
                     sectionSpacing,

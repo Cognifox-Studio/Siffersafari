@@ -16,9 +16,11 @@ import 'package:siffersafari/core/providers/word_problems_settings_provider.dart
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/services/activity_summary.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
 import 'package:siffersafari/app/navigation/app_navigator.dart';
+import 'package:siffersafari/features/parent/providers/parent_activity_provider.dart';
 import 'package:siffersafari/features/parent/providers/parent_grade_soft_defaults.dart';
 import 'package:siffersafari/features/parent/providers/parent_quiz_history_provider.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
