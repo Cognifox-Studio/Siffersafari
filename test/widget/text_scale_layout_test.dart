@@ -347,7 +347,7 @@ void main() {
 
       await tester.pumpWidget(
         _harness(
-          Center(
+          const Center(
             child: SizedBox(
               width: 320,
               height: 220,
@@ -376,22 +376,26 @@ void main() {
 
       await tester.pumpWidget(
         _harness(
-          Center(
+          const Center(
             child: SizedBox(
               width: 320,
               height: 220,
-              child: QuestionCard(question: _longWordProblem),
+              child: QuestionCard(question: _wordProblemQuestion),
             ),
           ),
           textScale: 1.0,
         ),
       );
 
+      // A prompt that fits keeps the plain, capped layout: scrolling is a
+      // fallback for text that would otherwise be cut off, not the new normal.
       expect(
         find.byKey(const Key('question_card_scrollable_text')),
         findsNothing,
         reason: 'Normal textstorlek ska inte behöva scrollas',
       );
+      final text = tester.widget<Text>(find.text(_wordProblemQuestion.promptText!));
+      expect(text.maxLines, isNotNull);
       expect(tester.takeException(), isNull);
     });
   });

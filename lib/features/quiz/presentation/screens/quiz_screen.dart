@@ -237,8 +237,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     // A muted profile is muted: no read-aloud button, no automatic reading.
     // The profile's own sound setting is the contract, so it wins over the
     // parent dashboard's read-aloud preference.
-    final readAloudAvailable =
-        ttsEnabled && (activeUser?.soundEnabled ?? false);
+    final readAloudAvailable = ttsEnabled &&
+        switch (activeUser) {
+          final user? => user.soundEnabled,
+          _ => false,
+        };
     // Åk 1–2 get the roomier read-aloud button; it is their main access path to
     // the question rather than a convenience.
     final youngLearner = (activeUser?.gradeLevel ?? 99) <= 2;
