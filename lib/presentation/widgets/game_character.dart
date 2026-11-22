@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/wardrobe_manifest.g.dart';
 import 'package:siffersafari/domain/services/outfit_resolver.dart';
+import 'package:siffersafari/domain/services/wardrobe_layout.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 
 part 'game_character__inventory_helpers_part.dart';

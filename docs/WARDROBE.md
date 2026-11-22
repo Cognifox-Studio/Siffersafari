@@ -37,7 +37,7 @@ Nu skriver garderoben alltid basoutfiten (`idle_<itemId>`), byter ut plagget i s
 ## Kvar att göra — i den ordning jag tar dem
 
 1. **D. Härled positionen ur bilden.** *Klar: `scripts/prepare_wardrobe_items.py` läser varje WebP:s opaka bbox med Pillow och skriver `assets/wardrobe/manifest.json` + `lib/domain/entities/wardrobe_manifest.g.dart` (`const`).*
-2. **C. Ankarpunkter i stället för `Alignment`.** *Delvis: `zOrder` och tapptarget kommer nu ur manifestet — `case 'item_x':`-switchen i `_getInteractiveHitShape` är borta, och handjusterade tapptarget (t.ex. hattens 0,9/0,46, trimmad för sjuåringsfingrar) lever vidare som `hitShapeOverride` i stället för som kod.* Kvar: renderaren använder ännu `legacy.offset`/`legacy.renderScale`, inte `anchor`. Att byta är en rad per plagg, men det kräver ögon på en enhet — ankarpunkten flyttar plaggen några procent, och det ska tittas på, inte gissas.
+2. **C. Ankarpunkter i stället för `Alignment`.** *Klar: `zOrder`, tapptarget och position kommer ur manifestet. `case 'item_x':`-switchen i `_getInteractiveHitShape` är borta, handjusterade tapptarget (t.ex. hattens 0,9/0,46, trimmad för sjuåringsfingrar) lever vidare som `hitShapeOverride`, och renderaren räknar positionen med `anchoredItemOffset` (`lib/domain/services/wardrobe_layout.dart`) ur bildens ankar­punkt i stället för `Alignment(0, -2.8)`.* Kvar att titta på: Loke står exakt stilla, men Signe och Astrid knuffar sina hattar några procent (upp till ~12 px på en 200 px karaktär) eftersom deras `scaleModifier` ändrar boxens storlek och den gamla offseten var skriven som en multipel av `(1 - skala) / 2`. `wardrobe_position_audit_test` håller avvikelsen under 6 % och fäller om den växer.
 3. **B. En outfit per barn i datamodellen.** *Klar sedan tidigare: basoutfit + `OutfitResolver`, en nyckel per plagg i stället för per pose.*
 4. **E. Färdiga outfits för de yngsta.** *Klar: "Slumpa outfit" (`OutfitShuffler`) och namngivna set — Safari, Forskare, Pirat (`outfit_looks.dart`). En look tar på det barnet äger och lämnar resten som något att leta efter.*
 
@@ -71,7 +71,15 @@ En look tar bara på det barnet äger, så ett tryck på Pirat kunde ge en halv 
 - `assets/wardrobe/manifest.json` — granskningsbar diff, för människor
 - `lib/domain/entities/wardrobe_manifest.g.dart` — `const`, så appen parsar ingen JSON vid start
 
-Härlett: `anchor` (var i bilden det synliga sitter, 0–1), `hitShape` (bbox + 2 % padding, i stället för att gissa på slot) och `zOrder` (från slotordningen). Icke härlett: `legacy.offset`/`legacy.renderScale` — de handjusterade värdena följer med oförändrade, så scriptet **kan inte** ändra hur spelet ser ut. Nästa steg är att låta `GameCharacter` läsa ankarpunkten i stället, och då är det en rad per plagg att växla.
+Härlett: `anchor` (var i bilden det synliga sitter, 0–1), `hitShape` (bbox + 2 % padding, i stället för att gissa på slot), `zOrder` (från slotordningen) och `target` (var ankarpunkten ska landa på karaktären, som andel av dess höjd).
+
+`target` lästes **en gång** ur den gamla `offset`/`renderScale`-paren, så bytet av modell flyttade ingenting utom avrundning. `legacy` ligger kvar i manifestet bara för att `wardrobe_position_audit_test` ska kunna hålla de två modellerna mot varandra; renderaren rör den inte längre. Ett plagg som bara anger sin slot ärver `slotAnchors` — medianen för var dess syskon i samma slot sitter — så ett nytt plagg behöver ingen handjusterad position alls:
+
+```
+offset: Alignment(0, -2.8), renderScale: 0.85   ->  slot: 'head'
+```
+
+Positionen blir då hattarnas mitt, inte en gissning. Vill plagget sitta någon annanstans än sina syskon finns `target: {x, y}` kvar att sätta för hand — men det är undantaget, inte regeln.
 
 Kör: `python3 scripts/prepare_wardrobe_items.py` (kräver Pillow). `--check` fäller om filerna är inaktuella. CI kör aldrig scriptet; `wardrobe_slots_audit_test` jämför i stället det genererade manifestet mot katalogen, så drift fälls utan Python i CI.
 

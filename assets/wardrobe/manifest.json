@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedBy": "scripts/prepare_wardrobe_items.py",
   "slotOrder": [
     "back",
@@ -10,6 +10,32 @@
     "accessory",
     "front"
   ],
+  "slotAnchors": {
+    "accessory": {
+      "x": 0.192,
+      "y": 0.1057
+    },
+    "body": {
+      "x": 0.0,
+      "y": -0.0021
+    },
+    "face": {
+      "x": 0.0,
+      "y": -0.0635
+    },
+    "feet": {
+      "x": 0.0,
+      "y": 0.4789
+    },
+    "front": {
+      "x": -0.372,
+      "y": 0.0357
+    },
+    "head": {
+      "x": 0.0,
+      "y": -0.2465
+    }
+  },
   "items": [
     {
       "id": "item_safari_hat",
@@ -48,6 +74,15 @@
           -2.8
         ],
         "renderScale": 0.85
+      },
+      "target": {
+        "x": 0.0,
+        "y": -0.2465
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": -0.2465
       }
     },
     {
@@ -87,6 +122,15 @@
           -2.8
         ],
         "renderScale": 0.85
+      },
+      "target": {
+        "x": 0.0,
+        "y": -0.2477
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": -0.2465
       }
     },
     {
@@ -126,6 +170,15 @@
           0.35
         ],
         "renderScale": 0.4
+      },
+      "target": {
+        "x": 0.479,
+        "y": 0.0935
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.192,
+        "y": 0.1057
       }
     },
     {
@@ -165,6 +218,15 @@
           0.3
         ],
         "renderScale": 0.35
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0814
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.192,
+        "y": 0.1057
       }
     },
     {
@@ -204,6 +266,15 @@
           0.15
         ],
         "renderScale": 0.45
+      },
+      "target": {
+        "x": -0.372,
+        "y": 0.0357
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": -0.372,
+        "y": 0.0357
       }
     },
     {
@@ -243,6 +314,15 @@
           2.8
         ],
         "renderScale": 0.65
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.4789
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.4789
       }
     },
     {
@@ -282,6 +362,15 @@
           -2.8
         ],
         "renderScale": 0.85
+      },
+      "target": {
+        "x": 0.0009,
+        "y": -0.2168
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": -0.2465
       }
     },
     {
@@ -321,6 +410,15 @@
           -0.8
         ],
         "renderScale": 0.9
+      },
+      "target": {
+        "x": 0.0,
+        "y": -0.0635
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": -0.0635
       }
     },
     {
@@ -360,6 +458,15 @@
           1.4
         ],
         "renderScale": 0.6
+      },
+      "target": {
+        "x": -0.4054,
+        "y": 0.2314
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.192,
+        "y": 0.1057
       }
     },
     {
@@ -399,6 +506,15 @@
           0.45
         ],
         "renderScale": 0.95
+      },
+      "target": {
+        "x": 0.0,
+        "y": -0.0021
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": -0.0021
       }
     },
     {
@@ -438,6 +554,15 @@
           0.45
         ],
         "renderScale": 0.45
+      },
+      "target": {
+        "x": 0.3841,
+        "y": 0.1179
+      },
+      "targetSource": "legacy",
+      "slotAnchor": {
+        "x": 0.192,
+        "y": 0.1057
       }
     },
     {
@@ -468,11 +593,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.58
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     },
     {
@@ -503,11 +634,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.62
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     },
     {
@@ -538,11 +675,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.62
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     },
     {
@@ -573,11 +716,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.62
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     },
     {
@@ -608,11 +757,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.6
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     },
     {
@@ -643,11 +798,17 @@
       },
       "hitShapeOverride": null,
       "legacy": {
-        "offset": [
-          0.0,
-          0.0
-        ],
+        "offset": null,
         "renderScale": 0.8
+      },
+      "target": {
+        "x": 0.0,
+        "y": 0.0
+      },
+      "targetSource": "slot",
+      "slotAnchor": {
+        "x": 0.0,
+        "y": 0.0
       }
     }
   ]
