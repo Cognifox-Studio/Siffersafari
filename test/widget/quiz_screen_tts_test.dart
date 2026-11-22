@@ -90,4 +90,106 @@ void main() {
       verify(() => tts.speakFeedback(any())).called(1);
     },
   );
+
+  /// Åk 1–2: read-aloud used to be off by default *and* the button was hidden
+  /// unless an adult had found the switch in the parent dashboard, so a child
+  /// who cannot read the prompt had no way to hear it at all.
+  testWidgets(
+    '[Widget] QuizScreen – Åk 2 hör frågan utan att någon slagit på uppläsning',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'young-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Loke',
+        ageGroup: AgeGroup.young,
+        gradeLevel: 2,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+      // Note: no textToSpeechEnabled setting is written anywhere.
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      final addition = find.byKey(const Key('operation_card_addition'));
+      await pumpUntilFound(tester, addition);
+      await tester.ensureVisible(addition);
+      await tester.pump();
+      await pumpFor(
+        tester,
+        AppConstants.mediumAnimationDuration +
+            const Duration(milliseconds: 150),
+      );
+      await tapInteractiveDescendant(tester, addition);
+      await pumpUntilFound(tester, find.byType(QuestionCard));
+
+      // The affordance is visible without anybody configuring anything...
+      final speakButton = find.byKey(const Key('quiz_tts_button'));
+      await tester.ensureVisible(speakButton);
+      expect(speakButton, findsOneWidget);
+
+      // ...and the question was read out as soon as it appeared.
+      final tts = getIt<TextToSpeechService>() as MockTextToSpeechService;
+      verify(() => tts.speakQuestion(any())).called(greaterThanOrEqualTo(1));
+    },
+  );
+
+  testWidgets(
+    '[Widget] QuizScreen – Åk 5 får ingen uppläsning förvald',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'older-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Noa',
+        ageGroup: AgeGroup.middle,
+        gradeLevel: 5,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      final multiplication =
+          find.byKey(const Key('operation_card_multiplication'));
+      await pumpUntilFound(tester, multiplication);
+      await tester.ensureVisible(multiplication);
+      await tester.pump();
+      await pumpFor(
+        tester,
+        AppConstants.mediumAnimationDuration +
+            const Duration(milliseconds: 150),
+      );
+      await tapInteractiveDescendant(tester, multiplication);
+      await pumpUntilFound(tester, find.byType(QuestionCard));
+
+      expect(find.byKey(const Key('quiz_tts_button')), findsNothing);
+      final tts = getIt<TextToSpeechService>() as MockTextToSpeechService;
+      verifyNever(() => tts.speakQuestion(any()));
+    },
+  );
 }

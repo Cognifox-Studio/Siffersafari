@@ -123,3 +123,11 @@ Princip: senaste datum vinner vid konflikt.
   - `AppThemeConfig` bär nu `backgroundArtP99Luminance` + `backgroundScrim`; scrimmen räknas fram med `scrimAlphaFor` mot `minBackdropContrastRatio = 3.0` (WCAG stor text/UI-komponent på bakgrund). Resultat: space 0.55, jungle 0.75, desert 0.70 — alla lättare än de 0.84 som användes i toppen tidigare, och alla över 3:1 i nederkant.
   - `test/unit/theme/background_scrim_test.dart` avkodar den faktiskt skeppade WebP:en med `image`-paketet och fäller om (a) den deklarerade p99-luminansen inte längre stämmer med konsten, (b) kontrasten hamnar under 3:1, eller (c) scrimmen är mer än 0.10 tyngre än konsten kräver. Byter man konst måste man alltså mäta om, och testet säger vilka tal som gäller.
   - `UiConstants.backgroundOverlayOpacity` är borttagen; en global scrim hade blivit en andra sanning om samma sak.
+
+### 2026-11-22
+- **Uppläsning är nu standard för Åk 1–2** (`AppFeatures.textToSpeechEnabled` var `false` för alla profiler, och "Läs upp"-knappen renderades bara `if (ttsEnabled)` — dvs. ett barn som inte kan läsa textuppgiften hade ingen väg till frågan förrän en vuxen hittade brytaren i föräldradashboarden).
+  - `QuizFeatureSettings.readTextToSpeechPreference` returnerar `bool?` så att "aldrig valt" går att skilja från "valt av". `readTextToSpeechEnabled` faller tillbaka på ålder: Åk 1–2 → på, Åk 3+ → av. Ett uttryckligt val i föräldradashboarden vinner alltid, åt båda håll.
+  - Frågan läses upp automatiskt när den byts, via `ref.listenManual(..., fireImmediately: true)` i `initState` — den första frågan finns normalt redan i sessionen när vyn mountas, så en ren "on change"-lyssnare hade aldrig läst den.
+  - Automatiken är tyst om profilens egen `soundEnabled` är av, så en tyst profil förblir tyst (klassrum).
+  - Uppläsningsknappen har full tryckyta (56 dp) för Åk 1–2 i stället för `visualDensity: compact`; äldre åk behåller den kompakta.
+- Test: enhetstester för de fyra kombinationerna (inget val/Åk 1–2, inget val/Åk 5, uttryckligt nej, uttryckligt ja) samt widgettester som visar att Åk 2 får knappen och hör frågan utan konfiguration, och att Åk 5 varken får knapp eller uppläsning.

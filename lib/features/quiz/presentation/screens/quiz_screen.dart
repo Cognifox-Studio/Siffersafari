@@ -38,6 +38,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   bool _feedbackDialogVisible = false;
   bool _ttsSpeaking = false;
   late final TextToSpeechService _textToSpeechService;
+  ProviderSubscription<String?>? _autoReadSubscription;
   late final AudioService _audioService;
   // Memoized answer options keyed by question id to prevent reshuffle on rebuild.
   String? _cachedQuestionId;
@@ -63,10 +64,38 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       _audioService.setMusicVolume(speaking ? 0.2 : 1.0);
     };
     _questionStartTime = DateTime.now();
+
+    // Åk 1–2 cannot read a word problem yet, so the question is read out loud
+    // as it arrives rather than waiting for the child to find a button.
+    // `fireImmediately` covers the first question, which is normally already in
+    // the session by the time this screen mounts.
+    _autoReadSubscription = ref.listenManual<String?>(
+      quizProvider.select((state) => state.session?.currentQuestion?.id),
+      (_, next) => _autoReadQuestion(next),
+      fireImmediately: true,
+    );
+  }
+
+  /// Reads [questionId]'s prompt aloud when the child's profile should hear it.
+  ///
+  /// Deliberately silent unless every condition holds: read-aloud enabled for
+  /// the profile (Åk 1–2 by default, an explicit parent choice otherwise) and
+  /// the profile's own sound switched on, so a muted profile stays muted.
+  void _autoReadQuestion(String? questionId) {
+    if (questionId == null || !mounted) return;
+    final user = ref.read(userProvider).activeUser;
+    if (user == null || !user.soundEnabled) return;
+    if (!ref.read(ttsEnabledProvider(user.userId))) return;
+    final question = ref.read(quizProvider).session?.currentQuestion;
+    if (question == null || question.id != questionId) return;
+    final text = question.displayQuestionText.trim();
+    if (text.isEmpty) return;
+    unawaited(_textToSpeechService.speakQuestion(text));
   }
 
   @override
   void dispose() {
+    _autoReadSubscription?.close();
     _textToSpeechService.onSpeakingChanged = null;
     unawaited(_textToSpeechService.stop());
     _audioService.setMusicVolume(1.0);
@@ -203,6 +232,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final ttsEnabled = activeUser != null
         ? ref.watch(ttsEnabledProvider(activeUser.userId))
         : false;
+    // Åk 1–2 get the roomier read-aloud button; it is their main access path to
+    // the question rather than a convenience.
+    final youngLearner = (activeUser?.gradeLevel ?? 99) <= 2;
 
     final themeColors = context.appThemeColors;
     final scheme = Theme.of(context).colorScheme;
@@ -334,6 +366,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
                       ttsEnabled: ttsEnabled,
+                      youngLearner: youngLearner,
                       onPrimary: onPrimary,
                       layout: layout,
                     )
@@ -351,6 +384,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
                       ttsEnabled: ttsEnabled,
+                      youngLearner: youngLearner,
                       onPrimary: onPrimary,
                       layout: layout,
                     ),
@@ -376,6 +410,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color lightTextColor,
     required Color mutedTextColor,
     required bool ttsEnabled,
+    required bool youngLearner,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
   }) {
@@ -404,7 +439,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding.w),
             child: Align(
               alignment: Alignment.centerRight,
-              child: _buildSpeakButton(context, question),
+              child: _buildSpeakButton(
+                context,
+                question,
+                largeTarget: youngLearner,
+              ),
             ),
           ),
         SizedBox(height: AppConstants.smallPadding.h),
@@ -458,6 +497,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color lightTextColor,
     required Color mutedTextColor,
     required bool ttsEnabled,
+    required bool youngLearner,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
   }) {
@@ -486,7 +526,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             ),
             child: Align(
               alignment: Alignment.centerRight,
-              child: _buildSpeakButton(context, question),
+              child: _buildSpeakButton(
+                context,
+                question,
+                largeTarget: youngLearner,
+              ),
             ),
           ),
         Expanded(
@@ -593,7 +637,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     );
   }
 
-  Widget _buildSpeakButton(BuildContext context, Question question) {
+  Widget _buildSpeakButton(
+    BuildContext context,
+    Question question, {
+    required bool largeTarget,
+  }) {
     final onPrimary = Theme.of(context).colorScheme.onPrimary;
 
     return FilledButton.tonalIcon(
@@ -615,7 +663,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
       label: Text(_ttsSpeaking ? 'Stoppa' : 'Läs upp'),
       style: FilledButton.styleFrom(
         foregroundColor: onPrimary,
-        visualDensity: VisualDensity.compact,
+        // Åk 1–2 get a full-size target; older grades keep the compact one so
+        // the header does not grow for no reason.
+        visualDensity:
+            largeTarget ? VisualDensity.standard : VisualDensity.compact,
+        minimumSize: largeTarget
+            ? const Size(0, AppConstants.minTouchTargetSize)
+            : null,
       ),
     );
   }
