@@ -41,6 +41,12 @@ Nu skriver garderoben alltid basoutfiten (`idle_<itemId>`), byter ut plagget i s
 3. **B. En outfit per barn i datamodellen.** `equippedItems` blir `slot → itemId`, med en liten explicit override-map för de få poser som verkligen behöver det. Migrering kollapsar befintliga nycklar (idle vinner), idempotent och testad.
 4. **E. Färdiga outfits för de yngsta.** *Klar: "Slumpa outfit" ger ett helt set (`OutfitShuffler`), och namngivna set — Safari, Forskare, Pirat — sitter som chips ovanför plaggallret (`outfit_looks.dart`). En look tar på det barnet äger och lämnar resten kvar som något att leta efter, en plagg per slot, en sparning via `applyBaseOutfit`.* "Safari", "Pirat", "Forskare" + "Slumpa": ett tryck i stället för att dra och rotera med sjuåringsfingrar. Bygger ovanpå B–D.
 
+## Städat: tre bilder som aldrig visades
+
+`item_binoculars_safari.webp`, `item_compass_safari.webp` och `item_map_safari.webp` låg kvar som byte-identiska kopior av sina `_nobg`-versioner, utan en enda referens — 200 KB i APK:n som inget barn kunde se (kartan ensam 132 KB). Borttagna. `wardrobe_assets_audit_test` håller det stängt: varje plagg måste peka på en fil som finns, och varje bild i `assets/images/items/` måste ägas av ett plagg.
+
+Samma test pinnar att `item_safari_hat` och `item_hat_safari` är **två** plagg med två olika bilder, inte en dubblett. De heter nästan likadant, men id:na får inte bytas: en namnändring kräver migrering av `unlockedItems` i alla befintliga profiler, och vinsten för barnet är noll.
+
 ## Två saker att kolla innan manifestet låses
 
 - `item_safari_hat` ("Safarihatt") och `item_hat_safari` ("Utforskarhatt") ser ut som dubbletter — jämför bilderna innan båda skrivs in i ett manifest.
