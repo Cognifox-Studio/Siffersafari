@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/theme/color_contrast.dart';
 
 class AnswerButton extends StatefulWidget {
   const AnswerButton({
@@ -161,28 +162,35 @@ class _AnswerButtonState extends State<AnswerButton>
     );
     final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
     Color backgroundColor;
-    Color textColor;
+    Color preferredInk;
 
     if (widget.isCorrect != null) {
       if (widget.isCorrect!) {
         backgroundColor = AppColors.correctAnswer;
-        textColor = scheme.onPrimary;
+        preferredInk = scheme.onPrimary;
       } else if (widget.isSelected) {
         backgroundColor = AppColors.wrongAnswer;
-        textColor = scheme.onPrimary;
+        preferredInk = scheme.onPrimary;
       } else {
         backgroundColor = widget.disabledBackgroundColor ?? scheme.surface;
-        textColor = widget.idleTextColor ?? scheme.onSurface;
+        preferredInk = widget.idleTextColor ?? scheme.onSurface;
       }
     } else {
       backgroundColor = widget.isSelected
           ? (widget.selectedBackgroundColor ??
               Theme.of(context).colorScheme.primary)
           : (widget.idleBackgroundColor ?? scheme.surface);
-      textColor = widget.isSelected
+      preferredInk = widget.isSelected
           ? scheme.onPrimary
           : (widget.idleTextColor ?? scheme.onSurface);
     }
+
+    // The state machine above names a theme *role* for the ink. On the
+    // selected state that role is white, while the fill is the theme accent:
+    // 1.78:1 on space, 2.01:1 on jungle, 2.15:1 on desert. Keep the preferred
+    // ink only where it is legible, otherwise fall back to the ink that
+    // contrasts with the fill that was actually resolved.
+    final textColor = legibleInkOn(backgroundColor, preferredInk);
 
     final isEnabled = widget.isCorrect == null;
     final String label;

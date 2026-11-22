@@ -51,6 +51,10 @@ class UiConstants {
   // Typography
   static const double buttonFontSize = 18.0;
 
+  // Contrast: WCAG 2.1 AA for text. Large display text may legally go to 3.0,
+  // but Åk 1-2 reads the answer digits, so this pass keeps the stricter bar.
+  static const double minTextContrastRatio = 4.5;
+
   // Tap targets
   static const double minTouchTargetSizeSmall = 44.0;
 

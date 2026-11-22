@@ -105,6 +105,7 @@ class AppConstants {
       UiConstants.feedbackDialogIconSize;
 
   static const double buttonFontSize = UiConstants.buttonFontSize;
+  static const double minTextContrastRatio = UiConstants.minTextContrastRatio;
   static const double minTouchTargetSizeSmall =
       UiConstants.minTouchTargetSizeSmall;
 
