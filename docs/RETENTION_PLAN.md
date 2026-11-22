@@ -19,14 +19,15 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 |---|---|
 | 1 | Klar — [RETENTION_BASELINE.md](RETENTION_BASELINE.md). Baslinjen fylls först när 30 dagars rullning finns. |
 | 2 | Delvis — `app_open`, `streak_extended`, `streak_lost` loggas, och `quiz_started` bär `cta`. Kvar: egna namn för `home_cta_tapped`/`results_cta_tapped` och `session_resumed`. |
-| 3 | Delvis — `DailyActivityService`: en post per dag och profil, 90 dagar, inga trackers. Kvar: vyn i föräldradelen (blir aktuell med steg 14). |
+| 3 | Klar — `DailyActivityService`: en post per dag och profil, 90 dagar, inga trackers. Läses nu i föräldravyn (steg 14). |
 | 4 | Klar — `HomeStreakBadge` överst på hem, med sviten, längsta sviten och dagsstatus. |
 | 5 | Klar — `streakCelebration` ger resultatvyn en svitrad ("5 · Dagar i rad – rekord!") som stat-pill, och konfetti/figur firar även när rundan bara förlängde sviten. Ingen ny lagring: läser `UserProgress` efter commit. |
 | 6 | Klar — "Dagen är gjord" när dagens session är registrerad. |
 | 7 | Klar — nåd-dag i `StreakResolver`: en per vecka, bara en enstaka missad dag, aldrig en betalning. |
 | 8 | Klar — "Välkommen tillbaka!" med längsta sviten, aldrig en tillrättavisning. |
 | 9 | Klar — åldersanpassat dagsmål (`dailyGoalSessions`: 1 runda för Åk 1–2, 2 från Åk 3) som räknas upp i svitbadgen på hem, med a11y-etikett. Bygger på `DailyActivityService`, ingen ny lagring. |
-| 10–25 | Kvar. |
+| 14 | Klar — "Dagar med spel" i föräldradashboarden: 90 rutor, en per dag, mörkare ju mer spelat, plus "34 av 90 dagar med spel · längsta följden 9" och en uppläst sammanfattning. Ren funktion `ActivitySummary`, ingen ny lagring. |
+| 10–13, 15–25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 

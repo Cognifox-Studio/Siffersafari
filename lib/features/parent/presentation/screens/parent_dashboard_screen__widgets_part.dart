@@ -813,6 +813,88 @@ class _ParentSectionHeader extends StatelessWidget {
   }
 }
 
+/// The last 90 days as squares.
+///
+/// A parent who wonders "is this a habit or a phase?" cannot read an event log;
+/// they can read a shape. One square per day, oldest first, darker when the day
+/// held more sessions -- and a spoken summary for screen readers, because 90
+/// unlabelled squares are noise to TalkBack.
+class _ActivityStrip extends StatelessWidget {
+  const _ActivityStrip({
+    required this.summary,
+    required this.accentColor,
+    required this.onPrimary,
+  });
+
+  static const double _squareSize = 9;
+  static const double _squareGap = 3;
+
+  final ActivitySummary summary;
+  final Color accentColor;
+  final Color onPrimary;
+
+  @override
+  Widget build(BuildContext context) {
+    final mutedOnPrimary = onPrimary.withValues(alpha: AppOpacities.mutedText);
+    final emptyFill = onPrimary.withValues(alpha: AppOpacities.subtleFill);
+    final busiest = summary.busiestDay;
+
+    return Semantics(
+      container: true,
+      label: summary.spokenSummary,
+      child: ExcludeSemantics(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(
+              spacing: _squareGap,
+              runSpacing: _squareGap,
+              children: [
+                for (var index = 0; index < summary.totalDays; index++)
+                  Container(
+                    width: _squareSize,
+                    height: _squareSize,
+                    decoration: BoxDecoration(
+                      color: summary.playedOn(index)
+                          ? accentColor.withValues(
+                              alpha: busiest <= 1
+                                  ? 0.75
+                                  : (0.35 +
+                                          0.65 *
+                                              (summary.sessionsPerDay[index] /
+                                                  busiest))
+                                      .clamp(0.35, 1.0),
+                            )
+                          : emptyFill,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppConstants.smallPadding),
+            Text(
+              summary.caption,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: mutedOnPrimary,
+                    fontWeight: FontWeight.w600,
+                  ),
+            ),
+            const SizedBox(height: AppConstants.microSpacing4),
+            Text(
+              'Varje ruta är en dag. Mörkare ruta = mer spelad den dagen.',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: onPrimary.withValues(
+                      alpha: AppOpacities.subtleText,
+                    ),
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _DashboardExpansionSection extends StatelessWidget {
   const _DashboardExpansionSection({
     required this.title,
