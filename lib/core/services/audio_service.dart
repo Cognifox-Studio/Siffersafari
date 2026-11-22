@@ -46,35 +46,35 @@ class AudioAssetSpec {
   final double? volume;
 }
 
+// NOTE: every `primary` below must exist in `assets/sounds/` *and* be listed in
+// `pubspec.yaml`. The previous `.mp3` primaries never shipped (only `.wav` files
+// exist), so each sound effect first failed to load and then fell back — an
+// extra failed platform-channel call on every tap. `scripts/generate_sfx_wav.dart`
+// writes these `.wav` files; see `assets/sounds/CONVERT_TO_MP3.md` before
+// switching a primary to `.mp3`.
 const Map<AppSoundEffect, AudioAssetSpec> appSoundEffectAssets = {
   AppSoundEffect.click: AudioAssetSpec(
-    primary: 'sounds/click.mp3',
-    fallback: 'sounds/click.wav',
+    primary: 'sounds/click.wav',
     volume: 0.55,
   ),
   AppSoundEffect.correct: AudioAssetSpec(
-    primary: 'sounds/correct.mp3',
-    fallback: 'sounds/correct.wav',
+    primary: 'sounds/correct.wav',
     volume: 0.78,
   ),
   AppSoundEffect.wrong: AudioAssetSpec(
-    primary: 'sounds/wrong.mp3',
-    fallback: 'sounds/wrong.wav',
+    primary: 'sounds/wrong.wav',
     volume: 0.7,
   ),
   AppSoundEffect.celebration: AudioAssetSpec(
-    primary: 'sounds/celebration.mp3',
-    fallback: 'sounds/celebration.wav',
+    primary: 'sounds/celebration.wav',
     volume: 0.82,
   ),
   AppSoundEffect.mapOpen: AudioAssetSpec(
-    primary: 'sounds/map_open.mp3',
-    fallback: 'sounds/map_open.wav',
+    primary: 'sounds/map_open.wav',
     volume: 0.62,
   ),
   AppSoundEffect.quizStart: AudioAssetSpec(
-    primary: 'sounds/quiz_start.mp3',
-    fallback: 'sounds/quiz_start.wav',
+    primary: 'sounds/quiz_start.wav',
     volume: 0.68,
   ),
 };
@@ -227,8 +227,10 @@ class AudioService {
         volume: _resolveVolume(spec.volume, _soundVolume),
       );
       _scheduleMusicRecovery();
-    } catch (_) {
-      // Handle error silently for now
+    } catch (e, st) {
+      // Never let audio break gameplay, but do not hide the failure either.
+      debugPrint('[AudioService] playSoundEffect(${effect.name}) failed: $e');
+      debugPrintStack(stackTrace: st);
     }
   }
 
@@ -271,8 +273,9 @@ class AudioService {
       );
       if (_currentMusicTrack != track) return;
       _pausedForAppLifecycle = false;
-    } catch (_) {
-      // Handle error silently for now
+    } catch (e, st) {
+      debugPrint('[AudioService] playMusicTrack(${track.name}) failed: $e');
+      debugPrintStack(stackTrace: st);
     }
   }
 

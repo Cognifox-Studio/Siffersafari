@@ -1,6 +1,6 @@
 # Services Index
 
-Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../docs/SERVICES_API.md`.
+Detta ar snabbkartan till `lib/core/services/`. Fulla kontrakt finns i `../../../docs/SERVICES_API.md`.
 
 ## Om du vill andra
 

@@ -41,8 +41,6 @@ jobs:
       - name: Build generated files (Hive/Riverpod)
         run: dart run build_runner build --delete-conflicting-outputs
 
-      - name: Analyze (app + tests)
-        run: flutter analyze --fatal-infos lib test integration_test
-
+      # `flutter analyze` is owned by ci.yaml so it runs exactly once per change.
       - name: Run tests
         run: flutter test test

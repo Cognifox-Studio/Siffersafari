@@ -187,13 +187,12 @@ Aktiva testlager:
 
 CI/workflows:
 - `.github/workflows/ci.yaml`: core smoke på PR samt full smoke + audit på huvudgrenen
-- `.github/workflows/flutter.yml`: analyze + test
-- `.github/workflows/android-smoke.yml`: Android-smoke för APK/device-flöden
+- `.github/workflows/flutter.yml`: enhetstester/widgettester (analyze ägs av `ci.yaml`)
 - `.github/workflows/build.yml`: release build + signering + GitHub Release
 - `.github/workflows/play-closed-beta.yml`: closed beta-publicering mot Play-flödet
 - `.github/workflows/play-store-listing.yml`: separat sync av Play Store-listing, metadata och valfria screenshots
 - `.github/workflows/privacy-policy-pages.yml`: publicering av statiska privacy policy-sidor
-- `.github/workflows/release-guard.yml`: snabb releasevalidering + APK size guard
+- `.github/workflows/release-guard.yml`: snabb releasevalidering + AAB size guard (kräver `SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING=true` när keystore saknas)
 
 Play Store-copy versioneras separat i `fastlane/metadata/android/` sa att butikssida och binar-upload kan styras oberoende av varandra.
 

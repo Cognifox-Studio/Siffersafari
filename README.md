@@ -17,7 +17,7 @@ Quiz, storyäventyr och PIN-skyddat föräldraläge — utan konto eller molnsyn
   <a href="docs/README.md"><strong>Dokumentation</strong></a>
 </p>
 
-**Kodversion i repo:** `1.4.3+22` (se `pubspec.yaml`).  
+**Kodversion i repo:** `1.4.3+25` (se `pubspec.yaml`).  
 **Senaste GitHub Release-tagg:** kan ligga lite efter — kolla [Releases](https://github.com/Cognifox-Studio/Siffersafari/releases) för installbar APK.
 
 ---
@@ -95,9 +95,14 @@ dart run build_runner build --delete-conflicting-outputs
 flutter run
 ```
 
-Rekommenderat lokalflöde på emulatorn `Pixel_6`:
+Rekommenderat lokalflöde på emulatorn `Pixel_6` — välj den som passar ditt OS:
 
 ```bash
+# macOS / Linux
+scripts/flutter_pixel6.sh --action sync
+scripts/flutter_pixel6.sh --action run
+
+# Windows
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action sync
 powershell -ExecutionPolicy Bypass -File scripts/flutter_pixel6.ps1 -Action run
 ```
@@ -107,6 +112,19 @@ Kvalitet:
 ```bash
 flutter analyze
 flutter test
+```
+
+Vill du att `git push` ska köra analyze + tester åt dig först:
+
+```bash
+scripts/install_git_hooks.sh   # en gång per klon, aktiverar .githooks/pre-push
+```
+
+Release-preflight och diff-granskning finns även som plattformsoberoende Dart-skript:
+
+```bash
+dart run scripts/release_preflight.dart      # analyze + nyckeltester + APK-size
+dart run scripts/verify_git_changes.dart     # granska staged/unstaged före commit
 ```
 
 CI kör analyze/test. Release-workflow bygger signerad APK från `v*`-taggar. Mer: [docs/DEPLOY_ANDROID.md](docs/DEPLOY_ANDROID.md).

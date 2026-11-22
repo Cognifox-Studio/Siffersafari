@@ -47,13 +47,13 @@ Nar native Android, navigation eller UI har andrats ar `sync` den sakraste verif
 Versionen styrs i `pubspec.yaml`:
 
 ```yaml
-version: 1.4.3+22
+version: 1.4.3+25
 ```
 
 - `1.4.3` = versionsnamn
-- `22` = versionskod (oka alltid buildnumret fore ny Play-upload)
+- `25` = versionskod (oka alltid buildnumret fore ny Play-upload)
 
-Lokal snabbkontroll fore upload: `pwsh scripts/release_preflight.ps1` (analyze + nyckeltester + debug-APK size).
+Lokal snabbkontroll fore upload: `dart run scripts/release_preflight.dart` (analyze + nyckeltester + debug-APK size). Pa Windows fungerar aven `pwsh scripts/release_preflight.ps1`.
 
 Innan varje Play-upload ska bada uppdateras. Play nekar nya builds om versionskoden inte okar.
 
@@ -253,7 +253,7 @@ flutter build appbundle --release --analyze-size
 
 ### Version code is lower than previously released code
 
-Oka buildnumret i `pubspec.yaml`, till exempel `1.4.3+22` -> `1.4.4+23`.
+Oka buildnumret i `pubspec.yaml`, till exempel `1.4.3+25` -> `1.4.4+26`.
 
 ---
 

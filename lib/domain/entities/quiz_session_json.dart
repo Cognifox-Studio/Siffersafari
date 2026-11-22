@@ -4,6 +4,18 @@ import '../enums/operation_type.dart';
 import 'question_json.dart';
 import 'quiz_session.dart';
 
+/// Resolve an enum value by its `name`, falling back instead of throwing.
+///
+/// Persisted sessions outlive refactors: an enum value may be renamed or an old
+/// build may have written a record with a value that no longer exists. A missing
+/// enum must never crash the resume flow.
+T _enumByName<T extends Enum>(List<T> values, Object? rawName, T fallback) {
+  for (final value in values) {
+    if (value.name == rawName) return value;
+  }
+  return fallback;
+}
+
 extension QuizSessionJson on QuizSession {
   Map<String, dynamic> toJson() {
     return {
@@ -32,17 +44,45 @@ extension QuizSessionJson on QuizSession {
   }
 
   static QuizSession fromJson(Map<dynamic, dynamic> json) {
+    final questions =
+        (json['questions'] as List).map((q) => QuestionJson.fromJson(q as Map)).toList();
+
+    final rawSteps = json['difficultyStepsByOperation'] as Map?;
+    final stepsByOperation = <OperationType, int>{};
+    if (rawSteps != null) {
+      for (final entry in rawSteps.entries) {
+        stepsByOperation[
+          _enumByName(OperationType.values, entry.key, OperationType.values.first)
+        ] = entry.value as int;
+      }
+    }
+
     return QuizSession(
       sessionId: json['sessionId'] as String,
-      ageGroup: AgeGroup.values.firstWhere((e) => e.name == json['ageGroup']),
+      ageGroup: _enumByName(
+        AgeGroup.values,
+        json['ageGroup'],
+        AgeGroup.values.first,
+      ),
       gradeLevel: json['gradeLevel'] as int?,
-      operationType: OperationType.values.firstWhere((e) => e.name == json['operationType']),
-      difficulty: DifficultyLevel.values.firstWhere((e) => e.name == json['difficulty']),
-      questions: (json['questions'] as List).map((q) => QuestionJson.fromJson(q as Map)).toList(),
-      targetQuestionCount: json['targetQuestionCount'] as int,
+      operationType: _enumByName(
+        OperationType.values,
+        json['operationType'],
+        OperationType.values.first,
+      ),
+      difficulty: _enumByName(
+        DifficultyLevel.values,
+        json['difficulty'],
+        DifficultyLevel.values.first,
+      ),
+      questions: questions,
+      // Older rows only stored `totalQuestions`; the oldest rows stored neither.
+      targetQuestionCount: (json['targetQuestionCount'] as int?) ??
+          (json['totalQuestions'] as int?) ??
+          questions.length,
       wordProblemsEnabled: json['wordProblemsEnabled'] as bool? ?? true,
       missingNumberEnabled: json['missingNumberEnabled'] as bool? ?? true,
-      difficultyStepsByOperation: (json['difficultyStepsByOperation'] as Map?)?.map((k, v) => MapEntry(OperationType.values.firstWhere((e) => e.name == k), v as int)) ?? {},
+      difficultyStepsByOperation: stepsByOperation,
       currentQuestionIndex: json['currentQuestionIndex'] as int? ?? 0,
       correctAnswers: json['correctAnswers'] as int? ?? 0,
       wrongAnswers: json['wrongAnswers'] as int? ?? 0,
@@ -54,6 +94,3 @@ extension QuizSessionJson on QuizSession {
     );
   }
 }
-
-
-

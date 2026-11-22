@@ -1,5 +1,17 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!--
+      No INTERNET permission in the release manifest on purpose.
+
+      Siffersafari is offline-first and the core product performs no network
+      I/O. Declaring android.permission.INTERNET would (a) contradict the
+      privacy policy and the Play data-safety form, and (b) be an unnecessary
+      permission on a children's app.
+
+      The debug and profile manifests still declare it, because the Flutter tool
+      needs it for hot reload / the observatory. If cloud backup (see
+      docs/FIREBASE_CLOUD_BACKUP.md) ever ships for real, add the permission
+      here together with the privacy-policy update.
+    -->
 
     <application
         android:label="Siffersafari"

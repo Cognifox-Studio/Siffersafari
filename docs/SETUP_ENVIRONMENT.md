@@ -164,6 +164,33 @@ Genererade filer hamnar till exempel har:
 flutter analyze
 ```
 
+### Git hooks (kor analyze + tester innan push)
+
+Repot har en `pre-push`-hook i `.githooks/` som kor `flutter analyze` och
+`flutter test test` innan en push lamnar datorn. Aktivera den en gang per klon:
+
+```bash
+scripts/install_git_hooks.sh
+```
+
+Det satter `core.hooksPath` till `.githooks`, sa att andringar i hooksen slar
+igenom utan ominstallation (till skillnad fran att kopiera filer till
+`.git/hooks/`).
+
+Viktigt: hooken ar **best-effort**. Saknas `flutter` pa PATH (t.ex. bara
+docs-arbete, eller i en container) varnar den och slapper igenom pushen i
+stallet for att blockera. Samma sak om du medvetet hoppar over:
+
+```bash
+SKIP_TESTS=1 git push     # hoppa over hela hooken
+SKIP_ANALYZE=1 git push   # hoppa bara over analyze
+git push --no-verify      # kringga alla git-hooks
+```
+
+Notera att hooken inte ersatter CI: `git push` till en feature-branch kor
+ingenting i GitHub Actions. Testerna kors i CI nar du oppnar en PR (se
+`.github/workflows/flutter.yml` och `ci.yaml`).
+
 ---
 
 ## 4. Vanliga Fel & Losningar

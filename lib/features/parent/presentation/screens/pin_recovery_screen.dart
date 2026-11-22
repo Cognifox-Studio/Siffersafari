@@ -113,8 +113,11 @@ class _PinRecoveryScreenState extends ConsumerState<PinRecoveryScreen> {
       if (!mounted) return;
 
       if (!isCorrect) {
+        final remaining = _pinService.getRemainingSecurityAnswerAttempts();
         setState(() {
-          _errorMessage = 'Felaktigt svar. Försök igen.';
+          _errorMessage = remaining > 0
+              ? 'Felaktigt svar. $remaining försök kvar.'
+              : 'Felaktigt svar.';
           _isLoading = false;
         });
         return;
@@ -123,6 +126,12 @@ class _PinRecoveryScreenState extends ConsumerState<PinRecoveryScreen> {
       setState(() {
         _currentStep = _RecoveryStep.newPinInput;
         _errorMessage = null;
+        _isLoading = false;
+      });
+    } on PinLockoutException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _errorMessage = e.toString();
         _isLoading = false;
       });
     } catch (e) {

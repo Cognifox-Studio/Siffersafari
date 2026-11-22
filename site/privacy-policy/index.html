@@ -142,7 +142,7 @@
       <section class="card">
         <div class="eyebrow">Siffersafari</div>
         <h1>Privacy Policy</h1>
-        <p class="updated"><strong>Last updated:</strong> April 22, 2026</p>
+        <p class="updated"><strong>Last updated:</strong> November 22, 2026</p>
 
         <h2>Overview</h2>
         <p>
@@ -151,8 +151,16 @@
         </p>
         <p>
           <strong>Important:</strong> We do not collect, use, or disclose personal
-          information from children or their parents. All gameplay data is stored
-          locally on your device.
+          information from children or their parents. By default all gameplay data
+          is stored locally on your device, and the app makes no network requests.
+        </p>
+        <p>
+          <strong>Optional cloud backup (parent opt-in):</strong> if a
+          parent/guardian turns this on behind the parent PIN, a copy of the
+          learning progress may be stored in <strong>Google Firebase</strong>
+          (Authentication + Firestore) so it can be restored on a new device. It is
+          <strong>off by default</strong>, is not required for any feature, and can
+          be turned off again in parent settings.
         </p>
 
         <h2>Data We Collect</h2>
@@ -202,12 +210,12 @@
             </tr>
           </tbody>
         </table>
-        <p><strong>All data remains on your device.</strong> We do not sync data to our servers.</p>
+        <p><strong>With cloud backup off (the default), all data remains on your device.</strong> We operate no servers of our own.</p>
 
         <h2>Data Not Collected</h2>
         <ul>
-          <li>No server uploads of child or parent data</li>
-          <li>No analytics platforms such as Google Analytics, Firebase, or Mixpanel</li>
+          <li>No server uploads of child or parent data unless a parent opts in to cloud backup</li>
+          <li>No analytics platforms such as Google Analytics, Firebase Analytics, or Mixpanel</li>
           <li>No advertising, ad networks, or behavioral advertising</li>
           <li>No tracking across apps or websites</li>
           <li>No third-party data sharing</li>
@@ -235,9 +243,10 @@
 
         <h2>Data Security</h2>
         <ul>
-          <li>Parent PINs are hashed using BCrypt and are not stored in plain text</li>
-          <li>Gameplay data is stored locally on the device</li>
-          <li>No network transmission is used for profile or progress data</li>
+          <li>Parent PINs and the PIN-recovery answer are hashed using BCrypt, never stored in plain text, with a 5-attempt lockout</li>
+          <li>Gameplay data is stored locally inside the app's private storage, protected by Android's per-app sandbox</li>
+          <li>With cloud backup off, no network transmission is used for profile or progress data</li>
+          <li>With cloud backup on, data is sent only over HTTPS/TLS to Firebase, access-controlled by security rules</li>
           <li>No account system is required to use the app</li>
         </ul>
 
@@ -245,18 +254,25 @@
         <p>
           Siffersafari is designed for children under 13. We comply with the
           Children's Online Privacy Protection Act (COPPA) by collecting no
-          personal information, storing data locally only, providing easy deletion,
-          and avoiding tracking or profiling across devices or apps.
+          personal information, storing data locally by default, providing easy
+          deletion, and avoiding tracking or profiling across devices or apps. Cloud
+          backup is parent-only, opt-in, and never enabled by a child.
         </p>
 
         <h2>Third-Party Services</h2>
-        <p>The app uses offline open-source libraries on the device only:</p>
+        <p>The app uses these offline open-source libraries on the device only:</p>
         <ul>
           <li>Hive for local database storage</li>
           <li>Riverpod for state management</li>
           <li>bcrypt for PIN hashing</li>
         </ul>
         <p>None of these libraries are used to upload user data or track users.</p>
+        <p>
+          Only if a parent enables cloud backup: Google Firebase Authentication
+          (parent sign-in) and Cloud Firestore (encrypted in transit, access
+          controlled by security rules). We do not embed Firebase Analytics,
+          Crashlytics with user profiling, or Firebase Ads.
+        </p>
 
         <h2>Data Retention</h2>
         <ul>
@@ -264,7 +280,7 @@
           <li>Parent PIN data is kept until you delete the profile</li>
           <li>Temporary files are cleared during normal app updates</li>
         </ul>
-        <p>Because the app has no centralized database, deletion is local and immediate.</p>
+        <p>Because the app has no centralized database, deletion is local and immediate. If cloud backup was enabled, turning it off or deleting the parent sign-in also removes the cloud copy.</p>
 
         <h2>Your Rights</h2>
         <ul>
@@ -295,7 +311,8 @@
         <div class="summary">
           <strong>Summary:</strong> Siffersafari is an offline-first children's math app.
           We do not collect personal information, do not use analytics or ads, and keep
-          gameplay data on the user's device.
+          gameplay data on the user's device unless a parent explicitly opts in to
+          optional cloud backup.
         </div>
       </section>
     </main>

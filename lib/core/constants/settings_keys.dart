@@ -11,6 +11,15 @@ class SettingsKeys {
   static const String parentPinLockoutUntil = 'pin_lockout_until';
   static const String parentPinRecoveryConfig = 'pin_recovery_config';
 
+  /// Failed attempts / lockout for the PIN-recovery security question.
+  ///
+  /// Tracked separately from the PIN counters: the recovery answer is free text
+  /// and would otherwise be an unrate-limited way around the PIN lockout.
+  static const String parentSecurityAnswerFailedAttempts =
+      'pin_security_answer_failed_attempts';
+  static const String parentSecurityAnswerLockoutUntil =
+      'pin_security_answer_lockout_until';
+
   static String onboardingDone(String userId) => 'onboarding_done_$userId';
 
   static String allowedOperations(String userId) => 'allowed_ops_$userId';
@@ -87,6 +96,9 @@ class SettingsKeys {
         parentPinFailedAttempts,
         parentPinLockoutUntil,
         parentPinRecoveryConfig,
+        parentSecurityAnswerFailedAttempts,
+        parentSecurityAnswerLockoutUntil,
+        cloudBackupOptInAt,
         analyticsEvents,
       ];
 }
