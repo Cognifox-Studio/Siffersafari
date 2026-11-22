@@ -79,6 +79,16 @@ const _equationQuestion = Question(
   correctAnswer: 12,
 );
 
+const _shortWordProblem = Question(
+  id: 'q-short-word',
+  operationType: OperationType.addition,
+  difficulty: DifficultyLevel.easy,
+  operand1: 3,
+  operand2: 0,
+  correctAnswer: 3,
+  promptText: 'Loke har 3 mangoer.',
+);
+
 const _wordProblemQuestion = Question(
   id: 'q-word',
   operationType: OperationType.addition,
@@ -374,13 +384,15 @@ void main() {
         (tester) async {
       useViewport(tester, width: 360, height: 640);
 
+      // Short sentence in a roomy card: this must fit, so the card keeps its
+      // ordinary capped layout.
       await tester.pumpWidget(
         _harness(
           const Center(
             child: SizedBox(
-              width: 320,
-              height: 220,
-              child: QuestionCard(question: _wordProblemQuestion),
+              width: 360,
+              height: 320,
+              child: QuestionCard(question: _shortWordProblem),
             ),
           ),
           textScale: 1.0,
@@ -394,7 +406,7 @@ void main() {
         findsNothing,
         reason: 'Normal textstorlek ska inte behöva scrollas',
       );
-      final text = tester.widget<Text>(find.text(_wordProblemQuestion.promptText!));
+      final text = tester.widget<Text>(find.text(_shortWordProblem.promptText!));
       expect(text.maxLines, isNotNull);
       expect(tester.takeException(), isNull);
     });

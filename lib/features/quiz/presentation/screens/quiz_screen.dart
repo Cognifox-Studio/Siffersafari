@@ -231,17 +231,18 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final quizState = ref.watch(quizProvider);
     final session = quizState.session;
     final activeUser = ref.watch(userProvider).activeUser;
-    final ttsEnabled = activeUser != null
-        ? ref.watch(ttsEnabledProvider(activeUser.userId))
-        : false;
-    // A muted profile is muted: no read-aloud button, no automatic reading.
-    // The profile's own sound setting is the contract, so it wins over the
-    // parent dashboard's read-aloud preference.
-    final readAloudAvailable = ttsEnabled &&
-        switch (activeUser) {
-          final user? => user.soundEnabled,
-          _ => false,
-        };
+    // Read-aloud needs two yeses: the parent dashboard decides whether reading
+    // aloud is allowed at all, the profile decides whether this child wants
+    // sound. A muted profile stays silent even when the dashboard allows it,
+    // so both are looked up together and a missing profile is simply silent.
+    final (:ttsEnabled, :soundOn) = switch (activeUser) {
+      final user? => (
+          ttsEnabled: ref.watch(ttsEnabledProvider(user.userId)),
+          soundOn: user.soundEnabled,
+        ),
+      _ => (ttsEnabled: false, soundOn: false),
+    };
+    final readAloudAvailable = ttsEnabled && soundOn;
     // Åk 1–2 get the roomier read-aloud button; it is their main access path to
     // the question rather than a convenience.
     final youngLearner = (activeUser?.gradeLevel ?? 99) <= 2;
