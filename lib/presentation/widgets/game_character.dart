@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
+import 'package:siffersafari/domain/services/outfit_resolver.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 
 part 'game_character__inventory_helpers_part.dart';
@@ -406,27 +407,22 @@ class _GameCharacterState extends State<GameCharacter>
     );
   }
 
+  /// What the child is actually wearing right now.
+  ///
+  /// A pose-specific choice overrides the base outfit for its slot; it does not
+  /// replace the outfit. See [OutfitResolver] for why: a hat equipped while
+  /// idle used to disappear the moment the character reacted.
   Map<String, String> get _currentPoseEquippedItems {
-    if (widget.equippedItems == null || widget.equippedItems!.isEmpty) {
-      return {};
+    final equipped = widget.equippedItems;
+    if (equipped == null || equipped.isEmpty) {
+      return const <String, String>{};
     }
 
-    final poseNames = _currentPoseLookupNames;
-    final Map<String, String> items = {};
-
-    for (final entry in widget.equippedItems!.entries) {
-      final key = entry.key;
-      final val = entry.value;
-
-      if (poseNames.any((poseName) => key.startsWith('${poseName}_'))) {
-        items[key] = val;
-      } else if (!key.contains('_')) {
-        if (poseNames.contains('idle')) {
-          items[key] = val;
-        }
-      }
-    }
-    return items;
+    return OutfitResolver.resolve(
+      equipped: equipped,
+      poseNames: _currentPoseLookupNames,
+      slotOf: (itemId) => _getItemConfig(itemId, '').slot,
+    );
   }
 
   List<String> get _currentPoseLookupNames {

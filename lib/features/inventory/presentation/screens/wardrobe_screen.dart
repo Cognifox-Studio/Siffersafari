@@ -8,6 +8,7 @@ import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/services/outfit_resolver.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
@@ -256,6 +257,14 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     );
   }
 
+  /// Which slot an item belongs to; two items in one slot never draw together.
+  static String _slotOf(String itemId) {
+    for (final item in InventoryConfig.allItems) {
+      if (item.id == itemId) return item.slot;
+    }
+    return '';
+  }
+
   Widget _buildGrid(
     BuildContext context,
     List<String> unlockedItems,
@@ -264,6 +273,17 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
   ) {
     final wardrobeItems = InventoryConfig.wardrobeItems;
     final themeColors = context.appThemeColors;
+
+    // The same resolution the character uses, so a tile is highlighted exactly
+    // when the child can actually see that item on the character.
+    final poseKeyFor = <String, String>{};
+    for (final entry in OutfitResolver.resolve(
+      equipped: equippedItems,
+      poseNames: [pose.name],
+      slotOf: _slotOf,
+    ).entries) {
+      poseKeyFor[entry.value] = entry.key;
+    }
 
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
@@ -277,11 +297,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
         final itemCacheSize = imageCacheExtent(context, 84);
 
-        final poseKey = '${pose.name}_${item.id}';
-        final isEquippedInPose = equippedItems.containsKey(poseKey) ||
-            (pose == CharacterReaction.idle &&
-                equippedItems.entries
-                    .any((e) => e.value == item.id && !e.key.contains('_')));
+        final equippedKey = poseKeyFor[item.id];
+        final isEquippedInPose = equippedKey != null;
 
         final lockedHint = InventoryConfig.lockedWardrobeHint(
           item.id,
@@ -300,11 +317,11 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               if (isUnlocked) {
                 ref.read(audioServiceProvider).playClickSound();
                 if (isEquippedInPose) {
-                  final existingKey =
-                      equippedItems.containsKey(poseKey) ? poseKey : item.id;
-                  ref.read(userProvider.notifier).unequipItem(existingKey);
+                  ref.read(userProvider.notifier).unequipItem(equippedKey);
                 } else {
-                  ref.read(userProvider.notifier).equipItem(poseKey, item.id);
+                  ref
+                      .read(userProvider.notifier)
+                      .equipItem('${pose.name}_${item.id}', item.id);
                 }
                 return;
               }

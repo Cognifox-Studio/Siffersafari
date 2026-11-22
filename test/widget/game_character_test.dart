@@ -297,4 +297,37 @@ void main() {
       expect(hatCenter.dx, greaterThan(characterCenter.dx + 40));
     },
   );
+
+  testWidgets(
+    '[Widget] GameCharacter behåller plagget när karaktären reagerar',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GameCharacter(
+                height: 200,
+                reaction: CharacterReaction.celebrate,
+                persistentReaction: true,
+                equippedItems: {
+                  'idle_item_safari_hat': 'item_safari_hat',
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // Regression: plagg valdes i vila och sparades som `idle_<item>`, men
+      // ritades bara i pose idle — hatten försvann så fort karaktären firade,
+      // vilket är exakt vad som händer i varje quiz.
+      expect(
+        _assetImageFinder('assets/images/items/item_safari_hat.webp'),
+        findsOneWidget,
+        reason: 'Ett plagg som valts i vila ska följa med när karaktären firar',
+      );
+    },
+  );
 }
