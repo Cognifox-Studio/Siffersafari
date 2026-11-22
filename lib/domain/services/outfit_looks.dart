@@ -23,6 +23,9 @@ class OutfitLook {
 /// "Slumpa" gives variation; these give *identity*. A child who can say "today
 /// I'm the scientist" keeps playing longer than one wearing a random hat -- and
 /// a look is a reason to go looking for the pieces that are still missing.
+///
+/// One item per slot is a hard rule here as well: the backpack and the
+/// binoculars are both worn as `accessory`, so a look may only use one of them.
 const outfitLooks = <OutfitLook>[
   OutfitLook(
     id: 'safari',
@@ -32,7 +35,6 @@ const outfitLooks = <OutfitLook>[
       'item_shirt_explorer',
       'item_binoculars_safari',
       'item_map_safari',
-      'item_backpack_adventure',
       'item_shoes_safari',
       'item_pet_zebra_companion',
     ],
@@ -45,7 +47,6 @@ const outfitLooks = <OutfitLook>[
       'item_glasses_nerd',
       'item_compass_safari',
       'item_shirt_explorer',
-      'item_backpack_adventure',
       'item_shoes_safari',
     ],
   ),
@@ -57,7 +58,7 @@ const outfitLooks = <OutfitLook>[
       'item_map_safari',
       'item_shirt_explorer',
       'item_shoes_safari',
-      'item_camera_safari',
+      'item_backpack_adventure',
     ],
   ),
 ];

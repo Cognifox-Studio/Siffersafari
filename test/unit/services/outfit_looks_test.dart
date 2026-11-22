@@ -54,7 +54,11 @@ void main() {
         unlockedIds: safari.itemIds.toSet(),
       );
 
-      expect(outfit.length, safari.itemIds.length);
+      expect(
+        outfit.length,
+        safari.itemIds.length,
+        reason: 'Alla plagg i looken ska på när barnet äger dem',
+      );
       expect(outfit.keys.every((key) => key.startsWith('idle_')), isTrue);
       expect(outfit['idle_item_safari_hat'], 'item_safari_hat');
     });
