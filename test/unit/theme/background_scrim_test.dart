@@ -41,12 +41,14 @@ void main() {
     for (var y = 0; y < image.height; y += stride) {
       for (var x = 0; x < image.width; x += stride) {
         final p = image.getPixel(x, y);
-        values.add(Color.fromARGB(
-          255,
-          p.r.toInt(),
-          p.g.toInt(),
-          p.b.toInt(),
-        ).computeLuminance());
+        values.add(
+          Color.fromARGB(
+            255,
+            p.r.toInt(),
+            p.g.toInt(),
+            p.b.toInt(),
+          ).computeLuminance(),
+        );
       }
     }
     values.sort();
