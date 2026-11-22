@@ -2,12 +2,13 @@
 // Run: python3 scripts/prepare_wardrobe_items.py
 //
 // The wardrobe is described by the art: anchor point and hit shape come
-// from each WebP's opaque bounding box, z-order from the slot. `legacy`
-// holds the hand-tuned offset/scale that the renderer still uses, so this
-// file changes nothing on screen until `GameCharacter` reads it.
+// from each WebP's opaque bounding box, z-order from the slot, and
+// `target` is where the anchor should land on the character. The
+// hand-tuned `offset`/`renderScale` pair is kept below only so an audit
+// can hold `target` against it.
 
 /// Manifest schema version. Bump together with the generator.
-const int wardrobeManifestSchemaVersion = 1;
+const int wardrobeManifestSchemaVersion = 2;
 
 /// Drawing order of the slots, bottom to top.
 const List<String> wardrobeZOrder = <String>[
@@ -33,6 +34,8 @@ class WardrobeManifestEntry {
     required this.imageHeight,
     required this.anchorX,
     required this.anchorY,
+    required this.targetX,
+    required this.targetY,
     required this.hitWidthFactor,
     required this.hitHeightFactor,
     required this.hitPaddingFactor,
@@ -75,6 +78,11 @@ class WardrobeManifestEntry {
   double get hitPadding =>
       hitOverridePaddingFactor ?? hitPaddingFactor;
 
+  /// Where the item's anchor point should land, measured from the
+  /// character's centre as a fraction of its height.
+  final double targetX;
+  final double targetY;
+
   /// Hand-tuned values carried over from `InventoryConfig`.
   final double offsetX;
   final double offsetY;
@@ -94,6 +102,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.5,
     anchorY: 0.457,
+    targetX: 0.0,
+    targetY: -0.2465,
     hitWidthFactor: 0.888,
     hitHeightFactor: 0.53,
     hitPaddingFactor: 0.02,
@@ -115,6 +125,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 384,
     anchorX: 0.5,
     anchorY: 0.4557,
+    targetX: 0.0,
+    targetY: -0.2477,
     hitWidthFactor: 0.9263,
     hitHeightFactor: 0.4679,
     hitPaddingFactor: 0.02,
@@ -136,6 +148,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4976,
     anchorY: 0.4712,
+    targetX: 0.479,
+    targetY: 0.0935,
     hitWidthFactor: 0.8569,
     hitHeightFactor: 0.5327,
     hitPaddingFactor: 0.02,
@@ -157,6 +171,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.5,
     anchorY: 0.454,
+    targetX: 0.0,
+    targetY: 0.0814,
     hitWidthFactor: 0.624,
     hitHeightFactor: 0.748,
     hitPaddingFactor: 0.02,
@@ -178,6 +194,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 408,
     anchorX: 0.4984,
     anchorY: 0.4816,
+    targetX: -0.372,
+    targetY: 0.0357,
     hitWidthFactor: 0.8991,
     hitHeightFactor: 0.8264,
     hitPaddingFactor: 0.02,
@@ -199,6 +217,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 408,
     anchorX: 0.5,
     anchorY: 0.4743,
+    targetX: 0.0,
+    targetY: 0.4789,
     hitWidthFactor: 0.7292,
     hitHeightFactor: 0.3656,
     hitPaddingFactor: 0.02,
@@ -220,6 +240,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.501,
     anchorY: 0.492,
+    targetX: 0.0009,
+    targetY: -0.2168,
     hitWidthFactor: 0.942,
     hitHeightFactor: 0.592,
     hitPaddingFactor: 0.02,
@@ -241,6 +263,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 408,
     anchorX: 0.5,
     anchorY: 0.4608,
+    targetX: 0.0,
+    targetY: -0.0635,
     hitWidthFactor: 0.6246,
     hitHeightFactor: 0.368,
     hitPaddingFactor: 0.02,
@@ -262,6 +286,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.491,
     anchorY: 0.419,
+    targetX: -0.4054,
+    targetY: 0.2314,
     hitWidthFactor: 0.802,
     hitHeightFactor: 0.718,
     hitPaddingFactor: 0.02,
@@ -283,6 +309,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.5,
     anchorY: 0.486,
+    targetX: 0.0,
+    targetY: -0.0021,
     hitWidthFactor: 0.848,
     hitHeightFactor: 0.716,
     hitPaddingFactor: 0.02,
@@ -304,6 +332,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 500,
     anchorX: 0.498,
     anchorY: 0.487,
+    targetX: 0.3841,
+    targetY: 0.1179,
     hitWidthFactor: 0.944,
     hitHeightFactor: 0.666,
     hitPaddingFactor: 0.02,
@@ -325,6 +355,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4977,
     anchorY: 0.5,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 1.0,
     hitHeightFactor: 1.0,
     hitPaddingFactor: 0.02,
@@ -343,6 +375,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4964,
     anchorY: 0.5,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 1.0,
     hitHeightFactor: 1.0,
     hitPaddingFactor: 0.02,
@@ -361,6 +395,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4964,
     anchorY: 0.5,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 1.0,
     hitHeightFactor: 1.0,
     hitPaddingFactor: 0.02,
@@ -379,6 +415,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4995,
     anchorY: 0.541,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 0.9272,
     hitHeightFactor: 0.8247,
     hitPaddingFactor: 0.02,
@@ -397,6 +435,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.4977,
     anchorY: 0.5,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 1.0,
     hitHeightFactor: 1.0,
     hitPaddingFactor: 0.02,
@@ -415,6 +455,8 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     imageHeight: 1024,
     anchorX: 0.5005,
     anchorY: 0.4985,
+    targetX: 0.0,
+    targetY: 0.0,
     hitWidthFactor: 1.0,
     hitHeightFactor: 1.0,
     hitPaddingFactor: 0.02,

@@ -26,10 +26,12 @@ What is derived and what is not:
                    on its slot.
   * `zOrder`    -- derived: the slot order (`back` under `front`), the same six
                    layers the character draws.
-  * `legacy`    -- carried over untouched: the hand-tuned `offset`/`renderScale`
-                   from today's catalog. They stay the source of truth until the
-                   renderer is switched over, so running this script cannot change
-                   how the game looks.
+  * `target`    -- derived: where the item's anchor should land on the character,
+                   as a fraction of its height. Read once out of the hand-tuned
+                   `offset`/`renderScale` pair (that is `legacy` below, kept only
+                   so an audit can hold the two against each other), so switching
+                   the renderer over moved nothing but rounding. An item with no
+                   offset of its own inherits its slot's `slotAnchors` value.
 
 Usage:
     python3 scripts/prepare_wardrobe_items.py           # write the files
@@ -44,6 +46,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import statistics
 import sys
 from pathlib import Path
 
@@ -63,7 +66,10 @@ MANIFEST_DART = ROOT / "lib" / "domain" / "entities" / "wardrobe_manifest.g.dart
 # `_slotLayers` in `game_character.dart`; `wardrobe_slots_audit_test` enforces it.
 SLOT_ORDER = ["back", "feet", "body", "face", "head", "accessory", "front"]
 
-SCHEMA_VERSION = 1
+# 2: every item gained `target`/`slotAnchor`, and the manifest learned
+# `slotAnchors`. The Dart class grew required fields, so an old reader cannot
+# silently ignore them.
+SCHEMA_VERSION = 2
 
 # Padding around the opaque box when the hit shape is derived. Enough for a
 # seven-year-old's finger without swallowing the neighbouring item.
@@ -111,12 +117,14 @@ def _catalog_entries() -> list[dict[str, object]]:
                 "slot": slot_match.group(1) if slot_match else "",
                 "asset": take("assetPath") or "",
                 "showInWardrobe": "showInWardrobe: false" not in chunk,
+                # None, not (0, 0): an item without a hand-tuned offset should
+                # inherit its slot's anchor, not land on the character's centre.
                 "offset": [
                     float(offset_match.group(1)),
                     float(offset_match.group(2)),
                 ]
                 if offset_match
-                else [0.0, 0.0],
+                else None,
                 "renderScale": float(scale_match.group(1))
                 if scale_match
                 else 0.5,
@@ -183,6 +191,69 @@ def _art(asset: str) -> dict[str, object] | None:
     }
 
 
+def _anchored_target(
+    offset: list[float] | None,
+    render_scale: float,
+    anchor: dict[str, float],
+    image: dict[str, int],
+) -> tuple[float, float]:
+    """Where the old hand-tuned pair actually put the item's anchor point.
+
+    Mirrors `anchoredItemOffset` in `lib/domain/services/wardrobe_layout.dart`,
+    run backwards: instead of anchor -> offset, this reads the legacy offset and
+    reports the point on the character the anchor landed on. Every value is a
+    fraction of the character's height, so the numbers survive a resize.
+    """
+    if offset is None:
+        return (0.0, 0.0)
+
+    box = render_scale
+    width = float(image["width"])
+    height = float(image["height"])
+    aspect = width / height if height else 1.0
+
+    if aspect >= 1.0:
+        draw_w, draw_h = box, box / aspect
+    else:
+        draw_w, draw_h = box * aspect, box
+
+    anchor_from_box_x = (box - draw_w) / 2 + anchor["x"] * draw_w - box / 2
+    anchor_from_box_y = (box - draw_h) / 2 + anchor["y"] * draw_h - box / 2
+
+    # `Alignment(ox, oy)` * `(1 - scale) / 2` is the legacy offset.
+    factor = (1.0 - box) / 2
+    return (
+        offset[0] * factor + anchor_from_box_x,
+        offset[1] * factor + anchor_from_box_y,
+    )
+
+
+def _slot_anchors(items: list[dict[str, object]]) -> dict[str, tuple[float, float]]:
+    """The middle of where each slot's items sit, in character-height fractions.
+
+    The median rather than the mean: one item that was nudged somewhere odd
+    should not drag the whole slot with it. A new item that gives only its slot
+    lands here.
+    """
+    grouped: dict[str, list[tuple[float, float]]] = {}
+    for item in items:
+        if item.get("targetSource") != "legacy":
+            continue
+        target = item["target"]
+        assert isinstance(target, dict)
+        grouped.setdefault(str(item["slot"]), []).append(
+            (float(target["x"]), float(target["y"]))
+        )
+
+    return {
+        slot: (
+            round(statistics.median(p[0] for p in points), 4),
+            round(statistics.median(p[1] for p in points), 4),
+        )
+        for slot, points in grouped.items()
+    }
+
+
 def build() -> dict[str, object]:
     overrides = _hit_shape_overrides()
     items: list[dict[str, object]] = []
@@ -210,8 +281,7 @@ def build() -> dict[str, object]:
                     "heightFactor": override[1],
                     "paddingFactor": override[2],
                 },
-                # Hand-tuned values stay the source of truth until the renderer
-                # is switched over; they live here so the switch is one diff.
+                # Kept for the audit that proves the swap is a no-op.
                 "legacy": {
                     "offset": entry["offset"],
                     "renderScale": entry["renderScale"],
@@ -219,10 +289,43 @@ def build() -> dict[str, object]:
             }
         )
 
+    # Position: read the hand-tuned pair once, then keep only where it landed.
+    # An item that gives just its slot inherits the slot's anchor instead.
+    for item in items:
+        image = item["image"]
+        anchor = item["anchor"]
+        legacy = item["legacy"]
+        assert isinstance(image, dict)
+        assert isinstance(anchor, dict)
+        assert isinstance(legacy, dict)
+
+        target_x, target_y = _anchored_target(
+            legacy["offset"],
+            float(legacy["renderScale"]),
+            anchor,
+            image,
+        )
+        item["target"] = {
+            "x": round(target_x, 4),
+            "y": round(target_y, 4),
+        }
+        item["targetSource"] = "legacy" if legacy["offset"] is not None else "slot"
+
+    slot_anchors = _slot_anchors(items)
+    for item in items:
+        slot_anchor = slot_anchors.get(str(item["slot"]), (0.0, 0.0))
+        item["slotAnchor"] = {"x": slot_anchor[0], "y": slot_anchor[1]}
+        if item["targetSource"] == "slot":
+            item["target"] = {"x": slot_anchor[0], "y": slot_anchor[1]}
+
     return {
         "schemaVersion": SCHEMA_VERSION,
         "generatedBy": "scripts/prepare_wardrobe_items.py",
         "slotOrder": SLOT_ORDER,
+        "slotAnchors": {
+            slot: {"x": point[0], "y": point[1]}
+            for slot, point in sorted(slot_anchors.items())
+        },
         "items": items,
     }
 
@@ -236,9 +339,10 @@ def _dart(manifest: dict[str, object]) -> str:
         "// Run: python3 scripts/prepare_wardrobe_items.py",
         "//",
         "// The wardrobe is described by the art: anchor point and hit shape come",
-        "// from each WebP's opaque bounding box, z-order from the slot. `legacy`",
-        "// holds the hand-tuned offset/scale that the renderer still uses, so this",
-        "// file changes nothing on screen until `GameCharacter` reads it.",
+        "// from each WebP's opaque bounding box, z-order from the slot, and",
+        "// `target` is where the anchor should land on the character. The",
+        "// hand-tuned `offset`/`renderScale` pair is kept below only so an audit",
+        "// can hold `target` against it.",
         "",
         "/// Manifest schema version. Bump together with the generator.",
         f"const int wardrobeManifestSchemaVersion = {manifest['schemaVersion']};",
@@ -261,6 +365,8 @@ def _dart(manifest: dict[str, object]) -> str:
         "    required this.imageHeight,",
         "    required this.anchorX,",
         "    required this.anchorY,",
+        "    required this.targetX,",
+        "    required this.targetY,",
         "    required this.hitWidthFactor,",
         "    required this.hitHeightFactor,",
         "    required this.hitPaddingFactor,",
@@ -303,6 +409,11 @@ def _dart(manifest: dict[str, object]) -> str:
         "  double get hitPadding =>",
         "      hitOverridePaddingFactor ?? hitPaddingFactor;",
         "",
+        "  /// Where the item's anchor point should land, measured from the",
+        "  /// character's centre as a fraction of its height.",
+        "  final double targetX;",
+        "  final double targetY;",
+        "",
         "  /// Hand-tuned values carried over from `InventoryConfig`.",
         "  final double offsetX;",
         "  final double offsetY;",
@@ -324,7 +435,8 @@ def _dart(manifest: dict[str, object]) -> str:
         assert isinstance(anchor, dict)
         assert isinstance(hit, dict)
         assert isinstance(legacy, dict)
-        offset = legacy["offset"]
+        # The renderer reads `target`; these two are only a paper trail.
+        offset = legacy["offset"] or [0.0, 0.0]
         assert isinstance(offset, list)
 
         lines += [
@@ -339,6 +451,8 @@ def _dart(manifest: dict[str, object]) -> str:
             f"    imageHeight: {image['height']},",
             f"    anchorX: {anchor['x']},",
             f"    anchorY: {anchor['y']},",
+            f"    targetX: {item['target']['x']},",
+            f"    targetY: {item['target']['y']},",
             f"    hitWidthFactor: {hit['widthFactor']},",
             f"    hitHeightFactor: {hit['heightFactor']},",
             f"    hitPaddingFactor: {hit['paddingFactor']},",
@@ -427,7 +541,8 @@ def main() -> int:
         assert isinstance(anchor, dict)
         print(
             f"  {item['id']:<28} {item['slot']:<10} z={item['zOrder']} "
-            f"anchor=({anchor['x']}, {anchor['y']})"
+            f"anchor=({anchor['x']}, {anchor['y']}) "
+            f"target=({item['target']['x']}, {item['target']['y']})"
         )
     return 0
 

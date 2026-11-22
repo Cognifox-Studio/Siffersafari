@@ -215,6 +215,33 @@ InventoryItem _getItemConfig(String itemId, String slot) =>
       ),
     );
 
+/// Where the item box goes for [itemId], as fractions of the character's
+/// height.
+///
+/// Unknown ids fall back to the hand-tuned pair: an id in an old profile can
+/// outlive the catalog that produced it, and that should not throw the item off
+/// the character.
+({double dx, double dy}) _anchoredItemOffset(
+  String itemId,
+  InventoryItem config,
+  double layoutScale,
+) {
+  final entry = wardrobeEntryFor(itemId);
+  if (entry != null && entry.imageHeight > 0) {
+    return anchoredItemOffset(
+      layoutScale: layoutScale,
+      imageAspect: entry.imageWidth / entry.imageHeight,
+      anchorX: entry.anchorX,
+      anchorY: entry.anchorY,
+      targetX: entry.targetX,
+      targetY: entry.targetY,
+    );
+  }
+
+  final factor = (1.0 - layoutScale) / 2;
+  return (dx: config.offset.x * factor, dy: config.offset.y * factor);
+}
+
 Map<String, double> _getItemSaved(_GameCharacterState state, String itemId) {
   final config = _getItemConfig(itemId, '');
   final adjustments = _getCharacterAdjustments(
@@ -225,8 +252,20 @@ Map<String, double> _getItemSaved(_GameCharacterState state, String itemId) {
   final layoutScale = config.renderScale * adjustments.scaleModifier;
   final alignmentFactor = (characterHeight * (1.0 - layoutScale)) * 0.5;
 
-  var dx = (config.offset.x + adjustments.dx) * alignmentFactor;
-  var dy = (config.offset.y + adjustments.dy) * alignmentFactor;
+  // Position comes from the art: the manifest says where the item's opaque
+  // centre is, and `target` says where that centre should land. No hand-tuned
+  // pair per item, and nothing that breaks when the character is drawn larger.
+  final anchored = _anchoredItemOffset(itemId, config, layoutScale);
+  var dx = anchored.dx * characterHeight;
+  var dy = anchored.dy * characterHeight;
+
+  // A character may still nudge a whole slot (Signe's hats sit lower, Astrid's
+  // sit to the side). The nudge keeps its old unit -- it scales with the box --
+  // so the table still means what it meant; only the item positions stopped
+  // being hand-tuned.
+  dx += adjustments.dx * alignmentFactor;
+  dy += adjustments.dy * alignmentFactor;
+
   var scale = 1.0;
   var rot = 0.0;
   final idleKey = '${itemId}_idle';
