@@ -92,3 +92,22 @@ Map<String, String> lookOutfit({
 
   return outfit;
 }
+
+/// How many of [look]'s items the child has not found yet.
+///
+/// Tapping a look dresses the child in the parts they own, which can look like
+/// half an outfit with no explanation. This is the number behind "2 plagg kvar
+/// att hitta": enough to turn a gap into a goal, without turning it into a
+/// checklist. Unknown ids are ignored, so a renamed item cannot make the count
+/// lie.
+int lookMissingCount({
+  required OutfitLook look,
+  required Iterable<InventoryItem> catalog,
+  required Set<String> unlockedIds,
+}) {
+  final knownIds = {for (final item in catalog) item.id};
+
+  return look.itemIds
+      .where((id) => knownIds.contains(id) && !unlockedIds.contains(id))
+      .length;
+}
