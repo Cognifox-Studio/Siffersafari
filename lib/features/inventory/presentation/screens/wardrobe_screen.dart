@@ -81,7 +81,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Välj pose — kläderna sparas per pose',
+                    'Posen ändrar bara hur figuren rör sig — plaggen sitter på '
+                    'oavsett pose',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context)
                               .colorScheme
@@ -297,8 +298,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
         final itemCacheSize = imageCacheExtent(context, 84);
 
-        final equippedKey = poseKeyFor[item.id];
-        final isEquippedInPose = equippedKey != null;
+        final isEquippedInPose = poseKeyFor.containsKey(item.id);
 
         final lockedHint = InventoryConfig.lockedWardrobeHint(
           item.id,
@@ -317,11 +317,12 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               if (isUnlocked) {
                 ref.read(audioServiceProvider).playClickSound();
                 if (isEquippedInPose) {
-                  ref.read(userProvider.notifier).unequipItem(equippedKey);
+                  ref.read(userProvider.notifier).unequipItemById(item.id);
                 } else {
-                  ref
-                      .read(userProvider.notifier)
-                      .equipItem('${pose.name}_${item.id}', item.id);
+                  ref.read(userProvider.notifier).equipItemInSlot(
+                        itemId: item.id,
+                        slot: item.slot,
+                      );
                 }
                 return;
               }

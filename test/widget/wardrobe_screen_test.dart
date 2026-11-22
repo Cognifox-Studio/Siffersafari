@@ -67,6 +67,169 @@ void main() {
       );
     },
   );
+
+  testWidgets(
+    '[Widget] Wardrobe – pose är förhandsvisning, plagget sparas globalt',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const userId = 'wardrobe-pose-user';
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: userId,
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+          unlockedItems: ['item_safari_hat'],
+        ),
+      );
+      await repository.setActiveUserId(userId);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(
+              home: _WardrobeHarness(),
+            ),
+          ),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('wardrobe_item_item_safari_hat')),
+      );
+
+      // Barnet förhandsvisar "Rätt" och klär på sig där.
+      await tester.tap(find.text('Rätt'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
+      await tester.pumpAndSettle();
+
+      final equipped = repository.getUserProgress(userId)!.equippedItems;
+      expect(
+        equipped,
+        containsPair('idle_item_safari_hat', 'item_safari_hat'),
+        reason: 'Plagget ska hamna i basoutfiten, inte i posen',
+      );
+      expect(
+        equipped.keys.where((key) => key.startsWith('answerCorrect_')),
+        isEmpty,
+        reason: 'En pose ska aldrig äga ett plagg',
+      );
+    },
+  );
+
+  testWidgets(
+    '[Widget] Wardrobe – ett plagg per slot',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const userId = 'wardrobe-slot-user';
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: userId,
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+          unlockedItems: ['item_safari_hat', 'item_hat_pirate'],
+        ),
+      );
+      await repository.setActiveUserId(userId);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(
+              home: _WardrobeHarness(),
+            ),
+          ),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('wardrobe_item_item_safari_hat')),
+      );
+
+      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('wardrobe_item_item_hat_pirate')));
+      await tester.pumpAndSettle();
+
+      final equipped = repository.getUserProgress(userId)!.equippedItems;
+      expect(
+        equipped,
+        containsPair('idle_item_hat_pirate', 'item_hat_pirate'),
+        reason: 'Den nya hatten ska ta över huvudet',
+      );
+      expect(
+        equipped.containsValue('item_safari_hat'),
+        isFalse,
+        reason: 'Två hattar får aldrig sitta på samtidigt',
+      );
+    },
+  );
+
+  testWidgets(
+    '[Widget] Wardrobe – att trycka på ett plagg tar av det',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const userId = 'wardrobe-remove-user';
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: userId,
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+          unlockedItems: ['item_safari_hat'],
+        ),
+      );
+      await repository.setActiveUserId(userId);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(
+              home: _WardrobeHarness(),
+            ),
+          ),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('wardrobe_item_item_safari_hat')),
+      );
+
+      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('wardrobe_item_item_safari_hat')));
+      await tester.pumpAndSettle();
+
+      expect(
+        repository.getUserProgress(userId)!.equippedItems,
+        isEmpty,
+        reason: 'Av betyder av, oavsett pose',
+      );
+    },
+  );
 }
 
 class _WardrobeHarness extends ConsumerStatefulWidget {
