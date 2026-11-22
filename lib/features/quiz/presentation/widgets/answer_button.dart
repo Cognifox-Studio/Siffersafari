@@ -297,19 +297,28 @@ class _AnswerButtonState extends State<AnswerButton>
                                     ),
                                   ),
                                 ),
-                              Text(
-                                widget.answer.toString(),
-                                style: (compact
-                                        ? Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .displaySmall)
-                                    ?.copyWith(
-                                  color: textColor,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: compact ? 32 : 44,
+                              // Åk 1–2 / low vision: the button height is fixed by
+                              // the quiz grid, but the digit still scales with the
+                              // system font setting. Without this the glyphs grow
+                              // past the box and Stack clips them silently - the
+                              // child simply sees a smaller number than it asked
+                              // for. Auto-shrink keeps the digit fully visible.
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  widget.answer.toString(),
+                                  style: (compact
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .displaySmall)
+                                      ?.copyWith(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: compact ? 32 : 44,
+                                  ),
                                 ),
                               ),
                             ],

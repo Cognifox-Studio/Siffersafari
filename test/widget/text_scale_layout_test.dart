@@ -14,11 +14,15 @@ import 'package:siffersafari/features/quiz/presentation/widgets/question_card.da
 /// the OS font slider (200 %) those two facts fight, and the loser is a child
 /// who cannot read the question or the answer they are choosing.
 ///
-/// These tests pin the behaviour down in both directions:
-///  * nothing may throw an overflow error at any supported text scale, and
-///  * the answer digit may never be taller than the button that contains it
-///    (a silent clip - `Stack` clips without complaining, so an overflow
-///    exception alone would not catch it).
+/// Two directions are pinned down:
+///  * nothing may overflow at any supported text scale, and
+///  * the answer digit must never be taller than the button containing it.
+///
+/// The second one cannot be checked with `tester.getSize`: a `Stack` clamps its
+/// child, so a clipped paragraph still reports the box height and the assertion
+/// passes while the child sees half a number. The size the glyphs actually need
+/// is therefore measured with a `TextPainter` using the widget's own style and
+/// the ambient text scaler.
 
 Widget _harness(
   Widget child, {
@@ -40,6 +44,18 @@ Widget _harness(
       ),
     ),
   );
+}
+
+/// Height the digit needs once the ambient text scaler is applied.
+double _neededTextHeight(WidgetTester tester, String text) {
+  final widget = tester.widget<Text>(find.text(text));
+  final painter = TextPainter(
+    text: TextSpan(text: text, style: widget.style),
+    textDirection: TextDirection.ltr,
+    textScaler: MediaQuery.textScalerOf(tester.element(find.text(text))),
+    maxLines: 1,
+  )..layout();
+  return painter.height;
 }
 
 const _equationQuestion = Question(
@@ -68,7 +84,11 @@ void main() {
 
   const scales = <double>[1.0, 1.3, 1.5, 2.0];
 
-  void useViewport(WidgetTester tester, {double width = 360, double height = 640}) {
+  void useViewport(
+    WidgetTester tester, {
+    double width = 360,
+    double height = 640,
+  }) {
     tester.view.devicePixelRatio = 1.0;
     tester.view.physicalSize = Size(width, height);
     addTearDown(() {
@@ -84,7 +104,7 @@ void main() {
 
         await tester.pumpWidget(
           _harness(
-            SizedBox(
+            const SizedBox(
               width: 360,
               height: 260,
               child: QuestionCard(question: _equationQuestion),
@@ -105,7 +125,7 @@ void main() {
 
         await tester.pumpWidget(
           _harness(
-            SizedBox(
+            const SizedBox(
               width: 360,
               height: 320,
               child: QuestionCard(question: _wordProblemQuestion),
@@ -124,6 +144,30 @@ void main() {
   });
 
   group('[Widget] Textskala – svarsknapp', () {
+    testWidgets('siffran ryms i knappen vid normal textskala', (tester) async {
+      useViewport(tester);
+
+      await tester.pumpWidget(
+        _harness(
+          Center(
+            child: SizedBox(
+              width: 160,
+              child: AnswerButton(answer: 12, onPressed: () {}),
+            ),
+          ),
+          textScale: 1.0,
+        ),
+      );
+
+      final buttonSize = tester.getSize(find.byType(AnswerButton));
+      expect(
+        _neededTextHeight(tester, '12'),
+        lessThanOrEqualTo(buttonSize.height),
+        reason: 'Vid textskala 1.0 ska siffran rymmas utan att krympas',
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('siffran klipps inte vid textskala 2.0', (tester) async {
       useViewport(tester);
 
@@ -140,15 +184,30 @@ void main() {
       );
 
       final buttonSize = tester.getSize(find.byType(AnswerButton));
-      final digitSize = tester.getSize(find.text('12'));
+      final needed = _neededTextHeight(tester, '12');
 
+      // Guards the test itself: at 200 % the digit genuinely needs more room
+      // than the button has, so the assertion below is exercising something.
       expect(
-        digitSize.height,
-        lessThanOrEqualTo(buttonSize.height),
-        reason: 'Siffran ($digitSize) är högre än knappen ($buttonSize) och '
-            'klipps därför bort vid textskala 2.0',
+        needed,
+        greaterThan(buttonSize.height),
+        reason: 'Förutsättning: siffran behöver $needed px i en '
+            '${buttonSize.height} px hög knapp vid textskala 2.0',
       );
-      expect(digitSize.width, lessThanOrEqualTo(buttonSize.width));
+
+      // ...and the widget has to deal with that instead of letting Stack clip it.
+      final shrink = find.ancestor(
+        of: find.text('12'),
+        matching: find.byType(FittedBox),
+      );
+      expect(
+        shrink,
+        findsWidgets,
+        reason: 'Siffran måste kunna krympas för att rymmas i knappen',
+      );
+      final shrinkSize = tester.getSize(shrink.first);
+      expect(shrinkSize.height, lessThanOrEqualTo(buttonSize.height));
+      expect(shrinkSize.width, lessThanOrEqualTo(buttonSize.width));
       expect(tester.takeException(), isNull);
     });
 
@@ -180,12 +239,15 @@ void main() {
       );
 
       for (final answer in [12, 13, 11, 10]) {
-        final digit = tester.getSize(find.text('$answer'));
+        final digit = find.text('$answer');
+        expect(digit, findsOneWidget);
+        final shrink = find.ancestor(of: digit, matching: find.byType(FittedBox));
         expect(
-          digit.height,
-          lessThanOrEqualTo(64),
+          shrink,
+          findsWidgets,
           reason: 'Svar $answer klipps i en 64 px hög knapp vid textskala 2.0',
         );
+        expect(tester.getSize(shrink.first).height, lessThanOrEqualTo(64));
       }
       expect(tester.takeException(), isNull);
     });
@@ -210,9 +272,7 @@ void main() {
         ),
       );
 
-      final buttonSize = tester.getSize(find.byType(AnswerButton));
-      final digitSize = tester.getSize(find.text('8'));
-      expect(digitSize.height, lessThanOrEqualTo(buttonSize.height));
+      expect(find.text('8'), findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   });
