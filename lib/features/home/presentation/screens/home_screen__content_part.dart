@@ -20,6 +20,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       final activeUser = ref.read(userProvider).activeUser;
       if (activeUser != null) {
         _checkUserData(activeUser.userId);
+        unawaited(_logAppOpen());
       }
 
       // Start home music when the child lands on the main screen.
@@ -33,6 +34,31 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         });
       }
     });
+  }
+
+  /// Counts one open per day per profile and logs it the first time only.
+  ///
+  /// Without this the funnel starts at `quiz_started`, so a child who opened the
+  /// app and walked away is invisible — and that is the population retention is
+  /// about.
+  Future<void> _logAppOpen() async {
+    final user = ref.read(userProvider).activeUser;
+    if (user == null) return;
+
+    try {
+      final firstToday = await ref
+          .read(dailyActivityProvider)
+          .recordAppOpen(userId: user.userId);
+      if (!firstToday) return;
+
+      await ref.read(appAnalyticsProvider).logEvent(
+        name: 'app_open',
+        userId: user.userId,
+        properties: {'day': DailyActivityService.dayKey(DateTime.now())},
+      );
+    } catch (_) {
+      // Analytics must never break the home screen.
+    }
   }
 
   /// Warm camp pedestal + nearby wardrobe thumbs so album/wardrobe open crisp.
@@ -370,6 +396,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           'operation': operationType.name,
           'difficulty': effectiveDifficulty.name,
           'gradeLevel': user.gradeLevel,
+          'cta': 'home_operation_card',
         },
       ),
     );
@@ -452,6 +479,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 constraints: BoxConstraints(maxWidth: maxContentWidth),
                 child: Column(
                   children: [
+                    if (user != null)
+                      HomeStreakBadge(
+                        streak: user.currentStreak,
+                        longestStreak: user.longestStreak,
+                        lastSessionDate: user.lastSessionDate,
+                        brokenStreak: ref.watch(userProvider).streakBrokenFrom,
+                      ),
                     PlayfulPanel(
                       hero: true,
                       highlightColor: accentColor,

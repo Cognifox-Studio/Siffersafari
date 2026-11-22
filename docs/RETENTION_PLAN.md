@@ -11,6 +11,27 @@ uppdaterad: 2026-11-22
 
 ---
 
+## Levererat hittills
+
+Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabellen).
+
+| Steg | Status |
+|---|---|
+| 1 | Klar — [RETENTION_BASELINE.md](RETENTION_BASELINE.md). Baslinjen fylls först när 30 dagars rullning finns. |
+| 2 | Delvis — `app_open`, `streak_extended`, `streak_lost` loggas, och `quiz_started` bär `cta`. Kvar: egna namn för `home_cta_tapped`/`results_cta_tapped` och `session_resumed`. |
+| 3 | Delvis — `DailyActivityService`: en post per dag och profil, 90 dagar, inga trackers. Kvar: vyn i föräldradelen (blir aktuell med steg 14). |
+| 4 | Klar — `HomeStreakBadge` överst på hem, med sviten, längsta sviten och dagsstatus. |
+| 5 | **Inte gjord** — resultatskärmen har ingen svit i sin read model; kräver egen slice. |
+| 6 | Klar — "Dagen är gjord" när dagens session är registrerad. |
+| 7 | Klar — nåd-dag i `StreakResolver`: en per vecka, bara en enstaka missad dag, aldrig en betalning. |
+| 8 | Klar — "Välkommen tillbaka!" med längsta sviten, aldrig en tillrättavisning. |
+| 9–25 | Kvar. |
+
+Två saker som ändrades under bygget, värda att veta:
+
+- Nåd-dagen ändrar streaken från "alltid nollställ vid lucka" till "en missad dag förlåts". Det är avsiktligt, men det är en *beteendeförändring* i `ApplyQuizResultUseCase`, inte bara UI, och den ligger därför i en egen testbar enhet (`StreakResolver`) med sju fall.
+- Sviten kunde inte läsas direkt från inställningarna i hemvyn: `modular_boundaries_audit_test` förbjuder storage-access i presentationslagret. Värdet härleds därför i `UserNotifier` och läses som state — samma regel som resten av appen.
+
 ## Utgångsläge — vad appen redan har
 
 - **Progression är byggd**: poäng och nivåer (200 p/nivå, `user_progress.dart:121`), nivåtitlar, 18 achievements (`achievement_catalog.dart`), camp med samlarobjekt och garderob, story-karta med biomer och `nextBiome`-teaser, mastery-quests (`quest_progression_service.dart`).

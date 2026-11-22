@@ -11,12 +11,14 @@ class _MergedQuizProgress {
     required this.reward,
     required this.oldLevel,
     required this.completedAt,
+    required this.streakOutcome,
   });
 
   final UserProgress updatedUser;
   final AchievementReward reward;
   final int oldLevel;
   final DateTime completedAt;
+  final StreakOutcome streakOutcome;
 }
 
 class _QuestResult {

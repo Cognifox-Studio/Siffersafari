@@ -4,6 +4,7 @@ import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/core/services/apply_quiz_result_use_case.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
+import 'package:siffersafari/core/services/streak_resolver.dart';
 import 'package:siffersafari/core/services/user_audio_settings_service.dart';
 import 'package:siffersafari/core/services/user_quest_state_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
@@ -33,6 +34,8 @@ class UserState {
     this.questStatus,
     this.questNotice,
     this.newlyUnlockedItem,
+    this.lastStreakOutcome,
+    this.streakBrokenFrom,
   });
 
   final UserProgress? activeUser;
@@ -45,6 +48,12 @@ class UserState {
   final QuestStatus? questStatus;
   final String? questNotice;
   final InventoryItem? newlyUnlockedItem;
+
+  /// How the last committed session changed the streak (null before any).
+  final StreakOutcome? lastStreakOutcome;
+
+  /// A streak that was lost and not yet recovered by a new session.
+  final int? streakBrokenFrom;
 
   static const Object _unset = Object();
 
@@ -59,6 +68,8 @@ class UserState {
     Object? questStatus = _unset,
     Object? questNotice = _unset,
     Object? newlyUnlockedItem = _unset,
+    Object? lastStreakOutcome = _unset,
+    Object? streakBrokenFrom = _unset,
   }) {
     return UserState(
       activeUser:
@@ -78,6 +89,12 @@ class UserState {
           : questStatus as QuestStatus?,
       questNotice:
           questNotice == _unset ? this.questNotice : questNotice as String?,
+      lastStreakOutcome: lastStreakOutcome == _unset
+          ? this.lastStreakOutcome
+          : lastStreakOutcome as StreakOutcome?,
+      streakBrokenFrom: streakBrokenFrom == _unset
+          ? this.streakBrokenFrom
+          : streakBrokenFrom as int?,
       newlyUnlockedItem: newlyUnlockedItem == _unset
           ? this.newlyUnlockedItem
           : newlyUnlockedItem as InventoryItem?,
@@ -190,6 +207,7 @@ class UserNotifier extends StateNotifier<UserState> {
         activeUser: activeUser,
         questStatus: questStatus,
         questNotice: questNotice,
+        streakBrokenFrom: _brokenStreakOf(activeUser),
         isLoading: false,
       );
     } catch (e) {
@@ -198,6 +216,21 @@ class UserNotifier extends StateNotifier<UserState> {
         errorMessage: e.toString(),
       );
     }
+  }
+
+  static int? _brokenAfter(StreakOutcome? outcome) {
+    if (outcome == null || !outcome.broken) return null;
+    return outcome.previousStreak;
+  }
+
+  /// Reads the remembered loss (written by the use case) so the home screen can
+  /// stay free of storage access — presentation reads derived state only.
+  int? _brokenStreakOf(UserProgress? user) {
+    if (user == null) return null;
+    final raw =
+        _repository.getSetting(SettingsKeys.streakBrokenFrom(user.userId));
+    if (raw is int) return raw;
+    return int.tryParse('${raw ?? ''}');
   }
 
   Future<void> selectUser(String userId) async {
@@ -428,6 +461,8 @@ class UserNotifier extends StateNotifier<UserState> {
       questStatus: result.questStatus,
       questNotice: result.questNotice ?? state.questNotice,
       newlyUnlockedItem: result.newlyUnlockedItem,
+      lastStreakOutcome: result.streakOutcome,
+      streakBrokenFrom: _brokenAfter(result.streakOutcome),
     );
   }
 }

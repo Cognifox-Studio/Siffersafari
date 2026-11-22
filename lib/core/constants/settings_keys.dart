@@ -47,6 +47,15 @@ class SettingsKeys {
 
   static String musicVolume(String userId) => 'music_volume_$userId';
 
+  /// Per-day activity counters (`YYYY-MM-DD` -> {o: opens, s: sessions}).
+  static String dailyActivity(String userId) => 'daily_activity_$userId';
+
+  /// ISO date of the last spent grace day (one forgiven day per week).
+  static String streakGraceUsed(String userId) => 'streak_grace_used_$userId';
+
+  /// The streak that was lost, kept until the child plays again.
+  static String streakBrokenFrom(String userId) => 'streak_broken_from_$userId';
+
   /// ISO-8601 timestamp when parent opted in to Firebase cloud backup; absent = off.
   static const String cloudBackupOptInAt = 'cloud_backup_opt_in_at';
 
@@ -72,6 +81,9 @@ class SettingsKeys {
         soundVolume(userId),
         musicVolume(userId),
         legacyDailyChallengeStreak(userId),
+        dailyActivity(userId),
+        streakGraceUsed(userId),
+        streakBrokenFrom(userId),
       ];
 
   static List<String> userScopedKeyPrefixes(String userId) => [

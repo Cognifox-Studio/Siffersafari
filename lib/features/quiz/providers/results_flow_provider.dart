@@ -41,6 +41,35 @@ class ResultsFlowService {
       );
     }
 
+    // The streak is what brings a child back tomorrow, so it has to be
+    // measurable: extended (including forgiven days) or actually lost.
+    final streak = _ref.read(userProvider).lastStreakOutcome;
+    if (streak != null && userId != null && userId.isNotEmpty) {
+      if (streak.broken) {
+        unawaited(
+          _ref.read(appAnalyticsProvider).logEvent(
+            name: 'streak_lost',
+            userId: userId,
+            properties: {
+              'streak_lost': streak.previousStreak,
+              'longest_kept': streak.streak,
+            },
+          ),
+        );
+      } else if (streak.continued) {
+        unawaited(
+          _ref.read(appAnalyticsProvider).logEvent(
+            name: 'streak_extended',
+            userId: userId,
+            properties: {
+              'streak': streak.streak,
+              'grace_used': streak.graceUsed,
+            },
+          ),
+        );
+      }
+    }
+
     final levelUp = _ref.read(userProvider).lastLevelUp;
     if (levelUp != null && userId != null && userId.isNotEmpty) {
       unawaited(
