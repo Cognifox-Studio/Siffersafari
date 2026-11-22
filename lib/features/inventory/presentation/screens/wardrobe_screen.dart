@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +11,7 @@ import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/services/outfit_resolver.dart';
+import 'package:siffersafari/domain/services/outfit_shuffler.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
@@ -137,6 +140,19 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppConstants.smallPadding),
+                  FilledButton.tonalIcon(
+                    key: const Key('wardrobe_randomize'),
+                    onPressed: () => _shuffleOutfit(unlockedItems),
+                    icon: const Icon(Icons.casino_rounded),
+                    label: const Text('Slumpa outfit'),
+                    style: FilledButton.styleFrom(
+                      minimumSize: Size(
+                        AppConstants.minTouchTargetSize,
+                        AppConstants.minTouchTargetSize,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -256,6 +272,23 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         ),
       ),
     );
+  }
+
+  /// Dresses the child in a random combination of what they own.
+  ///
+  /// One tap instead of six: the fun part of a wardrobe for a seven-year-old is
+  /// seeing a result, not dragging a hat into place.
+  void _shuffleOutfit(List<String> unlockedItems) {
+    ref.read(audioServiceProvider).playClickSound();
+
+    final available = InventoryConfig.wardrobeItems
+        .where((item) => kDebugMode || unlockedItems.contains(item.id))
+        .toList();
+    if (available.isEmpty) return;
+
+    ref.read(userProvider.notifier).applyBaseOutfit(
+          OutfitShuffler.shuffle(available: available, random: Random()),
+        );
   }
 
   /// Which slot an item belongs to; two items in one slot never draw together.

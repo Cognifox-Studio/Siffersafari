@@ -230,6 +230,67 @@ void main() {
       );
     },
   );
+  testWidgets(
+    '[Widget] Wardrobe – Slumpa klär på barnet med ett tryck',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(390, 844);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      const userId = 'wardrobe-shuffle-user';
+      const unlocked = ['item_safari_hat', 'item_hat_pirate', 'item_glasses_nerd'];
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: userId,
+          name: 'Mira',
+          ageGroup: AgeGroup.middle,
+          unlockedItems: unlocked,
+        ),
+      );
+      await repository.setActiveUserId(userId);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(
+              home: _WardrobeHarness(),
+            ),
+          ),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('wardrobe_randomize')),
+      );
+
+      await tester.tap(find.byKey(const Key('wardrobe_randomize')));
+      await tester.pumpAndSettle();
+
+      final equipped = repository.getUserProgress(userId)!.equippedItems;
+      expect(equipped, isNotEmpty);
+      expect(
+        equipped.keys.every((key) => key.startsWith('idle_')),
+        isTrue,
+        reason: 'Slumpade plagg ska hamna i basoutfiten',
+      );
+      expect(
+        equipped.values.every((id) => unlocked.contains(id)),
+        isTrue,
+        reason: 'Bara upplåsta plagg får slumpas fram',
+      );
+      expect(
+        equipped.values.where((id) => id.contains('hat')).length,
+        1,
+        reason: 'Högst en hatt',
+      );
+    },
+  );
+
 }
 
 class _WardrobeHarness extends ConsumerStatefulWidget {

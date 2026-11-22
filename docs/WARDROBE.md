@@ -39,7 +39,7 @@ Nu skriver garderoben alltid basoutfiten (`idle_<itemId>`), byter ut plagget i s
 1. **D. Härled positionen ur bilden.** `scripts/prepare_wardrobe_items.py` läser varje WebP:s opaka bbox, räknar ankarpunkt och skala relativt karaktärens huvud-/kroppsbox, och skriver ett manifest **plus** hit-shape. Då försvinner både de magiska talen och `case 'item_x':`-switchen: nytt plagg = lägg in filen, kör scriptet.
 2. **C. Ankarpunkter i stället för `Alignment`.** Per slot en normaliserad ankarpunkt + `zOrder` i manifestet; drag finns kvar som finjustering men lagras bara som `n,`. En audit kräver att varje plagg har känd slot, existerande asset och unik z-ordning.
 3. **B. En outfit per barn i datamodellen.** `equippedItems` blir `slot → itemId`, med en liten explicit override-map för de få poser som verkligen behöver det. Migrering kollapsar befintliga nycklar (idle vinner), idempotent och testad.
-4. **E. Färdiga outfits för de yngsta.** "Safari", "Pirat", "Forskare" + "Slumpa": ett tryck i stället för att dra och rotera med sjuåringsfingrar. Bygger ovanpå B–D.
+4. **E. Färdiga outfits för de yngsta.** *Påbörjad: "Slumpa outfit" finns nu — ett tryck ger ett helt set, ett plagg per slot, bara upplåsta plagg (`OutfitShuffler`, en sparning via `applyBaseOutfit`). Kvar: namngivna set (Safari, Pirat, Forskare).* "Safari", "Pirat", "Forskare" + "Slumpa": ett tryck i stället för att dra och rotera med sjuåringsfingrar. Bygger ovanpå B–D.
 
 ## Två saker att kolla innan manifestet låses
 

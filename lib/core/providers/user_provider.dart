@@ -418,6 +418,22 @@ class UserNotifier extends StateNotifier<UserState> {
     await saveUser(user.copyWith(equippedItems: updated));
   }
 
+  /// Replaces the base outfit in one write.
+  ///
+  /// Used by "Slumpa": equipping six items one at a time would be six saves and
+  /// six rebuilds, and the child would watch the character get dressed in slow
+  /// motion.
+  Future<void> applyBaseOutfit(Map<String, String> outfit) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updated = Map<String, String>.from(user.equippedItems)
+      ..removeWhere((key, _) => OutfitResolver.isBaseKey(key))
+      ..addAll(outfit);
+
+    await saveUser(user.copyWith(equippedItems: updated));
+  }
+
   /// Takes [itemId] off everywhere, base outfit and pose overrides alike.
   ///
   /// "Take it off" has to mean off: leaving an override behind would make the
