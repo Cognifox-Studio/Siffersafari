@@ -36,6 +36,9 @@ class WardrobeManifestEntry {
     required this.hitWidthFactor,
     required this.hitHeightFactor,
     required this.hitPaddingFactor,
+    this.hitOverrideWidthFactor,
+    this.hitOverrideHeightFactor,
+    this.hitOverridePaddingFactor,
     required this.offsetX,
     required this.offsetY,
     required this.renderScale,
@@ -56,10 +59,21 @@ class WardrobeManifestEntry {
   final double anchorX;
   final double anchorY;
 
-  /// Tap target, as factors of the image (already padded).
+  /// Tap target measured from the art, as factors of the image.
   final double hitWidthFactor;
   final double hitHeightFactor;
   final double hitPaddingFactor;
+
+  /// Hand-tuned tap target, when someone has tuned one for small fingers.
+  final double? hitOverrideWidthFactor;
+  final double? hitOverrideHeightFactor;
+  final double? hitOverridePaddingFactor;
+
+  /// What the renderer should use: the hand-tuned value, else the art.
+  double get hitWidth => hitOverrideWidthFactor ?? hitWidthFactor;
+  double get hitHeight => hitOverrideHeightFactor ?? hitHeightFactor;
+  double get hitPadding =>
+      hitOverridePaddingFactor ?? hitPaddingFactor;
 
   /// Hand-tuned values carried over from `InventoryConfig`.
   final double offsetX;
@@ -83,6 +97,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.888,
     hitHeightFactor: 0.53,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.9,
+    hitOverrideHeightFactor: 0.46,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: -2.8,
     renderScale: 0.85,
@@ -101,6 +118,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.9263,
     hitHeightFactor: 0.4679,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.9,
+    hitOverrideHeightFactor: 0.46,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: -2.8,
     renderScale: 0.85,
@@ -119,6 +139,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.8569,
     hitHeightFactor: 0.5327,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.72,
+    hitOverrideHeightFactor: 0.42,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 1.6,
     offsetY: 0.35,
     renderScale: 0.4,
@@ -137,6 +160,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.624,
     hitHeightFactor: 0.748,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.6,
+    hitOverrideHeightFactor: 0.6,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: 0.3,
     renderScale: 0.35,
@@ -155,6 +181,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.8991,
     hitHeightFactor: 0.8264,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.84,
+    hitOverrideHeightFactor: 0.62,
+    hitOverridePaddingFactor: 0.02,
     offsetX: -1.35,
     offsetY: 0.15,
     renderScale: 0.45,
@@ -173,6 +202,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.7292,
     hitHeightFactor: 0.3656,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.78,
+    hitOverrideHeightFactor: 0.4,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: 2.8,
     renderScale: 0.65,
@@ -191,6 +223,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.942,
     hitHeightFactor: 0.592,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.9,
+    hitOverrideHeightFactor: 0.46,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: -2.8,
     renderScale: 0.85,
@@ -209,6 +244,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.6246,
     hitHeightFactor: 0.368,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.68,
+    hitOverrideHeightFactor: 0.24,
+    hitOverridePaddingFactor: 0.015,
     offsetX: 0.0,
     offsetY: -0.8,
     renderScale: 0.9,
@@ -227,6 +265,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.802,
     hitHeightFactor: 0.718,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.72,
+    hitOverrideHeightFactor: 0.78,
+    hitOverridePaddingFactor: 0.02,
     offsetX: -2.0,
     offsetY: 1.4,
     renderScale: 0.6,
@@ -245,6 +286,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.848,
     hitHeightFactor: 0.716,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.84,
+    hitOverrideHeightFactor: 0.92,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 0.0,
     offsetY: 0.45,
     renderScale: 0.95,
@@ -263,6 +307,9 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     hitWidthFactor: 0.944,
     hitHeightFactor: 0.666,
     hitPaddingFactor: 0.02,
+    hitOverrideWidthFactor: 0.72,
+    hitOverrideHeightFactor: 0.58,
+    hitOverridePaddingFactor: 0.02,
     offsetX: 1.4,
     offsetY: 0.45,
     renderScale: 0.45,
@@ -376,3 +423,15 @@ const List<WardrobeManifestEntry> wardrobeManifest = <WardrobeManifestEntry>[
     renderScale: 0.8,
   ),
 ];
+
+final Map<String, WardrobeManifestEntry> _wardrobeById =
+    <String, WardrobeManifestEntry>{
+  for (final entry in wardrobeManifest) entry.id: entry,
+};
+
+/// The manifest entry for [itemId], or null when the id is unknown.
+///
+/// Callers fall back rather than crash: an item id in an old profile can
+/// outlive the catalog that produced it.
+WardrobeManifestEntry? wardrobeEntryFor(String itemId) =>
+    _wardrobeById[itemId];

@@ -2,115 +2,104 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
+import 'package:siffersafari/domain/entities/wardrobe_manifest.g.dart';
 
+/// Tap targets come from the manifest, which is generated from the art.
+///
+/// This used to be a `case 'item_x':` switch in the renderer, checked by
+/// grepping the source for `case '` lines -- a test that could only tell you
+/// that someone had edited the switch, not that the target made sense. The
+/// checks below are about the numbers instead.
 void main() {
   group('Wardrobe hit shape audit', () {
-    test(
-      '[Unit] WardrobeHitShapeAudit – all active wardrobe items have explicit hit shapes',
-      () {
-        final source = _gameCharacterLibrarySource();
-        final activeSlots = _extractSlotLayers(source);
-        final explicitItemIds = _extractExplicitHitShapeItemIds(source);
+    test('[Unit] varje plagg har ett tapptarget i manifestet', () {
+      final drawnSlots = _extractSlotLayers(_gameCharacterSource());
 
-        final activeWardrobeItemIds = InventoryConfig.allItems
-            .where((item) => activeSlots.contains(item.slot))
-            .map((item) => item.id)
-            .toSet();
+      final missing = <String>[
+        for (final item in InventoryConfig.allItems)
+          if (drawnSlots.contains(item.slot) &&
+              wardrobeEntryFor(item.id) == null)
+            item.id,
+      ];
 
-        final missingExplicitCases =
-            activeWardrobeItemIds.difference(explicitItemIds).toList()..sort();
+      expect(
+        missing,
+        isEmpty,
+        reason: 'Plagg som ritas men saknar manifestpost får inget '
+            'tapptarget:\n${missing.join('\n')}',
+      );
+    });
 
-        expect(
-          missingExplicitCases,
-          isEmpty,
-          reason:
-              'Aktiva wardrobe-items saknar explicit hit-shape-case i GameCharacter:\n'
-              '${missingExplicitCases.join('\n')}',
-        );
-      },
-    );
+    test('[Unit] tapptarget ligger inom bilden', () {
+      final broken = <String>[];
 
-    test(
-      '[Unit] WardrobeHitShapeAudit – explicit hit shapes reference known inventory items only',
-      () {
-        final explicitItemIds =
-            _extractExplicitHitShapeItemIds(_gameCharacterLibrarySource());
-        final knownItemIds =
-            InventoryConfig.allItems.map((item) => item.id).toSet();
+      for (final entry in wardrobeManifest) {
+        if (entry.hitWidth <= 0 || entry.hitWidth > 1) {
+          broken.add('${entry.id}: bredd ${entry.hitWidth}');
+        }
+        if (entry.hitHeight <= 0 || entry.hitHeight > 1) {
+          broken.add('${entry.id}: höjd ${entry.hitHeight}');
+        }
+        if (entry.hitPadding < 0) {
+          broken.add('${entry.id}: padding ${entry.hitPadding}');
+        }
+      }
 
-        final unknownItemIds = explicitItemIds.difference(knownItemIds).toList()
-          ..sort();
+      expect(
+        broken,
+        isEmpty,
+        reason: 'Ett tapptarget utanför bilden går inte att träffa:\n'
+            '${broken.join('\n')}',
+      );
+    });
 
-        expect(
-          unknownItemIds,
-          isEmpty,
-          reason:
-              'GameCharacter innehåller explicita hit-shape-case för okända item-ID:n:\n'
-              '${unknownItemIds.join('\n')}',
-        );
-      },
-    );
+    test('[Unit] handjusterade tapptarget vinner över de uppmätta', () {
+      final safariHat = wardrobeEntryFor('item_safari_hat');
+      expect(safariHat, isNotNull);
+
+      // 0.9/0.46 is tuned for a seven-year-old's finger; the measured box of
+      // the art is smaller. If the override ever disappears, taps get harder
+      // for the youngest players -- silently.
+      expect(safariHat!.hitWidth, greaterThan(safariHat.hitWidthFactor));
+      expect(safariHat.hitWidth, 0.9);
+      expect(safariHat.hitOverrideWidthFactor, isNotNull);
+    });
+
+    test('[Unit] alla manifestposter pekar på kända plagg', () {
+      final known = InventoryConfig.allItems.map((item) => item.id).toSet();
+      final unknown = wardrobeManifest
+          .map((entry) => entry.id)
+          .where((id) => !known.contains(id))
+          .toList();
+
+      expect(unknown, isEmpty, reason: 'Okända id:n: ${unknown.join(', ')}');
+    });
   });
 }
 
-String _gameCharacterLibrarySource() {
-  final mainFile = File(_gameCharacterPath);
-  final mainSource = mainFile.readAsStringSync();
-  final buffer = StringBuffer(mainSource);
-
-  for (final relativePath in _extractPartPaths(mainSource)) {
-    final normalizedPath = relativePath.replaceAll(
-      '/',
-      Platform.pathSeparator,
-    );
-    final partFile = File(
-      '${mainFile.parent.path}${Platform.pathSeparator}$normalizedPath',
-    );
-    if (!partFile.existsSync()) {
-      fail(
-        'Kunde inte hitta GameCharacter-partfilen $relativePath för audit-testet.',
-      );
-    }
-    buffer
-      ..writeln()
-      ..writeln(partFile.readAsStringSync());
-  }
-
-  return buffer.toString();
-}
-
-Iterable<String> _extractPartPaths(String source) sync* {
-  for (final match in RegExp(r"part '([^']+)';").allMatches(source)) {
-    final relativePath = match.group(1);
-    if (relativePath != null && relativePath.isNotEmpty) {
-      yield relativePath;
-    }
-  }
-}
-
-Set<String> _extractSlotLayers(String source) {
+List<String> _extractSlotLayers(String source) {
   final match = RegExp(
     r'_slotLayers\s*=\s*<String>\[(.*?)\];',
     dotAll: true,
   ).firstMatch(source);
   if (match == null) {
-    fail(
-      'Kunde inte hitta _slotLayers i lib/presentation/widgets/game_character.dart',
-    );
+    fail('Kunde inte hitta _slotLayers i game_character.dart');
   }
 
   return RegExp(r"'([^']+)'")
       .allMatches(match.group(1)!)
       .map((match) => match.group(1)!)
-      .toSet();
+      .toList(growable: false);
 }
 
-Set<String> _extractExplicitHitShapeItemIds(String source) {
-  return RegExp(r"case '(item_[^']+)':")
-      .allMatches(source)
-      .map((match) => match.group(1)!)
-      .toSet();
-}
+String _gameCharacterSource() {
+  final path = [
+    Directory.current.path,
+    'lib',
+    'presentation',
+    'widgets',
+    'game_character.dart',
+  ].join(Platform.pathSeparator);
 
-final _gameCharacterPath =
-    '${Directory.current.path}${Platform.pathSeparator}lib${Platform.pathSeparator}presentation${Platform.pathSeparator}widgets${Platform.pathSeparator}game_character.dart';
+  return File(path).readAsStringSync();
+}

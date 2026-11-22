@@ -54,6 +54,10 @@ except ImportError:  # pragma: no cover - developer setup issue
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "lib" / "domain" / "entities" / "inventory_item.dart"
+HIT_SHAPES = (
+    ROOT / "lib" / "presentation" / "widgets"
+    / "game_character__inventory_helpers_part.dart"
+)
 MANIFEST_JSON = ROOT / "assets" / "wardrobe" / "manifest.json"
 MANIFEST_DART = ROOT / "lib" / "domain" / "entities" / "wardrobe_manifest.g.dart"
 
@@ -125,6 +129,40 @@ def _catalog_entries() -> list[dict[str, object]]:
     return entries
 
 
+def _hit_shape_overrides() -> dict[str, tuple[float, float, float]]:
+    """Read the hand-tuned hit shapes out of the renderer.
+
+    They were a `case 'item_x':` switch -- the last place where adding an item
+    cost an edit in the widget. Their values are worth keeping (a hat's tap
+    target was tuned for a seven-year-old's finger, not measured), so they move
+    into the manifest as overrides instead of being thrown away with the switch.
+    """
+    source = HIT_SHAPES.read_text(encoding="utf-8")
+    start = source.index("_getInteractiveHitShape")
+    # Stop at the slot fallback: those are per-slot defaults, not per-item.
+    end = source.index("switch (slot)", start)
+    body = source[start:end]
+    # Comments may sit between a case and its return; they carry no values.
+    body = "\n".join(
+        line for line in body.splitlines() if not line.strip().startswith("//")
+    )
+
+    pattern = re.compile(
+        r"((?:\s*case '[^']+':)+)\s*"
+        r"return \(widthFactor: ([\d.]+), heightFactor: ([\d.]+), "
+        r"paddingFactor: ([\d.]+)\);"
+    )
+
+    overrides: dict[str, tuple[float, float, float]] = {}
+    for match in pattern.finditer(body):
+        case_block = match.group(1)
+        values = (float(match.group(2)), float(match.group(3)), float(match.group(4)))
+        for item_id in re.findall(r"case '([^']+)':", case_block):
+            overrides[item_id] = values
+
+    return overrides
+
+
 def _art(asset: str) -> dict[str, object] | None:
     path = ROOT / asset
     if not path.exists():
@@ -159,12 +197,15 @@ def _art(asset: str) -> dict[str, object] | None:
 
 
 def build() -> dict[str, object]:
+    overrides = _hit_shape_overrides()
     items: list[dict[str, object]] = []
     for entry in _catalog_entries():
         art = _art(str(entry["asset"]))
         slot = str(entry["slot"])
         if art is None:
             continue
+
+        override = overrides.get(str(entry["id"]))
 
         items.append(
             {
@@ -175,6 +216,13 @@ def build() -> dict[str, object]:
                 "showInWardrobe": entry["showInWardrobe"],
                 "asset": entry["asset"],
                 **art,
+                "hitShapeOverride": None
+                if override is None
+                else {
+                    "widthFactor": override[0],
+                    "heightFactor": override[1],
+                    "paddingFactor": override[2],
+                },
                 # Hand-tuned values stay the source of truth until the renderer
                 # is switched over; they live here so the switch is one diff.
                 "legacy": {
@@ -229,6 +277,9 @@ def _dart(manifest: dict[str, object]) -> str:
         "    required this.hitWidthFactor,",
         "    required this.hitHeightFactor,",
         "    required this.hitPaddingFactor,",
+        "    this.hitOverrideWidthFactor,",
+        "    this.hitOverrideHeightFactor,",
+        "    this.hitOverridePaddingFactor,",
         "    required this.offsetX,",
         "    required this.offsetY,",
         "    required this.renderScale,",
@@ -249,10 +300,21 @@ def _dart(manifest: dict[str, object]) -> str:
         "  final double anchorX;",
         "  final double anchorY;",
         "",
-        "  /// Tap target, as factors of the image (already padded).",
+        "  /// Tap target measured from the art, as factors of the image.",
         "  final double hitWidthFactor;",
         "  final double hitHeightFactor;",
         "  final double hitPaddingFactor;",
+        "",
+        "  /// Hand-tuned tap target, when someone has tuned one for small fingers.",
+        "  final double? hitOverrideWidthFactor;",
+        "  final double? hitOverrideHeightFactor;",
+        "  final double? hitOverridePaddingFactor;",
+        "",
+        "  /// What the renderer should use: the hand-tuned value, else the art.",
+        "  double get hitWidth => hitOverrideWidthFactor ?? hitWidthFactor;",
+        "  double get hitHeight => hitOverrideHeightFactor ?? hitHeightFactor;",
+        "  double get hitPadding =>",
+        "      hitOverridePaddingFactor ?? hitPaddingFactor;",
         "",
         "  /// Hand-tuned values carried over from `InventoryConfig`.",
         "  final double offsetX;",
@@ -270,6 +332,7 @@ def _dart(manifest: dict[str, object]) -> str:
         anchor = item["anchor"]
         hit = item["hitShape"]
         legacy = item["legacy"]
+        override = item.get("hitShapeOverride")
         assert isinstance(image, dict)
         assert isinstance(anchor, dict)
         assert isinstance(hit, dict)
@@ -292,13 +355,46 @@ def _dart(manifest: dict[str, object]) -> str:
             f"    hitWidthFactor: {hit['widthFactor']},",
             f"    hitHeightFactor: {hit['heightFactor']},",
             f"    hitPaddingFactor: {hit['paddingFactor']},",
+            *[
+                f"    {name}: {value},"
+                for name, value in (
+                    (
+                        "hitOverrideWidthFactor",
+                        override["widthFactor"] if override else None,
+                    ),
+                    (
+                        "hitOverrideHeightFactor",
+                        override["heightFactor"] if override else None,
+                    ),
+                    (
+                        "hitOverridePaddingFactor",
+                        override["paddingFactor"] if override else None,
+                    ),
+                )
+                if value is not None
+            ],
             f"    offsetX: {offset[0]},",
             f"    offsetY: {offset[1]},",
             f"    renderScale: {legacy['renderScale']},",
             "  ),",
         ]
 
-    lines += ["];", ""]
+    lines += [
+        "];",
+        "",
+        "final Map<String, WardrobeManifestEntry> _wardrobeById =",
+        "    <String, WardrobeManifestEntry>{",
+        "  for (final entry in wardrobeManifest) entry.id: entry,",
+        "};",
+        "",
+        "/// The manifest entry for [itemId], or null when the id is unknown.",
+        "///",
+        "/// Callers fall back rather than crash: an item id in an old profile can",
+        "/// outlive the catalog that produced it.",
+        "WardrobeManifestEntry? wardrobeEntryFor(String itemId) =>",
+        "    _wardrobeById[itemId];",
+        "",
+    ]
     return "\n".join(lines)
 
 
