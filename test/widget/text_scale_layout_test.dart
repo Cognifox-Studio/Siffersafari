@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/domain/entities/question.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
@@ -151,8 +152,11 @@ void main() {
         _harness(
           Center(
             child: SizedBox(
+              height: 64,
               width: 160,
-              child: AnswerButton(answer: 12, onPressed: () {}),
+              // Samma väg som quiz-rutnätet tar: höjden kommer färdig i
+              // logiska pixlar och får inte skalas en andra gång.
+              child: AnswerButton(answer: 12, minHeight: 64, onPressed: () {}),
             ),
           ),
           textScale: 1.0,
@@ -168,8 +172,28 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('siffran klipps inte vid textskala 2.0', (tester) async {
+    testWidgets('knappen kortas aldrig under minsta tryckyta', (tester) async {
       useViewport(tester);
+
+      // En kort skärm (360×640) gjorde tidigare 64 px till 50 px eftersom
+      // höjden skalgjordes med .h — under både siffrans behov och 56 dp.
+      await tester.pumpWidget(
+        _harness(
+          Center(
+            child: SizedBox(
+              width: 160,
+              child: AnswerButton(answer: 12, minHeight: 20, onPressed: () {}),
+            ),
+          ),
+          textScale: 1.0,
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(AnswerButton)).height,
+        greaterThanOrEqualTo(AppConstants.minTouchTargetSize),
+        reason: 'Svarsknappen får aldrig bli mindre än minsta tryckyta',
+      );
 
       await tester.pumpWidget(
         _harness(
@@ -177,6 +201,30 @@ void main() {
             child: SizedBox(
               width: 160,
               child: AnswerButton(answer: 12, onPressed: () {}),
+            ),
+          ),
+          textScale: 1.0,
+        ),
+      );
+
+      expect(
+        tester.getSize(find.byType(AnswerButton)).height,
+        greaterThanOrEqualTo(AppConstants.minTouchTargetSize),
+        reason: 'Inte heller standardhöjden får krympa under tryckytan',
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('siffran klipps inte vid textskala 2.0', (tester) async {
+      useViewport(tester);
+
+      await tester.pumpWidget(
+        _harness(
+          Center(
+            child: SizedBox(
+              height: 64,
+              width: 160,
+              child: AnswerButton(answer: 12, minHeight: 64, onPressed: () {}),
             ),
           ),
           textScale: 2.0,
@@ -227,7 +275,11 @@ void main() {
                   SizedBox(
                     width: 148,
                     height: 64,
-                    child: AnswerButton(answer: answer, onPressed: () {}),
+                    child: AnswerButton(
+                      answer: answer,
+                      minHeight: 64,
+                      onPressed: () {},
+                    ),
                   ),
               ],
             ),

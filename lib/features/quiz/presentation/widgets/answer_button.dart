@@ -148,8 +148,16 @@ class _AnswerButtonState extends State<AnswerButton>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final resolvedMinHeight =
-        widget.minHeight ?? AppConstants.answerButtonHeight;
+    // `minHeight` arrives from the quiz grid already expressed in logical
+    // pixels (it is derived from LayoutBuilder constraints), so scaling it
+    // again with `.h` shrank a 64 px cell to 50 px on a 640 px tall screen --
+    // which clipped the answer digit even at text scale 1.0. Only the default
+    // constant is screen-scaled here, and the result never falls below the
+    // minimum touch target.
+    final resolvedMinHeight = math.max(
+      AppConstants.minTouchTargetSize,
+      widget.minHeight ?? AppConstants.answerButtonHeight.h,
+    );
     final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
     Color backgroundColor;
     Color textColor;
@@ -267,7 +275,7 @@ class _AnswerButtonState extends State<AnswerButton>
                           : widget.onPressed,
                       child: SizedBox(
                         width: double.infinity,
-                        height: resolvedMinHeight.h,
+                        height: resolvedMinHeight,
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.defaultPadding.w,
