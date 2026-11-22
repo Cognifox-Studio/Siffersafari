@@ -36,7 +36,7 @@ class AchievementDefinition {
     albumLabel: 'Märke',
     emoji: '❔',
     unlockHint: 'Spela mer och samla.',
-    assetPath: 'assets/images/ui/img_badge_level.png',
+    assetPath: 'assets/images/ui/img_badge_level.webp',
   );
 }
 

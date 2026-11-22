@@ -56,12 +56,12 @@ jobs:
           AAB_PATH="build/app/outputs/bundle/release/app-release.aab"
           test -f "$AAB_PATH"
           SIZE_BYTES=$(stat -c%s "$AAB_PATH")
-          # Measured 2026-11-22: 98.7 MB. An AAB bundles all three ABIs plus every
-          # density, so it is several times what a single device downloads. The
-          # previous 80 MB ceiling was never reachable for this app (assets/images
-          # alone is 43 MB), which kept this job red and ignored. Tighten again
-          # once the art assets are compressed.
-          MAX_BYTES=$((120 * 1024 * 1024))
+          # An AAB bundles all three ABIs plus every density, so it is several
+          # times what a single device downloads.
+          #   98.7 MB  before the WebP migration (43 MB of PNG art)
+          #   75 MB    budget after it - ~11 MB of headroom over the expected
+          #            ~64 MB, so genuine bloat (new art, new ABIs) trips it.
+          MAX_BYTES=$((75 * 1024 * 1024))
           echo "AAB size: $SIZE_BYTES bytes"
           if [ "$SIZE_BYTES" -gt "$MAX_BYTES" ]; then
             echo "AAB exceeds budget ($MAX_BYTES bytes)"

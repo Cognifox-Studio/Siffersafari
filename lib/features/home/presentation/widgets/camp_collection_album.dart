@@ -197,7 +197,7 @@ class _CampSouvenirTile extends StatelessWidget {
                           cacheHeight: imageCacheSize,
                         )
                       : Image.asset(
-                          'assets/images/ui/ic_reward_locked_nobg.png',
+                          'assets/images/ui/ic_reward_locked_nobg.webp',
                           key: Key('camp_collection_album_locked_${item.id}'),
                           fit: BoxFit.contain,
                           cacheWidth: lockedCacheSize,

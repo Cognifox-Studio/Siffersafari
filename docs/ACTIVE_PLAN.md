@@ -62,7 +62,7 @@ Full rangordning: [ROI_BACKLOG.md](ROI_BACKLOG.md) (#14–100 + near-miss). Hög
 - Molnsync / kontoberoenden  
 - Riktiga sociala funktioner  
 - Leaderboard som kärnfeature  
-- Ny mascot-runtime utanför PNG-first  
+- Ny mascot-runtime utanför WebP-first
 - Stora ML-funktioner i kärnflödet innan offline- och size-frågor är lösta  
 - Hive-kryptering som retrofit (ärlig privacy-copy först)  
 - Session time-limits innan PIN-gate wipe + parent practice-CTA finns  

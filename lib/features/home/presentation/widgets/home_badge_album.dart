@@ -172,7 +172,7 @@ class _BadgeTile extends StatelessWidget {
                           : Padding(
                               padding: const EdgeInsets.all(10),
                               child: Image.asset(
-                                'assets/images/ui/locked_badge.png',
+                                'assets/images/ui/locked_badge.webp',
                                 key: Key('home_badge_locked_${entry.id}'),
                                 fit: BoxFit.contain,
                                 cacheWidth: lockedBadgeCacheSize,

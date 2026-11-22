@@ -73,9 +73,9 @@ flutter:
     - assets/sounds/quiz_music.mp3
     # Character assets are listed per runtime folder to keep bundling explicit
     # for app + integration-test builds.
-    - assets/characters/loke/png/
-    - assets/characters/signe/png/
-    - assets/characters/astrid/png/
+    - assets/characters/loke/
+    - assets/characters/signe/
+    - assets/characters/astrid/
     - assets/images/
     - assets/images/brand/
     - assets/images/app_icon/

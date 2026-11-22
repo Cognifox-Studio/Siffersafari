@@ -97,9 +97,9 @@ class AppThemeConfig {
     if (resolvedTheme == AppTheme.jungle) {
       return const AppThemeConfig(
         theme: AppTheme.jungle,
-        backgroundAsset: 'assets/images/themes/jungle/background.png',
-        questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
-        characterAsset: 'assets/images/themes/jungle/character.png',
+        backgroundAsset: 'assets/images/themes/jungle/background.webp',
+        questHeroAsset: 'assets/images/themes/jungle/quest_hero.webp',
+        characterAsset: 'assets/images/themes/jungle/character.webp',
         baseBackgroundColor: AppColors.jungleBackground,
         primaryActionColor: AppColors.junglePrimary,
         secondaryActionColor: AppColors.jungleSecondary,
@@ -114,9 +114,9 @@ class AppThemeConfig {
       return const AppThemeConfig(
         theme: AppTheme.fantasy,
         backgroundAsset:
-            'assets/images/story/biome_star_desert_preview.png',
-        questHeroAsset: 'assets/images/story/biome_star_desert_preview.png',
-        characterAsset: 'assets/images/themes/jungle/character.png',
+            'assets/images/story/biome_star_desert_preview.webp',
+        questHeroAsset: 'assets/images/story/biome_star_desert_preview.webp',
+        characterAsset: 'assets/images/themes/jungle/character.webp',
         baseBackgroundColor: AppColors.desertBackground,
         primaryActionColor: AppColors.desertPrimary,
         secondaryActionColor: AppColors.desertSecondary,
@@ -128,9 +128,9 @@ class AppThemeConfig {
 
     return const AppThemeConfig(
       theme: AppTheme.space,
-      backgroundAsset: 'assets/images/themes/space/background.png',
-      questHeroAsset: 'assets/images/themes/space/quest_hero.png',
-      characterAsset: 'assets/images/themes/space/character.png',
+      backgroundAsset: 'assets/images/themes/space/background.webp',
+      questHeroAsset: 'assets/images/themes/space/quest_hero.webp',
+      characterAsset: 'assets/images/themes/space/character.webp',
       baseBackgroundColor: AppColors.spaceBackground,
       primaryActionColor: AppColors.spacePrimary,
       secondaryActionColor: AppColors.spaceSecondary,

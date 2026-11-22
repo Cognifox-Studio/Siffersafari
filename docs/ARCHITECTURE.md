@@ -16,9 +16,9 @@ Detta dokument beskriver aktuell implementation i repo:t (uppdaterad 2026-05-29)
 - Navigation: Imperativ standardnavigering (`Navigator` med lokala helpers, inget externt router-paket)
 - Persistens: Hive (`user_progress`, `settings`, `quiz_history`); valfri Firebase Firestore-backup (föräldraopt-in, se `docs/FIREBASE_CLOUD_BACKUP.md`)
 - Assets & Animation:
-  - Custom PNG-assets för både UI-ikoner (`ic_*`), avatarer (`img_*`) och karaktärer. Emojis och Flutter standard-ikoner är under utfasning.
-  - PNG-first för mascot-runtime i produkt-UI
-  - Flutter-styrda proceduranimationer (via `AnimatedBuilder` och math/sin) ovanpå PNG i GameCharacter
+  - Custom WebP-assets för både UI-ikoner (`ic_*`), avatarer (`img_*`) och karaktärer. Emojis och Flutter standard-ikoner är under utfasning.
+  - WebP-first för mascot-runtime i produkt-UI
+  - Flutter-styrda proceduranimationer (via `AnimatedBuilder` och math/sin) ovanpå WebP i GameCharacter
   - optional `.riv`-filer och blueprint-material finns kvar som framtida enhancement-spår, men är inte en aktiv runtime-dependency i appens huvudflöden
 
 ## Namngivningsbaseline

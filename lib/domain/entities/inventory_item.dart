@@ -26,7 +26,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_safari_hat',
       slot: 'head',
-      assetPath: 'assets/images/items/item_safari_hat.png',
+      assetPath: 'assets/images/items/item_safari_hat.webp',
       name: 'Safarihatt',
       offset: Alignment(0.0, -2.8),
       renderScale: 0.85,
@@ -34,7 +34,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_hat_safari',
       slot: 'head',
-      assetPath: 'assets/images/items/item_hat_safari.png',
+      assetPath: 'assets/images/items/item_hat_safari.webp',
       name: 'Utforskarhatt',
       offset: Alignment(0.0, -2.8),
       renderScale: 0.85,
@@ -42,7 +42,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_binoculars_safari',
       slot: 'accessory',
-      assetPath: 'assets/images/items/item_binoculars_safari_nobg.png',
+      assetPath: 'assets/images/items/item_binoculars_safari_nobg.webp',
       name: 'Kikare',
       offset: Alignment(1.6, 0.35),
       renderScale: 0.4,
@@ -50,7 +50,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_compass_safari',
       slot: 'accessory',
-      assetPath: 'assets/images/items/item_compass_safari_nobg.png',
+      assetPath: 'assets/images/items/item_compass_safari_nobg.webp',
       name: 'Kompass',
       offset: Alignment(0.0, 0.3),
       renderScale: 0.35,
@@ -59,7 +59,7 @@ class InventoryConfig {
       id: 'item_map_safari',
       slot: 'front', // Map ritas överst med den nya front-slotten
       assetPath:
-          'assets/images/items/item_map_safari_nobg.png', // Korrigerad till transparent
+          'assets/images/items/item_map_safari_nobg.webp', // Korrigerad till transparent
       name: 'Karta',
       offset: Alignment(-1.35, 0.15),
       renderScale: 0.45,
@@ -68,7 +68,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_shoes_safari',
       slot: 'feet',
-      assetPath: 'assets/images/items/item_shoes_safari.png',
+      assetPath: 'assets/images/items/item_shoes_safari.webp',
       name: 'Safariskor',
       offset: Alignment(0.0, 2.8),
       renderScale: 0.65,
@@ -78,7 +78,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_hat_pirate',
       slot: 'head',
-      assetPath: 'assets/images/items/item_hat_pirate_nobg.png',
+      assetPath: 'assets/images/items/item_hat_pirate_nobg.webp',
       name: 'Pirathatt',
       offset: Alignment(0.0, -2.8), // Samma position som safarihatten
       renderScale: 0.85, // Samma skala som safarihatten
@@ -86,7 +86,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_glasses_nerd',
       slot: 'face',
-      assetPath: 'assets/images/items/item_glasses_nerd_nobg.png',
+      assetPath: 'assets/images/items/item_glasses_nerd_nobg.webp',
       name: 'Smarta glasögon',
       offset: Alignment(0.0, -0.8), // Flyttad upp mot ögonen
       renderScale: 0.9, // Uppskalad för att täcka Lokes stora ögon
@@ -95,7 +95,7 @@ class InventoryConfig {
       id: 'item_backpack_adventure',
       slot:
           'accessory', // Byt från 'back' till 'accessory' så den ritas framför Loke
-      assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
+      assetPath: 'assets/images/items/item_backpack_adventure_nobg.webp',
       name: 'Äventyrsryggsäck',
       offset: Alignment(
         -2.0,
@@ -106,7 +106,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_shirt_explorer',
       slot: 'body',
-      assetPath: 'assets/images/items/item_shirt_explorer_nobg.png',
+      assetPath: 'assets/images/items/item_shirt_explorer_nobg.webp',
       name: 'Äventyrsskjorta',
       offset: Alignment(0.0, 0.45),
       renderScale: 0.95,
@@ -115,7 +115,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camera_safari',
       slot: 'accessory',
-      assetPath: 'assets/images/items/item_camera_safari_nobg.png',
+      assetPath: 'assets/images/items/item_camera_safari_nobg.webp',
       name: 'Safariskamera',
       offset: Alignment(1.4, 0.45), // Placerad nära handen/magen
       renderScale: 0.45,
@@ -123,7 +123,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camp_fruit_glade',
       slot: 'camp',
-      assetPath: 'assets/images/story/map_fruit_glade.png',
+      assetPath: 'assets/images/story/map_fruit_glade.webp',
       name: 'Fruktgläntan',
       renderScale: 0.58,
       showInWardrobe: false,
@@ -131,7 +131,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camp_bridge',
       slot: 'camp',
-      assetPath: 'assets/images/story/map_bridge.png',
+      assetPath: 'assets/images/story/map_bridge.webp',
       name: 'Repbron',
       renderScale: 0.62,
       showInWardrobe: false,
@@ -139,7 +139,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camp_cartography',
       slot: 'camp',
-      assetPath: 'assets/images/story/map_cartography_camp.png',
+      assetPath: 'assets/images/story/map_cartography_camp.webp',
       name: 'Kartlägret',
       renderScale: 0.62,
       showInWardrobe: false,
@@ -147,7 +147,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camp_temple_gate',
       slot: 'camp',
-      assetPath: 'assets/images/story/map_temple_gate.png',
+      assetPath: 'assets/images/story/map_temple_gate.webp',
       name: 'Tempelporten',
       renderScale: 0.62,
       showInWardrobe: false,
@@ -155,7 +155,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_camp_treasure_cache',
       slot: 'camp',
-      assetPath: 'assets/images/story/map_treasure_cache.png',
+      assetPath: 'assets/images/story/map_treasure_cache.webp',
       name: 'Skattgömman',
       renderScale: 0.6,
       showInWardrobe: false,
@@ -163,7 +163,7 @@ class InventoryConfig {
     InventoryItem(
       id: 'item_pet_zebra_companion',
       slot: 'pet',
-      assetPath: 'assets/images/items/item_pet_zebra_companion_nobg.png',
+      assetPath: 'assets/images/items/item_pet_zebra_companion_nobg.webp',
       name: 'Zebravän',
       renderScale: 0.8,
       showInWardrobe: false,

@@ -917,19 +917,19 @@ class _CharacterPickerTile extends ConsumerWidget {
       'loke',
       'Loke',
       'Ser mönster',
-      'assets/characters/loke/png/loke_base.png',
+      'assets/characters/loke/loke_base.webp',
     ),
     (
       'signe',
       'Signe',
       'Springer snabbt',
-      'assets/characters/signe/png/signe_base.png',
+      'assets/characters/signe/signe_base.webp',
     ),
     (
       'astrid',
       'Astrid',
       'Minns mycket',
-      'assets/characters/astrid/png/astrid_base.png',
+      'assets/characters/astrid/astrid_base.webp',
     ),
   ];
 

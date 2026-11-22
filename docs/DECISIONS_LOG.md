@@ -8,6 +8,10 @@ uppdaterad: 2026-05-26
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
+## Gällande nuläge (2026-11-22)
+
+- **Bildformat: WebP ersätter PNG (utom app-ikon).** `assets/` gick från 40,6 MB PNG till 6,6 MB WebP (84 % mindre) utan synlig kvalitetsförlust; AAB:n var 98,7 MB före bytet. Konverteringen är reproducerbar via `scripts/convert_images_to_webp.py` (PSNR-mätt kvalitetsval per bild). `assets/images/app_icon/` behåller PNG eftersom `scripts/generate_android_launcher_icons.dart` läser `icon_source.png`. PNG-first-beslutet från 2026-07-24 gäller därmed inte längre som formatregel — principen (rasterassets + procedurgenererad animation, ingen SVG/Lottie/Rive) står kvar.
+
 ## Gällande nuläge (2026-10-29)
 
 - **Valfri Firebase-molnsäkerhetskopia:** Produktriktning ändrad från “aldrig molnsync” till **offline-first kärna + opt-in** backup via Firebase Auth + Firestore (ingen Firebase Analytics/Ads). Hive fortsätter som source of truth lokalt. Spec: `docs/FIREBASE_CLOUD_BACKUP.md`, setup: `docs/FIREBASE_SETUP.md`. Phase 2 = förälder-UI + sync.

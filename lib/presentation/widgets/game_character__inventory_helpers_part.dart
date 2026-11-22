@@ -221,7 +221,7 @@ InventoryItem _getItemConfig(String itemId, String slot) =>
       orElse: () => InventoryItem(
         id: itemId,
         slot: slot,
-        assetPath: 'assets/images/items/$itemId.png',
+        assetPath: 'assets/images/items/$itemId.webp',
         name: 'Unknown',
       ),
     );

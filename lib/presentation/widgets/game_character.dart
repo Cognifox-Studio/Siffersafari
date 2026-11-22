@@ -496,31 +496,31 @@ class _GameCharacterState extends State<GameCharacter>
     if (widget.characterId == CharacterId.signe) {
       if (_fallbackReaction == CharacterReaction.celebrate ||
           _fallbackReaction == CharacterReaction.answerCorrect) {
-        return 'assets/characters/signe/png/signe_cheer.png';
+        return 'assets/characters/signe/signe_cheer.webp';
       } else if (_fallbackReaction == CharacterReaction.answerWrong) {
-        return 'assets/characters/signe/png/signe_thinking.png';
+        return 'assets/characters/signe/signe_thinking.webp';
       }
-      return 'assets/characters/signe/png/signe_base.png';
+      return 'assets/characters/signe/signe_base.webp';
     }
 
     if (widget.characterId == CharacterId.astrid) {
       if (_fallbackReaction == CharacterReaction.celebrate ||
           _fallbackReaction == CharacterReaction.answerCorrect) {
-        return 'assets/characters/astrid/png/astrid_cheer.png';
+        return 'assets/characters/astrid/astrid_cheer.webp';
       } else if (_fallbackReaction == CharacterReaction.answerWrong) {
-        return 'assets/characters/astrid/png/astrid_thinking.png';
+        return 'assets/characters/astrid/astrid_thinking.webp';
       }
-      return 'assets/characters/astrid/png/astrid_base.png';
+      return 'assets/characters/astrid/astrid_base.webp';
     }
 
     // Default to Loke
     if (_fallbackReaction == CharacterReaction.celebrate ||
         _fallbackReaction == CharacterReaction.answerCorrect) {
-      return 'assets/characters/loke/png/loke_cheer_streak.png';
+      return 'assets/characters/loke/loke_cheer_streak.webp';
     } else if (_fallbackReaction == CharacterReaction.answerWrong) {
-      return 'assets/characters/loke/png/loke_think_struggle.png';
+      return 'assets/characters/loke/loke_think_struggle.webp';
     }
-    return 'assets/characters/loke/png/loke_base.png';
+    return 'assets/characters/loke/loke_base.webp';
   }
 
   _FallbackPose _fallbackPoseFor(double t) {

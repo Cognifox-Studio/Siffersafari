@@ -464,7 +464,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                               alignment: Alignment.center,
                               children: [
                                 Image.asset(
-                                  'assets/images/ui/img_logo_safari.png',
+                                  'assets/images/ui/img_logo_safari.webp',
                                   height: 88,
                                   fit: BoxFit.contain,
                                   cacheHeight: homeLogoCacheHeight,
@@ -501,7 +501,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                       },
                                       iconSize: 56,
                                       icon: Image.asset(
-                                        'assets/images/ui/ic_ui_padlock.png',
+                                        'assets/images/ui/ic_ui_padlock.webp',
                                         width: 48,
                                         height: 48,
                                         cacheWidth: homeActionIconCacheSize,
@@ -843,22 +843,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       (
         operation: OperationType.addition,
         icon: Icons.add,
-        assetPath: 'assets/images/ui/ic_math_addition.png'
+        assetPath: 'assets/images/ui/ic_math_addition.webp'
       ),
       (
         operation: OperationType.subtraction,
         icon: Icons.remove,
-        assetPath: 'assets/images/ui/ic_math_subtraction.png'
+        assetPath: 'assets/images/ui/ic_math_subtraction.webp'
       ),
       (
         operation: OperationType.multiplication,
         icon: Icons.close,
-        assetPath: 'assets/images/ui/ic_math_multiplication.png'
+        assetPath: 'assets/images/ui/ic_math_multiplication.webp'
       ),
       (
         operation: OperationType.division,
         icon: Icons.percent,
-        assetPath: 'assets/images/ui/ic_math_division.png'
+        assetPath: 'assets/images/ui/ic_math_division.webp'
       ),
     ];
 

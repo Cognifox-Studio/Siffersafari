@@ -230,7 +230,7 @@ class _OnboardingGradePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _OnboardingCard(
-      imageAsset: 'assets/images/ui/img_school_cap.png',
+      imageAsset: 'assets/images/ui/img_school_cap.webp',
       title: 'Årskurs',
       child: Column(
         mainAxisSize: MainAxisSize.min,
