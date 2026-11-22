@@ -135,7 +135,7 @@ class _StartupSplashGateState extends State<StartupSplashGate>
 
     // Avoid image decode hitch during the splash animation.
     precacheImage(
-      const AssetImage('assets/images/brand/cognifox_logo.png'),
+      const AssetImage('assets/images/brand/cognifox_logo.webp'),
       context,
       onError: (_, __) {},
     );
@@ -264,7 +264,7 @@ class _StartupSplashScaffold extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.all(24),
                           child: _SplashImage(
-                            assetPath: 'assets/images/brand/cognifox_logo.png',
+                            assetPath: 'assets/images/brand/cognifox_logo.webp',
                             size: imageSize,
                             fallbackIcon: Icons.auto_awesome,
                           ),

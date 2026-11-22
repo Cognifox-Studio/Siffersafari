@@ -558,33 +558,33 @@ class _NodeVisual {
 String? _storyLandmarkAssetPath(String sceneTag) {
   switch (sceneTag) {
     case 'baslager':
-      return 'assets/images/story/campfire.png';
+      return 'assets/images/story/campfire.webp';
     case 'koja':
-      return 'assets/images/story/cabin.png';
+      return 'assets/images/story/cabin.webp';
     case 'monkey_rock':
-      return 'assets/images/story/map_monkey_rock.png';
+      return 'assets/images/story/map_monkey_rock.webp';
     case 'skugga':
-      return 'assets/images/story/map_shadow_trail.png';
+      return 'assets/images/story/map_shadow_trail.webp';
     case 'fors':
-      return 'assets/images/story/map_waterfall.png';
+      return 'assets/images/story/map_waterfall.webp';
     case 'frukt':
-      return 'assets/images/story/map_fruit_glade.png';
+      return 'assets/images/story/map_fruit_glade.webp';
     case 'bro':
-      return 'assets/images/story/map_bridge.png';
+      return 'assets/images/story/map_bridge.webp';
     case 'karta':
-      return 'assets/images/story/map_cartography_camp.png';
+      return 'assets/images/story/map_cartography_camp.webp';
     case 'tempel':
-      return 'assets/images/story/map_temple_gate.png';
+      return 'assets/images/story/map_temple_gate.webp';
     case 'soltempel':
-      return 'assets/images/story/map_sun_temple.png';
+      return 'assets/images/story/map_sun_temple.webp';
     case 'skog':
-      return 'assets/images/story/map_forest_grove.png';
+      return 'assets/images/story/map_forest_grove.webp';
     case 'trumma':
-      return 'assets/images/story/map_drum_grove.png';
+      return 'assets/images/story/map_drum_grove.webp';
     case 'port':
-      return 'assets/images/story/map_stone_gate.png';
+      return 'assets/images/story/map_stone_gate.webp';
     case 'skatt':
-      return 'assets/images/story/map_treasure_cache.png';
+      return 'assets/images/story/map_treasure_cache.webp';
   }
 
   return null;
@@ -593,9 +593,9 @@ String? _storyLandmarkAssetPath(String sceneTag) {
 String? _storyBiomePreviewAssetPath(StoryBiomePreview biome) {
   switch (biome.name) {
     case 'Nattskogen':
-      return 'assets/images/story/biome_night_forest_preview.png';
+      return 'assets/images/story/biome_night_forest_preview.webp';
     case 'Stjärnöknen':
-      return 'assets/images/story/biome_star_desert_preview.png';
+      return 'assets/images/story/biome_star_desert_preview.webp';
   }
 
   return null;

@@ -8,6 +8,10 @@ uppdaterad: 2026-05-26
 Syfte: samla stabila beslut utanfor chatten.
 Princip: senaste datum vinner vid konflikt.
 
+## Gällande nuläge (2026-11-22)
+
+- **Bildformat: WebP ersätter PNG (utom app-ikon).** `assets/` gick från 40,6 MB PNG till 6,6 MB WebP (84 % mindre) utan synlig kvalitetsförlust; AAB:n var 98,7 MB före bytet. Konverteringen är reproducerbar via `scripts/convert_images_to_webp.py` (PSNR-mätt kvalitetsval per bild). `assets/images/app_icon/` behåller PNG eftersom `scripts/generate_android_launcher_icons.dart` läser `icon_source.png`. PNG-first-beslutet från 2026-07-24 gäller därmed inte längre som formatregel — principen (rasterassets + procedurgenererad animation, ingen SVG/Lottie/Rive) står kvar.
+
 ## Gällande nuläge (2026-10-29)
 
 - **Valfri Firebase-molnsäkerhetskopia:** Produktriktning ändrad från “aldrig molnsync” till **offline-first kärna + opt-in** backup via Firebase Auth + Firestore (ingen Firebase Analytics/Ads). Hive fortsätter som source of truth lokalt. Spec: `docs/FIREBASE_CLOUD_BACKUP.md`, setup: `docs/FIREBASE_SETUP.md`. Phase 2 = förälder-UI + sync.
@@ -107,3 +111,34 @@ Princip: senaste datum vinner vid konflikt.
 ### 2026-04-18
 - UI-anrop via `PostFrameCallback` inuti `build()` ersattes med `ref.listen` for sidoeffekter.
 - Borttagning av Lottie/Rive från primary runtime.
+
+### 2026-11-22
+- Temaillustrationer: `themes/space/` och nya `themes/desert/` ersatta med egen konst i atmosfärisk 2.5D-barnboksstil.
+  - Space-temats bakgrund var beige djungelvegetation (fel genre) och `space/quest_hero.webp` var en byte-identisk kopia av bakgrunden (md5) — hero-kortet visade alltså en landskapsbild, och filen lagrades två gånger.
+  - Space-astronauten levererades med en **inbakad grön chroma-ruta** (RGBA men ogenomskinliga gröna pixlar). Nu riktig alfa; `scripts/prepare_theme_art.py` gör keyningen med despill på kantpixlarna så ingen grön halo syns mot den mörka rymdbakgrunden.
+  - Öken-temat (`AppTheme.fantasy`) lånade `story/biome_star_desert_preview.webp` som helskärmsbakgrund och `themes/jungle/character.webp` som karaktär — dvs. djungelkillen visades i öknen. Egen bakgrund, egen utforskarkaraktär (flicka med scarf och goggles) och egen hero.
+  - Hero-bilderna kom med en vit pappersram; den tas bort genom att fylla pappersbandet inifrån med närmaste riktiga pixlar (kantförlängning), inte genom beskärning — ramen är en mjuk vinjett som bleknar över ~25 px, så varje beskärning lämnade antingen vit kant eller åt konst.
+  - Alla nya filer är WebP på samma dimensioner som tidigare (bakgrund 1024×1536, karaktär 512×512 med alfa, hero 1024×512), så inga widgetar behövde ändras.
+- Bakgrundsscrimmen är nu **härledd per tema** i stället för en global 0.72. Skälet är mätt: konsten har mycket olika luminans (p99: space 0.60, jungle 0.96, desert 0.79) medan vit text läggs direkt på kompositen, så en enda konstant var antingen för tung för rymden (konsten försvann) eller för lätt i nederkant för jungle/desert (0.64 gav 2.45:1, under WCAG:s 3:1 för stor text).
+  - `AppThemeConfig` bär nu `backgroundArtP99Luminance` + `backgroundScrim`; scrimmen räknas fram med `scrimAlphaFor` mot `minBackdropContrastRatio = 3.0` (WCAG stor text/UI-komponent på bakgrund). Resultat: space 0.55, jungle 0.75, desert 0.70 — alla lättare än de 0.84 som användes i toppen tidigare, och alla över 3:1 i nederkant.
+  - `test/unit/theme/background_scrim_test.dart` avkodar den faktiskt skeppade WebP:en med `image`-paketet och fäller om (a) den deklarerade p99-luminansen inte längre stämmer med konsten, (b) kontrasten hamnar under 3:1, eller (c) scrimmen är mer än 0.10 tyngre än konsten kräver. Byter man konst måste man alltså mäta om, och testet säger vilka tal som gäller.
+  - `UiConstants.backgroundOverlayOpacity` är borttagen; en global scrim hade blivit en andra sanning om samma sak.
+
+### 2026-11-22
+- **Uppläsning är nu standard för Åk 1–2** (`AppFeatures.textToSpeechEnabled` var `false` för alla profiler, och "Läs upp"-knappen renderades bara `if (ttsEnabled)` — dvs. ett barn som inte kan läsa textuppgiften hade ingen väg till frågan förrän en vuxen hittade brytaren i föräldradashboarden).
+  - `QuizFeatureSettings.readTextToSpeechPreference` returnerar `bool?` så att "aldrig valt" går att skilja från "valt av". `readTextToSpeechEnabled` faller tillbaka på ålder: Åk 1–2 → på, Åk 3+ → av. Ett uttryckligt val i föräldradashboarden vinner alltid, åt båda håll.
+  - Frågan läses upp automatiskt när den byts **för Åk 1–2** (äldre åk behåller knappen som frivilligt val), via `ref.listenManual(..., fireImmediately: true)` i `initState` — den första frågan finns normalt redan i sessionen när vyn mountas, så en ren "on change"-lyssnare hade aldrig läst den.
+  - Automatiken är tyst om profilens egen `soundEnabled` är av, så en tyst profil förblir tyst (klassrum).
+  - Uppläsningsknappen har full tryckyta (56 dp) för Åk 1–2 i stället för `visualDensity: compact`; äldre åk behåller den kompakta.
+- Test: enhetstester för de fyra kombinationerna (inget val/Åk 1–2, inget val/Åk 5, uttryckligt nej, uttryckligt ja) samt widgettester som visar att Åk 2 får knappen och hör frågan utan konfiguration, och att Åk 5 varken får knapp eller uppläsning.
+
+### 2026-11-22
+- **Textuppgifter klipps inte längre vid stor textskala.** `_resolveWordProblemFontSize` returnerade sitt minsta försök även när texten inte rymdes, och `Text` avslutade då med "..." — slutet av uppgiften försvann tyst. Vid 200 % textskala är det hela frågan för ett barn som precis lär sig läsa. Nu returnerar resolvern även `fits`, och när inget typsnitt ryms rullas texten i stället (`question_card_scrollable_text`) i stället för att klippas.
+- **Feedback läses bara upp om profilen inte är tyst.** Uppläsningen av feedback kontrollerade bara `ttsEnabled`; det var ofarligt så länge uppläsning var av som standard, men sedan Åk 1–2 fick den på som standard skulle en tyst profil börja prata. `readAloudAvailable = ttsEnabled && soundEnabled` styr nu både knappen och automatiken — en tyst profil är tyst.
+- **Appikon:** vit ordbild på oliv (#8A8769) gav 3.65:1. Bakgrunden är nu djup djungelgrön (#1C4A2B) → 10.18:1, och alla derivat (äldre launcher-ikoner, adaptiv förgrund, Play-ikon 512) genereras från samma master med explicita marginaler av `scripts/prepare_app_icon.py`. Alfastoft under 24 rensas bort (det var de "vita prickarna").
+  - Noterat under arbetet: att behålla bara största sammanhängande alfaregionen raderade hela ordbilden — den består av tolv separata bokstäver. Tröskeln sätts därför långt under minsta bokstav (mätt: 128 celler) och verifierades genom att räkna komponenter först.
+
+### 2026-11-22 (garderoben)
+- **Outfiten är per barn, inte per pose.** `equippedItems` nycklades per pose och karaktären ritade bara nycklar för aktuell pose, så ett plagg som valdes i vila (som är standard i garderoben) försvann så fort karaktären reagerade — alltså i varje quiz. Ny `OutfitResolver` låter basoutfiten alltid ritas och låter en pose-specifik nyckel bara *överrida* sin slot. Två plagg i samma slot ritas aldrig samtidigt.
+- **Garderoben markerar det barnet faktiskt ser.** Rutan använder samma resolver som karaktären i stället för att gissa utifrån nyckelformatet, så en hatt som ärvs från vilooutfiten visas som påklädd även i en annan pose.
+- **Varför inte en pose per plagg:** vi behåller poser som *undantag*, inte som modell. En pose är en animation, inte en garderob. Migreringen till `slot → itemId` ligger som steg 3 i `WARDROBE.md` eftersom den kräver en dataflytt av befintliga profiler.

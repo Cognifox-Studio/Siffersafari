@@ -31,6 +31,8 @@ class AppThemeConfig {
     required this.accentColor,
     required this.cardColor,
     required this.disabledBackgroundColor,
+    required this.backgroundArtP99Luminance,
+    required this.backgroundScrim,
   });
 
   final AppTheme theme;
@@ -49,6 +51,19 @@ class AppThemeConfig {
 
   /// Used for disabled answer buttons etc.
   final Color disabledBackgroundColor;
+
+  /// 99th-percentile relative luminance of [backgroundAsset], measured rather
+  /// than guessed (`test/unit/theme/background_scrim_test.dart` decodes the
+  /// real WebP and fails if this drifts). Changing the artwork means
+  /// re-measuring this, which then re-derives [backgroundScrim].
+  final double backgroundArtP99Luminance;
+
+  /// Alpha of [baseBackgroundColor] laid over [backgroundAsset] so that light
+  /// text sitting on the backdrop keeps [AppConstants.minBackdropContrastRatio].
+  /// Derived from [backgroundArtP99Luminance] with `scrimAlphaFor`, not picked
+  /// by eye: dark art earns a light scrim and can actually be seen, bright art
+  /// needs a heavy one to stay legible.
+  final double backgroundScrim;
 
   Color get panelBackgroundColor => cardColor;
   Color get panelBorderColor =>
@@ -97,46 +112,50 @@ class AppThemeConfig {
     if (resolvedTheme == AppTheme.jungle) {
       return const AppThemeConfig(
         theme: AppTheme.jungle,
-        backgroundAsset: 'assets/images/themes/jungle/background.png',
-        questHeroAsset: 'assets/images/themes/jungle/quest_hero.png',
-        characterAsset: 'assets/images/themes/jungle/character.png',
+        backgroundAsset: 'assets/images/themes/jungle/background.webp',
+        questHeroAsset: 'assets/images/themes/jungle/quest_hero.webp',
+        characterAsset: 'assets/images/themes/jungle/character.webp',
         baseBackgroundColor: AppColors.jungleBackground,
         primaryActionColor: AppColors.junglePrimary,
         secondaryActionColor: AppColors.jungleSecondary,
         accentColor: AppColors.jungleAccent,
         cardColor: Color(0xCC2A4F36),
         disabledBackgroundColor: Color(0xCC3D6C50),
+        backgroundArtP99Luminance: 0.96,
+        backgroundScrim: 0.75,
       );
     }
 
     if (resolvedTheme == AppTheme.fantasy) {
-      // Desert palette + story biome preview until dedicated theme PNGs land.
       return const AppThemeConfig(
         theme: AppTheme.fantasy,
-        backgroundAsset:
-            'assets/images/story/biome_star_desert_preview.png',
-        questHeroAsset: 'assets/images/story/biome_star_desert_preview.png',
-        characterAsset: 'assets/images/themes/jungle/character.png',
+        backgroundAsset: 'assets/images/themes/desert/background.webp',
+        questHeroAsset: 'assets/images/themes/desert/quest_hero.webp',
+        characterAsset: 'assets/images/themes/desert/character.webp',
         baseBackgroundColor: AppColors.desertBackground,
         primaryActionColor: AppColors.desertPrimary,
         secondaryActionColor: AppColors.desertSecondary,
         accentColor: AppColors.desertAccent,
         cardColor: Color(0xCC6B4423),
         disabledBackgroundColor: Color(0xCC8B5E34),
+        backgroundArtP99Luminance: 0.79,
+        backgroundScrim: 0.70,
       );
     }
 
     return const AppThemeConfig(
       theme: AppTheme.space,
-      backgroundAsset: 'assets/images/themes/space/background.png',
-      questHeroAsset: 'assets/images/themes/space/quest_hero.png',
-      characterAsset: 'assets/images/themes/space/character.png',
+      backgroundAsset: 'assets/images/themes/space/background.webp',
+      questHeroAsset: 'assets/images/themes/space/quest_hero.webp',
+      characterAsset: 'assets/images/themes/space/character.webp',
       baseBackgroundColor: AppColors.spaceBackground,
       primaryActionColor: AppColors.spacePrimary,
       secondaryActionColor: AppColors.spaceSecondary,
       accentColor: AppColors.spaceAccent,
       cardColor: Color(0xCC485466),
       disabledBackgroundColor: Color(0xCC5B6575),
+      backgroundArtP99Luminance: 0.60,
+      backgroundScrim: 0.55,
     );
   }
 

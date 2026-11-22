@@ -154,7 +154,7 @@ Exempel:
 
 ## Aktuell animationsregel
 
-- Karaktärer och animationer hanteras enbart via procedurgenererade transformationer på PNG, varken `SVG`, `Lottie` eller `Rive` assets tillåts som core mascot-runtime.
+- Karaktärer och animationer hanteras enbart via procedurgenererade transformationer på WebP, varken `SVG`, `Lottie` eller `Rive` assets tillåts som core mascot-runtime.
 
 ## .github/
 

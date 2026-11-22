@@ -8,15 +8,18 @@ class _QuizProgressMerger {
   _MergedQuizProgress merge({
     required UserProgress user,
     required QuizSession session,
+    bool graceAvailable = false,
   }) {
     final now = DateTime.now();
     final oldLevel = user.level;
 
-    final updatedStreak = _calculateStreak(
+    final streakOutcome = resolveStreak(
       currentStreak: user.currentStreak,
       lastSessionDate: user.lastSessionDate,
       now: now,
+      graceAvailable: graceAvailable,
     );
+    final updatedStreak = streakOutcome.streak;
     final updatedLongestStreak =
         updatedStreak > user.longestStreak ? updatedStreak : user.longestStreak;
     final updatedMastery = _updateMastery(
@@ -56,28 +59,8 @@ class _QuizProgressMerger {
       reward: reward,
       oldLevel: oldLevel,
       completedAt: now,
+      streakOutcome: streakOutcome,
     );
-  }
-
-  int _calculateStreak({
-    required int currentStreak,
-    required DateTime? lastSessionDate,
-    required DateTime now,
-  }) {
-    if (lastSessionDate == null) return 1;
-
-    final lastDate = DateTime(
-      lastSessionDate.year,
-      lastSessionDate.month,
-      lastSessionDate.day,
-    );
-    final today = DateTime(now.year, now.month, now.day);
-
-    final difference = today.difference(lastDate).inDays;
-
-    if (difference == 0) return currentStreak;
-    if (difference == 1) return currentStreak + 1;
-    return 1;
   }
 
   Map<String, double> _updateMastery({

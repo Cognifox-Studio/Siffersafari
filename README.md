@@ -136,7 +136,7 @@ CI kör analyze/test. Release-workflow bygger signerad APK från `v*`-taggar. Me
 - Flutter / Dart 3, Android-first
 - Riverpod + GetIt + Hive
 - Feature-first UI under `lib/features/`
-- PNG-first maskot/figur (Loke), proceduranimationer i Flutter
+- WebP-first maskot/figur (Loke), proceduranimationer i Flutter
 - Curriculum/facit i `docs/curriculum_facit.json` + årskursbanker
 
 ```text

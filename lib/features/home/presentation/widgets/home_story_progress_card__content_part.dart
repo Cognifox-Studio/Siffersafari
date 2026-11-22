@@ -126,7 +126,7 @@ class HomeStoryProgressCard extends StatelessWidget {
                 child: TextButton.icon(
                   onPressed: onOpenMap,
                   icon: Image.asset(
-                    'assets/images/ui/ic_ui_map.png',
+                    'assets/images/ui/ic_ui_map.webp',
                     width: 20,
                     height: 20,
                   ),

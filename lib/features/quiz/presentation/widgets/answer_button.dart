@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/theme/color_contrast.dart';
 
 class AnswerButton extends StatefulWidget {
   const AnswerButton({
@@ -148,32 +149,48 @@ class _AnswerButtonState extends State<AnswerButton>
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final resolvedMinHeight =
-        widget.minHeight ?? AppConstants.answerButtonHeight;
+    // `minHeight` arrives from the quiz grid already expressed in logical
+    // pixels (it is derived from LayoutBuilder constraints). The default is
+    // deliberately *not* scaled with `.h`: scaling a button with screen height
+    // made it 50 px on a 640 px tall screen and 45 px on shorter ones, i.e.
+    // smallest exactly where a child's finger is least precise. A control is
+    // sized in dp, so this is a plain 64 px target floored at the app's
+    // minimum touch target.
+    final resolvedMinHeight = math.max(
+      AppConstants.minTouchTargetSize,
+      widget.minHeight ?? AppConstants.answerButtonHeight,
+    );
     final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
     Color backgroundColor;
-    Color textColor;
+    Color preferredInk;
 
     if (widget.isCorrect != null) {
       if (widget.isCorrect!) {
         backgroundColor = AppColors.correctAnswer;
-        textColor = scheme.onPrimary;
+        preferredInk = scheme.onPrimary;
       } else if (widget.isSelected) {
         backgroundColor = AppColors.wrongAnswer;
-        textColor = scheme.onPrimary;
+        preferredInk = scheme.onPrimary;
       } else {
         backgroundColor = widget.disabledBackgroundColor ?? scheme.surface;
-        textColor = widget.idleTextColor ?? scheme.onSurface;
+        preferredInk = widget.idleTextColor ?? scheme.onSurface;
       }
     } else {
       backgroundColor = widget.isSelected
           ? (widget.selectedBackgroundColor ??
               Theme.of(context).colorScheme.primary)
           : (widget.idleBackgroundColor ?? scheme.surface);
-      textColor = widget.isSelected
+      preferredInk = widget.isSelected
           ? scheme.onPrimary
           : (widget.idleTextColor ?? scheme.onSurface);
     }
+
+    // The state machine above names a theme *role* for the ink. On the
+    // selected state that role is white, while the fill is the theme accent:
+    // 1.78:1 on space, 2.01:1 on jungle, 2.15:1 on desert. Keep the preferred
+    // ink only where it is legible, otherwise fall back to the ink that
+    // contrasts with the fill that was actually resolved.
+    final textColor = legibleInkOn(backgroundColor, preferredInk);
 
     final isEnabled = widget.isCorrect == null;
     final String label;
@@ -267,7 +284,7 @@ class _AnswerButtonState extends State<AnswerButton>
                           : widget.onPressed,
                       child: SizedBox(
                         width: double.infinity,
-                        height: resolvedMinHeight.h,
+                        height: resolvedMinHeight,
                         child: Padding(
                           padding: EdgeInsets.symmetric(
                             horizontal: AppConstants.defaultPadding.w,
@@ -297,19 +314,28 @@ class _AnswerButtonState extends State<AnswerButton>
                                     ),
                                   ),
                                 ),
-                              Text(
-                                widget.answer.toString(),
-                                style: (compact
-                                        ? Theme.of(context)
-                                            .textTheme
-                                            .headlineSmall
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .displaySmall)
-                                    ?.copyWith(
-                                  color: textColor,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: compact ? 32 : 44,
+                              // Åk 1–2 / low vision: the button height is fixed by
+                              // the quiz grid, but the digit still scales with the
+                              // system font setting. Without this the glyphs grow
+                              // past the box and Stack clips them silently - the
+                              // child simply sees a smaller number than it asked
+                              // for. Auto-shrink keeps the digit fully visible.
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  widget.answer.toString(),
+                                  style: (compact
+                                          ? Theme.of(context)
+                                              .textTheme
+                                              .headlineSmall
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .displaySmall)
+                                      ?.copyWith(
+                                    color: textColor,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: compact ? 32 : 44,
+                                  ),
                                 ),
                               ),
                             ],

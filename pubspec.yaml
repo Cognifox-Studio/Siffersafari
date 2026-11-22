@@ -73,14 +73,17 @@ flutter:
     - assets/sounds/quiz_music.mp3
     # Character assets are listed per runtime folder to keep bundling explicit
     # for app + integration-test builds.
-    - assets/characters/loke/png/
-    - assets/characters/signe/png/
-    - assets/characters/astrid/png/
+    - assets/characters/loke/
+    - assets/characters/signe/
+    - assets/characters/astrid/
     - assets/images/
     - assets/images/brand/
-    - assets/images/app_icon/
+    # Only the splash artwork ships; the Play Console icon is a store asset
+    # and used to be bundled into the APK purely because of the folder entry.
+    - assets/images/app_icon/icon_source.png
     - assets/images/themes/space/
     - assets/images/themes/jungle/
+    - assets/images/themes/desert/
     - assets/images/story/
     - assets/images/ui/
     - assets/images/items/

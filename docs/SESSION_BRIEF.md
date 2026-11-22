@@ -94,7 +94,7 @@ Plan/slice-start bara vid risk.
 Se [DECISIONS_LOG.md](DECISIONS_LOG.md). Nyckelpunkter:
 
 - COPPA först — inga trackers / OTA / `REQUEST_INSTALL_PACKAGES`
-- PNG-first maskot (Loke); SVG/Rive utfasade som runtime
+- WebP-first maskot (Loke); SVG/Rive utfasade som runtime
 - Riverpod + GetIt + Hive; feature-first UI
 - Hybrid adaptiv svårighet
 - **Dagens runda:** fullt pensionerad; legacy settings-nycklar endast för wipe

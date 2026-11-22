@@ -1,5 +1,7 @@
 import 'package:siffersafari/core/constants/app_constants.dart';
+import 'package:siffersafari/core/constants/settings_keys.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
+import 'package:siffersafari/core/services/streak_resolver.dart';
 import 'package:siffersafari/core/services/user_quest_state_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
@@ -37,6 +39,7 @@ class ApplyQuizResultResult {
     this.newlyUnlockedItem,
     this.levelUpEvent,
     this.questNotice,
+    this.streakOutcome,
   });
 
   final UserProgress finalUser;
@@ -46,6 +49,9 @@ class ApplyQuizResultResult {
   final InventoryItem? newlyUnlockedItem;
   final LevelUpEvent? levelUpEvent;
   final String? questNotice;
+
+  /// How the finished session changed the streak, including a spent grace day.
+  final StreakOutcome? streakOutcome;
 }
 
 class ApplyQuizResultUseCase {
@@ -73,9 +79,14 @@ class ApplyQuizResultUseCase {
       return _buildAlreadyAppliedResult(user.userId);
     }
 
+    final now = DateTime.now();
     final merge = _QuizProgressMerger(_achievementService).merge(
       user: user,
       session: session,
+      graceAvailable: isGraceAvailable(
+        lastGraceUsedAt: _graceUsedAt(user.userId),
+        now: now,
+      ),
     );
     final questResult = await _QuestResultCoordinator(_questStateService).apply(
       previousUser: user,
@@ -109,6 +120,14 @@ class ApplyQuizResultUseCase {
       rethrow;
     }
 
+    // Only after the progress is safely stored: a failed save must not burn a
+    // grace day or claim that a streak was lost.
+    await _recordStreakOutcome(
+      userId: user.userId,
+      outcome: merge.streakOutcome,
+      now: merge.completedAt,
+    );
+
     return ApplyQuizResultResult(
       finalUser: episodeReward.user,
       reward: episodeReward.reward,
@@ -117,7 +136,41 @@ class ApplyQuizResultUseCase {
       newlyUnlockedItem: unlockResult.newlyUnlockedItem,
       levelUpEvent: unlockResult.levelUpEvent,
       questNotice: questResult.questNotice,
+      streakOutcome: merge.streakOutcome,
     );
+  }
+
+  DateTime? _graceUsedAt(String userId) {
+    final raw = _repository.getSetting(SettingsKeys.streakGraceUsed(userId));
+    if (raw is DateTime) return raw;
+    return raw is String ? DateTime.tryParse(raw) : null;
+  }
+
+  /// Remembers what the streak did, so the home screen can be kind about it.
+  Future<void> _recordStreakOutcome({
+    required String userId,
+    required StreakOutcome outcome,
+    required DateTime now,
+  }) async {
+    if (outcome.graceUsed) {
+      await _repository.saveSetting(
+        SettingsKeys.streakGraceUsed(userId),
+        now.toIso8601String(),
+      );
+    }
+
+    if (outcome.broken && outcome.previousStreak > 1) {
+      await _repository.saveSetting(
+        SettingsKeys.streakBrokenFrom(userId),
+        outcome.previousStreak,
+      );
+      return;
+    }
+
+    if (!outcome.broken) {
+      // The streak is alive again; the comeback line has nothing left to say.
+      await _repository.deleteSetting(SettingsKeys.streakBrokenFrom(userId));
+    }
   }
 
   ({UserProgress user, AchievementReward reward})

@@ -53,7 +53,14 @@ class QuestionCard extends StatelessWidget {
     return candidates.last;
   }
 
-  double _resolveWordProblemFontSize(
+  /// Largest font size at which [text] fits in [maxLines], plus whether it fits
+  /// at all.
+  ///
+  /// The second half matters at large system text scales: when even the
+  /// smallest candidate overflows, this used to return it anyway and the Text
+  /// quietly ellipsised, so the end of a word problem disappeared. A child who
+  /// cannot read the whole question is being asked to guess.
+  ({double fontSize, bool fits}) _resolveWordProblem(
     BuildContext context, {
     required TextStyle? baseStyle,
     required String text,
@@ -80,11 +87,11 @@ class QuestionCard extends StatelessWidget {
       )..layout(maxWidth: maxWidth);
 
       if (!painter.didExceedMaxLines) {
-        return fontSize;
+        return (fontSize: fontSize, fits: true);
       }
     }
 
-    return candidates.last;
+    return (fontSize: candidates.last, fits: false);
   }
 
   @override
@@ -128,9 +135,9 @@ class QuestionCard extends StatelessWidget {
                 : (compact ? textTheme.headlineLarge : textTheme.displayLarge);
             final wordProblemMaxLines = veryCompact ? 3 : 5;
             final questionMaxLines = isWordProblem ? wordProblemMaxLines : 2;
-            final wordProblemFontSize = !isWordProblem
+            final wordProblem = !isWordProblem
                 ? null
-                : _resolveWordProblemFontSize(
+                : _resolveWordProblem(
                     context,
                     baseStyle: questionStyle?.copyWith(
                       fontWeight: FontWeight.bold,
@@ -142,6 +149,10 @@ class QuestionCard extends StatelessWidget {
                     maxLines: questionMaxLines,
                     compact: compact,
                   );
+            final wordProblemFontSize = wordProblem?.fontSize;
+            // Too long even at the smallest readable size (large system text
+            // scale): scroll instead of cropping the question.
+            final wordProblemNeedsScroll = wordProblem != null && !wordProblem.fits;
             final equationFontSize = isWordProblem
                 ? null
                 : _resolveEquationFontSize(
@@ -201,8 +212,8 @@ class QuestionCard extends StatelessWidget {
                               constraints:
                                   BoxConstraints(maxWidth: maxQuestionWidth),
                               child: isWordProblem
-                                  ? Text(
-                                      question.displayQuestionText,
+                                  ? _WordProblemText(
+                                      text: question.displayQuestionText,
                                       style: questionStyle?.copyWith(
                                         fontSize: wordProblemFontSize,
                                         fontWeight: FontWeight.bold,
@@ -210,9 +221,8 @@ class QuestionCard extends StatelessWidget {
                                             scheme.onSurface,
                                         height: 1.2,
                                       ),
-                                      textAlign: TextAlign.center,
                                       maxLines: questionMaxLines,
-                                      overflow: TextOverflow.ellipsis,
+                                      scrollable: wordProblemNeedsScroll,
                                     )
                                   : FittedBox(
                                       fit: BoxFit.scaleDown,
@@ -239,6 +249,42 @@ class QuestionCard extends StatelessWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Renders the word problem, and when it cannot fit even at the smallest
+/// readable size (large system text scale) lets it scroll instead of cropping
+/// it with an ellipsis. Nothing is hidden from the reader, and the text stays
+/// at a size a beginner can actually decode.
+class _WordProblemText extends StatelessWidget {
+  const _WordProblemText({
+    required this.text,
+    required this.style,
+    required this.maxLines,
+    required this.scrollable,
+  });
+
+  final String text;
+  final TextStyle? style;
+  final int maxLines;
+  final bool scrollable;
+
+  @override
+  Widget build(BuildContext context) {
+    final label = Text(
+      text,
+      style: style,
+      textAlign: TextAlign.center,
+      maxLines: scrollable ? null : maxLines,
+      overflow: scrollable ? TextOverflow.clip : TextOverflow.ellipsis,
+    );
+
+    if (!scrollable) return label;
+
+    return SingleChildScrollView(
+      key: const Key('question_card_scrollable_text'),
+      child: label,
     );
   }
 }

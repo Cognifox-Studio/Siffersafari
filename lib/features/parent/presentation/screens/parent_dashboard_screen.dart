@@ -52,7 +52,7 @@ class ParentDashboardScreen extends ConsumerWidget {
               AppNavigator.openSettings(context);
             },
             icon: Image.asset(
-              'assets/images/ui/ic_ui_settings.png',
+              'assets/images/ui/ic_ui_settings.webp',
               width: 28,
               height: 28,
               cacheWidth: toolbarIconCacheSize,

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/providers/app_theme_provider.dart';
 import 'package:siffersafari/core/theme/app_theme_colors.dart';
 
@@ -9,7 +8,7 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
     required this.body,
     this.appBar,
     this.padding,
-    this.overlayOpacity = AppConstants.backgroundOverlayOpacity,
+    this.overlayOpacity,
     this.extendBodyBehindAppBar = false,
     super.key,
   });
@@ -17,7 +16,9 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
   final PreferredSizeWidget? appBar;
   final Widget body;
   final EdgeInsetsGeometry? padding;
-  final double overlayOpacity;
+  /// Overrides the theme's own scrim. Null means "use the value the theme
+  /// measured for its artwork" (see [AppThemeConfig.backgroundScrim]).
+  final double? overlayOpacity;
   final bool extendBodyBehindAppBar;
 
   @override
@@ -35,10 +36,12 @@ class ThemedBackgroundScaffold extends ConsumerWidget {
     final effectiveExtendBodyBehindAppBar =
         extendBodyBehindAppBar || appBar != null;
     final appBarHeight = appBar?.preferredSize.height ?? 0.0;
-    final overlayTopOpacity =
-        (overlayOpacity + 0.12).clamp(0.0, 1.0).toDouble();
-    final overlayBottomOpacity =
-        (overlayOpacity - 0.08).clamp(0.0, 1.0).toDouble();
+    // The theme's scrim is the *minimum*: it is guaranteed at the bottom edge,
+    // where the gradient is thinnest, and the top is deliberately a little
+    // heavier so the app bar area never competes with its own title.
+    final baseScrim = overlayOpacity ?? cfg.backgroundScrim;
+    final overlayTopOpacity = (baseScrim + 0.10).clamp(0.0, 1.0).toDouble();
+    final overlayBottomOpacity = baseScrim.clamp(0.0, 1.0).toDouble();
 
     return Scaffold(
       backgroundColor: themeColors.baseBackgroundColor,

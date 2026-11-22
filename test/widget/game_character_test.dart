@@ -81,7 +81,7 @@ void main() {
       await tester.pump();
       await tester.timedDragFrom(
         tester.getCenter(
-          _assetImageFinder('assets/images/items/item_safari_hat.png'),
+          _assetImageFinder('assets/images/items/item_safari_hat.webp'),
         ),
         const Offset(24, 0),
         const Duration(milliseconds: 150),
@@ -97,7 +97,7 @@ void main() {
     '[Widget] GameCharacter renders the same item position regardless of wardrobe canvas size',
     (WidgetTester tester) async {
       Future<double> renderItemDeltaY(double canvasSize) async {
-        const hatAssetPath = 'assets/images/items/item_safari_hat.png';
+        const hatAssetPath = 'assets/images/items/item_safari_hat.webp';
 
         await tester.pumpWidget(
           MaterialApp(
@@ -163,7 +163,7 @@ void main() {
       await tester.pump();
 
       final hatFinder =
-          _assetImageFinder('assets/images/items/item_safari_hat.png');
+          _assetImageFinder('assets/images/items/item_safari_hat.webp');
       expect(hatFinder, findsOneWidget);
 
       await tester.tap(find.byType(GameCharacter));
@@ -207,7 +207,7 @@ void main() {
 
       await tester.timedDragFrom(
         tester.getCenter(
-          _assetImageFinder('assets/images/items/item_glasses_nerd_nobg.png'),
+          _assetImageFinder('assets/images/items/item_glasses_nerd_nobg.webp'),
         ),
         const Offset(8, 0),
         const Duration(milliseconds: 150),
@@ -250,7 +250,7 @@ void main() {
       await tester.pump();
 
       final glassesCenter = tester.getCenter(
-        _assetImageFinder('assets/images/items/item_glasses_nerd_nobg.png'),
+        _assetImageFinder('assets/images/items/item_glasses_nerd_nobg.webp'),
       );
 
       await tester.timedDragFrom(
@@ -290,11 +290,44 @@ void main() {
       await tester.pump();
 
       final hatCenter = tester.getCenter(
-        _assetImageFinder('assets/images/items/item_hat_pirate_nobg.png'),
+        _assetImageFinder('assets/images/items/item_hat_pirate_nobg.webp'),
       );
       final characterCenter = tester.getCenter(find.byType(GameCharacter));
 
       expect(hatCenter.dx, greaterThan(characterCenter.dx + 40));
+    },
+  );
+
+  testWidgets(
+    '[Widget] GameCharacter behåller plagget när karaktären reagerar',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GameCharacter(
+                height: 200,
+                reaction: CharacterReaction.celebrate,
+                persistentReaction: true,
+                equippedItems: {
+                  'idle_item_safari_hat': 'item_safari_hat',
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // Regression: plagg valdes i vila och sparades som `idle_<item>`, men
+      // ritades bara i pose idle — hatten försvann så fort karaktären firade,
+      // vilket är exakt vad som händer i varje quiz.
+      expect(
+        _assetImageFinder('assets/images/items/item_safari_hat.webp'),
+        findsOneWidget,
+        reason: 'Ett plagg som valts i vila ska följa med när karaktären firar',
+      );
     },
   );
 }

@@ -187,9 +187,9 @@ class _ProfileAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final avatars = [
-      'assets/images/ui/img_avatar_animal.png',
-      'assets/images/ui/img_avatar_elephant.png',
-      'assets/images/ui/img_avatar_zebra.png',
+      'assets/images/ui/img_avatar_animal.webp',
+      'assets/images/ui/img_avatar_elephant.webp',
+      'assets/images/ui/img_avatar_zebra.webp',
     ];
     final avatarAsset = avatars[avatarEmoji.hashCode % avatars.length];
     final avatarCacheSize = imageCacheExtent(context, 84);

@@ -8,6 +8,11 @@ on:
     tags:
       - 'v*'
   workflow_dispatch:
+    inputs:
+      artifact_only:
+        description: 'Build an installable APK artifact and publish nothing (no release, no tag)'
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -16,6 +21,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Secrets cannot be read in a step-level `if`, so resolve it once here.
+      # When the keystore secret exists the test artifact is signed with the real
+      # release key, which means it installs *over* an existing Play build and
+      # keeps the child's local progress.
+      HAS_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 != '' }}
     
     steps:
       - uses: actions/checkout@v4
@@ -43,6 +54,7 @@ jobs:
         run: flutter analyze --fatal-infos lib test integration_test
 
       - name: Validate signing secrets
+        if: ${{ !inputs.artifact_only }}
         run: |
           if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ] || [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then
             echo "Missing KEYSTORE_BASE64 or KEYSTORE_PASSWORD secret"
@@ -50,10 +62,12 @@ jobs:
           fi
       
       - name: Decode keystore
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
       
       - name: Create key.properties
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
         run: |
           cat > android/key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
@@ -62,8 +76,22 @@ jobs:
           storeFile=upload-keystore.jks
           EOF
       
+      # Without a keystore the Gradle config refuses to produce a release
+      # artifact unless this explicit opt-in is set. With a keystore present the
+      # release signing config always wins, so setting it is safe either way.
       - name: Build APK
+        env:
+          SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING: 'true'
         run: flutter build apk --release
+
+      - name: Upload test APK
+        if: ${{ inputs.artifact_only }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: siffersafari-test-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+          if-no-files-found: error
       
       - name: Resolve release version
         id: version
@@ -97,6 +125,7 @@ jobs:
           echo "TAG_NAME=${TAG_NAME}"
       
       - name: Create Release
+        if: ${{ !inputs.artifact_only }}
         uses: softprops/action-gh-release@v2
         with:
           files: build/app/outputs/flutter-apk/app-release.apk

@@ -76,8 +76,6 @@ class AppConstants {
   static const double progressBarHeightMedium =
       UiConstants.progressBarHeightMedium;
 
-  static const double backgroundOverlayOpacity =
-      UiConstants.backgroundOverlayOpacity;
 
   // Animation Durations
   static const Duration microAnimationDuration =
@@ -105,6 +103,9 @@ class AppConstants {
       UiConstants.feedbackDialogIconSize;
 
   static const double buttonFontSize = UiConstants.buttonFontSize;
+  static const double minTextContrastRatio = UiConstants.minTextContrastRatio;
+  static const double minBackdropContrastRatio =
+      UiConstants.minBackdropContrastRatio;
   static const double minTouchTargetSizeSmall =
       UiConstants.minTouchTargetSizeSmall;
 

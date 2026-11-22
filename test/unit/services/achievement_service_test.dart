@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/services/achievement_service.dart';
@@ -97,12 +99,19 @@ void main() {
       );
     });
 
-    test('badgealbum använder PNG-tiles (#83)', () {
+    test('badgealbum använder WebP-tiles som finns på disk (#83)', () {
       final service = AchievementService();
       for (final entry in service.albumEntries) {
         expect(entry.assetPath, isNotNull, reason: entry.id);
         expect(entry.assetPath, isNotEmpty, reason: entry.id);
-        expect(entry.assetPath, endsWith('.png'), reason: entry.id);
+        expect(entry.assetPath, endsWith('.webp'), reason: entry.id);
+        // A rename in assets/ that misses a catalog entry used to be invisible
+        // until a child opened the badge album on a device.
+        expect(
+          File(entry.assetPath!).existsSync(),
+          isTrue,
+          reason: '${entry.id}: ${entry.assetPath} saknas i assets/',
+        );
       }
     });
 

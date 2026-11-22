@@ -1120,7 +1120,7 @@ class _LevelUpBanner extends StatelessWidget {
               width: 56,
               height: 56,
               child: Image.asset(
-                'assets/images/ui/reward_chest.png',
+                'assets/images/ui/reward_chest.webp',
                 fit: BoxFit.contain,
                 cacheWidth: chestCacheSize,
                 cacheHeight: chestCacheSize,

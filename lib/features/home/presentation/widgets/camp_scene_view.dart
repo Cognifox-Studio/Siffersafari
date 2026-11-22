@@ -176,7 +176,7 @@ class CampSceneView extends ConsumerWidget {
             bottom: isWideScreen ? 60 : 54,
             child: _SceneDecoration(
               key: const Key('camp_scene_cabin'),
-              assetPath: 'assets/images/story/cabin.png',
+              assetPath: 'assets/images/story/cabin.webp',
               width: isWideScreen ? 96 : 82,
             ),
           ),
@@ -185,7 +185,7 @@ class CampSceneView extends ConsumerWidget {
             bottom: isWideScreen ? 52 : 46,
             child: _SceneDecoration(
               key: const Key('camp_scene_campfire'),
-              assetPath: 'assets/images/story/campfire.png',
+              assetPath: 'assets/images/story/campfire.webp',
               width: isWideScreen ? 84 : 72,
             ),
           ),
@@ -447,7 +447,7 @@ class _LockedCampPedestal extends StatelessWidget {
             Opacity(
               opacity: 0.45,
               child: Image.asset(
-                'assets/images/ui/ic_reward_locked_nobg.png',
+                'assets/images/ui/ic_reward_locked_nobg.webp',
                 key: const Key('camp_scene_locked_pedestal'),
                 width: iconSize,
                 height: iconSize,
@@ -676,7 +676,7 @@ class _CampPetSpot extends StatelessWidget {
               ),
             ),
             child: Image.asset(
-              'assets/images/ui/ic_reward_locked_nobg.png',
+              'assets/images/ui/ic_reward_locked_nobg.webp',
               fit: BoxFit.contain,
               cacheWidth: placeholderCacheSize,
               cacheHeight: placeholderCacheSize,

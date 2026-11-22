@@ -10,7 +10,7 @@ abstract final class AchievementCatalog {
       displayName: 'Första quizet',
       albumLabel: 'Första',
       emoji: '🧭',
-      assetPath: 'assets/images/items/item_compass_safari_nobg.png',
+      assetPath: 'assets/images/items/item_compass_safari_nobg.webp',
       unlockHint: 'Klara ditt första quiz.',
     ),
     AchievementDefinition(
@@ -18,7 +18,7 @@ abstract final class AchievementCatalog {
       displayName: 'Första plusrundan',
       albumLabel: 'Plus',
       emoji: '➕',
-      assetPath: 'assets/images/ui/ic_math_addition.png',
+      assetPath: 'assets/images/ui/ic_math_addition.webp',
       unlockHint: 'Spela en plus-runda.',
     ),
     AchievementDefinition(
@@ -26,7 +26,7 @@ abstract final class AchievementCatalog {
       displayName: 'Första minusrundan',
       albumLabel: 'Minus',
       emoji: '➖',
-      assetPath: 'assets/images/ui/ic_math_subtraction.png',
+      assetPath: 'assets/images/ui/ic_math_subtraction.webp',
       unlockHint: 'Spela en minus-runda.',
     ),
     AchievementDefinition(
@@ -34,7 +34,7 @@ abstract final class AchievementCatalog {
       displayName: 'Första gångerrundan',
       albumLabel: 'Gånger',
       emoji: '✖️',
-      assetPath: 'assets/images/ui/ic_math_multiplication.png',
+      assetPath: 'assets/images/ui/ic_math_multiplication.webp',
       unlockHint: 'Spela en gånger-runda.',
     ),
     AchievementDefinition(
@@ -42,7 +42,7 @@ abstract final class AchievementCatalog {
       displayName: 'Första delatrundan',
       albumLabel: 'Delat',
       emoji: '➗',
-      assetPath: 'assets/images/ui/ic_math_division.png',
+      assetPath: 'assets/images/ui/ic_math_division.webp',
       unlockHint: 'Spela en delat-runda.',
     ),
     AchievementDefinition(
@@ -50,7 +50,7 @@ abstract final class AchievementCatalog {
       displayName: 'Perfekt resultat',
       albumLabel: 'Perfekt',
       emoji: '⭐',
-      assetPath: 'assets/images/ui/ic_ui_star.png',
+      assetPath: 'assets/images/ui/ic_ui_star.webp',
       unlockHint: 'Svara rätt på alla frågor i ett quiz.',
     ),
     AchievementDefinition(
@@ -58,7 +58,7 @@ abstract final class AchievementCatalog {
       displayName: 'Klarade svår nivå',
       albumLabel: 'Svår',
       emoji: '🧗',
-      assetPath: 'assets/images/ui/img_school_cap.png',
+      assetPath: 'assets/images/ui/img_school_cap.webp',
       unlockHint: 'Klara ett svårt quiz, eller ett medel-quiz med alla rätt.',
     ),
     AchievementDefinition(
@@ -66,7 +66,7 @@ abstract final class AchievementCatalog {
       displayName: '10 quiz spelade',
       albumLabel: '10 quiz',
       emoji: '🎒',
-      assetPath: 'assets/images/items/item_backpack_adventure_nobg.png',
+      assetPath: 'assets/images/items/item_backpack_adventure_nobg.webp',
       unlockHint: 'Spela 10 quiz.',
     ),
     AchievementDefinition(
@@ -74,7 +74,7 @@ abstract final class AchievementCatalog {
       displayName: '500 poäng',
       albumLabel: '500 p',
       emoji: '🪙',
-      assetPath: 'assets/images/ui/img_loot_chest.png',
+      assetPath: 'assets/images/ui/img_loot_chest.webp',
       unlockHint: 'Samla 500 poäng.',
     ),
     AchievementDefinition(
@@ -82,7 +82,7 @@ abstract final class AchievementCatalog {
       displayName: '1000 poäng',
       albumLabel: '1000 p',
       emoji: '🏅',
-      assetPath: 'assets/images/ui/img_badge_level.png',
+      assetPath: 'assets/images/ui/img_badge_level.webp',
       unlockHint: 'Samla 1000 poäng.',
     ),
     AchievementDefinition(
@@ -90,7 +90,7 @@ abstract final class AchievementCatalog {
       displayName: '2000 poäng',
       albumLabel: '2000 p',
       emoji: '🏆',
-      assetPath: 'assets/images/ui/reward_chest.png',
+      assetPath: 'assets/images/ui/reward_chest.webp',
       unlockHint: 'Samla 2000 poäng.',
     ),
     AchievementDefinition(
@@ -98,7 +98,7 @@ abstract final class AchievementCatalog {
       displayName: '500 frågor',
       albumLabel: '500 frågor',
       emoji: '🧠',
-      assetPath: 'assets/images/items/item_binoculars_safari_nobg.png',
+      assetPath: 'assets/images/items/item_binoculars_safari_nobg.webp',
       unlockHint: 'Svara på 500 frågor.',
     ),
     AchievementDefinition(
@@ -106,7 +106,7 @@ abstract final class AchievementCatalog {
       displayName: '1000 frågor',
       albumLabel: '1000 frågor',
       emoji: '🚀',
-      assetPath: 'assets/images/ui/ic_ui_flash.png',
+      assetPath: 'assets/images/ui/ic_ui_flash.webp',
       unlockHint: 'Svara på 1000 frågor.',
     ),
     AchievementDefinition(
@@ -114,7 +114,7 @@ abstract final class AchievementCatalog {
       displayName: 'Alla souvenirer',
       albumLabel: 'Souvenirer',
       emoji: '🗺️',
-      assetPath: 'assets/images/items/item_map_safari_nobg.png',
+      assetPath: 'assets/images/items/item_map_safari_nobg.webp',
       unlockHint: 'Samla alla souvenirer i campet.',
     ),
     AchievementDefinition(
@@ -122,7 +122,7 @@ abstract final class AchievementCatalog {
       displayName: 'Mästare 100',
       albumLabel: '100 rätt',
       emoji: '💯',
-      assetPath: 'assets/images/ui/ic_ui_star.png',
+      assetPath: 'assets/images/ui/ic_ui_star.webp',
       unlockHint: 'Svara rätt 100 gånger.',
     ),
     AchievementDefinition(
@@ -130,7 +130,7 @@ abstract final class AchievementCatalog {
       displayName: '7-dagars streak',
       albumLabel: '7 dagar',
       emoji: '🔥',
-      assetPath: 'assets/images/story/campfire.png',
+      assetPath: 'assets/images/story/campfire.webp',
       unlockHint: 'Spela 7 dagar i rad.',
     ),
     AchievementDefinition(
@@ -138,7 +138,7 @@ abstract final class AchievementCatalog {
       displayName: '30-dagars streak',
       albumLabel: '30 dagar',
       emoji: '👑',
-      assetPath: 'assets/images/ui/img_badge_level.png',
+      assetPath: 'assets/images/ui/img_badge_level.webp',
       unlockHint: 'Spela 30 dagar i rad.',
     ),
     AchievementDefinition(
@@ -146,7 +146,7 @@ abstract final class AchievementCatalog {
       displayName: 'Episoden klar',
       albumLabel: 'Episod',
       emoji: '🌴',
-      assetPath: 'assets/images/ui/ic_ui_map.png',
+      assetPath: 'assets/images/ui/ic_ui_map.webp',
       unlockHint: 'Klara hela djungelkartan så nästa värld syns.',
     ),
   ];
