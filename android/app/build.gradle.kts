@@ -31,10 +31,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
-    }
-
     defaultConfig {
         applicationId = "se.cognifox.Siffersafari"
         // You can update the following values to match your application needs.
@@ -83,24 +79,37 @@ android {
     }
 }
 
+// `kotlinOptions.jvmTarget` is deprecated in Kotlin 2.x and Gradle compiles
+// build scripts with warnings treated as errors, so use the compilerOptions DSL.
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+}
+
 // Fail only when a release artifact is actually requested, so debug builds and
 // `flutter run` keep working without a keystore.
-gradle.taskGraph.whenReady { graph ->
-    val buildingRelease = graph.allTasks.any { task ->
-        val name = task.name
-        (name.startsWith("bundle") ||
-            name.startsWith("assemble") ||
-            name.startsWith("package")) && name.contains("Release")
-    }
+//
+// `whenReady` is passed an explicit `Action` rather than a lambda: with a bare
+// lambda Kotlin binds the Groovy `Closure` overload and fails to compile.
+gradle.taskGraph.whenReady(
+    object : org.gradle.api.Action<org.gradle.api.execution.TaskExecutionGraph> {
+        override fun execute(graph: org.gradle.api.execution.TaskExecutionGraph) {
+            val buildingRelease = graph.allTasks.any { task ->
+                val name = task.name
+                (name.startsWith("bundle") ||
+                    name.startsWith("assemble") ||
+                    name.startsWith("package")) && name.contains("Release")
+            }
 
-    if (buildingRelease && !keystorePropertiesFile.exists() && !allowDebugReleaseSigning) {
-        throw GradleException(
-            "Refusing to build a release artifact without android/key.properties. " +
-                "Add signing secrets, or set " +
-                "SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING=true for a size-gate-only build.",
-        )
-    }
-}
+            if (buildingRelease && !keystorePropertiesFile.exists() && !allowDebugReleaseSigning) {
+                throw GradleException(
+                    "Refusing to build a release artifact without android/key.properties. " +
+                        "Add signing secrets, or set " +
+                        "SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING=true for a size-gate-only build.",
+                )
+            }
+        }
+    },
+)
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
