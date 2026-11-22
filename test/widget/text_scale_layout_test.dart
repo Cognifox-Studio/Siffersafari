@@ -25,6 +25,17 @@ import 'package:siffersafari/features/quiz/presentation/widgets/question_card.da
 /// is therefore measured with a `TextPainter` using the widget's own style and
 /// the ambient text scaler.
 
+const _longWordProblem = Question(
+  id: 'q-long-word',
+  operationType: OperationType.addition,
+  difficulty: DifficultyLevel.easy,
+  operand1: 7,
+  operand2: 5,
+  correctAnswer: 9,
+  promptText: 'Loke plockar 7 mangoer i korgen och Signe plockar 5 mangoer '
+      'till. Sedan äter de 3 mangoer. Hur många mangoer är kvar i korgen?',
+);
+
 Widget _harness(
   Widget child, {
   required double textScale,
@@ -325,6 +336,62 @@ void main() {
       );
 
       expect(find.text('8'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('[Widget] Textskala – textuppgift som inte får plats', () {
+    testWidgets('vid textskala 2.0 rullas uppgiften i stället för att klippas',
+        (tester) async {
+      useViewport(tester, width: 360, height: 640);
+
+      await tester.pumpWidget(
+        _harness(
+          Center(
+            child: SizedBox(
+              width: 320,
+              height: 220,
+              child: QuestionCard(question: _longWordProblem),
+            ),
+          ),
+          textScale: 2.0,
+        ),
+      );
+
+      // Nothing is hidden: the text is laid out in full inside a scroller
+      // instead of ending in "...".
+      expect(
+        find.byKey(const Key('question_card_scrollable_text')),
+        findsOneWidget,
+        reason: 'Vid textskala 2.0 ska uppgiften kunna läsas i sin helhet',
+      );
+      final text = tester.widget<Text>(find.text(_longWordProblem.promptText!));
+      expect(text.maxLines, isNull);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('vid textskala 1.0 klipps inget och ingen scrollning behövs',
+        (tester) async {
+      useViewport(tester, width: 360, height: 640);
+
+      await tester.pumpWidget(
+        _harness(
+          Center(
+            child: SizedBox(
+              width: 320,
+              height: 220,
+              child: QuestionCard(question: _longWordProblem),
+            ),
+          ),
+          textScale: 1.0,
+        ),
+      );
+
+      expect(
+        find.byKey(const Key('question_card_scrollable_text')),
+        findsNothing,
+        reason: 'Normal textstorlek ska inte behöva scrollas',
+      );
       expect(tester.takeException(), isNull);
     });
   });

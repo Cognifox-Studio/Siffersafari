@@ -234,6 +234,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     final ttsEnabled = activeUser != null
         ? ref.watch(ttsEnabledProvider(activeUser.userId))
         : false;
+    // A muted profile is muted: no read-aloud button, no automatic reading.
+    // The profile's own sound setting is the contract, so it wins over the
+    // parent dashboard's read-aloud preference.
+    final readAloudAvailable =
+        ttsEnabled && (activeUser?.soundEnabled ?? false);
     // Åk 1–2 get the roomier read-aloud button; it is their main access path to
     // the question rather than a convenience.
     final youngLearner = (activeUser?.gradeLevel ?? 99) <= 2;
@@ -280,7 +285,11 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               currentSession.currentQuestionIndex >=
                   currentSession.totalQuestions - 1;
 
-          if (ttsEnabled) {
+          // Speak the feedback only when the profile itself is unmuted. This
+          // used to check `ttsEnabled` alone, which was harmless while
+          // read-aloud was off by default -- now that Åk 1-2 default to it, a
+          // muted profile would have started talking.
+          if (ttsEnabled && (hapticUser?.soundEnabled ?? false)) {
             unawaited(
               _textToSpeechService.speakFeedback(
                 _feedbackAnnouncement(feedback),
@@ -367,7 +376,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       cardBorderColor: cardBorderColor,
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
-                      ttsEnabled: ttsEnabled,
+                      showReadAloud: readAloudAvailable,
                       youngLearner: youngLearner,
                       onPrimary: onPrimary,
                       layout: layout,
@@ -385,7 +394,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                       cardBorderColor: cardBorderColor,
                       lightTextColor: lightTextColor,
                       mutedTextColor: mutedTextColor,
-                      ttsEnabled: ttsEnabled,
+                      showReadAloud: readAloudAvailable,
                       youngLearner: youngLearner,
                       onPrimary: onPrimary,
                       layout: layout,
@@ -411,7 +420,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color cardBorderColor,
     required Color lightTextColor,
     required Color mutedTextColor,
-    required bool ttsEnabled,
+    required bool showReadAloud,
     required bool youngLearner,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
@@ -435,7 +444,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
-        if (ttsEnabled)
+        if (showReadAloud)
           Padding(
             padding:
                 EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding.w),
@@ -498,7 +507,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required Color cardBorderColor,
     required Color lightTextColor,
     required Color mutedTextColor,
-    required bool ttsEnabled,
+    required bool showReadAloud,
     required bool youngLearner,
     required Color onPrimary,
     required AdaptiveLayoutInfo layout,
@@ -519,7 +528,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 onPrimary.withValues(alpha: AppOpacities.progressTrack),
           ),
         ),
-        if (ttsEnabled)
+        if (showReadAloud)
           Padding(
             padding: EdgeInsets.only(
               left: AppConstants.defaultPadding.w,

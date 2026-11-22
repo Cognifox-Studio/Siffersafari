@@ -131,3 +131,9 @@ Princip: senaste datum vinner vid konflikt.
   - Automatiken är tyst om profilens egen `soundEnabled` är av, så en tyst profil förblir tyst (klassrum).
   - Uppläsningsknappen har full tryckyta (56 dp) för Åk 1–2 i stället för `visualDensity: compact`; äldre åk behåller den kompakta.
 - Test: enhetstester för de fyra kombinationerna (inget val/Åk 1–2, inget val/Åk 5, uttryckligt nej, uttryckligt ja) samt widgettester som visar att Åk 2 får knappen och hör frågan utan konfiguration, och att Åk 5 varken får knapp eller uppläsning.
+
+### 2026-11-22
+- **Textuppgifter klipps inte längre vid stor textskala.** `_resolveWordProblemFontSize` returnerade sitt minsta försök även när texten inte rymdes, och `Text` avslutade då med "..." — slutet av uppgiften försvann tyst. Vid 200 % textskala är det hela frågan för ett barn som precis lär sig läsa. Nu returnerar resolvern även `fits`, och när inget typsnitt ryms rullas texten i stället (`question_card_scrollable_text`) i stället för att klippas.
+- **Feedback läses bara upp om profilen inte är tyst.** Uppläsningen av feedback kontrollerade bara `ttsEnabled`; det var ofarligt så länge uppläsning var av som standard, men sedan Åk 1–2 fick den på som standard skulle en tyst profil börja prata. `readAloudAvailable = ttsEnabled && soundEnabled` styr nu både knappen och automatiken — en tyst profil är tyst.
+- **Appikon:** vit ordbild på oliv (#8A8769) gav 3.65:1. Bakgrunden är nu djup djungelgrön (#1C4A2B) → 10.18:1, och alla derivat (äldre launcher-ikoner, adaptiv förgrund, Play-ikon 512) genereras från samma master med explicita marginaler av `scripts/prepare_app_icon.py`. Alfastoft under 24 rensas bort (det var de "vita prickarna").
+  - Noterat under arbetet: att behålla bara största sammanhängande alfaregionen raderade hela ordbilden — den består av tolv separata bokstäver. Tröskeln sätts därför långt under minsta bokstav (mätt: 128 celler) och verifierades genom att räkna komponenter först.

@@ -192,4 +192,55 @@ void main() {
       verifyNever(() => tts.speakQuestion(any()));
     },
   );
+
+  /// Mute has to win: the read-aloud default for Åk 1–2 must not start talking
+  /// on a profile whose sound is switched off.
+  testWidgets(
+    '[Widget] QuizScreen – tyst profil hör varken fråga eller feedback',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'muted-user';
+      const user = UserProgress(
+        userId: userId,
+        name: 'Tyst',
+        ageGroup: AgeGroup.young,
+        gradeLevel: 2,
+        soundEnabled: false,
+      );
+      await repository.saveUserProgress(user);
+      await repository.saveSetting(SettingsKeys.onboardingDone(userId), true);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: SiffersafariApp(initError: null),
+        ),
+      );
+
+      final addition = find.byKey(const Key('operation_card_addition'));
+      await pumpUntilFound(tester, addition);
+      await tester.ensureVisible(addition);
+      await tester.pump();
+      await pumpFor(
+        tester,
+        AppConstants.mediumAnimationDuration +
+            const Duration(milliseconds: 150),
+      );
+      await tapInteractiveDescendant(tester, addition);
+      await pumpUntilFound(tester, find.byType(QuestionCard));
+
+      expect(find.byKey(const Key('quiz_tts_button')), findsNothing);
+
+      final tts = getIt<TextToSpeechService>() as MockTextToSpeechService;
+      verifyNever(() => tts.speakQuestion(any()));
+      verifyNever(() => tts.speakFeedback(any()));
+    },
+  );
 }
