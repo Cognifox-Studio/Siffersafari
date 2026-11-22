@@ -59,9 +59,11 @@ jobs:
           # An AAB bundles all three ABIs plus every density, so it is several
           # times what a single device downloads.
           #   98.7 MB  before the WebP migration (43 MB of PNG art)
-          #   75 MB    budget after it - ~11 MB of headroom over the expected
-          #            ~64 MB, so genuine bloat (new art, new ABIs) trips it.
-          MAX_BYTES=$((75 * 1024 * 1024))
+          #   63.2 MB  measured after it (run 45006602047)
+          #   70 MB    budget: ~11 % headroom, so genuine bloat - new art, a new
+          #            ABI, a stray dependency - trips the gate instead of being
+          #            silently absorbed.
+          MAX_BYTES=$((70 * 1024 * 1024))
           echo "AAB size: $SIZE_BYTES bytes"
           if [ "$SIZE_BYTES" -gt "$MAX_BYTES" ]; then
             echo "AAB exceeds budget ($MAX_BYTES bytes)"
