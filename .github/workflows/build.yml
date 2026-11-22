@@ -21,6 +21,12 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      # Secrets cannot be read in a step-level `if`, so resolve it once here.
+      # When the keystore secret exists the test artifact is signed with the real
+      # release key, which means it installs *over* an existing Play build and
+      # keeps the child's local progress.
+      HAS_KEYSTORE: ${{ secrets.KEYSTORE_BASE64 != '' }}
     
     steps:
       - uses: actions/checkout@v4
@@ -56,12 +62,12 @@ jobs:
           fi
       
       - name: Decode keystore
-        if: ${{ !inputs.artifact_only }}
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
       
       - name: Create key.properties
-        if: ${{ !inputs.artifact_only }}
+        if: ${{ env.HAS_KEYSTORE == 'true' }}
         run: |
           cat > android/key.properties << EOF
           storePassword=${{ secrets.KEYSTORE_PASSWORD }}
