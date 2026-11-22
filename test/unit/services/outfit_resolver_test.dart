@@ -112,8 +112,10 @@ void main() {
 
     test('pose läses ut ur nyckeln', () {
       expect(OutfitResolver.poseOf('celebrate_item_hat_pirate'), 'celebrate');
-      expect(OutfitResolver.poseOf('answerCorrect_item_safari_hat'),
-          'answerCorrect');
+      expect(
+        OutfitResolver.poseOf('answerCorrect_item_safari_hat'),
+        'answerCorrect',
+      );
       expect(OutfitResolver.poseOf('idle_item_safari_hat'), isNull);
       expect(OutfitResolver.poseOf('head'), isNull);
     });
