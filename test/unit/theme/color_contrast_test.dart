@@ -37,8 +37,10 @@ void main() {
 
     test('legibleInkOn replaces a preferred ink that is not', () {
       // White on the selected-answer accent is ~2:1 in every theme.
-      expect(legibleInkOn(AppColors.spaceSecondary, Colors.white),
-          AppColors.textPrimary);
+      expect(
+        legibleInkOn(AppColors.spaceSecondary, Colors.white),
+        AppColors.textPrimary,
+      );
     });
 
     test('every theme fill reaches AA with the ink the widget will choose', () {
