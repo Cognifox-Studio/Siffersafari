@@ -66,4 +66,33 @@ void main() {
       expect(summary.playedOn(99), isFalse);
     });
   });
+
+  group('[Unit] Aktivitetsöversikt – text', () {
+    test('tom historik säger att första rundan räknas', () {
+      final summary = ActivitySummary.fromDailyCounts(const []);
+
+      expect(summary.caption, contains('Första rundan räknas'));
+    });
+
+    test('räknar dagar och längsta följd i klartext', () {
+      final summary = ActivitySummary.fromDailyCounts(const [1, 0, 1, 1]);
+
+      expect(summary.caption, '3 av 4 dagar med spel · längsta följden 2');
+    });
+
+    test('uppläst sammanfattning har singular när det är en dag', () {
+      final summary = ActivitySummary.fromDailyCounts(const [1, 0, 0]);
+
+      expect(summary.spokenSummary, contains('1 dag med spel'));
+      expect(summary.spokenSummary, contains('längsta följden 1 dag.'));
+    });
+
+    test('uppläst sammanfattning har plural annars', () {
+      final summary = ActivitySummary.fromDailyCounts(const [1, 1, 0]);
+
+      expect(summary.spokenSummary, contains('2 dagar med spel'));
+      expect(summary.spokenSummary, contains('längsta följden 2 dagar'));
+    });
+  });
+
 }

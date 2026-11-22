@@ -69,6 +69,29 @@ class ActivitySummary {
           ? 0
           : sessionsPerDay.reduce((a, b) => a > b ? a : b);
 
+  /// The line a parent reads under the squares.
+  ///
+  /// Copy lives here, not in the widget: "how often did we play?" is the whole
+  /// point of the card, and a sentence is easier to test than a render tree.
+  String get caption => isEmpty
+      ? 'Inga dagar med spel ännu. Första rundan räknas direkt.'
+      : '$activeDays av $totalDays dagar med spel · '
+          'längsta följden $longestRun';
+
+  /// The same thing as one spoken sentence, for TalkBack and VoiceOver.
+  ///
+  /// Ninety unlabelled squares are noise to a screen reader, so the strip is one
+  /// semantic node with a number in it.
+  String get spokenSummary {
+    if (isEmpty) {
+      return 'Ingen aktivitet de senaste $totalDays dagarna.';
+    }
+    final days = activeDays == 1 ? 'dag' : 'dagar';
+    final runDays = longestRun == 1 ? 'dag' : 'dagar';
+    return 'Aktivitet de senaste $totalDays dagarna: '
+        '$activeDays $days med spel, längsta följden $longestRun $runDays.';
+  }
+
   /// Whether the day at [index] had any play. Out-of-range is false, so a
   /// layout bug shows an empty square instead of throwing in a parent's face.
   bool playedOn(int index) =>

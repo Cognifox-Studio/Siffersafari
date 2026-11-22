@@ -839,20 +839,9 @@ class _ActivityStrip extends StatelessWidget {
     final emptyFill = onPrimary.withValues(alpha: AppOpacities.subtleFill);
     final busiest = summary.busiestDay;
 
-    String spoken() {
-      if (summary.isEmpty) {
-        return 'Ingen aktivitet de senaste ${summary.totalDays} dagarna.';
-      }
-      final days = summary.activeDays == 1 ? 'dag' : 'dagar';
-      final run = summary.longestRun == 1 ? 'dag' : 'dagar';
-      return 'Aktivitet de senaste ${summary.totalDays} dagarna: '
-          '${summary.activeDays} $days med spel, '
-          'längsta följden ${summary.longestRun} $run.';
-    }
-
     return Semantics(
       container: true,
-      label: spoken(),
+      label: summary.spokenSummary,
       child: ExcludeSemantics(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -884,10 +873,7 @@ class _ActivityStrip extends StatelessWidget {
             ),
             const SizedBox(height: AppConstants.smallPadding),
             Text(
-              summary.isEmpty
-                  ? 'Inga dagar med spel ännu. Första rundan räknas direkt.'
-                  : '${summary.activeDays} av ${summary.totalDays} dagar med '
-                      'spel · längsta följden ${summary.longestRun}',
+              summary.caption,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: mutedOnPrimary,
                     fontWeight: FontWeight.w600,
