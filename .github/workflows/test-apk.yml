@@ -1,0 +1,72 @@
+name: Test APK (installable, no release)
+
+# Builds an installable APK for device testing and uploads it as a build
+# artifact. It publishes nothing: no GitHub Release, no tag, no Play upload, and
+# it needs no signing secrets.
+#
+# The APK is a real release build (R8, tree-shaken assets) signed with the debug
+# key through the repo's explicit opt-in
+# (SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING, see android/app/build.gradle.kts),
+# which exists for size-gate builds. That makes it installable over USB or from
+# a file manager — and *not* updateable over an installed Play build, so treat it
+# as a test artifact, never as a release.
+on:
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING: 'true'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.x'
+          channel: stable
+          cache: true
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build runner
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Summarise
+        run: |
+          APK_PATH="build/app/outputs/flutter-apk/app-release.apk"
+          test -f "$APK_PATH"
+          {
+            echo "### Test-APK"
+            echo ""
+            echo "- Version: \`$(grep '^version:' pubspec.yaml | sed 's/version: //')\`"
+            echo "- Commit: \`${GITHUB_SHA:0:7}\`"
+            echo "- Size: $(du -h "$APK_PATH" | cut -f1)"
+            echo "- Signing: debug key (test artifact, not updateable over Play)"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: siffersafari-test-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 14
+          if-no-files-found: error
