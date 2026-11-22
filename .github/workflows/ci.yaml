@@ -58,10 +58,12 @@ jobs:
           profile: pixel_6
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
+          # android-emulator-runner puts this script through /bin/sh (dash), where
+          # `set -o pipefail` and `${PIPESTATUS[0]}` are syntax errors: the smoke
+          # test passed and the job still exited 2 with "Bad substitution". Hand
+          # the pipeline to bash instead.
           script: |
-            set -o pipefail
-            flutter test integration_test/app_smoke_test.dart -d emulator-${EMULATOR_PORT} --dart-define=FULL_SMOKE=false --plain-name "Smoke: app startar och hittar huvudskärm" 2>&1 | tee core_smoke.log
-            exit ${PIPESTATUS[0]}
+            bash -o pipefail -c 'flutter test integration_test/app_smoke_test.dart -d emulator-${EMULATOR_PORT} --dart-define=FULL_SMOKE=false --plain-name "Smoke: app startar och hittar huvudskärm" 2>&1 | tee core_smoke.log'
       - name: Upload core smoke log
         uses: actions/upload-artifact@v4
         with:
@@ -102,10 +104,9 @@ jobs:
           profile: pixel_6
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
+          # See core-smoke: the runner's script is executed by dash, not bash.
           script: |
-            set -o pipefail
-            flutter test integration_test/app_smoke_test.dart -d emulator-${EMULATOR_PORT} --dart-define=FULL_SMOKE=true 2>&1 | tee full_smoke.log
-            exit ${PIPESTATUS[0]}
+            bash -o pipefail -c 'flutter test integration_test/app_smoke_test.dart -d emulator-${EMULATOR_PORT} --dart-define=FULL_SMOKE=true 2>&1 | tee full_smoke.log'
       - name: Upload full smoke log
         uses: actions/upload-artifact@v4
         with:
