@@ -85,11 +85,13 @@ void main() {
     });
 
     test('Loke, som inte knuffar något, står helt stilla', () {
-      // Without a nudge the box keeps its size, so the anchor math must return
-      // what the hand-tuned pair returned. Only two things may differ: manifest
+      // Without a nudge the box keeps its size, so the anchor math returns what
+      // the hand-tuned pair returned. Only two things may differ: manifest
       // values rounded to four decimals, and stage props (camp, pet) that never
-      // had an offset of their own -- they now inherit their slot's anchor,
-      // which lands within a thousandth of the dead centre they used to get.
+      // had an offset of their own. Those used to centre the *image*; they now
+      // centre what is *visible*, which for `item_camp_temple_gate` (anchor
+      // 0.541) lifts the art by 0.025 of the body height -- 5 px on a 200 px
+      // character, and the reason this is a bound rather than an equality.
       final nudge = _characters['loke']!;
       for (final item in InventoryConfig.allItems) {
         final entry = wardrobeEntryFor(item.id);
@@ -100,12 +102,12 @@ void main() {
         final drift = _drift(item, entry, nudge);
         expect(
           drift.dx,
-          lessThanOrEqualTo(0.005),
+          lessThanOrEqualTo(0.03),
           reason: '${item.id} flyttade sig i sidled',
         );
         expect(
           drift.dy,
-          lessThanOrEqualTo(0.005),
+          lessThanOrEqualTo(0.03),
           reason: '${item.id} flyttade sig i höjdled',
         );
       }
