@@ -10,6 +10,7 @@ import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/services/outfit_looks.dart';
 import 'package:siffersafari/domain/services/outfit_resolver.dart';
 import 'package:siffersafari/domain/services/outfit_shuffler.dart';
 import 'package:siffersafari/gen/assets.g.dart';
@@ -182,7 +183,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               padding: const EdgeInsets.all(
                                 AppConstants.defaultPadding,
                               ),
-                              child: _buildGrid(
+                              child: _buildWardrobe(
                                 context,
                                 unlockedItems,
                                 equippedItems,
@@ -217,7 +218,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             padding: const EdgeInsets.all(
                               AppConstants.defaultPadding,
                             ),
-                            child: _buildGrid(
+                            child: _buildWardrobe(
                               context,
                               unlockedItems,
                               equippedItems,
@@ -296,6 +297,65 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
       if (item.id == itemId) return item.slot;
     }
     return '';
+  }
+
+  /// The panel: named looks first, then every item the child owns.
+  ///
+  /// The looks sit on top because that is the choice a seven-year-old actually
+  /// makes ("I want to be the pirate"), while the grid below is for the detail
+  /// work -- one hat, then another.
+  Widget _buildWardrobe(
+    BuildContext context,
+    List<String> unlockedItems,
+    Map<String, String> equippedItems,
+    CharacterReaction pose,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildLooks(unlockedItems),
+        const SizedBox(height: AppConstants.smallPadding),
+        Expanded(
+          child: _buildGrid(context, unlockedItems, equippedItems, pose),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLooks(List<String> unlockedItems) {
+    final owned = {
+      for (final item in InventoryConfig.wardrobeItems)
+        if (kDebugMode || unlockedItems.contains(item.id)) item.id,
+    };
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: AppConstants.smallPadding,
+      runSpacing: AppConstants.microSpacing4,
+      children: [
+        for (final look in outfitLooks)
+          ActionChip(
+            key: Key('wardrobe_look_${look.id}'),
+            avatar: const Icon(Icons.auto_awesome_rounded, size: 18),
+            label: Text(look.name),
+            onPressed: () => _applyLook(look, owned),
+          ),
+      ],
+    );
+  }
+
+  /// Puts a look on. Anything the child does not own yet stays off, so a tap
+  /// always does something visible instead of failing silently.
+  void _applyLook(OutfitLook look, Set<String> ownedIds) {
+    final outfit = lookOutfit(
+      look: look,
+      catalog: InventoryConfig.allItems,
+      unlockedIds: ownedIds,
+    );
+    if (outfit.isEmpty) return;
+
+    ref.read(audioServiceProvider).playClickSound();
+    ref.read(userProvider.notifier).applyBaseOutfit(outfit);
   }
 
   Widget _buildGrid(

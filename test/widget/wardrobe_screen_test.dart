@@ -295,6 +295,54 @@ void main() {
     },
   );
 
+  testWidgets(
+    '[Widget] WardrobeScreen – färdig outfit tar på hela looken',
+    (WidgetTester tester) async {
+      const userId = 'look-user';
+      await repository.clearAllData();
+      await repository.saveUserProgress(
+        const UserProgress(
+          userId: userId,
+          name: 'Alva',
+          ageGroup: AgeGroup.middle,
+        ),
+      );
+      await repository.setActiveUserId(userId);
+
+      await tester.pumpWidget(
+        const ProviderScope(
+          child: ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(
+              home: _WardrobeHarness(),
+            ),
+          ),
+        ),
+      );
+
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('wardrobe_look_pirate')),
+      );
+
+      await tester.tap(find.byKey(const Key('wardrobe_look_pirate')));
+      await tester.pumpAndSettle();
+
+      final equipped = repository.getUserProgress(userId)!.equippedItems;
+      expect(equipped['idle_item_hat_pirate'], 'item_hat_pirate');
+      expect(
+        equipped.values.where((id) => id.contains('hat')).length,
+        1,
+        reason: 'Looken ska byta hatt, inte lägga till en till',
+      );
+      expect(
+        equipped.keys.every((key) => key.startsWith('idle_')),
+        isTrue,
+        reason: 'En look klär barnet i alla poser',
+      );
+    },
+  );
+
 }
 
 class _WardrobeHarness extends ConsumerStatefulWidget {
