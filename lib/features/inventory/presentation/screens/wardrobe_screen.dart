@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -8,7 +10,9 @@ import 'package:siffersafari/core/theme/app_theme_colors.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
 import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/services/outfit_looks.dart';
 import 'package:siffersafari/domain/services/outfit_resolver.dart';
+import 'package:siffersafari/domain/services/outfit_shuffler.dart';
 import 'package:siffersafari/gen/assets.g.dart';
 import 'package:siffersafari/presentation/widgets/game_character.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
@@ -81,7 +85,8 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Välj pose — kläderna sparas per pose',
+                    'Posen ändrar bara hur figuren rör sig — plaggen sitter på '
+                    'oavsett pose',
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: Theme.of(context)
                               .colorScheme
@@ -136,6 +141,18 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppConstants.smallPadding),
+                  FilledButton.tonalIcon(
+                    key: const Key('wardrobe_randomize'),
+                    onPressed: () => _shuffleOutfit(unlockedItems),
+                    icon: const Icon(Icons.casino_rounded),
+                    label: const Text('Slumpa outfit'),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size.square(
+                        AppConstants.minTouchTargetSize,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -166,7 +183,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                               padding: const EdgeInsets.all(
                                 AppConstants.defaultPadding,
                               ),
-                              child: _buildGrid(
+                              child: _buildWardrobe(
                                 context,
                                 unlockedItems,
                                 equippedItems,
@@ -201,7 +218,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
                             padding: const EdgeInsets.all(
                               AppConstants.defaultPadding,
                             ),
-                            child: _buildGrid(
+                            child: _buildWardrobe(
                               context,
                               unlockedItems,
                               equippedItems,
@@ -257,12 +274,88 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
     );
   }
 
+  /// Dresses the child in a random combination of what they own.
+  ///
+  /// One tap instead of six: the fun part of a wardrobe for a seven-year-old is
+  /// seeing a result, not dragging a hat into place.
+  void _shuffleOutfit(List<String> unlockedItems) {
+    ref.read(audioServiceProvider).playClickSound();
+
+    final available = InventoryConfig.wardrobeItems
+        .where((item) => kDebugMode || unlockedItems.contains(item.id))
+        .toList();
+    if (available.isEmpty) return;
+
+    ref.read(userProvider.notifier).applyBaseOutfit(
+          OutfitShuffler.shuffle(available: available, random: Random()),
+        );
+  }
+
   /// Which slot an item belongs to; two items in one slot never draw together.
   static String _slotOf(String itemId) {
     for (final item in InventoryConfig.allItems) {
       if (item.id == itemId) return item.slot;
     }
     return '';
+  }
+
+  /// The panel: named looks first, then every item the child owns.
+  ///
+  /// The looks sit on top because that is the choice a seven-year-old actually
+  /// makes ("I want to be the pirate"), while the grid below is for the detail
+  /// work -- one hat, then another.
+  Widget _buildWardrobe(
+    BuildContext context,
+    List<String> unlockedItems,
+    Map<String, String> equippedItems,
+    CharacterReaction pose,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildLooks(unlockedItems),
+        const SizedBox(height: AppConstants.smallPadding),
+        Expanded(
+          child: _buildGrid(context, unlockedItems, equippedItems, pose),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLooks(List<String> unlockedItems) {
+    final owned = {
+      for (final item in InventoryConfig.wardrobeItems)
+        if (kDebugMode || unlockedItems.contains(item.id)) item.id,
+    };
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: AppConstants.smallPadding,
+      runSpacing: AppConstants.microSpacing4,
+      children: [
+        for (final look in outfitLooks)
+          ActionChip(
+            key: Key('wardrobe_look_${look.id}'),
+            avatar: const Icon(Icons.auto_awesome_rounded, size: 18),
+            label: Text(look.name),
+            onPressed: () => _applyLook(look, owned),
+          ),
+      ],
+    );
+  }
+
+  /// Puts a look on. Anything the child does not own yet stays off, so a tap
+  /// always does something visible instead of failing silently.
+  void _applyLook(OutfitLook look, Set<String> ownedIds) {
+    final outfit = lookOutfit(
+      look: look,
+      catalog: InventoryConfig.allItems,
+      unlockedIds: ownedIds,
+    );
+    if (outfit.isEmpty) return;
+
+    ref.read(audioServiceProvider).playClickSound();
+    ref.read(userProvider.notifier).applyBaseOutfit(outfit);
   }
 
   Widget _buildGrid(
@@ -297,8 +390,7 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
         final isUnlocked = kDebugMode || unlockedItems.contains(item.id);
         final itemCacheSize = imageCacheExtent(context, 84);
 
-        final equippedKey = poseKeyFor[item.id];
-        final isEquippedInPose = equippedKey != null;
+        final isEquippedInPose = poseKeyFor.containsKey(item.id);
 
         final lockedHint = InventoryConfig.lockedWardrobeHint(
           item.id,
@@ -317,11 +409,12 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
               if (isUnlocked) {
                 ref.read(audioServiceProvider).playClickSound();
                 if (isEquippedInPose) {
-                  ref.read(userProvider.notifier).unequipItem(equippedKey);
+                  ref.read(userProvider.notifier).unequipItemById(item.id);
                 } else {
-                  ref
-                      .read(userProvider.notifier)
-                      .equipItem('${pose.name}_${item.id}', item.id);
+                  ref.read(userProvider.notifier).equipItemInSlot(
+                        itemId: item.id,
+                        slot: item.slot,
+                      );
                 }
                 return;
               }

@@ -95,6 +95,56 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('visar dagens mål och räknar upp', (tester) async {
+      await tester.pumpWidget(
+        harness(
+          HomeStreakBadge(
+            streak: 4,
+            longestStreak: 4,
+            lastSessionDate: DateTime(2026, 11, 21),
+            now: now,
+            sessionsToday: 1,
+            gradeLevel: 4,
+          ),
+        ),
+      );
+
+      expect(find.byKey(HomeStreakBadge.goalKey), findsOneWidget);
+      expect(find.text('Dagens mål: 1 av 2 rundor'), findsOneWidget);
+    });
+
+    testWidgets('säger att målet är klart när det är klart', (tester) async {
+      await tester.pumpWidget(
+        harness(
+          HomeStreakBadge(
+            streak: 2,
+            longestStreak: 2,
+            lastSessionDate: DateTime(2026, 11, 22, 8),
+            now: now,
+            sessionsToday: 1,
+            gradeLevel: 2,
+          ),
+        ),
+      );
+
+      expect(find.text('Dagens mål klart'), findsOneWidget);
+    });
+
+    testWidgets('utan sessionsdata visas ingen mållinje', (tester) async {
+      await tester.pumpWidget(
+        harness(
+          HomeStreakBadge(
+            streak: 3,
+            longestStreak: 3,
+            lastSessionDate: DateTime(2026, 11, 21),
+            now: now,
+          ),
+        ),
+      );
+
+      expect(find.byKey(HomeStreakBadge.goalKey), findsNothing);
+    });
+
     testWidgets('klarar 200 % textskala utan att klippa', (tester) async {
       await tester.pumpWidget(
         harness(

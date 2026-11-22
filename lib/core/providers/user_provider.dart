@@ -5,6 +5,7 @@ import 'package:siffersafari/core/services/apply_quiz_result_use_case.dart';
 import 'package:siffersafari/core/services/audio_service.dart';
 import 'package:siffersafari/core/services/quest_progression_service.dart';
 import 'package:siffersafari/core/services/streak_resolver.dart';
+import 'package:siffersafari/domain/services/outfit_resolver.dart';
 import 'package:siffersafari/core/services/user_audio_settings_service.dart';
 import 'package:siffersafari/core/services/user_quest_state_service.dart';
 import 'package:siffersafari/data/repositories/local_storage_repository.dart';
@@ -385,6 +386,67 @@ class UserNotifier extends StateNotifier<UserState> {
     updatedEquipped[slot] = itemId;
     final updatedUser = user.copyWith(equippedItems: updatedEquipped);
     await saveUser(updatedUser);
+  }
+
+  /// Puts [itemId] on for good, replacing whatever was in the same slot.
+  ///
+  /// The pose buttons in the wardrobe preview an animation; they do not decide
+  /// what the child owns. A hat put on while "Rätt" was selected used to be
+  /// stored as an override that only appeared when the character answered
+  /// correctly — invisible everywhere else. This always writes the base outfit
+  /// key (`idle_<itemId>`), which [OutfitResolver] treats as "worn unless a pose
+  /// overrides this slot".
+  Future<void> equipItemInSlot({
+    required String itemId,
+    required String slot,
+  }) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final sameSlotIds = InventoryConfig.allItems
+        .where((item) => item.slot == slot)
+        .map((item) => item.id)
+        .toSet();
+
+    final updated = Map<String, String>.from(user.equippedItems);
+    updated.removeWhere(
+      (key, value) =>
+          OutfitResolver.isBaseKey(key) && sameSlotIds.contains(value),
+    );
+    updated['idle_$itemId'] = itemId;
+
+    await saveUser(user.copyWith(equippedItems: updated));
+  }
+
+  /// Replaces the base outfit in one write.
+  ///
+  /// Used by "Slumpa": equipping six items one at a time would be six saves and
+  /// six rebuilds, and the child would watch the character get dressed in slow
+  /// motion.
+  Future<void> applyBaseOutfit(Map<String, String> outfit) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updated = Map<String, String>.from(user.equippedItems)
+      ..removeWhere((key, _) => OutfitResolver.isBaseKey(key))
+      ..addAll(outfit);
+
+    await saveUser(user.copyWith(equippedItems: updated));
+  }
+
+  /// Takes [itemId] off everywhere, base outfit and pose overrides alike.
+  ///
+  /// "Take it off" has to mean off: leaving an override behind would make the
+  /// item reappear in another pose and look like the tap did nothing.
+  Future<void> unequipItemById(String itemId) async {
+    final user = state.activeUser;
+    if (user == null) return;
+
+    final updated = Map<String, String>.from(user.equippedItems)
+      ..removeWhere((_, value) => value == itemId);
+    if (updated.length == user.equippedItems.length) return;
+
+    await saveUser(user.copyWith(equippedItems: updated));
   }
 
   /// Unequips any item in the specified slot for the active user.

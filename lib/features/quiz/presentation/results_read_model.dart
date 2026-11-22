@@ -4,6 +4,7 @@ import 'package:siffersafari/core/services/achievement_service.dart';
 import 'package:siffersafari/domain/entities/quiz_session.dart';
 import 'package:siffersafari/domain/entities/story_progress.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
+import 'package:siffersafari/domain/services/streak_celebration.dart';
 
 class ResultsReadModel {
   const ResultsReadModel({
@@ -16,6 +17,7 @@ class ResultsReadModel {
     required this.shouldCelebrate,
     required this.totalPoints,
     required this.hasStoryCheckpoint,
+    required this.streak,
   });
 
   final QuizSession? session;
@@ -27,6 +29,9 @@ class ResultsReadModel {
   final bool shouldCelebrate;
   final int totalPoints;
   final bool hasStoryCheckpoint;
+
+  /// Streak line for the results screen, or null when there is nothing to say.
+  final StreakCelebration? streak;
 
   static int calculateStars(double successRate) {
     if (successRate >= 0.9) return 3;
@@ -52,6 +57,7 @@ class ResultsReadModel {
         shouldCelebrate: false,
         totalPoints: 0,
         hasStoryCheckpoint: false,
+        streak: null,
       );
     }
 
@@ -63,6 +69,13 @@ class ResultsReadModel {
     final bonusPoints = reward?.bonusPoints ?? 0;
     final questCompletion = userState.lastQuestCompletion;
     final hasStoryCheckpoint = questCompletion != null && storyProgress != null;
+    final activeUser = userState.activeUser;
+    final streak = activeUser == null
+        ? null
+        : streakCelebration(
+            currentStreak: activeUser.currentStreak,
+            longestStreak: activeUser.longestStreak,
+          );
 
     return ResultsReadModel(
       session: session,
@@ -74,6 +87,7 @@ class ResultsReadModel {
       shouldCelebrate: shouldCelebrate,
       totalPoints: session.totalPoints + bonusPoints,
       hasStoryCheckpoint: hasStoryCheckpoint,
+      streak: streak,
     );
   }
 }

@@ -247,4 +247,96 @@ void main() {
       );
     },
   );
+  testWidgets(
+    '[Widget] ResultsScreen – visar sviten som förlängdes idag',
+    (WidgetTester tester) async {
+      tester.view.devicePixelRatio = 1.0;
+      tester.view.physicalSize = const Size(375, 812);
+      addTearDown(() {
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      });
+
+      await repository.clearAllData();
+
+      const userId = 'streak-user';
+      final initialUser = UserProgress(
+        userId: userId,
+        name: 'Elva',
+        ageGroup: AgeGroup.middle,
+        totalQuizzesTaken: 3,
+        totalPoints: 120,
+        currentStreak: 3,
+        longestStreak: 3,
+        lastSessionDate: DateTime.now().subtract(const Duration(days: 1)),
+      );
+
+      await repository.saveUserProgress(initialUser);
+      await repository.setActiveUserId(userId);
+
+      const question = Question(
+        id: 'streak_q1',
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        operand1: 6,
+        operand2: 1,
+        correctAnswer: 7,
+        wrongAnswers: [6, 8, 9],
+        explanation: '6 + 1 = 7',
+      );
+
+      const session = QuizSession(
+        sessionId: 'streak_session',
+        ageGroup: AgeGroup.middle,
+        operationType: OperationType.addition,
+        difficulty: DifficultyLevel.easy,
+        questions: [question],
+        targetQuestionCount: 1,
+        correctAnswers: 1,
+        wrongAnswers: 0,
+        totalPoints: 20,
+        answers: {'streak_q1': 7},
+      );
+
+      final container = ProviderContainer(
+        overrides: [
+          quizProvider.overrideWith(
+            (ref) => _SeededQuizNotifier(
+              repository: repository,
+              userId: userId,
+              session: session,
+            ),
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+
+      await container.read(userProvider.notifier).loadUsers();
+
+      await tester.pumpWidget(
+        UncontrolledProviderScope(
+          container: container,
+          child: const ScreenUtilInit(
+            designSize: Size(375, 812),
+            child: MaterialApp(home: ResultsScreen()),
+          ),
+        ),
+      );
+
+      await tester.pump();
+      await pumpUntilFound(
+        tester,
+        find.byKey(const Key('results_streak_pill')),
+      );
+
+      final pill = find.byKey(const Key('results_streak_pill'));
+      expect(pill, findsOneWidget);
+      expect(find.text('Dagar i rad – rekord!'), findsOneWidget);
+      expect(
+        container.read(userProvider).activeUser?.currentStreak,
+        4,
+        reason: 'Gårdagens runda plus idag ska bli fyra dagar i rad',
+      );
+    },
+  );
 }

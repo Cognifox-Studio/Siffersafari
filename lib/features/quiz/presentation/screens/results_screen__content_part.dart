@@ -72,7 +72,12 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
 
     final shouldCelebrate =
         await ref.read(resultsFlowProvider).commitSessionResults(session);
-    if (shouldCelebrate) {
+    // Extending the streak is a win in its own right, even on a round that was
+    // not perfect: the child came back today, and that is what the streak is
+    // counting. The read model already sees the freshly committed streak.
+    final beatTheRecord =
+        ref.read(resultsReadModelProvider).streak?.isRecord ?? false;
+    if (shouldCelebrate || beatTheRecord) {
       _celebrateTimer = Timer(const Duration(milliseconds: 900), () {
         if (mounted) {
           setState(() {
@@ -136,6 +141,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
     final activeUser = userState.activeUser;
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
+    final streak = readModel.streak;
 
     final summaryHero = Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -195,6 +201,14 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                 icon: Icons.star_rounded,
                 highlightColor: themeColors.primaryActionColor,
               ),
+              if (streak != null)
+                PlayfulStatPill(
+                  key: const Key('results_streak_pill'),
+                  label: streak.label,
+                  value: streak.value,
+                  icon: Icons.local_fire_department_rounded,
+                  highlightColor: themeColors.secondaryActionColor,
+                ),
             ],
           ),
         ],

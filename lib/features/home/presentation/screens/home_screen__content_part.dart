@@ -485,6 +485,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         longestStreak: user.longestStreak,
                         lastSessionDate: user.lastSessionDate,
                         brokenStreak: ref.watch(userProvider).streakBrokenFrom,
+                        sessionsToday: ref
+                            .read(dailyActivityProvider)
+                            .activityOn(userId: user.userId)
+                            .sessions,
+                        gradeLevel: user.gradeLevel,
                       ),
                     PlayfulPanel(
                       hero: true,
