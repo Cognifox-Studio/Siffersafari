@@ -54,10 +54,7 @@ except ImportError:  # pragma: no cover - developer setup issue
 
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "lib" / "domain" / "entities" / "inventory_item.dart"
-HIT_SHAPES = (
-    ROOT / "lib" / "presentation" / "widgets"
-    / "game_character__inventory_helpers_part.dart"
-)
+HIT_SHAPE_OVERRIDES = ROOT / "assets" / "wardrobe" / "hit_shape_overrides.json"
 MANIFEST_JSON = ROOT / "assets" / "wardrobe" / "manifest.json"
 MANIFEST_DART = ROOT / "lib" / "domain" / "entities" / "wardrobe_manifest.g.dart"
 
@@ -130,37 +127,27 @@ def _catalog_entries() -> list[dict[str, object]]:
 
 
 def _hit_shape_overrides() -> dict[str, tuple[float, float, float]]:
-    """Read the hand-tuned hit shapes out of the renderer.
+    """Hand-tuned tap targets, kept as data instead of as code.
 
-    They were a `case 'item_x':` switch -- the last place where adding an item
-    cost an edit in the widget. Their values are worth keeping (a hat's tap
-    target was tuned for a seven-year-old's finger, not measured), so they move
-    into the manifest as overrides instead of being thrown away with the switch.
+    They used to be a `case 'item_x':` switch in the renderer, which meant every
+    new item was an edit in a widget and the only guard was a test that grepped
+    the source for `case '` lines. The values were tuned for a seven-year-old's
+    finger (a hat's target is wider than its art), so they are worth keeping --
+    they simply live in JSON next to the manifest now.
     """
-    source = HIT_SHAPES.read_text(encoding="utf-8")
-    start = source.index("_getInteractiveHitShape")
-    # Stop at the slot fallback: those are per-slot defaults, not per-item.
-    end = source.index("switch (slot)", start)
-    body = source[start:end]
-    # Comments may sit between a case and its return; they carry no values.
-    body = "\n".join(
-        line for line in body.splitlines() if not line.strip().startswith("//")
-    )
+    if not HIT_SHAPE_OVERRIDES.exists():
+        return {}
 
-    pattern = re.compile(
-        r"((?:\s*case '[^']+':)+)\s*"
-        r"return \(widthFactor: ([\d.]+), heightFactor: ([\d.]+), "
-        r"paddingFactor: ([\d.]+)\);"
-    )
-
-    overrides: dict[str, tuple[float, float, float]] = {}
-    for match in pattern.finditer(body):
-        case_block = match.group(1)
-        values = (float(match.group(2)), float(match.group(3)), float(match.group(4)))
-        for item_id in re.findall(r"case '([^']+)':", case_block):
-            overrides[item_id] = values
-
-    return overrides
+    payload = json.loads(HIT_SHAPE_OVERRIDES.read_text(encoding="utf-8"))
+    items = payload.get("items", {})
+    return {
+        item_id: (
+            float(values["widthFactor"]),
+            float(values["heightFactor"]),
+            float(values["paddingFactor"]),
+        )
+        for item_id, values in items.items()
+    }
 
 
 def _art(asset: str) -> dict[str, object] | None:
