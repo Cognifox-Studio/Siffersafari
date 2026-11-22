@@ -47,6 +47,26 @@ Nu skriver garderoben alltid basoutfiten (`idle_<itemId>`), byter ut plagget i s
 
 Samma test pinnar att `item_safari_hat` och `item_hat_safari` är **två** plagg med två olika bilder, inte en dubblett. De heter nästan likadant, men id:na får inte bytas: en namnändring kräver migrering av `unlockedItems` i alla befintliga profiler, och vinsten för barnet är noll.
 
+## Safariskorna syntes aldrig
+
+`_slotLayers` i `game_character.dart` listar de sex lager som faktiskt ritas: `back`, `body`, `face`, `head`, `accessory`, `front`. `item_shoes_safari` ligger i slot `feet`, som **inte** fanns i listan. Barnet kunde alltså låsa upp skorna, trycka på dem, se rutan lysa — och ingenting hände på figuren. Ingenstans klagade appen: ett plagg i en okänd slot hoppas bara över.
+
+`feet` är nu ett riktigt lager (under skjortan, så en lång tröja kan hänga över skorna), `_getInteractiveHitShape` har ett explicit case för skorna, och två tester håller det stängt:
+
+- `wardrobe_slots_audit_test` — varje plagg i garderoben måste ha en slot som ritas, och manifestets z-ordning måste vara **identisk** med `_slotLayers`.
+- `game_character_test` — frågar render-trädet, inte katalogen: skorna ska finnas som `Image` när de är på.
+
+## Manifestet: positionen härleds ur bilden
+
+`scripts/prepare_wardrobe_items.py` läser varje WebP:s opaka bbox med Pillow och skriver:
+
+- `assets/wardrobe/manifest.json` — granskningsbar diff, för människor
+- `lib/domain/entities/wardrobe_manifest.g.dart` — `const`, så appen parsar ingen JSON vid start
+
+Härlett: `anchor` (var i bilden det synliga sitter, 0–1), `hitShape` (bbox + 2 % padding, i stället för att gissa på slot) och `zOrder` (från slotordningen). Icke härlett: `legacy.offset`/`legacy.renderScale` — de handjusterade värdena följer med oförändrade, så scriptet **kan inte** ändra hur spelet ser ut. Nästa steg är att låta `GameCharacter` läsa ankarpunkten i stället, och då är det en rad per plagg att växla.
+
+Kör: `python3 scripts/prepare_wardrobe_items.py` (kräver Pillow). `--check` fäller om filerna är inaktuella. CI kör aldrig scriptet; `wardrobe_slots_audit_test` jämför i stället det genererade manifestet mot katalogen, så drift fälls utan Python i CI.
+
 ## Två saker att kolla innan manifestet låses
 
 - `item_safari_hat` ("Safarihatt") och `item_hat_safari` ("Utforskarhatt") ser ut som dubbletter — jämför bilderna innan båda skrivs in i ett manifest.

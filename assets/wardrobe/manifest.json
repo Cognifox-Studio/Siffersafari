@@ -1,0 +1,593 @@
+{
+  "schemaVersion": 1,
+  "generatedBy": "scripts/prepare_wardrobe_items.py",
+  "slotOrder": [
+    "back",
+    "feet",
+    "body",
+    "face",
+    "head",
+    "accessory",
+    "front"
+  ],
+  "items": [
+    {
+      "id": "item_safari_hat",
+      "name": "Safarihatt",
+      "slot": "head",
+      "zOrder": 4,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_safari_hat.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        33,
+        101,
+        434,
+        255
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.457
+      },
+      "hitShape": {
+        "widthFactor": 0.888,
+        "heightFactor": 0.53,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          -2.8
+        ],
+        "renderScale": 0.85
+      }
+    },
+    {
+      "id": "item_hat_safari",
+      "name": "Utforskarhatt",
+      "slot": "head",
+      "zOrder": 4,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_hat_safari.webp",
+      "image": {
+        "width": 384,
+        "height": 384
+      },
+      "opaqueBbox": [
+        18,
+        89,
+        348,
+        172
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.4557
+      },
+      "hitShape": {
+        "widthFactor": 0.9263,
+        "heightFactor": 0.4679,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          -2.8
+        ],
+        "renderScale": 0.85
+      }
+    },
+    {
+      "id": "item_binoculars_safari",
+      "name": "Kikare",
+      "slot": "accessory",
+      "zOrder": 5,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_binoculars_safari_nobg.webp",
+      "image": {
+        "width": 1024,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        81,
+        220,
+        857,
+        525
+      ],
+      "anchor": {
+        "x": 0.4976,
+        "y": 0.4712
+      },
+      "hitShape": {
+        "widthFactor": 0.8569,
+        "heightFactor": 0.5327,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          1.6,
+          0.35
+        ],
+        "renderScale": 0.4
+      }
+    },
+    {
+      "id": "item_compass_safari",
+      "name": "Kompass",
+      "slot": "accessory",
+      "zOrder": 5,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_compass_safari_nobg.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        99,
+        45,
+        302,
+        364
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.454
+      },
+      "hitShape": {
+        "widthFactor": 0.624,
+        "heightFactor": 0.748,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.3
+        ],
+        "renderScale": 0.35
+      }
+    },
+    {
+      "id": "item_map_safari",
+      "name": "Karta",
+      "slot": "front",
+      "zOrder": 6,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_map_safari_nobg.webp",
+      "image": {
+        "width": 612,
+        "height": 408
+      },
+      "opaqueBbox": [
+        36,
+        32,
+        538,
+        329
+      ],
+      "anchor": {
+        "x": 0.4984,
+        "y": 0.4816
+      },
+      "hitShape": {
+        "widthFactor": 0.8991,
+        "heightFactor": 0.8264,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          -1.35,
+          0.15
+        ],
+        "renderScale": 0.45
+      }
+    },
+    {
+      "id": "item_shoes_safari",
+      "name": "Safariskor",
+      "slot": "feet",
+      "zOrder": 1,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_shoes_safari.webp",
+      "image": {
+        "width": 612,
+        "height": 408
+      },
+      "opaqueBbox": [
+        89,
+        123,
+        434,
+        141
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.4743
+      },
+      "hitShape": {
+        "widthFactor": 0.7292,
+        "heightFactor": 0.3656,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          2.8
+        ],
+        "renderScale": 0.65
+      }
+    },
+    {
+      "id": "item_hat_pirate",
+      "name": "Pirathatt",
+      "slot": "head",
+      "zOrder": 4,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_hat_pirate_nobg.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        20,
+        103,
+        461,
+        286
+      ],
+      "anchor": {
+        "x": 0.501,
+        "y": 0.492
+      },
+      "hitShape": {
+        "widthFactor": 0.942,
+        "heightFactor": 0.592,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          -2.8
+        ],
+        "renderScale": 0.85
+      }
+    },
+    {
+      "id": "item_glasses_nerd",
+      "name": "Smarta glasögon",
+      "slot": "face",
+      "zOrder": 3,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_glasses_nerd_nobg.webp",
+      "image": {
+        "width": 612,
+        "height": 408
+      },
+      "opaqueBbox": [
+        121,
+        117,
+        370,
+        142
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.4608
+      },
+      "hitShape": {
+        "widthFactor": 0.6246,
+        "heightFactor": 0.368,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          -0.8
+        ],
+        "renderScale": 0.9
+      }
+    },
+    {
+      "id": "item_backpack_adventure",
+      "name": "Äventyrsryggsäck",
+      "slot": "accessory",
+      "zOrder": 5,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_backpack_adventure_nobg.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        50,
+        35,
+        391,
+        349
+      ],
+      "anchor": {
+        "x": 0.491,
+        "y": 0.419
+      },
+      "hitShape": {
+        "widthFactor": 0.802,
+        "heightFactor": 0.718,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          -2.0,
+          1.4
+        ],
+        "renderScale": 0.6
+      }
+    },
+    {
+      "id": "item_shirt_explorer",
+      "name": "Äventyrsskjorta",
+      "slot": "body",
+      "zOrder": 2,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_shirt_explorer_nobg.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        43,
+        69,
+        414,
+        348
+      ],
+      "anchor": {
+        "x": 0.5,
+        "y": 0.486
+      },
+      "hitShape": {
+        "widthFactor": 0.848,
+        "heightFactor": 0.716,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.45
+        ],
+        "renderScale": 0.95
+      }
+    },
+    {
+      "id": "item_camera_safari",
+      "name": "Safariskamera",
+      "slot": "accessory",
+      "zOrder": 5,
+      "showInWardrobe": true,
+      "asset": "assets/images/items/item_camera_safari_nobg.webp",
+      "image": {
+        "width": 500,
+        "height": 500
+      },
+      "opaqueBbox": [
+        18,
+        82,
+        462,
+        323
+      ],
+      "anchor": {
+        "x": 0.498,
+        "y": 0.487
+      },
+      "hitShape": {
+        "widthFactor": 0.944,
+        "heightFactor": 0.666,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          1.4,
+          0.45
+        ],
+        "renderScale": 0.45
+      }
+    },
+    {
+      "id": "item_camp_fruit_glade",
+      "name": "Fruktgläntan",
+      "slot": "camp",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/story/map_fruit_glade.webp",
+      "image": {
+        "width": 1536,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        4,
+        0,
+        1521,
+        1024
+      ],
+      "anchor": {
+        "x": 0.4977,
+        "y": 0.5
+      },
+      "hitShape": {
+        "widthFactor": 1.0,
+        "heightFactor": 1.0,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.58
+      }
+    },
+    {
+      "id": "item_camp_bridge",
+      "name": "Repbron",
+      "slot": "camp",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/story/map_bridge.webp",
+      "image": {
+        "width": 1536,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        0,
+        0,
+        1525,
+        1024
+      ],
+      "anchor": {
+        "x": 0.4964,
+        "y": 0.5
+      },
+      "hitShape": {
+        "widthFactor": 1.0,
+        "heightFactor": 1.0,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.62
+      }
+    },
+    {
+      "id": "item_camp_cartography",
+      "name": "Kartlägret",
+      "slot": "camp",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/story/map_cartography_camp.webp",
+      "image": {
+        "width": 1536,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        0,
+        0,
+        1525,
+        1024
+      ],
+      "anchor": {
+        "x": 0.4964,
+        "y": 0.5
+      },
+      "hitShape": {
+        "widthFactor": 1.0,
+        "heightFactor": 1.0,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.62
+      }
+    },
+    {
+      "id": "item_camp_temple_gate",
+      "name": "Tempelporten",
+      "slot": "camp",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/story/map_temple_gate.webp",
+      "image": {
+        "width": 1024,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        47,
+        142,
+        929,
+        824
+      ],
+      "anchor": {
+        "x": 0.4995,
+        "y": 0.541
+      },
+      "hitShape": {
+        "widthFactor": 0.9272,
+        "heightFactor": 0.8247,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.62
+      }
+    },
+    {
+      "id": "item_camp_treasure_cache",
+      "name": "Skattgömman",
+      "slot": "camp",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/story/map_treasure_cache.webp",
+      "image": {
+        "width": 1536,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        4,
+        0,
+        1521,
+        1024
+      ],
+      "anchor": {
+        "x": 0.4977,
+        "y": 0.5
+      },
+      "hitShape": {
+        "widthFactor": 1.0,
+        "heightFactor": 1.0,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.6
+      }
+    },
+    {
+      "id": "item_pet_zebra_companion",
+      "name": "Zebravän",
+      "slot": "pet",
+      "zOrder": -1,
+      "showInWardrobe": false,
+      "asset": "assets/images/items/item_pet_zebra_companion_nobg.webp",
+      "image": {
+        "width": 1024,
+        "height": 1024
+      },
+      "opaqueBbox": [
+        4,
+        6,
+        1017,
+        1009
+      ],
+      "anchor": {
+        "x": 0.5005,
+        "y": 0.4985
+      },
+      "hitShape": {
+        "widthFactor": 1.0,
+        "heightFactor": 1.0,
+        "paddingFactor": 0.02
+      },
+      "legacy": {
+        "offset": [
+          0.0,
+          0.0
+        ],
+        "renderScale": 0.8
+      }
+    }
+  ]
+}

@@ -330,4 +330,31 @@ void main() {
       );
     },
   );
+  testWidgets(
+    '[Widget] GameCharacter ritar skorna — feet är ett riktigt lager',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: GameCharacter(
+                height: 200,
+                equippedItems: {'idle_item_shoes_safari': 'item_shoes_safari'},
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pump();
+
+      // The shoes lived in the slot `feet`, which the character stack simply did
+      // not contain: they could be equipped and never appeared. This test asks
+      // the render tree, not the catalog.
+      expect(
+        _assetImageFinder('assets/images/items/item_shoes_safari.webp'),
+        findsOneWidget,
+      );
+    },
+  );
 }
