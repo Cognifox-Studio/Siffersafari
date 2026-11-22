@@ -78,13 +78,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   /// Reads [questionId]'s prompt aloud when the child's profile should hear it.
   ///
-  /// Deliberately silent unless every condition holds: read-aloud enabled for
-  /// the profile (Åk 1–2 by default, an explicit parent choice otherwise) and
-  /// the profile's own sound switched on, so a muted profile stays muted.
+  /// Deliberately silent unless every condition holds: the profile is Åk 1–2
+  /// (older grades read the question themselves -- there the button is the
+  /// affordance, not the default), read-aloud is enabled for the profile, and
+  /// the profile's own sound is on, so a muted profile stays muted.
   void _autoReadQuestion(String? questionId) {
     if (questionId == null || !mounted) return;
     final user = ref.read(userProvider).activeUser;
     if (user == null || !user.soundEnabled) return;
+    if ((user.gradeLevel ?? 99) > 2) return;
     if (!ref.read(ttsEnabledProvider(user.userId))) return;
     final question = ref.read(quizProvider).session?.currentQuestion;
     if (question == null || question.id != questionId) return;
