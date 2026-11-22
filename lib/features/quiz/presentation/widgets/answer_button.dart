@@ -149,14 +149,15 @@ class _AnswerButtonState extends State<AnswerButton>
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     // `minHeight` arrives from the quiz grid already expressed in logical
-    // pixels (it is derived from LayoutBuilder constraints), so scaling it
-    // again with `.h` shrank a 64 px cell to 50 px on a 640 px tall screen --
-    // which clipped the answer digit even at text scale 1.0. Only the default
-    // constant is screen-scaled here, and the result never falls below the
+    // pixels (it is derived from LayoutBuilder constraints). The default is
+    // deliberately *not* scaled with `.h`: scaling a button with screen height
+    // made it 50 px on a 640 px tall screen and 45 px on shorter ones, i.e.
+    // smallest exactly where a child's finger is least precise. A control is
+    // sized in dp, so this is a plain 64 px target floored at the app's
     // minimum touch target.
     final resolvedMinHeight = math.max(
       AppConstants.minTouchTargetSize,
-      widget.minHeight ?? AppConstants.answerButtonHeight.h,
+      widget.minHeight ?? AppConstants.answerButtonHeight,
     );
     final compact = resolvedMinHeight < AppConstants.answerButtonHeight;
     Color backgroundColor;
