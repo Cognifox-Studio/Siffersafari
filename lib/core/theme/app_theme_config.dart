@@ -110,13 +110,11 @@ class AppThemeConfig {
     }
 
     if (resolvedTheme == AppTheme.fantasy) {
-      // Desert palette + story biome preview until dedicated theme PNGs land.
       return const AppThemeConfig(
         theme: AppTheme.fantasy,
-        backgroundAsset:
-            'assets/images/story/biome_star_desert_preview.webp',
-        questHeroAsset: 'assets/images/story/biome_star_desert_preview.webp',
-        characterAsset: 'assets/images/themes/jungle/character.webp',
+        backgroundAsset: 'assets/images/themes/desert/background.webp',
+        questHeroAsset: 'assets/images/themes/desert/quest_hero.webp',
+        characterAsset: 'assets/images/themes/desert/character.webp',
         baseBackgroundColor: AppColors.desertBackground,
         primaryActionColor: AppColors.desertPrimary,
         secondaryActionColor: AppColors.desertSecondary,

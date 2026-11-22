@@ -111,3 +111,12 @@ Princip: senaste datum vinner vid konflikt.
 ### 2026-04-18
 - UI-anrop via `PostFrameCallback` inuti `build()` ersattes med `ref.listen` for sidoeffekter.
 - Borttagning av Lottie/Rive från primary runtime.
+
+### 2026-11-22
+- Temaillustrationer: `themes/space/` och nya `themes/desert/` ersatta med egen konst i atmosfärisk 2.5D-barnboksstil.
+  - Space-temats bakgrund var beige djungelvegetation (fel genre) och `space/quest_hero.webp` var en byte-identisk kopia av bakgrunden (md5) — hero-kortet visade alltså en landskapsbild, och filen lagrades två gånger.
+  - Space-astronauten levererades med en **inbakad grön chroma-ruta** (RGBA men ogenomskinliga gröna pixlar). Nu riktig alfa; `scripts/prepare_theme_art.py` gör keyningen med despill på kantpixlarna så ingen grön halo syns mot den mörka rymdbakgrunden.
+  - Öken-temat (`AppTheme.fantasy`) lånade `story/biome_star_desert_preview.webp` som helskärmsbakgrund och `themes/jungle/character.webp` som karaktär — dvs. djungelkillen visades i öknen. Egen bakgrund, egen utforskarkaraktär (flicka med scarf och goggles) och egen hero.
+  - Hero-bilderna kom med en vit pappersram; den tas bort genom att fylla pappersbandet inifrån med närmaste riktiga pixlar (kantförlängning), inte genom beskärning — ramen är en mjuk vinjett som bleknar över ~25 px, så varje beskärning lämnade antingen vit kant eller åt konst.
+  - Alla nya filer är WebP på samma dimensioner som tidigare (bakgrund 1024×1536, karaktär 512×512 med alfa, hero 1024×512), så inga widgetar behövde ändras.
+- Kvar att titta på: `ThemedBackgroundScaffold` lägger `baseBackgroundColor` över bilden med 0.72–0.84 alfa, så merparten av detaljerna i den nya konsten dämpas. Att sänka scrimmen kräver kontrastmätning mot texten först.

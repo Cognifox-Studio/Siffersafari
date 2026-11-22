@@ -81,6 +81,7 @@ flutter:
     - assets/images/app_icon/
     - assets/images/themes/space/
     - assets/images/themes/jungle/
+    - assets/images/themes/desert/
     - assets/images/story/
     - assets/images/ui/
     - assets/images/items/
