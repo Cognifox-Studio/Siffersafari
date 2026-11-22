@@ -56,6 +56,10 @@ Samma test pinnar att `item_safari_hat` och `item_hat_safari` är **två** plagg
 - `wardrobe_slots_audit_test` — varje plagg i garderoben måste ha en slot som ritas, och manifestets z-ordning måste vara **identisk** med `_slotLayers`.
 - `game_character_test` — frågar render-trädet, inte katalogen: skorna ska finnas som `Image` när de är på.
 
+## "2 plagg kvar att hitta"
+
+En look tar bara på det barnet äger, så ett tryck på Pirat kunde ge en halv outfit utan en förklaring. Nu säger garderoben hur många plagg som är kvar (`lookMissingCount` + en kort snackbar): pausen blir ett mål i stället för en lucka. Räknaren hoppar över okända id:n, så ett omdöpt plagg kan aldrig få siffran att ljuga.
+
 ## Tapptarget ur manifestet
 
 `_getInteractiveHitShape` var en `switch` med ett `case 'item_x':` per plagg — det sista stället där ett nytt plagg krävde en ändring i widgeten, och en audit som *grep:ade källkoden* efter `case '`-rader för att ingen skulle glömma en. Nu slår den upp i manifestet: bredd/höjd mätt ur bildens opaka bbox, med de handjusterade värdena kvar som `hitShapeOverride` — och de värdena bor i `assets/wardrobe/hit_shape_overrides.json`, inte i den switch som togs bort. (Första versionen av scriptet skrapade switchen; då hade en omkörning tyst tappat alla overrides och gjort hattarna svårare att träffa.) `wardrobe_hit_shape_audit_test` kontrollerar talen i stället för texten: alla plagg som ritas har en post, tapptarget ligger inom bilden (0–1], och hattens override får inte försvinna — då blir det svårare att träffa för de yngsta, tyst.

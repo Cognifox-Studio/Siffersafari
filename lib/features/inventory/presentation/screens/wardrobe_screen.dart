@@ -356,6 +356,27 @@ class _WardrobeScreenState extends ConsumerState<WardrobeScreen> {
 
     ref.read(audioServiceProvider).playClickSound();
     ref.read(userProvider.notifier).applyBaseOutfit(outfit);
+
+    // A look dresses the child in the parts they own, which can look like half
+    // an outfit. Say how many are still out there -- that turns the gap into
+    // something to look for instead of something missing.
+    final missing = lookMissingCount(
+      look: look,
+      catalog: InventoryConfig.wardrobeItems,
+      unlockedIds: ownedIds,
+    );
+    if (missing > 0) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text(
+              '${look.name}: $missing plagg kvar att hitta',
+            ),
+            duration: const Duration(seconds: 3),
+          ),
+        );
+    }
   }
 
   Widget _buildGrid(

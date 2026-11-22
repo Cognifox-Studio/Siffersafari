@@ -99,4 +99,61 @@ void main() {
       expect(outfit.values.toList(), ['item_hat_pirate']);
     });
   });
+
+  group('[Unit] Färdiga outfits – det som saknas', () {
+    final safari = outfitLooks.firstWhere((look) => look.id == 'safari');
+
+    test('räknar plaggen barnet inte har hittat', () {
+      expect(
+        lookMissingCount(
+          look: safari,
+          catalog: catalog,
+          unlockedIds: const <String>{},
+        ),
+        safari.itemIds.length,
+      );
+
+      expect(
+        lookMissingCount(
+          look: safari,
+          catalog: catalog,
+          unlockedIds: {
+            safari.itemIds.first,
+            safari.itemIds.last,
+          },
+        ),
+        safari.itemIds.length - 2,
+      );
+    });
+
+    test('allt funnet ger noll, inte ett negativt tal', () {
+      expect(
+        lookMissingCount(
+          look: safari,
+          catalog: catalog,
+          unlockedIds: safari.itemIds.toSet(),
+        ),
+        0,
+      );
+    });
+
+    test('okända id räknas inte som saknade', () {
+      const broken = OutfitLook(
+        id: 'broken',
+        name: 'Trasig',
+        itemIds: ['item_som_inte_finns', 'item_hat_pirate'],
+      );
+
+      expect(
+        lookMissingCount(
+          look: broken,
+          catalog: catalog,
+          unlockedIds: const <String>{},
+        ),
+        1,
+        reason: 'Ett plagg som inte finns kan barnet aldrig hitta',
+      );
+    });
+  });
+
 }
