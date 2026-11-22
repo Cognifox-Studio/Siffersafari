@@ -76,8 +76,12 @@ class GameCharacter extends StatefulWidget {
 
 class _GameCharacterState extends State<GameCharacter>
     with TickerProviderStateMixin {
+  // Bottom to top. This list *is* the drawing order and the hit-test order, so
+  // a slot that is missing here is a slot whose items can be equipped and then
+  // never seen -- which is exactly what happened to `feet` (Safariskor).
   static const List<String> _slotLayers = <String>[
     'back',
+    'feet',
     'body',
     'face',
     'head',
@@ -475,6 +479,8 @@ class _GameCharacterState extends State<GameCharacter>
         clipBehavior: Clip.none,
         children: [
           ..._buildEquippedItem(this, context, 'back', canvasSize),
+          // Shoes sit under the shirt so a long shirt can overlap them.
+          ..._buildEquippedItem(this, context, 'feet', canvasSize),
           characterAsset,
           ..._buildEquippedItem(this, context, 'body', canvasSize),
           ..._buildEquippedItem(this, context, 'face', canvasSize),

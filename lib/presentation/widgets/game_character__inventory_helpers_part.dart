@@ -130,6 +130,8 @@ double? _getInteractiveItemHitScore(
     case 'item_shirt_explorer':
       return (widthFactor: 0.84, heightFactor: 0.92, paddingFactor: 0.02);
     case 'item_shoes_safari':
+      // 0.73/0.37 is what the opaque box of the art measures; the hand-tuned
+      // 0.78/0.40 is a little more forgiving for small fingers, so it stays.
       return (widthFactor: 0.78, heightFactor: 0.4, paddingFactor: 0.02);
   }
 
