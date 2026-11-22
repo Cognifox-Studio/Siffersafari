@@ -110,29 +110,16 @@ double? _getInteractiveItemHitScore(
   double heightFactor,
   double paddingFactor,
 }) _getInteractiveHitShape(String itemId, String slot) {
-  switch (itemId) {
-    case 'item_glasses_nerd':
-      return (widthFactor: 0.68, heightFactor: 0.24, paddingFactor: 0.015);
-    case 'item_safari_hat':
-    case 'item_hat_safari':
-    case 'item_hat_pirate':
-      return (widthFactor: 0.9, heightFactor: 0.46, paddingFactor: 0.02);
-    case 'item_binoculars_safari':
-      return (widthFactor: 0.72, heightFactor: 0.42, paddingFactor: 0.02);
-    case 'item_compass_safari':
-      return (widthFactor: 0.6, heightFactor: 0.6, paddingFactor: 0.02);
-    case 'item_map_safari':
-      return (widthFactor: 0.84, heightFactor: 0.62, paddingFactor: 0.02);
-    case 'item_camera_safari':
-      return (widthFactor: 0.72, heightFactor: 0.58, paddingFactor: 0.02);
-    case 'item_backpack_adventure':
-      return (widthFactor: 0.72, heightFactor: 0.78, paddingFactor: 0.02);
-    case 'item_shirt_explorer':
-      return (widthFactor: 0.84, heightFactor: 0.92, paddingFactor: 0.02);
-    case 'item_shoes_safari':
-      // 0.73/0.37 is what the opaque box of the art measures; the hand-tuned
-      // 0.78/0.40 is a little more forgiving for small fingers, so it stays.
-      return (widthFactor: 0.78, heightFactor: 0.4, paddingFactor: 0.02);
+  // Every item's tap target comes from the generated manifest: measured from
+  // the opaque box of the art, with the hand-tuned values kept as overrides for
+  // small fingers. Adding an item is no longer an edit in this file.
+  final entry = wardrobeEntryFor(itemId);
+  if (entry != null) {
+    return (
+      widthFactor: entry.hitWidth,
+      heightFactor: entry.hitHeight,
+      paddingFactor: entry.hitPadding,
+    );
   }
 
   switch (slot) {

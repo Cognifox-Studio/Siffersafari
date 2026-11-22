@@ -1,0 +1,66 @@
+{
+  "_doc": [
+    "Handjusterade tapptarget, i andel av bilden.",
+    "De här värdena är trimmade för barnfingrar, inte uppmätta ur bilden:",
+    "de vinner över prepare_wardrobe_items.py:s mätning (hitShape).",
+    "Saknas ett plagg här används den uppmätta rutan.",
+    "Filen paketeras inte i APK:n - assets/wardrobe/ är utvecklarunderlag."
+  ],
+  "items": {
+    "item_glasses_nerd": {
+      "widthFactor": 0.68,
+      "heightFactor": 0.24,
+      "paddingFactor": 0.015
+    },
+    "item_safari_hat": {
+      "widthFactor": 0.9,
+      "heightFactor": 0.46,
+      "paddingFactor": 0.02
+    },
+    "item_hat_safari": {
+      "widthFactor": 0.9,
+      "heightFactor": 0.46,
+      "paddingFactor": 0.02
+    },
+    "item_hat_pirate": {
+      "widthFactor": 0.9,
+      "heightFactor": 0.46,
+      "paddingFactor": 0.02
+    },
+    "item_binoculars_safari": {
+      "widthFactor": 0.72,
+      "heightFactor": 0.42,
+      "paddingFactor": 0.02
+    },
+    "item_compass_safari": {
+      "widthFactor": 0.6,
+      "heightFactor": 0.6,
+      "paddingFactor": 0.02
+    },
+    "item_map_safari": {
+      "widthFactor": 0.84,
+      "heightFactor": 0.62,
+      "paddingFactor": 0.02
+    },
+    "item_camera_safari": {
+      "widthFactor": 0.72,
+      "heightFactor": 0.58,
+      "paddingFactor": 0.02
+    },
+    "item_backpack_adventure": {
+      "widthFactor": 0.72,
+      "heightFactor": 0.78,
+      "paddingFactor": 0.02
+    },
+    "item_shirt_explorer": {
+      "widthFactor": 0.84,
+      "heightFactor": 0.92,
+      "paddingFactor": 0.02
+    },
+    "item_shoes_safari": {
+      "widthFactor": 0.78,
+      "heightFactor": 0.4,
+      "paddingFactor": 0.02
+    }
+  }
+}

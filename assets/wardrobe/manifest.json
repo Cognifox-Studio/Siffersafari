@@ -37,6 +37,11 @@
         "heightFactor": 0.53,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.9,
+        "heightFactor": 0.46,
+        "paddingFactor": 0.02
+      },
       "legacy": {
         "offset": [
           0.0,
@@ -69,6 +74,11 @@
       "hitShape": {
         "widthFactor": 0.9263,
         "heightFactor": 0.4679,
+        "paddingFactor": 0.02
+      },
+      "hitShapeOverride": {
+        "widthFactor": 0.9,
+        "heightFactor": 0.46,
         "paddingFactor": 0.02
       },
       "legacy": {
@@ -105,6 +115,11 @@
         "heightFactor": 0.5327,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.72,
+        "heightFactor": 0.42,
+        "paddingFactor": 0.02
+      },
       "legacy": {
         "offset": [
           1.6,
@@ -137,6 +152,11 @@
       "hitShape": {
         "widthFactor": 0.624,
         "heightFactor": 0.748,
+        "paddingFactor": 0.02
+      },
+      "hitShapeOverride": {
+        "widthFactor": 0.6,
+        "heightFactor": 0.6,
         "paddingFactor": 0.02
       },
       "legacy": {
@@ -173,6 +193,11 @@
         "heightFactor": 0.8264,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.84,
+        "heightFactor": 0.62,
+        "paddingFactor": 0.02
+      },
       "legacy": {
         "offset": [
           -1.35,
@@ -205,6 +230,11 @@
       "hitShape": {
         "widthFactor": 0.7292,
         "heightFactor": 0.3656,
+        "paddingFactor": 0.02
+      },
+      "hitShapeOverride": {
+        "widthFactor": 0.78,
+        "heightFactor": 0.4,
         "paddingFactor": 0.02
       },
       "legacy": {
@@ -241,6 +271,11 @@
         "heightFactor": 0.592,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.9,
+        "heightFactor": 0.46,
+        "paddingFactor": 0.02
+      },
       "legacy": {
         "offset": [
           0.0,
@@ -275,6 +310,11 @@
         "heightFactor": 0.368,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.68,
+        "heightFactor": 0.24,
+        "paddingFactor": 0.015
+      },
       "legacy": {
         "offset": [
           0.0,
@@ -307,6 +347,11 @@
       "hitShape": {
         "widthFactor": 0.802,
         "heightFactor": 0.718,
+        "paddingFactor": 0.02
+      },
+      "hitShapeOverride": {
+        "widthFactor": 0.72,
+        "heightFactor": 0.78,
         "paddingFactor": 0.02
       },
       "legacy": {
@@ -343,6 +388,11 @@
         "heightFactor": 0.716,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": {
+        "widthFactor": 0.84,
+        "heightFactor": 0.92,
+        "paddingFactor": 0.02
+      },
       "legacy": {
         "offset": [
           0.0,
@@ -375,6 +425,11 @@
       "hitShape": {
         "widthFactor": 0.944,
         "heightFactor": 0.666,
+        "paddingFactor": 0.02
+      },
+      "hitShapeOverride": {
+        "widthFactor": 0.72,
+        "heightFactor": 0.58,
         "paddingFactor": 0.02
       },
       "legacy": {
@@ -411,6 +466,7 @@
         "heightFactor": 1.0,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
@@ -445,6 +501,7 @@
         "heightFactor": 1.0,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
@@ -479,6 +536,7 @@
         "heightFactor": 1.0,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
@@ -513,6 +571,7 @@
         "heightFactor": 0.8247,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
@@ -547,6 +606,7 @@
         "heightFactor": 1.0,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
@@ -581,6 +641,7 @@
         "heightFactor": 1.0,
         "paddingFactor": 0.02
       },
+      "hitShapeOverride": null,
       "legacy": {
         "offset": [
           0.0,
