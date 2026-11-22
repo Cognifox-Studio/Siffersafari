@@ -119,7 +119,7 @@ class QuizState {
 ///
 /// Use [startSession] to begin a quiz; [submitAnswer] to record responses.
 class QuizNotifier extends StateNotifier<QuizState> {
-  QuizNotifier(
+  factory QuizNotifier(
     QuestionGeneratorService questionGenerator,
     FeedbackService feedbackService,
     AudioService audioService,
@@ -129,29 +129,47 @@ class QuizNotifier extends StateNotifier<QuizState> {
     QuizReviewScheduleService? reviewScheduleService,
     QuizSessionPlanner? sessionPlanner,
     QuizSessionStorageService? sessionStorageService,
-  })  : _feedbackService = feedbackService,
-        _audioService = audioService,
-        _repository = repository,
-        _adaptiveDifficultyService = adaptiveDifficultyService,
+  }) {
+    // Resolve the review-schedule service exactly once; both the notifier and
+    // the planner must share the same instance.
+    final reviewService = reviewScheduleService ??
+        QuizReviewScheduleService(
+          questionGenerator: questionGenerator,
+          repository: repository,
+          spacedRepetitionService: spacedRepetitionService,
+        );
+
+    return QuizNotifier._(
+      feedbackService,
+      audioService,
+      repository,
+      adaptiveDifficultyService: adaptiveDifficultyService,
+      spacedRepetitionService: spacedRepetitionService,
+      reviewScheduleService: reviewService,
+      sessionPlanner: sessionPlanner ??
+          QuizSessionPlanner(
+            questionGenerator: questionGenerator,
+            reviewScheduleService: reviewService,
+          ),
+      sessionStorageService:
+          sessionStorageService ?? QuizSessionStorageService(repository),
+    );
+  }
+
+  QuizNotifier._(
+    this._feedbackService,
+    this._audioService,
+    this._repository, {
+    required AdaptiveDifficultyService adaptiveDifficultyService,
+    required SpacedRepetitionService spacedRepetitionService,
+    required QuizReviewScheduleService reviewScheduleService,
+    required QuizSessionPlanner sessionPlanner,
+    required QuizSessionStorageService sessionStorageService,
+  })  : _adaptiveDifficultyService = adaptiveDifficultyService,
         _spacedRepetitionService = spacedRepetitionService,
-        _reviewScheduleService = reviewScheduleService ??
-            QuizReviewScheduleService(
-              questionGenerator: questionGenerator,
-              repository: repository,
-              spacedRepetitionService: spacedRepetitionService,
-            ),
-        _sessionPlanner = sessionPlanner ??
-            QuizSessionPlanner(
-              questionGenerator: questionGenerator,
-              reviewScheduleService: reviewScheduleService ??
-                  QuizReviewScheduleService(
-                    questionGenerator: questionGenerator,
-                    repository: repository,
-                    spacedRepetitionService: spacedRepetitionService,
-                  ),
-            ),
-        _sessionStorageService =
-            sessionStorageService ?? QuizSessionStorageService(repository),
+        _reviewScheduleService = reviewScheduleService,
+        _sessionPlanner = sessionPlanner,
+        _sessionStorageService = sessionStorageService,
         super(const QuizState());
 
   final FeedbackService _feedbackService;
@@ -310,13 +328,29 @@ class QuizNotifier extends StateNotifier<QuizState> {
     );
   }
 
-  void resumeSession({
+  /// Returns `true` when the session could be restored.
+  ///
+  /// A corrupt or legacy row must never crash the resume flow; it is dropped so
+  /// the home CTA stops offering a session that can never be resumed.
+  bool resumeSession({
     required String userId,
     required Map<String, dynamic> sessionMap,
   }) {
     debugPrint('[QuizNotifier] resumeSession: userId=$userId');
 
-    final session = QuizSessionJson.fromJson(sessionMap);
+    final QuizSession session;
+    try {
+      session = QuizSessionJson.fromJson(sessionMap);
+    } catch (e, st) {
+      debugPrint('[QuizNotifier] resumeSession: unreadable session: $e');
+      debugPrintStack(stackTrace: st);
+
+      final sessionId = sessionMap['sessionId'];
+      if (sessionId is String && sessionId.isNotEmpty) {
+        unawaited(_repository.deleteQuizSession(sessionId));
+      }
+      return false;
+    }
 
     _sessionStorageService.prepareInProgressStorage(
       userId: userId,
@@ -333,6 +367,8 @@ class QuizNotifier extends StateNotifier<QuizState> {
       reviewState: reviewState,
       pendingDueKeys: _reviewScheduleService.readPendingDueKeys(sessionMap),
     );
+
+    return true;
   }
 
   bool resumeLatestSessionForUser({
@@ -347,8 +383,7 @@ class QuizNotifier extends StateNotifier<QuizState> {
       return false;
     }
 
-    resumeSession(userId: userId, sessionMap: sessionMap);
-    return true;
+    return resumeSession(userId: userId, sessionMap: sessionMap);
   }
 
   void startCustomSession({
@@ -473,8 +508,13 @@ class QuizNotifier extends StateNotifier<QuizState> {
         : state.bestCorrectStreak;
     final newSpeedBonusCount = state.speedBonusCount + (gotSpeedBonus ? 1 : 0);
 
+    // `session.questions` grows lazily (one question is appended per step), so
+    // at any point `questions.length == currentQuestionIndex + 1`. Comparing
+    // against the list length would therefore mark *every* answer as the last
+    // one and stamp `endTime` mid-session. Compare against the session target
+    // instead — the same predicate `isComplete` and `advanceToNextQuestion` use.
     final isLastQuestion =
-        session.currentQuestionIndex >= session.questions.length - 1;
+        session.currentQuestionIndex >= session.totalQuestions - 1;
 
     final updatedSession = session.copyWith(
       correctAnswers: session.correctAnswers + (isCorrect ? 1 : 0),
@@ -561,12 +601,16 @@ class QuizNotifier extends StateNotifier<QuizState> {
           )
         : 0;
 
-    state = state.copyWith(
-      session: updatedSession.copyWith(
-        difficultyStepsByOperation: Map<OperationType, int>.unmodifiable(
-          updatedDifficultySteps,
-        ),
+    // Build the session once, with the freshly adapted difficulty steps, so the
+    // in-memory state and the persisted copy can never disagree.
+    final sessionWithSteps = updatedSession.copyWith(
+      difficultyStepsByOperation: Map<OperationType, int>.unmodifiable(
+        updatedDifficultySteps,
       ),
+    );
+
+    state = state.copyWith(
+      session: sessionWithSteps,
       feedback: feedback,
       difficultyStepsByOperation: Map<OperationType, int>.unmodifiable(
         updatedDifficultySteps,
@@ -595,7 +639,10 @@ class QuizNotifier extends StateNotifier<QuizState> {
       );
       _persistInProgressSession(
         userId: userId,
-        session: updatedSession,
+        // Persist the *same* session the state now holds, including the
+        // adapted difficulty steps — otherwise resuming rolls the child back
+        // to the difficulty they had when the session started.
+        session: sessionWithSteps,
         pendingDueKeys: state.pendingDueKeys,
       );
       if (isSpacedRepetitionEnabled) {

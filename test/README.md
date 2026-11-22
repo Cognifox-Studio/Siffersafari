@@ -12,20 +12,24 @@ Note: Håll inte hårdkodade test-antal i dokumentation (de blir snabbt stale). 
 
 ```
 test/
-├── support/                       # Shared non-runtime test support widgets/files
-│   └── widgets/
-├── test_utils.dart                # Shared helpers/mocks for widget tests
+├── test_utils.dart                # Shared helpers/mocks (in-memory repo, fakes)
 ├── unit/                          # Unit tests
 │   ├── audits/                    # Verification and audit tests
-│   ├── core/                      # Core app and provider-focused unit tests
+│   ├── config/                    # Curriculum/config loading
+│   ├── constants/                 # Catalogs and constant tables
+│   ├── core/                      # Validators and core helpers
 │   ├── logic/                     # Business logic and progression rules
 │   ├── services/                  # Service layer and repository-adjacent tests
-│   └── assets/                    # Asset- och fixture-relaterade enhetstester
-└── widget/                        # Widget- och flödestester
-   ├── app_*.dart
-   ├── game_character_test.dart
-   └── mascot_reaction_view_test.dart
+│   └── theme/                     # Theme configuration
+└── widget/                        # Widget- och flödestester (en mapp, ingen test/widgets/)
+    ├── app_*.dart
+    ├── game_character_test.dart
+    └── mascot_reaction_view_test.dart
 ```
+
+> Shared fixtures live in `test/test_utils.dart`. There is no `test/support/`
+> directory and no `test/unit/assets/` directory — keep new helpers in
+> `test_utils.dart` instead of inventing new top-level folders.
 
 ### Directory Purposes
 
@@ -68,6 +72,11 @@ All tests follow this standardized naming format:
 ```bash
 flutter test
 ```
+
+### Automatiskt innan push
+`scripts/install_git_hooks.sh` aktiverar `.githooks/pre-push`, som kor
+`flutter analyze` + `flutter test test` innan en push. Hoppa over en gang med
+`SKIP_TESTS=1 git push`. Se [docs/SETUP_ENVIRONMENT.md](../docs/SETUP_ENVIRONMENT.md).
 
 ### Run only unit tests
 ```bash

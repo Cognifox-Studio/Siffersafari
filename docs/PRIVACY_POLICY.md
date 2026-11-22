@@ -1,6 +1,6 @@
 # Privacy Policy – Siffersafari
 
-**Last Updated:** October 29, 2026
+**Last Updated:** November 22, 2026
 
 ## Overview
 
@@ -24,7 +24,9 @@ We do **not** collect:
 
 ## Data We Store Locally
 
-The following information is stored **only on your device** using encrypted local storage:
+The following information is stored **only on your device**, inside the app's
+private storage (Android app sandbox). Hive boxes are not separately encrypted;
+they are protected by the operating system's per-app storage isolation:
 
 | Data Type | Purpose | Stored Where |
 |-----------|---------|--------------|
@@ -89,10 +91,11 @@ Advanced users who need a raw copy can use platform backup tools for the app’s
 ## Data Security
 
 Your data is protected by:
-- **Local Encryption:** Parent PINs are hashed using BCrypt (not stored in plain text)
-- **Device Storage:** Data stored in Hive encrypted box on your device
-- **No Network Transmission:** No encryption needed since data never leaves your device
-- **No Account/Password System:** No account means no credential breach risk
+- **Hashed PINs:** Parent PINs (and the PIN-recovery answer) are hashed using BCrypt (not stored in plain text), with a 5-attempt lockout on both.
+- **Device Storage:** Data is stored in Hive inside the app's private storage, protected by Android's per-app sandbox. The Hive boxes themselves are not separately encrypted.
+- **No Network Transmission by default:** With cloud backup off (the default), the app makes no network requests and no data leaves the device.
+- **Encrypted in transit when cloud backup is on:** Only then is data sent, over HTTPS/TLS to Firebase.
+- **No Account/Password System:** No account is required to play, so there is no credential breach risk in the default mode.
 
 ## Children's Privacy (COPPA)
 

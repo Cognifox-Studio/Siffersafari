@@ -27,14 +27,20 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      # `flutter analyze` is owned by ci.yaml; keep this job focused on the
+      # release-specific checks so a PR does not analyze four times.
       - name: Fast release checks
         run: |
-          flutter analyze --fatal-infos lib test
           flutter test test/unit/logic/spaced_repetition_test.dart
           flutter test test/unit/logic/quiz_provider_srs_test.dart
           flutter test test/unit/audits/question_bank_runtime_status_audit_test.dart
 
+      # No keystore in PR context: this build exists only to measure AAB size, so
+      # it explicitly opts in to debug signing. Without this env var the Gradle
+      # config refuses to produce a release artifact (see android/app/build.gradle.kts).
       - name: Build release App Bundle
+        env:
+          SIFFERSAFARI_ALLOW_DEBUG_RELEASE_SIGNING: 'true'
         run: flutter build appbundle --release
 
       - name: Verify AAB size budget

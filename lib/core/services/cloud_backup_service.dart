@@ -10,6 +10,12 @@ abstract class CloudBackupService {
   /// True when parent has opted in (persisted in Hive). Default false.
   bool get isOptedIn;
 
+  /// Persist the parent's opt-in choice.
+  ///
+  /// Must only be called from the PIN-protected parent area. Opting in is not
+  /// the same as syncing: [ensureSignedIn] still has to succeed (Phase 2).
+  Future<void> setOptedIn(bool optedIn);
+
   /// Phase 2: sign-in, upload, restore. Throws until implemented.
   Future<void> ensureSignedIn();
 }
@@ -27,15 +33,21 @@ class DisabledCloudBackupService implements CloudBackupService {
   bool get isOptedIn => false;
 
   @override
+  Future<void> setOptedIn(bool optedIn) async {
+    throw UnsupportedError('Cloud backup is not enabled.');
+  }
+
+  @override
   Future<void> ensureSignedIn() async {
     throw UnsupportedError('Cloud backup is not enabled.');
   }
 }
 
 class FirebaseCloudBackupService implements CloudBackupService {
-  FirebaseCloudBackupService(this._readOptIn);
+  FirebaseCloudBackupService(this._readOptIn, this._writeOptIn);
 
   final bool Function() _readOptIn;
+  final Future<void> Function(bool optedIn) _writeOptIn;
 
   @override
   bool get isProjectConfigured => DefaultFirebaseOptions.isConfigured;
@@ -45,6 +57,9 @@ class FirebaseCloudBackupService implements CloudBackupService {
 
   @override
   bool get isOptedIn => _readOptIn();
+
+  @override
+  Future<void> setOptedIn(bool optedIn) => _writeOptIn(optedIn);
 
   @override
   Future<void> ensureSignedIn() async {

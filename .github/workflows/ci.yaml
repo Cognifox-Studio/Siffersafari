@@ -6,6 +6,15 @@ on:
   push:
     branches: [ main, master ]
 
+# Single owner of `flutter analyze` and the Android emulator smoke:
+#   PR   -> analyze + core smoke
+#   push -> analyze + full smoke + audit
+# `.github/workflows/flutter.yml` owns the unit/widget suite and does not repeat
+# analyze; `release-guard.yml` owns the release-artifact checks.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   analyze:
     runs-on: ubuntu-latest

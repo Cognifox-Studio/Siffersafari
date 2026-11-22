@@ -88,10 +88,18 @@ Future<void> initializeDependencies({
   );
   _registerLazy<CloudBackupService>(() {
     final repo = getIt<LocalStorageRepository>();
-    return FirebaseCloudBackupService(() {
-      final raw = repo.getSetting(SettingsKeys.cloudBackupOptInAt);
-      return raw != null && raw.toString().isNotEmpty;
-    });
+    return FirebaseCloudBackupService(
+      () {
+        final raw = repo.getSetting(SettingsKeys.cloudBackupOptInAt);
+        return raw != null && raw.toString().isNotEmpty;
+      },
+      (optedIn) => optedIn
+          ? repo.saveSetting(
+              SettingsKeys.cloudBackupOptInAt,
+              DateTime.now().toIso8601String(),
+            )
+          : repo.deleteSetting(SettingsKeys.cloudBackupOptInAt),
+    );
   });
 
   if (total != null) {

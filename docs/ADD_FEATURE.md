@@ -326,9 +326,10 @@ För data som behöver sparas offline:
   dart fix --apply  # Automatisk fix
   ```
 
-### "git commit blocked by pre-push checks"
-- **Orsak:** GitHub Actions kanske testar innan du pushar
-- **Lösning:** Kör `flutter test` lokalt innan push
+### "git push blocked by pre-push checks"
+- **Orsak:** `.githooks/pre-push` kor `flutter analyze` + `flutter test test` innan push (aktiveras med `scripts/install_git_hooks.sh`)
+- **Lösning:** Kör `flutter test` lokalt och fixa felet — eller hoppa över en gang med `SKIP_TESTS=1 git push` / `git push --no-verify`
+- **Obs:** Hooken kor bara lokalt. CI kors nar du oppnar en PR, inte nar du pushar en feature-branch.
 
 ---
 

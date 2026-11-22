@@ -1,0 +1,69 @@
+#!/bin/sh
+#
+# Pre-push gate: run the same checks CI gates on, before the push leaves your
+# machine.
+#
+# Install once per clone:
+#   scripts/install_git_hooks.sh
+#
+# Skip for a single push when you know what you are doing:
+#   SKIP_TESTS=1 git push            # skip everything in this hook
+#   SKIP_ANALYZE=1 git push          # analyze only is skipped
+#   git push --no-verify             # bypass all git hooks
+#
+# The hook is deliberately best-effort about tooling: if `flutter` is not on
+# PATH (fresh clone, CI container, docs-only contributor) it warns and allows
+# the push instead of blocking you.
+
+set -eu
+
+if [ "${SKIP_TESTS:-0}" = "1" ]; then
+  echo "[pre-push] SKIP_TESTS=1 — hoppar over analyze/test."
+  exit 0
+fi
+
+find_flutter() {
+  if command -v flutter >/dev/null 2>&1; then
+    command -v flutter
+    return 0
+  fi
+  # Git Bash / MSYS on Windows exposes the launcher as flutter.bat.
+  if command -v flutter.bat >/dev/null 2>&1; then
+    command -v flutter.bat
+    return 0
+  fi
+  return 1
+}
+
+if ! FLUTTER="$(find_flutter)"; then
+  echo "[pre-push] VARNING: hittade inte 'flutter' pa PATH."
+  echo "[pre-push] Hopper over analyze/test — pushas anda. CI kor dem pa PR/main."
+  exit 0
+fi
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$repo_root"
+
+echo "[pre-push] repo: $repo_root"
+echo "[pre-push] flutter: $FLUTTER"
+
+if [ "${SKIP_ANALYZE:-0}" != "1" ]; then
+  echo "[pre-push] flutter analyze --fatal-infos lib test integration_test"
+  if ! "$FLUTTER" analyze --fatal-infos lib test integration_test; then
+    echo ""
+    echo "[pre-push] analyze misslyckades. Fixa eller kor: git push --no-verify"
+    exit 1
+  fi
+else
+  echo "[pre-push] SKIP_ANALYZE=1 — hoppar over analyze."
+fi
+
+echo "[pre-push] flutter test test"
+if ! "$FLUTTER" test test; then
+  echo ""
+  echo "[pre-push] Tester misslyckades. Fixa eller kor: git push --no-verify"
+  exit 1
+fi
+
+echo "[pre-push] OK — analyze och tester ar grona."
+exit 0

@@ -139,4 +139,87 @@ void main() {
       expect(service.hasRecoveryConfigured(), isFalse);
     });
   });
+
+  group('[Unit] ParentPinService – Security answer rate limiting', () {
+    Future<ParentPinService> serviceWithRecovery() async {
+      final storage = InMemoryLocalStorageRepository();
+      final service = ParentPinService(storage);
+      await service.setPin('1234');
+      await service.setupPinRecovery(
+        securityQuestion: 'Favoritdjur?',
+        securityAnswer: 'Hund',
+      );
+      return service;
+    }
+
+    test('rätt svar nollställer antalet försök', () async {
+      final service = await serviceWithRecovery();
+
+      expect(await service.verifySecurityAnswer('katt'), isFalse);
+      expect(service.getRemainingSecurityAnswerAttempts(), 4);
+
+      expect(await service.verifySecurityAnswer('hund'), isTrue);
+      expect(service.getRemainingSecurityAnswerAttempts(), 5);
+    });
+
+    test('fem felaktiga svar låser säkerhetsfrågan', () async {
+      final service = await serviceWithRecovery();
+
+      for (var i = 0; i < 4; i++) {
+        expect(await service.verifySecurityAnswer('katt'), isFalse);
+      }
+
+      await expectLater(
+        () => service.verifySecurityAnswer('katt'),
+        throwsA(isA<PinLockoutException>()),
+      );
+
+      // Even the correct answer is rejected while locked out — otherwise the
+      // lockout would not actually gate recovery.
+      await expectLater(
+        () => service.verifySecurityAnswer('hund'),
+        throwsA(isA<PinLockoutException>()),
+      );
+
+      expect(service.getSecurityAnswerLockoutRemainingMinutes(), isNotNull);
+      expect(service.getRemainingSecurityAnswerAttempts(), 0);
+    });
+
+    test('utgången låsning rensas vid nästa försök', () async {
+      final storage = InMemoryLocalStorageRepository();
+      final service = ParentPinService(storage);
+      await service.setPin('1234');
+      await service.setupPinRecovery(
+        securityQuestion: 'Favoritdjur?',
+        securityAnswer: 'Hund',
+      );
+
+      await storage.saveSetting(
+        SettingsKeys.parentSecurityAnswerLockoutUntil,
+        DateTime.now().subtract(const Duration(seconds: 1)).millisecondsSinceEpoch,
+      );
+      await storage.saveSetting(
+        SettingsKeys.parentSecurityAnswerFailedAttempts,
+        5,
+      );
+
+      expect(await service.verifySecurityAnswer('katt'), isFalse);
+      expect(service.getSecurityAnswerLockoutRemainingMinutes(), isNull);
+      expect(service.getRemainingSecurityAnswerAttempts(), 4);
+    });
+
+    test('säkerhetsfrågan delar inte räknare med PIN-låsningen', () async {
+      final service = await serviceWithRecovery();
+
+      // Burn the PIN counter without tripping its lockout.
+      for (var i = 0; i < 4; i++) {
+        expect(await service.verifyPin('0000'), isFalse);
+      }
+
+      // Recovery is still available and unaffected.
+      expect(service.getRemainingSecurityAnswerAttempts(), 5);
+      expect(await service.verifySecurityAnswer('hund'), isTrue);
+      expect(service.getLockoutRemainingMinutes(), isNull);
+    });
+  });
 }

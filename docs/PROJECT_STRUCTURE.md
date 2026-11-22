@@ -165,8 +165,7 @@ Exempel:
 - `skills/` repo-specifika arbetsflöden för QA, docs, release, COPPA och assets
 - `hooks/` lätta guardrails för customization-arbete via hookdefinitioner och små PowerShell-skript
 - `workflows/ci.yaml` PR-core-smoke samt full smoke + audit på huvudgrenen
-- `workflows/flutter.yml` grundläggande analyze + test
-- `workflows/android-smoke.yml` Android-smoke för APK-flödet
+- `workflows/flutter.yml` enhetstester/widgettester (analyze ägs av `ci.yaml`)
 - `workflows/build.yml` release build + release upload
 - `workflows/play-closed-beta.yml` Play closed beta-flöde
 - `workflows/play-store-listing.yml` separat Play Store listing-sync
