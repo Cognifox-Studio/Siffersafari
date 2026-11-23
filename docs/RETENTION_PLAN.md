@@ -31,7 +31,9 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 14 | Klar — "Dagar med spel" i föräldradashboarden: 90 rutor, en per dag, mörkare ju mer spelat, plus "34 av 90 dagar med spel · längsta följden 9" och en uppläst sammanfattning. Ren funktion `ActivitySummary`, ingen ny lagring. |
 | 18 | Klar — profilvalet visar varje barns egen svit ("🔥 5 dagar i rad") i sin ruta. Syskon delar platta, inte svit. Noll dagar syns inte alls. |
 | 22 | Klar — personbästa per räknesätt: `personal_bests.dart` räknar bästa rundan ur historiken som redan finns (inga nya fält), och resultatvyn firar bara när rundan slog något som fanns *före* den. Första rundan är aldrig ett personbästa. |
-| 12–13, 15–17, 19–21, 23–25 | Kvar. |
+| 13 | Klar — efter ≥3 dagars uppehåll startar första rundan ett steg lägre, bara för räknesättet hon möter (`comeback.dart`). Inget sparas: adaptiva trappan klättrar tillbaka så fort hon svarar bra. `quiz_started` får `comeback: true` så effekten går att mäta. |
+| 17 | Klar — checklistan får ett slut som syns: onboardingkortet visar «Så här börjar vi: Årskurs 3 · plusraketer, minusgrottor, gånger-djungeln, delat-isbanan · Läshjälp på» innan man trycker Starta, och säger att allt kan ändras i Föräldraläge. `SetupPlan` speglar exakt det `OnboardingController.complete` skriver. |
+| 12, 15–16, 19–21, 23–25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 

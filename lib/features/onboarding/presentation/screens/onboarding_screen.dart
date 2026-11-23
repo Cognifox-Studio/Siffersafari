@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:siffersafari/core/constants/app_constants.dart';
 import 'package:siffersafari/core/utils/adaptive_layout.dart';
 import 'package:siffersafari/core/utils/image_cache_size.dart';
+import 'package:siffersafari/domain/services/setup_plan.dart';
 import 'package:siffersafari/features/onboarding/providers/onboarding_controller_provider.dart';
 import 'package:siffersafari/presentation/widgets/playful_panel.dart';
 import 'package:siffersafari/presentation/widgets/themed_background_scaffold.dart';
@@ -229,6 +230,7 @@ class _OnboardingGradePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final plan = SetupPlan.forGrade(gradeLevel);
     return _OnboardingCard(
       imageAsset: 'assets/images/ui/img_school_cap.webp',
       title: 'Årskurs',
@@ -261,6 +263,8 @@ class _OnboardingGradePage extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppConstants.defaultPadding),
+          _SetupPlanPreview(plan: plan),
+          const SizedBox(height: AppConstants.defaultPadding),
           Text(
             gradeLevel == null
                 ? 'Osäker? Välj «Vet inte än» — du kan byta årskurs senare under Föräldrar.'
@@ -274,6 +278,76 @@ class _OnboardingGradePage extends StatelessWidget {
                 ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The end of the checklist, shown before it is pressed.
+///
+/// Setup used to end in a black box: the grade went in, three settings came
+/// out, and nothing said which. This is the sentence the parent can check --
+/// and, if it is wrong, the reason to open Föräldraläge before the child meets
+/// a level she cannot handle.
+class _SetupPlanPreview extends StatelessWidget {
+  const _SetupPlanPreview({required this.plan});
+
+  final SetupPlan plan;
+
+  static const Key _key = Key('onboarding_setup_plan');
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final onPrimary = scheme.onPrimary;
+    return Semantics(
+      container: true,
+      label: 'Så här börjar vi. ${plan.spokenSummary}',
+      child: ExcludeSemantics(
+        child: Container(
+          key: _key,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppConstants.smallPadding,
+            vertical: AppConstants.smallPadding,
+          ),
+          decoration: BoxDecoration(
+            color: onPrimary.withValues(alpha: AppOpacities.subtleFill),
+            borderRadius:
+                BorderRadius.circular(AppConstants.borderRadius * 1.1),
+            border: Border.all(
+              color: onPrimary.withValues(alpha: AppOpacities.hudBorder),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Så här börjar vi',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: onPrimary.withValues(alpha: 0.78),
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.4,
+                    ),
+              ),
+              const SizedBox(height: AppConstants.microSpacing6),
+              Text(
+                '${plan.gradeLabel} · ${plan.operationsLabel}',
+                key: const Key('onboarding_setup_plan_summary'),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: onPrimary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+              Text(
+                '${plan.readingLabel}. Allt kan ändras i Föräldraläge.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: onPrimary.withValues(alpha: 0.82),
+                    ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
