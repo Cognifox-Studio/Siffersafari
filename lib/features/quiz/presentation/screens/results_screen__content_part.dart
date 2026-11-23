@@ -140,6 +140,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       reward: reward,
     );
     final activeUser = userState.activeUser;
+    final previousBests = activeUser == null
+        ? const <OperationType, PersonalBest>{}
+        : ref.watch(
+            personalBestsProvider(
+              (
+                userId: activeUser.userId,
+                excludeSessionId: session.sessionId,
+              ),
+            ),
+          );
+    final newBest = _newPersonalBest(session: session, previous: previousBests);
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
     final streak = readModel.streak;
 
@@ -259,6 +270,31 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       label: const Text('Spela igen'),
     );
 
+    // One filled button per screen. When the story moved forward, that button
+    // is "Fortsätt storyn" further down, so practice and replay stop competing
+    // for the same tap -- they stay reachable, but as links.
+    final demotePractice = hasStoryCheckpoint;
+    final practiceLink = TextButton.icon(
+      key: const Key('results_practice_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: true,
+      ),
+      icon: const Icon(Icons.bolt_rounded),
+      label: const Text('Snabbträna ⚡'),
+    );
+    final replayLink = TextButton.icon(
+      key: const Key('results_replay_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: false,
+      ),
+      icon: const Icon(Icons.replay_rounded),
+      label: const Text('Spela igen'),
+    );
+
     final nextStepPanel = PlayfulPanel(
       hero: !hasStoryCheckpoint,
       backgroundColor: panelColor,
@@ -274,7 +310,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                     : 'Kör mer?',
           ),
           SizedBox(height: AppConstants.defaultPadding.h),
-          if (canFocusPractice) ...[
+          if (demotePractice) ...[
+            practiceLink,
+            replayLink,
+          ] else if (canFocusPractice) ...[
             practiceButton,
             SizedBox(height: AppConstants.defaultPadding.h),
             replayButton,
@@ -306,6 +345,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         nextStepPanel,
+        if (newBest != null) ...[
+          SizedBox(height: AppConstants.defaultPadding.h),
+          _PersonalBestBanner(best: newBest),
+        ],
         const SizedBox(height: AppConstants.largePadding),
         if (userState.newlyUnlockedItem != null) ...[
           _ItemUnlockedBanner(item: userState.newlyUnlockedItem!),
@@ -436,7 +479,58 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
   }
 
+  /// Only the rounds that beat something that already existed. The first round
+  /// in an operation returns null on purpose: there is nothing to beat yet, and
+  /// a "personal best" on the very first try teaches a child nothing.
+  /// `previous` comes from `personalBestsProvider`, which already excludes
+  /// nothing -- the round that just ended is still in progress when the screen
+  /// builds, so it cannot shadow itself.
+  PersonalBest? _newPersonalBest({
+    required QuizSession session,
+    required Map<OperationType, PersonalBest> previous,
+  }) {
+    final prior = previous[session.operationType];
+    if (prior == null) return null;
+    final round = PersonalBest(
+      operation: session.operationType,
+      correct: session.correctAnswers,
+      total: session.totalQuestions,
+    );
+    return isBetterRound(round, prior) ? round : null;
+  }
+
+  /// Which button ended the round. The page is deliberately down to one filled
+  /// button on purpose, so the interesting question is which of the quiet ones
+  /// still gets used.
+  void _logResultsCta(String cta) {
+    final userId = ref.read(userProvider).activeUser?.userId;
+    unawaited(
+      _logGuarded(
+        name: 'results_cta_tapped',
+        userId: userId,
+        properties: {'cta': cta},
+      ),
+    );
+  }
+
+  Future<void> _logGuarded({
+    required String name,
+    String? userId,
+    Map<String, Object?> properties = const <String, Object?>{},
+  }) async {
+    try {
+      await ref.read(appAnalyticsProvider).logEvent(
+            name: name,
+            userId: userId,
+            properties: properties,
+          );
+    } catch (_) {
+      // Analytics must never break a tap handler.
+    }
+  }
+
   void _goHomeFromResults() {
+    _logResultsCta('home');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playHomeMusic();
@@ -444,6 +538,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   }
 
   void _goToStoryMapFromResults() {
+    _logResultsCta('story');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playMapOpenSound();
@@ -456,6 +551,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required List<_HardestQuestion> hardest,
     required bool useFocusedMiniPass,
   }) {
+    _logResultsCta(useFocusedMiniPass ? 'focused_practice' : 'replay');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
 
@@ -1162,6 +1258,44 @@ class _LevelUpBanner extends StatelessWidget {
                       ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PersonalBestBanner extends StatelessWidget {
+  const _PersonalBestBanner({required this.best});
+
+  final PersonalBest best;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      key: const Key('results_personal_best'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.defaultPadding,
+        vertical: AppConstants.smallPadding,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.tertiary.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(AppConstants.defaultPadding),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🏅', style: TextStyle(fontSize: 20)),
+          const SizedBox(width: AppConstants.smallPadding),
+          Flexible(
+            child: Text(
+              'Nytt personbästa: ${best.label}!',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: scheme.onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
             ),
           ),
         ],

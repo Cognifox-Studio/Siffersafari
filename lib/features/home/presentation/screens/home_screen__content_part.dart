@@ -61,6 +61,35 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     }
   }
 
+  /// Which door the child walked through. `quiz_started` already carries a
+  /// `cta`, but it only fires when a round actually starts -- a tap that
+  /// resumes an old session, or a tap that goes to the story map, is invisible
+  /// in that event. Analytics must never break the home screen, so failures are
+  /// swallowed here rather than bubbling into a tap handler.
+  Future<void> _logEvent({
+    required String name,
+    String? userId,
+    Map<String, Object?> properties = const <String, Object?>{},
+  }) async {
+    try {
+      await ref.read(appAnalyticsProvider).logEvent(
+            name: name,
+            userId: userId,
+            properties: properties,
+          );
+    } catch (_) {
+      // Analytics must never break a tap handler.
+    }
+  }
+
+  Future<void> _logCta(String cta, {String? userId}) {
+    return _logEvent(
+      name: 'home_cta_tapped',
+      userId: userId,
+      properties: {'cta': cta},
+    );
+  }
+
   /// Warm camp pedestal + nearby wardrobe thumbs so album/wardrobe open crisp.
   Future<void> _precacheCollectibleThumbs(UserProgress? user) async {
     if (!mounted) return;
@@ -105,6 +134,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   void _openStoryMap() {
+    unawaited(
+      _logCta('story_map', userId: ref.read(userProvider).activeUser?.userId),
+    );
     final audio = ref.read(audioServiceProvider);
     audio.playMapOpenSound();
     audio.playStoryMusic();
@@ -321,7 +353,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               userId: user.userId,
             );
 
+    unawaited(
+      _logCta(didResume ? 'resume_quiz' : 'primary_cta', userId: user.userId),
+    );
     if (didResume) {
+      unawaited(
+        _logEvent(
+          name: 'session_resumed',
+          userId: user.userId,
+          properties: const {'source': 'home_primary'},
+        ),
+      );
       setState(() {
         _mascotReaction = CharacterReaction.screenChange;
         _mascotReactionNonce++;
@@ -400,6 +442,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
       ),
     );
+    unawaited(_logCta('operation_card', userId: user.userId));
 
     setState(() {
       _mascotReaction = CharacterReaction.screenChange;
@@ -422,6 +465,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final homeModel = ref.watch(homeReadModelProvider);
     final user = homeModel.activeUser;
     final storyProgress = homeModel.storyProgress;
+    // One locked thing, one line: computed from state the screen already has.
+    final nextGoal = nextGoalFor(user: user, story: storyProgress);
 
     final themeCfg = ref.watch(appThemeConfigProvider);
     final backgroundAsset = themeCfg.backgroundAsset;
@@ -479,6 +524,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 constraints: BoxConstraints(maxWidth: maxContentWidth),
                 child: Column(
                   children: [
+                    if (nextGoal != null)
+                      HomeNextGoalCard(goal: nextGoal),
                     if (user != null)
                       HomeStreakBadge(
                         streak: user.currentStreak,

@@ -18,7 +18,7 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | Steg | Status |
 |---|---|
 | 1 | Klar — [RETENTION_BASELINE.md](RETENTION_BASELINE.md). Baslinjen fylls först när 30 dagars rullning finns. |
-| 2 | Delvis — `app_open`, `streak_extended`, `streak_lost` loggas, och `quiz_started` bär `cta`. Kvar: egna namn för `home_cta_tapped`/`results_cta_tapped` och `session_resumed`. |
+| 2 | Klar — `app_open` (en/dag/profil), `streak_extended`, `streak_lost`, `level_up` och `quiz_started{cta}` loggas. Nu även `home_cta_tapped{cta}` (primärknapp, räknesättskort, storykarta), `results_cta_tapped{cta}` (story, snabbträna, spela igen, hem) och `session_resumed`. Alla med `try/catch`: mätning får aldrig krascha en tap. |
 | 3 | Klar — `DailyActivityService`: en post per dag och profil, 90 dagar, inga trackers. Läses nu i föräldravyn (steg 14). |
 | 4 | Klar — `HomeStreakBadge` överst på hem, med sviten, längsta sviten och dagsstatus. |
 | 5 | Klar — `streakCelebration` ger resultatvyn en svitrad ("5 · Dagar i rad – rekord!") som stat-pill, och konfetti/figur firar även när rundan bara förlängde sviten. Ingen ny lagring: läser `UserProgress` efter commit. |
@@ -26,8 +26,12 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 7 | Klar — nåd-dag i `StreakResolver`: en per vecka, bara en enstaka missad dag, aldrig en betalning. |
 | 8 | Klar — "Välkommen tillbaka!" med längsta sviten, aldrig en tillrättavisning. |
 | 9 | Klar — åldersanpassat dagsmål (`dailyGoalSessions`: 1 runda för Åk 1–2, 2 från Åk 3) som räknas upp i svitbadgen på hem, med a11y-etikett. Bygger på `DailyActivityService`, ingen ny lagring. |
+| 10 | Klar — "Nästa mål" högst upp på hem: ett låst märke med sin ledtråd, annars nästa nivå med poäng kvar, annars biomen efter episoden. Ren funktion `nextGoalFor` (`next_goal.dart`) ur befintlig state, ingen ny lagring, ingen ny räknare. |
+| 11 | Klar — resultatvyn har nu **en** fylld knapp. När storyn gick framåt är det "Fortsätt storyn"; snabbträna och spela igen finns kvar som länkar med samma nycklar, så inget val försvinner — det slutar bara konkurrera. `results_cta_tapped` visar vilken dörr som används. |
 | 14 | Klar — "Dagar med spel" i föräldradashboarden: 90 rutor, en per dag, mörkare ju mer spelat, plus "34 av 90 dagar med spel · längsta följden 9" och en uppläst sammanfattning. Ren funktion `ActivitySummary`, ingen ny lagring. |
-| 10–13, 15–25 | Kvar. |
+| 18 | Klar — profilvalet visar varje barns egen svit ("🔥 5 dagar i rad") i sin ruta. Syskon delar platta, inte svit. Noll dagar syns inte alls. |
+| 22 | Klar — personbästa per räknesätt: `personal_bests.dart` räknar bästa rundan ur historiken som redan finns (inga nya fält), och resultatvyn firar bara när rundan slog något som fanns *före* den. Första rundan är aldrig ett personbästa. |
+| 12–13, 15–17, 19–21, 23–25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 
