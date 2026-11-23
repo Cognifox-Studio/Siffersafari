@@ -43,15 +43,5 @@ jobs:
 
       # `flutter analyze` is owned by ci.yaml so it runs exactly once per change.
       - name: Run tests
-        continue-on-error: true
-        run: flutter test test --reporter expanded 2>&1 | tee /tmp/test.log
+        run: flutter test test
 
-      - name: Show failures
-        if: always()
-        run: |
-          echo "--- [E] lines ---"
-          grep -n "\[E\]" /tmp/test.log | head -20 || true
-          echo "--- context ---"
-          grep -n -A 30 "\[E\]" /tmp/test.log | head -150 || true
-          echo "--- expected ---"
-          grep -n -A 12 "Expected:" /tmp/test.log | head -80 || true

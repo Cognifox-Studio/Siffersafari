@@ -54,7 +54,7 @@ Map<OperationType, PersonalBest> personalBestsFrom(
       total: total,
     );
     final current = best[operation];
-    if (current == null || _isBetter(candidate, current)) {
+    if (current == null || isBetterRound(candidate, current)) {
       best[operation] = candidate;
     }
   }
@@ -80,7 +80,7 @@ bool isNewPersonalBest({
   )[operation];
   if (previous == null) return false;
 
-  return _isBetter(
+  return isBetterRound(
     PersonalBest(operation: operation, correct: correct, total: total),
     previous,
   );
@@ -88,7 +88,7 @@ bool isNewPersonalBest({
 
 /// More correct answers wins; at equal accuracy the round that asked more
 /// questions wins, so 9/10 beats 5/5 -- a bigger round is the braver one.
-bool _isBetter(PersonalBest candidate, PersonalBest current) {
+bool isBetterRound(PersonalBest candidate, PersonalBest current) {
   if (candidate.correct != current.correct) {
     return candidate.correct > current.correct;
   }

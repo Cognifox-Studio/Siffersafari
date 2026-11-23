@@ -140,7 +140,17 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       reward: reward,
     );
     final activeUser = userState.activeUser;
-    final newBest = _newPersonalBest(session: session, user: activeUser);
+    final previousBests = activeUser == null
+        ? const <OperationType, PersonalBest>{}
+        : ref.watch(
+            personalBestsProvider(
+              (
+                userId: activeUser.userId,
+                excludeSessionId: session.sessionId,
+              ),
+            ),
+          );
+    final newBest = _newPersonalBest(session: session, previous: previousBests);
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
     final streak = readModel.streak;
 
@@ -472,27 +482,21 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   /// Only the rounds that beat something that already existed. The first round
   /// in an operation returns null on purpose: there is nothing to beat yet, and
   /// a "personal best" on the very first try teaches a child nothing.
+  /// `previous` comes from `personalBestsProvider`, which already excludes
+  /// nothing -- the round that just ended is still in progress when the screen
+  /// builds, so it cannot shadow itself.
   PersonalBest? _newPersonalBest({
     required QuizSession session,
-    required UserProgress? user,
+    required Map<OperationType, PersonalBest> previous,
   }) {
-    if (user == null) return null;
-    final history = ref
-        .read(localStorageRepositoryProvider)
-        .getQuizHistory(user.userId);
-    final beatSomething = isNewPersonalBest(
-      operationType: session.operationType.name,
-      correct: session.correctAnswers,
-      total: session.totalQuestions,
-      history: history,
-      excludeSessionId: session.sessionId,
-    );
-    if (!beatSomething) return null;
-    return PersonalBest(
+    final prior = previous[session.operationType];
+    if (prior == null) return null;
+    final round = PersonalBest(
       operation: session.operationType,
       correct: session.correctAnswers,
       total: session.totalQuestions,
     );
+    return isBetterRound(round, prior) ? round : null;
   }
 
   /// Which button ended the round. The page is deliberately down to one filled
