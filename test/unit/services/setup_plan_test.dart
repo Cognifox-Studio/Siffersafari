@@ -7,8 +7,10 @@ void main() {
     test('Åk 1 får bara plus och minus och inga textfrågor', () {
       final plan = SetupPlan.forGrade(1);
 
-      expect(plan.operations, [OperationType.addition,
-        OperationType.subtraction]);
+      expect(plan.operations, [
+        OperationType.addition,
+        OperationType.subtraction,
+      ]);
       expect(plan.readingHelp, isFalse);
       expect(plan.gradeLabel, 'Årskurs 1');
     });
@@ -18,8 +20,10 @@ void main() {
 
       expect(plan.operations, OperationType.values.toList());
       expect(plan.readingHelp, isTrue);
-      expect(plan.operationsLabel,
-          'plusraketer, minusgrottor, gånger-djungeln, delat-isbanan');
+      expect(
+        plan.operationsLabel,
+        'plusraketer, minusgrottor, gånger-djungeln, delat-isbanan',
+      );
     });
 
     test('«Vet inte än» börjar försiktigt och säger det', () {
@@ -27,8 +31,10 @@ void main() {
 
       expect(plan.gradeWasGuessed, isTrue);
       expect(plan.gradeLabel, 'Årskurs 1 – vi börjar försiktigt');
-      expect(plan.operations, [OperationType.addition,
-        OperationType.subtraction]);
+      expect(plan.operations, [
+        OperationType.addition,
+        OperationType.subtraction,
+      ]);
     });
 
     test('planen går att läsa upp som en mening', () {
@@ -45,8 +51,10 @@ void main() {
     test('tre rader: årskurs, räknesätt och frågor', () {
       final plan = SetupPlan.forGrade(2);
 
-      expect(plan.lines.map((line) => line.label),
-          ['Årskurs', 'Räknesätt', 'Frågor']);
+      expect(
+        plan.lines.map((line) => line.label),
+        ['Årskurs', 'Räknesätt', 'Frågor'],
+      );
       expect(plan.lines[2].value, 'Läshjälp på');
     });
 

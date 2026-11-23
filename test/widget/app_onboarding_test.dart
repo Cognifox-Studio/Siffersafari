@@ -183,9 +183,25 @@ void main() {
       expect(find.text('Kan barnet läsa?'), findsNothing);
       expect(find.text('Vad vill du räkna först?'), findsNothing);
 
+      // Planen säger först att vi börjar försiktigt, eftersom inget val är
+      // gjort -- den får inte låtsas veta mer än föräldern har sagt.
+      expect(
+        find.textContaining('Årskurs 1 – vi börjar försiktigt'),
+        findsOneWidget,
+      );
+
       expect(find.text('Åk 3'), findsOneWidget);
       await tester.tap(find.text('Åk 3'));
       await pumpFor(tester, const Duration(milliseconds: 200));
+
+      expect(
+        find.textContaining('Årskurs 3 · plusraketer, minusgrottor'),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('onboarding_setup_plan_summary')),
+        findsOneWidget,
+      );
 
       await tester.tap(find.text('Starta'));
 
