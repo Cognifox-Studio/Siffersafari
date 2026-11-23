@@ -18,7 +18,14 @@ void main() {
     test('Åk 3 får alla fyra räknesätten och läshjälp', () {
       final plan = SetupPlan.forGrade(3);
 
-      expect(plan.operations, OperationType.values.toList());
+      // Mix är inget eget räknesätt på kartan -- det dyker upp först när
+      // barnet själv väljer det.
+      expect(plan.operations, [
+        OperationType.addition,
+        OperationType.subtraction,
+        OperationType.multiplication,
+        OperationType.division,
+      ]);
       expect(plan.readingHelp, isTrue);
       expect(
         plan.operationsLabel,
