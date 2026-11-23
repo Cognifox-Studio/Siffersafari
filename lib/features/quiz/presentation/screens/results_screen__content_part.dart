@@ -259,6 +259,31 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       label: const Text('Spela igen'),
     );
 
+    // One filled button per screen. When the story moved forward, that button
+    // is "Fortsätt storyn" further down, so practice and replay stop competing
+    // for the same tap -- they stay reachable, but as links.
+    final demotePractice = hasStoryCheckpoint;
+    final practiceLink = TextButton.icon(
+      key: const Key('results_practice_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: true,
+      ),
+      icon: const Icon(Icons.bolt_rounded),
+      label: const Text('Snabbträna ⚡'),
+    );
+    final replayLink = TextButton.icon(
+      key: const Key('results_replay_button'),
+      onPressed: () => _startRoundFromResults(
+        session: session,
+        hardest: hardest,
+        useFocusedMiniPass: false,
+      ),
+      icon: const Icon(Icons.replay_rounded),
+      label: const Text('Spela igen'),
+    );
+
     final nextStepPanel = PlayfulPanel(
       hero: !hasStoryCheckpoint,
       backgroundColor: panelColor,
@@ -274,7 +299,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
                     : 'Kör mer?',
           ),
           SizedBox(height: AppConstants.defaultPadding.h),
-          if (canFocusPractice) ...[
+          if (demotePractice) ...[
+            practiceLink,
+            replayLink,
+          ] else if (canFocusPractice) ...[
             practiceButton,
             SizedBox(height: AppConstants.defaultPadding.h),
             replayButton,
@@ -436,7 +464,38 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     );
   }
 
+  /// Which button ended the round. The page is deliberately down to one filled
+  /// button on purpose, so the interesting question is which of the quiet ones
+  /// still gets used.
+  void _logResultsCta(String cta) {
+    final userId = ref.read(userProvider).activeUser?.userId;
+    unawaited(
+      _logGuarded(
+        name: 'results_cta_tapped',
+        userId: userId,
+        properties: {'cta': cta},
+      ),
+    );
+  }
+
+  Future<void> _logGuarded({
+    required String name,
+    String? userId,
+    Map<String, Object?> properties = const <String, Object?>{},
+  }) async {
+    try {
+      await ref.read(appAnalyticsProvider).logEvent(
+            name: name,
+            userId: userId,
+            properties: properties,
+          );
+    } catch (_) {
+      // Analytics must never break a tap handler.
+    }
+  }
+
   void _goHomeFromResults() {
+    _logResultsCta('home');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playHomeMusic();
@@ -444,6 +503,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
   }
 
   void _goToStoryMapFromResults() {
+    _logResultsCta('story');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
     ref.read(audioServiceProvider).playMapOpenSound();
@@ -456,6 +516,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
     required List<_HardestQuestion> hardest,
     required bool useFocusedMiniPass,
   }) {
+    _logResultsCta(useFocusedMiniPass ? 'focused_practice' : 'replay');
     ref.read(userProvider.notifier).clearLastQuestCompletion();
     ref.read(userProvider.notifier).clearLastLevelUp();
 
