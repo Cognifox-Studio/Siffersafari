@@ -84,8 +84,10 @@ class ProfileSelectionScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final u = users[index];
                     return _ProfileTile(
+                      userId: u.userId,
                       name: u.name,
                       avatarEmoji: u.avatarEmoji,
+                      streak: u.currentStreak,
                       onTap: () async {
                         ref.read(audioServiceProvider).playClickSound();
                         await ref.read(userProvider.notifier).selectUser(
@@ -108,13 +110,17 @@ class ProfileSelectionScreen extends ConsumerWidget {
 
 class _ProfileTile extends StatelessWidget {
   const _ProfileTile({
+    required this.userId,
     required this.name,
     required this.avatarEmoji,
+    required this.streak,
     required this.onTap,
   });
 
+  final String userId;
   final String name;
   final String avatarEmoji;
+  final int streak;
   final VoidCallback onTap;
 
   @override
@@ -139,7 +145,13 @@ class _ProfileTile extends StatelessWidget {
                   color: themeColors.accentColor,
                 ),
                 const SizedBox(width: AppConstants.defaultPadding),
-                Expanded(child: _ProfileTileText(name: name)),
+                Expanded(
+                  child: _ProfileTileText(
+                    name: name,
+                    streak: streak,
+                    streakKey: Key('profile_streak_$userId'),
+                  ),
+                ),
                 Icon(
                   Icons.play_circle_fill_rounded,
                   color: onPrimary,
@@ -159,6 +171,8 @@ class _ProfileTile extends StatelessWidget {
               const SizedBox(height: AppConstants.defaultPadding),
               _ProfileTileText(
                 name: name,
+                streak: streak,
+                streakKey: Key('profile_streak_$userId'),
                 center: true,
               ),
               const SizedBox(height: AppConstants.smallPadding),
@@ -223,14 +237,24 @@ class _ProfileAvatar extends StatelessWidget {
 class _ProfileTileText extends StatelessWidget {
   const _ProfileTileText({
     required this.name,
+    required this.streak,
+    required this.streakKey,
     this.center = false,
   });
 
   final String name;
+
+  /// This child's own streak. Siblings share a device, not a streak -- showing
+  /// it per tile is what keeps one child's quiet week from looking like
+  /// another child's success.
+  final int streak;
+
+  final Key streakKey;
   final bool center;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment:
           center ? CrossAxisAlignment.center : CrossAxisAlignment.start,
@@ -240,10 +264,20 @@ class _ProfileTileText extends StatelessWidget {
           name,
           textAlign: center ? TextAlign.center : TextAlign.start,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: scheme.onPrimary,
                 fontWeight: FontWeight.w900,
               ),
         ),
+        if (streak > 0)
+          Text(
+            streak == 1 ? '🔥 1 dag i rad' : '🔥 $streak dagar i rad',
+            key: streakKey,
+            textAlign: center ? TextAlign.center : TextAlign.start,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: scheme.onPrimary.withValues(alpha: 0.82),
+                  fontWeight: FontWeight.w700,
+                ),
+          ),
       ],
     );
   }

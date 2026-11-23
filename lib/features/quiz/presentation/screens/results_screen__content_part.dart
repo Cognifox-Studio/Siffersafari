@@ -140,6 +140,7 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       reward: reward,
     );
     final activeUser = userState.activeUser;
+    final newBest = _newPersonalBest(session: session, user: activeUser);
     final hasStoryCheckpoint = readModel.hasStoryCheckpoint;
     final streak = readModel.streak;
 
@@ -334,6 +335,10 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         nextStepPanel,
+        if (newBest != null) ...[
+          SizedBox(height: AppConstants.defaultPadding.h),
+          _PersonalBestBanner(best: newBest),
+        ],
         const SizedBox(height: AppConstants.largePadding),
         if (userState.newlyUnlockedItem != null) ...[
           _ItemUnlockedBanner(item: userState.newlyUnlockedItem!),
@@ -461,6 +466,32 @@ class _ResultsScreenState extends ConsumerState<ResultsScreen>
           },
         ),
       ),
+    );
+  }
+
+  /// Only the rounds that beat something that already existed. The first round
+  /// in an operation returns null on purpose: there is nothing to beat yet, and
+  /// a "personal best" on the very first try teaches a child nothing.
+  PersonalBest? _newPersonalBest({
+    required QuizSession session,
+    required UserProgress? user,
+  }) {
+    if (user == null) return null;
+    final history = ref
+        .read(localStorageRepositoryProvider)
+        .getQuizHistory(user.userId);
+    final beatSomething = isNewPersonalBest(
+      operationType: session.operationType.name,
+      correct: session.correctAnswers,
+      total: session.totalQuestions,
+      history: history,
+      excludeSessionId: session.sessionId,
+    );
+    if (!beatSomething) return null;
+    return PersonalBest(
+      operation: session.operationType,
+      correct: session.correctAnswers,
+      total: session.totalQuestions,
     );
   }
 
@@ -1223,6 +1254,44 @@ class _LevelUpBanner extends StatelessWidget {
                       ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PersonalBestBanner extends StatelessWidget {
+  const _PersonalBestBanner({required this.best});
+
+  final PersonalBest best;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Container(
+      key: const Key('results_personal_best'),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.defaultPadding,
+        vertical: AppConstants.smallPadding,
+      ),
+      decoration: BoxDecoration(
+        color: scheme.tertiary.withValues(alpha: 0.22),
+        borderRadius: BorderRadius.circular(AppConstants.defaultPadding),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('🏅', style: TextStyle(fontSize: 20)),
+          const SizedBox(width: AppConstants.smallPadding),
+          Flexible(
+            child: Text(
+              'Nytt personbästa: ${best.label}!',
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: scheme.onPrimary,
+                    fontWeight: FontWeight.w800,
+                  ),
             ),
           ),
         ],
