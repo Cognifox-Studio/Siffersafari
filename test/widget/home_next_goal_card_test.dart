@@ -47,7 +47,7 @@ void main() {
 
     expect(
       tester.getSemantics(find.byKey(HomeNextGoalCard.cardKey)),
-      containsSemantics(
+      isSemantics(
         label: 'Nästa mål. Nivå 2. Poäng kvar till nästa nivå: 80.',
       ),
     );
