@@ -48,4 +48,10 @@ jobs:
 
       - name: Show failures
         if: always()
-        run: grep -n -A 25 "❌" /tmp/test.log | head -120 || true
+        run: |
+          echo "--- [E] lines ---"
+          grep -n "\[E\]" /tmp/test.log | head -20 || true
+          echo "--- context ---"
+          grep -n -A 30 "\[E\]" /tmp/test.log | head -150 || true
+          echo "--- expected ---"
+          grep -n -A 12 "Expected:" /tmp/test.log | head -80 || true
