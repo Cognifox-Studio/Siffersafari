@@ -405,11 +405,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       gradeLevel: user.gradeLevel,
     );
 
-    final steps = DifficultyConfig.buildDifficultySteps(
+    final builtSteps = DifficultyConfig.buildDifficultySteps(
       storedSteps: user.operationDifficultySteps,
       defaultDifficulty: effectiveDifficulty,
       gradeLevel: user.gradeLevel,
     );
+
+    // After a break the first round starts one step lower, so it ends in "jag
+    // kan det här" instead of in a wall. The adaptive service climbs back as
+    // soon as she answers well; nothing is stored about it.
+    final isComeback = isComebackGap(
+      lastSessionDate: user.lastSessionDate,
+      now: DateTime.now(),
+    );
+    final steps = isComeback
+        ? softenedStepsForComeback(builtSteps, operation: operationType)
+        : builtSteps;
 
     final wordProblemsEnabled = ref.read(
       wordProblemsEnabledProvider(user.userId),
@@ -439,6 +450,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           'difficulty': effectiveDifficulty.name,
           'gradeLevel': user.gradeLevel,
           'cta': 'home_operation_card',
+          if (isComeback) 'comeback': true,
         },
       ),
     );

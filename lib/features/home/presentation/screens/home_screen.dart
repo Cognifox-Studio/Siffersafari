@@ -22,6 +22,7 @@ import 'package:siffersafari/domain/entities/inventory_item.dart';
 import 'package:siffersafari/domain/entities/user_progress.dart';
 import 'package:siffersafari/domain/enums/difficulty_level.dart';
 import 'package:siffersafari/domain/enums/operation_type.dart';
+import 'package:siffersafari/domain/services/comeback.dart';
 import 'package:siffersafari/domain/services/next_goal.dart';
 import 'package:siffersafari/features/home/presentation/home_read_model.dart';
 import 'package:siffersafari/features/home/presentation/widgets/camp_scene_view.dart';
