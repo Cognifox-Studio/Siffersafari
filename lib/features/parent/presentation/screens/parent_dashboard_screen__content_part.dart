@@ -368,10 +368,11 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         gradeLevel: user.gradeLevel,
       );
 
-      final focusedCount =
-          (DifficultyConfig.getQuestionsPerSession(effectiveAgeGroup) / 2)
-              .round()
-              .clamp(5, 8);
+      // Tio frågor är ungefär tio minuter för åldersgruppen -- den längd en
+      // förälder säger ja till när hon sitter ner med barnet på kvällen. Fast
+      // längd i stället för en bråkdel av sessionen: en siffra hon kan lita på
+      // utan att räkna själv.
+      const focusedCount = 10;
 
       ref.read(quizProvider.notifier).startSession(
             userId: user.userId,
@@ -421,7 +422,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
-            'Ikväll',
+            'Ikväll · tio minuter',
             key: const Key('parent_tonight_practice_title'),
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
                   color: onPrimary,
@@ -431,8 +432,8 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
           const SizedBox(height: AppConstants.microSpacing4),
           Text(
             tonightArea.isSuggestedFiller
-                ? 'Inga svaga områden ännu. Ett kort pass håller vanan igång.'
-                : 'Ett kort pass på det som känns svårast just nu.',
+                ? 'Inga svaga områden ännu. Tio minuter håller vanan igång.'
+                : 'Tio minuter på det som känns svårast just nu.',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: subtleOnPrimary,
                   fontWeight: FontWeight.w600,
@@ -459,7 +460,7 @@ class _DashboardBodyState extends ConsumerState<_DashboardBody> {
             key: const Key('parent_tonight_practice_button'),
             onPressed: () => startTonightPractice(tonightArea),
             icon: const Icon(Icons.nightlight_round),
-            label: const Text('Öva ikväll'),
+            label: const Text('Öva tio minuter'),
           ),
         ],
       ),

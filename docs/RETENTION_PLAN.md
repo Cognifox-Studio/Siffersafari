@@ -35,7 +35,9 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 17 | Klar — checklistan får ett slut som syns: onboardingkortet visar «Så här börjar vi: Årskurs 3 · plusraketer, minusgrottor, gånger-djungeln, delat-isbanan · Läshjälp på» innan man trycker Starta, och säger att allt kan ändras i Föräldraläge. `SetupPlan` speglar exakt det `OnboardingController.complete` skriver. |
 | 12 | Klar — veckans mål på hem: fyra rundor (tre för Åk 1–2) inom veckofönstret mån–sön. Mätt ur historiken som redan finns, så det nollställs av sig själv på måndag i stället för att kräva en räknare som kan glida. Avbrutna rundor tickar inte. |
 | 23 | Klar — experimenthake: `experimentVariant` (FNV-1a med avalanche, så två experiment inte lottas lika), varianten sparas per barn i settings och loggas som `experiment_assigned` vid första start. Ingen variant rör kärnloopen; `variantIsOn` finns för steg 24. |
-| 15–16, 19–21, 24–25 | Kvar. |
+| 16 | Klar — «Ikväll · tio minuter» i föräldradashboarden: en knapp, en färdig session på tio frågor (≈ tio minuter) på det svagaste området. Fast längd i stället för en bråkdel av sessionen, så siffran i rubriken stämmer. |
+| 24 | Klar (regeln) — `ExperimentDecision`: behåll om D7 förbättras ≥3 procentenheter vid minst 30 profiler per arm, annars ta bort, annars samla mer. Regeln står i kod och i klartext (`explain`). Körningen väntar på data. |
+| 15, 19–21, 25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 

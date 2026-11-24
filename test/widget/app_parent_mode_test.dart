@@ -263,7 +263,7 @@ void main() {
         tester,
         find.byKey(const Key('parent_tonight_practice_button')),
       );
-      expect(find.text('Ikväll'), findsOneWidget);
+      expect(find.text('Ikväll · tio minuter'), findsOneWidget);
       expect(find.textContaining('Gånger'), findsWidgets);
     },
   );
