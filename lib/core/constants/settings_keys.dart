@@ -26,6 +26,13 @@ class SettingsKeys {
   ///
   /// Stored, not recomputed on every launch: a child must not switch variant
   /// mid-week, and an analysis must not see the same child on both sides.
+  /// Opt-in för den dagliga påminnelsen (steg 15). Av som default.
+  static String reminderOptIn(String userId) => 'reminder_opt_in_$userId';
+
+  /// Dagen då en påminnelse senast skickades, så det blir högst en per dag.
+  static String reminderLastSentDay(String userId) =>
+      'reminder_last_day_$userId';
+
   static String experiment(String userId, String experiment) =>
       'experiment_${userId}_$experiment';
 
@@ -90,6 +97,8 @@ class SettingsKeys {
         legacyDailyChallengeStreak(userId),
         dailyActivity(userId),
         streakGraceUsed(userId),
+        reminderOptIn(userId),
+        reminderLastSentDay(userId),
         streakBrokenFrom(userId),
       ];
 
