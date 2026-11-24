@@ -37,7 +37,8 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 23 | Klar — experimenthake: `experimentVariant` (FNV-1a med avalanche, så två experiment inte lottas lika), varianten sparas per barn i settings och loggas som `experiment_assigned` vid första start. Ingen variant rör kärnloopen; `variantIsOn` finns för steg 24. |
 | 16 | Klar — «Ikväll · tio minuter» i föräldradashboarden: en knapp, en färdig session på tio frågor (≈ tio minuter) på det svagaste området. Fast längd i stället för en bråkdel av sessionen, så siffran i rubriken stämmer. |
 | 24 | Klar (regeln) — `ExperimentDecision`: behåll om D7 förbättras ≥3 procentenheter vid minst 30 profiler per arm, annars ta bort, annars samla mer. Regeln står i kod och i klartext (`explain`). Körningen väntar på data. |
-| 15, 19–21, 25 | Kvar. |
+| 15 | Delvis — policyn är klar och testad (`ReminderPolicy`: av som default, högst en per dag, tysta timmar flyttar notisen i stället för att stryka den, opt-in-nycklar per barn). Kvar: `flutter_local_notifications` + Android-desugaring + manifest, som kräver egen CI- och APK-runda. |
+| 19–21, 25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 
