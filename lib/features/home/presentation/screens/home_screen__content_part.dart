@@ -2,6 +2,7 @@ part of 'home_screen.dart';
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   String? _checkedOnboardingForUserId;
+  String? _checkedExperimentsForUserId;
   String? _loadedReviewSummaryForUserId;
   bool _onboardingPushInFlight = false;
   CharacterReaction _mascotReaction = CharacterReaction.idle;
@@ -116,6 +117,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       _checkedOnboardingForUserId = userId;
       _checkOnboarding(userId);
     }
+
+    if (_checkedExperimentsForUserId != userId) {
+      _checkedExperimentsForUserId = userId;
+      unawaited(_assignExperiments(userId));
+    }
+  }
+
+  /// Puts the child in a variant once, remembers it, and says so in analytics.
+  ///
+  /// Nothing on screen branches on the answer yet -- step 24 owns that decision,
+  /// and only after thirty profiles. Keeping the assignment honest from day one
+  /// means the data exists when the decision is due.
+  Future<void> _assignExperiments(String userId) async {
+    final service = ref.read(experimentServiceProvider);
+    final assignments = service.assignmentsFor(userId);
+    await _logEvent(
+      name: 'experiment_assigned',
+      userId: userId,
+      properties: assignments,
+    );
   }
 
   void _checkOnboarding(String userId) {
@@ -479,6 +500,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final storyProgress = homeModel.storyProgress;
     // One locked thing, one line: computed from state the screen already has.
     final nextGoal = nextGoalFor(user: user, story: storyProgress);
+    // The week's own small goal. A view of the stored history, so it resets by
+    // itself on Monday instead of needing a counter that can drift.
+    final weeklyQuest = user == null
+        ? null
+        : ref.watch(weeklyQuestProvider(user.userId));
 
     final themeCfg = ref.watch(appThemeConfigProvider);
     final backgroundAsset = themeCfg.backgroundAsset;
@@ -538,6 +564,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   children: [
                     if (nextGoal != null)
                       HomeNextGoalCard(goal: nextGoal),
+                    if (weeklyQuest != null)
+                      HomeWeeklyQuestCard(quest: weeklyQuest),
                     if (user != null)
                       HomeStreakBadge(
                         streak: user.currentStreak,

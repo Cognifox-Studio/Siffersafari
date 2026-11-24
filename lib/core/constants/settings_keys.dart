@@ -22,6 +22,13 @@ class SettingsKeys {
 
   static String onboardingDone(String userId) => 'onboarding_done_$userId';
 
+  /// The variant one child was put in for one experiment (step 23).
+  ///
+  /// Stored, not recomputed on every launch: a child must not switch variant
+  /// mid-week, and an analysis must not see the same child on both sides.
+  static String experiment(String userId, String experiment) =>
+      'experiment_${userId}_$experiment';
+
   static String allowedOperations(String userId) => 'allowed_ops_$userId';
 
   static String questCurrent(String userId) => 'quest_current_$userId';
@@ -88,6 +95,9 @@ class SettingsKeys {
 
   static List<String> userScopedKeyPrefixes(String userId) => [
         'daily_challenge_${userId}_',
+        // Experimentvarianten hör till barnet: byter profilen bort ska den
+        // bort med den, annars kan nästa profil ärva en variant.
+        'experiment_${userId}_',
       ];
 
   static List<String> userScopedSampleKeys(String userId) => [

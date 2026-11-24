@@ -33,7 +33,9 @@ Fas 0–1 är byggd, med två delar kvar som kräver mer än en slice (se tabell
 | 22 | Klar — personbästa per räknesätt: `personal_bests.dart` räknar bästa rundan ur historiken som redan finns (inga nya fält), och resultatvyn firar bara när rundan slog något som fanns *före* den. Första rundan är aldrig ett personbästa. |
 | 13 | Klar — efter ≥3 dagars uppehåll startar första rundan ett steg lägre, bara för räknesättet hon möter (`comeback.dart`). Inget sparas: adaptiva trappan klättrar tillbaka så fort hon svarar bra. `quiz_started` får `comeback: true` så effekten går att mäta. |
 | 17 | Klar — checklistan får ett slut som syns: onboardingkortet visar «Så här börjar vi: Årskurs 3 · plusraketer, minusgrottor, gånger-djungeln, delat-isbanan · Läshjälp på» innan man trycker Starta, och säger att allt kan ändras i Föräldraläge. `SetupPlan` speglar exakt det `OnboardingController.complete` skriver. |
-| 12, 15–16, 19–21, 23–25 | Kvar. |
+| 12 | Klar — veckans mål på hem: fyra rundor (tre för Åk 1–2) inom veckofönstret mån–sön. Mätt ur historiken som redan finns, så det nollställs av sig själv på måndag i stället för att kräva en räknare som kan glida. Avbrutna rundor tickar inte. |
+| 23 | Klar — experimenthake: `experimentVariant` (FNV-1a med avalanche, så två experiment inte lottas lika), varianten sparas per barn i settings och loggas som `experiment_assigned` vid första start. Ingen variant rör kärnloopen; `variantIsOn` finns för steg 24. |
+| 15–16, 19–21, 24–25 | Kvar. |
 
 Två saker som ändrades under bygget, värda att veta:
 
